@@ -1,0 +1,6 @@
+com/mygdx/nextlevel/NextLevel.java
+ com.mygdx.nextlevel.NextLevel
+com/mygdx/nextlevel/MainMenuScreen.java
+ com.mygdx.nextlevel.MainMenuScreen
+com/mygdx/nextlevel/GameScreen.java
+ com.mygdx.nextlevel.GameScreen
