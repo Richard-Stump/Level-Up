@@ -1,6 +1,12 @@
+com/mygdx/nextlevel/Enemy.java
+ com.mygdx.nextlevel.Enemy
+com/mygdx/nextlevel/scenes/Lives.java
+ com.mygdx.nextlevel.scenes.Lives
+com/mygdx/nextlevel/Actor.java
+ com.mygdx.nextlevel.Actor
+com/mygdx/nextlevel/sprites/Hero.java
+ com.mygdx.nextlevel.sprites.Hero
 com/mygdx/nextlevel/NextLevel.java
  com.mygdx.nextlevel.NextLevel
-com/mygdx/nextlevel/MainMenuScreen.java
- com.mygdx.nextlevel.MainMenuScreen
-com/mygdx/nextlevel/GameScreen.java
- com.mygdx.nextlevel.GameScreen
+com/mygdx/nextlevel/screens/GameScreen.java
+ com.mygdx.nextlevel.screens.GameScreen
