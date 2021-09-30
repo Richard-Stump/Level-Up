@@ -57,11 +57,30 @@ public class GameScreen implements Screen {
             hero.x -= 200 * Gdx.graphics.getDeltaTime();
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
             hero.x += 200 * Gdx.graphics.getDeltaTime();
+        if (Gdx.input.isKeyPressed(Input.Keys.UP))
+            hero.y += 400 * Gdx.graphics.getDeltaTime();
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
+            hero.y -= 400 * Gdx.graphics.getDeltaTime();
         if (hero.x < 0)
             hero.x = 0;
         if (hero.x > 800 - 64)
             hero.x = 800 - 64;
-        if (hero.overlaps(enemy)) {
+        if (hero.overlaps(enemy) && hero.y > enemy.y) {
+            game.batch.begin();
+            hero.x = 10;
+            hero.y = 20;
+            hero.width = 100;
+            hero.height = 100;
+            enemy.x = 500;
+            enemy.y = 20;
+            enemy.width = 64;
+            enemy.height = 64;
+            game.batch.draw(heroImage, hero.x, hero.y, hero.width, hero.height);
+            game.batch.draw(enemyImage, enemy.x, enemy.y, enemy.width, enemy.height);
+
+            game.batch.end();
+
+        } else if (hero.overlaps(enemy)) {
             lives--;
             game.batch.begin();
             hero.x = 10;
