@@ -14,7 +14,12 @@ public class DBController {
         try {
             connection = DBConnection.getConnection();
         } catch (SQLException e) {
+            //handle database errors (doesn't exist, etc)
             e.printStackTrace();
         }
+    }
+
+    public boolean isDBConnected() {
+        return (connection != null);
     }
 }
