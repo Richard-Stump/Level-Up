@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -27,8 +28,8 @@ public class MainMenuScreen implements Screen {
     protected Skin skin;
 
     public MainMenuScreen () {
-        atlas = new TextureAtlas("skin.atlas");
-        skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+        atlas = new TextureAtlas("skin/neon-ui.atlas");
+        skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
 
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
@@ -87,6 +88,10 @@ public class MainMenuScreen implements Screen {
         });
 
         //Add buttons to table
+        Label title = new Label("Next Level", skin);
+        mainTable.add(title).colspan(3).center().expandY();
+        mainTable.row();
+
         mainTable.add(playButton);
         mainTable.row();
         mainTable.add(createLevelButton);
