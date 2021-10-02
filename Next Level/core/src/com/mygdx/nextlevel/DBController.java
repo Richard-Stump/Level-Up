@@ -4,17 +4,29 @@ import com.mygdx.nextlevel.dbUtil.DBConnection;
 
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class DBController {
     private Connection connection;
+    private final String tableName;
 
-    public DBController() {
+    /**
+     * Constructor
+     */
+    public DBController(String tableName) {
         //connect to the database
         try {
             connection = DBConnection.getConnection();
         } catch (SQLException e) {
             //handle database errors (doesn't exist, etc)
             e.printStackTrace();
+        }
+        if (isDBConnected()) {
+            this.tableName = tableName;
+        } else {
+            this.tableName = null;
         }
     }
 
@@ -36,7 +48,7 @@ public class DBController {
         int rowsChanged;
 
         String sqlQuery = "INSERT INTO downloaded (id, title, author, bestTime, rating, difficulty, playCount, dateDownloaded)" +
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
 
@@ -79,7 +91,7 @@ public class DBController {
                 "SET bestTime = ? " +
                 "AND rating = ? " +
                 "AND playCount = ? " +
-                "WHERE id LIKE ?";
+                "WHERE id LIKE ?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setFloat(1, levelInfo.getBestTime());
@@ -120,6 +132,46 @@ public class DBController {
             return -1;
         } catch (SQLException e) {
             return -1;
+        }
+    }
+
+    /**
+     *  This function
+     * @return a list of LevelInfo objects that are sorted alphabetically by title
+     */
+    public List<LevelInfo> sortByTitle() {
+        ResultSet resultSet;
+
+        String sqlQuery = "SELECT * FROM downloaded " +
+                "ORDER BY title ASC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            resultSet = statement.executeQuery();
+
+            int size = 0;
+            if (resultSet != null) {
+                resultSet.beforeFirst();
+                resultSet.last();
+                size = resultSet.getRow();
+                resultSet.beforeFirst();
+            }
+            List<LevelInfo> list = new ArrayList<>();
+
+            for (int i = 0; i < size; i++) {
+                LevelInfo levelInfo = new LevelInfo(resultSet.getString("id"));
+                levelInfo.setTitle(resultSet.getString("title"));
+                levelInfo.setAuthor(resultSet.getString("author"));
+                levelInfo.setPlayCount(resultSet.getInt("playCount"));
+                levelInfo.setDifficulty(resultSet.getInt("difficulty"));
+                levelInfo.setRating(resultSet.getFloat("rating"));
+                levelInfo.setBestTime(resultSet.getFloat("bestTime"));
+                levelInfo.setDateDownloaded(resultSet.getDate("dateDownloaded"));
+                list.add(levelInfo);
+            }
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
