@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-    private static final String CONNECTION = "jdbc:sqlite:core/main/NextLevel/core/src/com" +
+    private static final String CONNECTION = "jdbc:sqlite:Next Level/core/src/com" +
             "/mygdx/nextlevel/data/levels.sqlite";
 
     public static Connection getConnection() throws SQLException {
