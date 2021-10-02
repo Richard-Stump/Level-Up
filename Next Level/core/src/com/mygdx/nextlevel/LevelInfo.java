@@ -3,6 +3,7 @@ package com.mygdx.nextlevel;
 import java.sql.Date;
 
 public class LevelInfo {
+    private final String id; //must be unique, won't ever change
     private String title;
     private String author;
     private float bestTime;
@@ -11,10 +12,21 @@ public class LevelInfo {
     private int playCount;
     private Date dateDownloaded;
 
-    public LevelInfo() {
-
+    /**
+     * Constructor
+     * @param id a unique level ID
+     */
+    public LevelInfo(String id) {
+        if (id == null) {
+            throw new NullPointerException();
+        }
+        this.id = id;
     }
 
+
+    /*
+    Getters:
+     */
     public float getBestTime() {
         return bestTime;
     }
@@ -42,6 +54,14 @@ public class LevelInfo {
     public Date getDateDownloaded() {
         return dateDownloaded;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    /*
+    Setters:
+     */
 
     public void setAuthor(String author) {
         this.author = author;
