@@ -19,7 +19,15 @@ public class DBController {
         }
     }
 
+    /**
+     *
+     * @return true if connected, false otherwise
+     */
     public boolean isDBConnected() {
         return (connection != null);
+    }
+
+    public boolean addLevel(LevelInfo levelInfo) {
+        return false;
     }
 }
