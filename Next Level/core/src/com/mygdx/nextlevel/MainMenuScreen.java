@@ -26,8 +26,9 @@ public class MainMenuScreen implements Screen {
     private OrthographicCamera camera;
     private TextureAtlas atlas;
     protected Skin skin;
+    private NextLevel game;
 
-    public MainMenuScreen () {
+    public MainMenuScreen (NextLevel game) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
 
@@ -40,6 +41,7 @@ public class MainMenuScreen implements Screen {
         camera.update();
 
         stage = new Stage(viewport, batch);
+        this.game = game;
     }
 
 
@@ -65,7 +67,7 @@ public class MainMenuScreen implements Screen {
         playButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen());
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen(game));
             }
         });
         createLevelButton.addListener(new ClickListener() {
