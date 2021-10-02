@@ -2,7 +2,7 @@ package com.mygdx.nextlevel;
 
 import com.badlogic.gdx.Screen;
 
-public class GameScreen implements Screen {
+public class TutorialScreen implements Screen {
     @Override
     public void show() {
 
