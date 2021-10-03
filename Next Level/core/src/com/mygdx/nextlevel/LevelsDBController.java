@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DBController {
+public class LevelsDBController {
     private Connection connection;
     private final String tableName;
 
     /**
-     * Constructor
+     * Constructor - should only be called by the children
      */
-    public DBController(String tableName) {
+    public LevelsDBController(String tableName) {
         //connect to the database
         try {
             connection = DBConnection.getConnection();
@@ -39,27 +39,28 @@ public class DBController {
     }
 
     /**
-     *  This will add a level into the local database containing information about downloaded levels
+     *  This will add a level into the local levels database
      *
      * @param levelInfo LevelInfo object associated with the level
      * @return 1 if successfully added, -1 otherwise
      */
-    public int addDownloadedLevel(LevelInfo levelInfo) {
+    public int addLevelInfo(LevelInfo levelInfo) {
         int rowsChanged;
 
-        String sqlQuery = "INSERT INTO downloaded (id, title, author, bestTime, rating, difficulty, playCount, dateDownloaded)" +
+        String sqlQuery = "INSERT INTO ? (id, title, author, bestTime, rating, difficulty, playCount, dateDownloaded)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, tableName);
 
-            statement.setString(1, levelInfo.getId());
-            statement.setString(2, levelInfo.getTitle());
-            statement.setString(3, levelInfo.getAuthor());
-            statement.setFloat(4, levelInfo.getBestTime());
-            statement.setFloat(5, levelInfo.getRating());
-            statement.setInt(6, levelInfo.getDifficulty());
-            statement.setInt(7, levelInfo.getPlayCount());
-            statement.setDate(8, levelInfo.getDateDownloaded());
+            statement.setString(2, levelInfo.getId());
+            statement.setString(3, levelInfo.getTitle());
+            statement.setString(4, levelInfo.getAuthor());
+            statement.setFloat(5, levelInfo.getBestTime());
+            statement.setFloat(6, levelInfo.getRating());
+            statement.setInt(7, levelInfo.getDifficulty());
+            statement.setInt(8, levelInfo.getPlayCount());
+            statement.setDate(9, levelInfo.getDateDownloaded());
 
             //will return the number of rows affected
             rowsChanged = statement.executeUpdate();
@@ -84,20 +85,22 @@ public class DBController {
      * @param levelInfo level information associated with level with updated information
      * @return 1 on success, -1 on failure
      */
-    public int updateDownloadedLevel(LevelInfo levelInfo) {
+    public int updateLevelInfo(LevelInfo levelInfo) {
         int rowsChanged;
 
-        String sqlQuery = "UPDATE downloaded " +
+        String sqlQuery = "UPDATE ? " +
                 "SET bestTime = ? " +
                 "AND rating = ? " +
                 "AND playCount = ? " +
                 "WHERE id LIKE ?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setFloat(1, levelInfo.getBestTime());
-            statement.setFloat(2, levelInfo.getRating());
-            statement.setInt(3, levelInfo.getPlayCount());
-            statement.setString(4, levelInfo.getId());
+            statement.setString(1, tableName);
+
+            statement.setFloat(2, levelInfo.getBestTime());
+            statement.setFloat(3, levelInfo.getRating());
+            statement.setInt(4, levelInfo.getPlayCount());
+            statement.setString(5, levelInfo.getId());
 
             rowsChanged = statement.executeUpdate();
             if (rowsChanged == 1) {
@@ -116,7 +119,7 @@ public class DBController {
      * @param levelInfo the level information associated with the level the user is deleting
      * @return 1 on success, -1 on failure
      */
-    public int removeDownloadedLevel(LevelInfo levelInfo) {
+    public int removeLevelInfo(LevelInfo levelInfo) {
         int rowsChanged;
 
         String sqlQuery = "DELETE FROM downloaded " +
@@ -142,10 +145,11 @@ public class DBController {
     public List<LevelInfo> sortByTitle() {
         ResultSet resultSet;
 
-        String sqlQuery = "SELECT * FROM downloaded " +
+        String sqlQuery = "SELECT * FROM ? " +
                 "ORDER BY title ASC;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, tableName);
             resultSet = statement.executeQuery();
 
             int size = 0;
