@@ -1,5 +1,5 @@
-com/mygdx/nextlevel/actors/Player.java
- com.mygdx.nextlevel.actors.Player
+com/mygdx/nextlevel/PhysicsShapeCache.java
+ com.mygdx.nextlevel.PhysicsShapeCache
 com/mygdx/nextlevel/MetadataNode.java
  com.mygdx.nextlevel.MetadataNode
 com/mygdx/nextlevel/TutorialScreen.java
@@ -10,8 +10,8 @@ com/mygdx/nextlevel/MainMenuScreen.java
  com.mygdx.nextlevel.MainMenuScreen$2
  com.mygdx.nextlevel.MainMenuScreen$3
  com.mygdx.nextlevel.MainMenuScreen$4
-com/mygdx/nextlevel/GameScreen.java
- com.mygdx.nextlevel.GameScreen
+com/mygdx/nextlevel/WorldContactListener.java
+ com.mygdx.nextlevel.WorldContactListener
 com/mygdx/nextlevel/Utility.java
  com.mygdx.nextlevel.Utility
 com/mygdx/nextlevel/FixtureNode.java
@@ -38,5 +38,9 @@ com/mygdx/nextlevel/NextLevel.java
  com.mygdx.nextlevel.NextLevel
 com/mygdx/nextlevel/Actor.java
  com.mygdx.nextlevel.Actor
-com/mygdx/nextlevel/PhysicsShapeCache.java
- com.mygdx.nextlevel.PhysicsShapeCache
+com/mygdx/nextlevel/actors/Player.java
+ com.mygdx.nextlevel.actors.Player
+ com.mygdx.nextlevel.actors.Player$1
+ com.mygdx.nextlevel.actors.Player$State
+com/mygdx/nextlevel/GameScreen.java
+ com.mygdx.nextlevel.GameScreen

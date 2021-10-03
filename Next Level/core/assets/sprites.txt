@@ -1,33 +1,33 @@
 sprites.png
-size: 512, 128
+size: 192, 48
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-banana - Copy
+Biker_idle-0
   rotate: false
   xy: 0, 0
-  size: 128, 128
-  orig: 128, 128
+  size: 48, 48
+  orig: 48, 48
   offset: 0, 0
   index: -1
-cherries
+Biker_idle-1
   rotate: false
-  xy: 128, 0
-  size: 128, 128
-  orig: 128, 128
+  xy: 48, 0
+  size: 48, 48
+  orig: 48, 48
   offset: 0, 0
   index: -1
-crate
+Biker_idle-2
   rotate: false
-  xy: 256, 0
-  size: 128, 128
-  orig: 128, 128
+  xy: 96, 0
+  size: 48, 48
+  orig: 48, 48
   offset: 0, 0
   index: -1
-orange
+Biker_idle-3
   rotate: false
-  xy: 384, 0
-  size: 128, 128
-  orig: 128, 128
+  xy: 144, 0
+  size: 48, 48
+  orig: 48, 48
   offset: 0, 0
   index: -1

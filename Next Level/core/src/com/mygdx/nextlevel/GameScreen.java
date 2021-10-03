@@ -7,38 +7,41 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.mygdx.nextlevel.actors.Player;
 
 import java.util.HashMap;
 
 import static com.badlogic.gdx.Files.FileType.Internal;
 
 public class GameScreen implements Screen {
+
+    // Main game variables
     final NextLevel game;
-    final HashMap<String, Sprite> sprites = new HashMap<String, Sprite>();
-    //Texture heroImage;
-    //Texture enemyImage;
-    //Rectangle hero;
-    //Rectangle enemy;
-    TextureAtlas textureAtlas;
-    OrthographicCamera camera;
-    ExtendViewport viewport;
+    private final OrthographicCamera camera;
+    private final ExtendViewport viewport;
     public SpriteBatch batch;
-    public BitmapFont font;
 
-    float spriteXposition;
-    float spriteYposition;
+    // Sprites
+    private final TextureAtlas textureAtlas;
+    Sprite banana;
+    Sprite crate;
 
+    //float spriteXposition;
+    //float spriteYposition;
+
+    // Box2D Vars
     World world;
+    Box2DDebugRenderer debugRenderer;
+    Body bodyCrate;
+    Body bodyBanana;
 
     static final float STEP_TIME = 1f / 60f;
     static final int VELOCITY_ITERATIONS = 6;
@@ -48,35 +51,39 @@ public class GameScreen implements Screen {
 
     PhysicsShapeCache physicsBodies;
 
-    Sprite banana;
-    Sprite crate;
+    // player
+    private Player player;
 
-    //Body body;
-    Body bodyCrate;
-    Body bodyBanana;
+    //FileHandle physicsFile = (Gdx.files.internal("physics.xml"));
+    //int lives = 3;
 
-    FileHandle physicsFile = (Gdx.files.internal("physics.xml"));
-
-    Box2DDebugRenderer debugRenderer;
-    int lives = 3;
-
+    /*
+     * Constructor for main game
+     */
     public GameScreen(NextLevel game) {
         this.game = game;
         Box2D.init();
         debugRenderer = new Box2DDebugRenderer();
 
-        //direction of gravity
+        // direction of gravity
         world = new World(new Vector2(0, -98f), true);
-
         physicsBodies = new PhysicsShapeCache("physics.xml");
 
-        //enemyImage = new Texture(Gdx.files.internal("boss-sprite.jpeg"));
-        //heroImage = new Texture(Gdx.files.internal("hero.png"));
+        // camera to follow player, view port to maintain aspect ratio
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(960, 500, camera);
 
+        // create atlas for sprites
         textureAtlas = new TextureAtlas("sprites.txt");
-        banana = textureAtlas.createSprite("banana - Copy");
+
+        // create player
+        player = new Player(this);
+
+        // class that implements ContactListener
+        world.setContactListener(new WorldContactListener());
+
+
+        /* banana = textureAtlas.createSprite("banana - Copy");
         crate = textureAtlas.createSprite("crate");
 
         batch = new SpriteBatch();
@@ -85,16 +92,16 @@ public class GameScreen implements Screen {
         //body.setTransform(10, 10, 0);
         //Body bodyCrate = physicsBodies.createBody("crate", world, StaticBody,0.05f, 0.05f);
 
-        //body and fixture for banana
+        // body and fixture for banana
         BodyDef bananaBodyDef = new BodyDef();
         bananaBodyDef.type = BodyDef.BodyType.KinematicBody;
 
         bananaBodyDef.position.set(banana.getX(), banana.getY());
         bodyBanana = physicsBodies.createBody("banana - Copy", world, bananaBodyDef, 0.05f, 0.05f);
 
-        /*XmlReader xml = new XmlReader();
+        XmlReader xml = new XmlReader();
         XmlReader.Element element = xml.parse(physicsFile);
-        PolygonNode bananaShape = new PolygonNode(element);*/
+        PolygonNode bananaShape = new PolygonNode(element);
 
         PolygonShape bananaShape = new PolygonShape();
         bananaShape.setAsBox(banana.getWidth()/2, banana.getHeight()/2);
@@ -105,41 +112,39 @@ public class GameScreen implements Screen {
 
         Fixture bananaFixture = bodyBanana.createFixture(bananaFixDef);
 
-        //body and fixture for crate
+        // body and fixture for crate
         crate.setPosition(200, 0);
 
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
+        BodyDef crateBodyDef = new BodyDef();
+        crateBodyDef.type = BodyDef.BodyType.StaticBody;
 
-        bodyDef.position.set(crate.getX(), crate.getY());
-        //body = world.createBody(bodyDef);
-        bodyCrate = physicsBodies.createBody("crate", world, bodyDef,0.05f, 0.05f);
+        crateBodyDef.position.set(crate.getX(), crate.getY());
+        body = world.createBody(bodyDef);
+        bodyCrate = physicsBodies.createBody("crate", world, crateBodyDef,0.05f, 0.05f);
 
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(crate.getWidth()/2, crate.getHeight()/2);
+        PolygonShape crateShape = new PolygonShape();
+        crateShape.setAsBox(crate.getWidth()/2, crate.getHeight()/2);
 
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
+        fixtureDef.shape = crateShape;
         fixtureDef.density = 3f;
 
         Fixture fixture = bodyCrate.createFixture(fixtureDef);
 
-        addSprites();
-        shape.dispose();
-        bananaShape.dispose();
+        //addSprites();
+        crateShape.dispose();
+        bananaShape.dispose(); */
     }
 
-    private void addSprites() {
-        Array<TextureAtlas.AtlasRegion> regions = textureAtlas.getRegions();
-
-        for (TextureAtlas.AtlasRegion region : regions) {
-            Sprite sprite = textureAtlas.createSprite(region.name);
-
-            sprites.put(region.name, sprite);
-        }
+    public TextureAtlas getAtlas() {
+        return this.textureAtlas;
     }
 
-    private void stepWorld() {
+    public World getWorld() {
+        return this.world;
+    }
+
+    /*private void stepWorld() {
         float delta = Gdx.graphics.getDeltaTime();
 
         accumulator += Math.min(delta, 0.25f);
@@ -149,52 +154,67 @@ public class GameScreen implements Screen {
 
             world.step(STEP_TIME, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
         }
+    }*/
+
+    public void handleInput(float dt) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            bodyBanana.applyLinearImpulse(new Vector2(0, 3f), bodyBanana.getWorldCenter(), true);
+        }
+        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && bodyBanana.getLinearVelocity().x >= -2) {
+            bodyBanana.applyLinearImpulse(new Vector2(-0.1f, 0), bodyBanana.getWorldCenter(), true);
+        }
+        else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && bodyBanana.getLinearVelocity().x <= 2) {
+            bodyBanana.applyLinearImpulse(new Vector2(0.1f, 0), bodyBanana.getWorldCenter(), true);
+        }
     }
+
+    public void update(float dt) {
+        // handle user input first
+        handleInput(dt);
+
+        world.step(1/60f, 6, 2);
+
+        player.update(dt);
+
+
+        camera.position.x = bodyBanana.getPosition().x;
+        // update game camera
+        camera.update();
+        // tell renderer to draw only what the camera can see of the game world
+        //mapRenderer.setView(gameCam);
+    }
+
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0.2f, 1);
         camera.update();
-        stepWorld();
+        //stepWorld();
 
         Gdx.gl.glClearColor(0.57f, 0.77f, 0.85f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        crate.setPosition(bodyCrate.getPosition().x, bodyCrate.getPosition().y);
-        batch.begin();
-        //banana.setPosition(spriteXposition, spriteYposition);
-        banana.setPosition(bodyBanana.getPosition().x, bodyBanana.getPosition().y);
-        banana.draw(batch);
-
-        crate.draw(batch);
-
-        batch.end();
 
         debugRenderer.render(world, camera.combined);
-        spriteControl();
-    }
 
-    public void spriteControl() {
-        boolean moveRight = (Gdx.input.isKeyPressed(Input.Keys.RIGHT));
-        boolean moveLeft = (Gdx.input.isKeyPressed(Input.Keys.LEFT));
+        batch.setProjectionMatrix(camera.combined);
 
-        if (moveRight && bodyBanana.getLinearVelocity().x < 3.00f) {
-            bodyBanana.applyLinearImpulse(new Vector2(0.15f, 0), bodyBanana.getWorldCenter(), true);
-        } else if (moveLeft && bodyBanana.getLinearVelocity().x > -3.00f) {
-            bodyBanana.applyLinearImpulse(new Vector2(-0.15f, 0), bodyBanana.getWorldCenter(), true);
-        } else if (moveRight == moveLeft) {
-            bodyBanana.setLinearVelocity(0f, bodyBanana.getLinearVelocity().y);
-        }
+        //crate.setPosition(bodyCrate.getPosition().x, bodyCrate.getPosition().y);
 
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            bodyBanana.applyLinearImpulse(new Vector2(0, 20), bodyBanana.getPosition(), true);
-        }
+        batch.begin();
+        player.draw(batch);
+        //banana.setPosition(spriteXposition, spriteYposition);
+        //banana.setPosition(bodyBanana.getPosition().x, bodyBanana.getPosition().y);
+        //banana.draw(batch);
+        //crate.draw(batch);
+        batch.end();
+        //spriteControl();
     }
 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
 
-        batch.setProjectionMatrix(camera.combined);
+        //batch.setProjectionMatrix(camera.combined);
     }
 
     @Override
