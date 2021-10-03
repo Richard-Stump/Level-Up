@@ -3,7 +3,6 @@ package com.mygdx.nextlevel.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.mygdx.nextlevel.NextLevel;
-import com.mygdx.nextlevel.Physics;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {

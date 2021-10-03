@@ -10,16 +10,12 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.nextlevel.actors.Enemy;
 import com.mygdx.nextlevel.actors.Player;
 
-
-
-
 public class NextLevel extends ApplicationAdapter implements InputProcessor {
 	SpriteBatch batch;
 	Player player;
 	Enemy enemy;
 
 	World world;
-	Body bodyPlayer, bodyEnemy;
 	Body bodyEdgeScreen;
 
 	Box2DDebugRenderer debugRenderer;
@@ -43,21 +39,9 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 
 		//Create Enemy and Player
 		Texture playerTexture = new Texture("tyson.jpg");
-		player = new Player(playerTexture, 0.2f, 0.5f);
+		player = new Player(playerTexture, world, 0.2f, 0.5f);
 		Texture enemyTexture = new Texture("enemy.jpg");
-		enemy = new Enemy(enemyTexture, 0.2f, 0.5f);
-
-
-
-		//Create Body in world
-		bodyPlayer = world.createBody(player.getBodyDef());
-		bodyEnemy = world.createBody(enemy.getBodyDef());
-
-		bodyPlayer.createFixture(player.getFixtureDef());
-		player.disposeShape();
-
-		bodyEnemy.createFixture(enemy.getFixtureDef());
-		enemy.disposeShape();
+		enemy = new Enemy(enemyTexture, world,100f, 0.5f);
 
 		//Bottom edge of screen
 		BodyDef edgeBodyDef = new BodyDef();
@@ -92,6 +76,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		bodyEdgeScreen = world.createBody(edgeBodyDef);
 		bodyEdgeScreen.createFixture(fixtureDefEdge);
 		edgeShape.dispose();
+
 		Gdx.input.setInputProcessor(this);
 
 		world.setContactListener(new ContactListener() {
@@ -116,7 +101,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 			}
 		});
 
-		//Create box2dbug render
+		//Create box2bug render
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
@@ -132,8 +117,8 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 //		bodyPlayer.applyTorque(torque,true);
 
 		//Set position from updated physics
-		player.getSprite().setPosition((bodyPlayer.getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (bodyPlayer.getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
-		enemy.getSprite().setPosition((bodyEnemy.getPosition().x * PIXELS_TO_METERS) - enemy.getSprite().getWidth()/2, (bodyPlayer.getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
+		player.getSprite().setPosition((player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (player.getBody().getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
+		enemy.getSprite().setPosition((enemy.getBody().getPosition().x * PIXELS_TO_METERS) - enemy.getSprite().getWidth()/2, (enemy.getBody().getPosition().y * PIXELS_TO_METERS) - enemy.getSprite().getHeight()/2);
 
 		Gdx.gl.glClearColor(1,1,1,1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -163,14 +148,14 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 	//	@Override
 	public boolean keyUp(int keycode) {
 		if (keycode == Input.Keys.RIGHT)
-			bodyPlayer.setLinearVelocity(1f,bodyPlayer.getLinearVelocity().y);
+			player.getBody().setLinearVelocity(1f,player.getBody().getLinearVelocity().y);
 		if (keycode == Input.Keys.LEFT)
-			bodyPlayer.setLinearVelocity(-1f, bodyPlayer.getLinearVelocity().y);
+			player.getBody().setLinearVelocity(-1f, player.getBody().getLinearVelocity().y);
 
 		if(keycode == Input.Keys.UP)
-			bodyPlayer.applyForceToCenter(0f,8f,true);
+			player.getBody().applyForceToCenter(0f,8f,true);
 		if(keycode == Input.Keys.DOWN)
-			bodyPlayer.applyForceToCenter(0f, -10f, true);
+			player.getBody().applyForceToCenter(0f, -10f, true);
 
 //		if(keycode == Input.Keys.RIGHT_BRACKET)
 //			torque += 0.1f;
@@ -183,10 +168,10 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 
 		// If user hits spacebar, reset everything back to normal
 		if(keycode == Input.Keys.SPACE) {
-			bodyPlayer.setLinearVelocity(0f, 0f);
+			player.getBody().setLinearVelocity(0f, 0f);
 			torque = 0f;
 			player.getSprite().setPosition(0f,0f);
-			bodyPlayer.setTransform(0f,0f,0f);
+			player.getBody().setTransform(0f,0f,0f);
 		}
 
 		if(keycode == Input.Keys.ESCAPE)

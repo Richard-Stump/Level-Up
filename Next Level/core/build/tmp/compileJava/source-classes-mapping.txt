@@ -1,19 +1,17 @@
-com/mygdx/nextlevel/actors/Player.java
- com.mygdx.nextlevel.actors.Player
+com/mygdx/nextlevel/Actor.java
+ com.mygdx.nextlevel.Actor
 com/mygdx/nextlevel/LevelInfo.java
  com.mygdx.nextlevel.LevelInfo
-com/mygdx/nextlevel/Physics.java
- com.mygdx.nextlevel.Physics
+com/mygdx/nextlevel/Tile.java
+ com.mygdx.nextlevel.Tile
 com/mygdx/nextlevel/Tilemap.java
  com.mygdx.nextlevel.Tilemap
 com/mygdx/nextlevel/GameScreen.java
  com.mygdx.nextlevel.GameScreen
 com/mygdx/nextlevel/Level.java
  com.mygdx.nextlevel.Level
-com/mygdx/nextlevel/Tile.java
- com.mygdx.nextlevel.Tile
-com/mygdx/nextlevel/Actor.java
- com.mygdx.nextlevel.Actor
+com/mygdx/nextlevel/actors/Player.java
+ com.mygdx.nextlevel.actors.Player
 com/mygdx/nextlevel/actors/Enemy.java
  com.mygdx.nextlevel.actors.Enemy
 com/mygdx/nextlevel/NextLevel.java
