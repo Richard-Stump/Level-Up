@@ -31,8 +31,8 @@ public class GameScreen implements Screen {
 
     // Sprites
     private final TextureAtlas textureAtlas;
-    Sprite banana;
-    Sprite crate;
+    //Sprite banana;
+    //Sprite crate;
 
     //float spriteXposition;
     //float spriteYposition;
@@ -40,8 +40,8 @@ public class GameScreen implements Screen {
     // Box2D Vars
     World world;
     Box2DDebugRenderer debugRenderer;
-    Body bodyCrate;
-    Body bodyBanana;
+    //Body bodyCrate;
+    //Body bodyBanana;
 
     static final float STEP_TIME = 1f / 60f;
     static final int VELOCITY_ITERATIONS = 6;
@@ -64,6 +64,8 @@ public class GameScreen implements Screen {
         this.game = game;
         Box2D.init();
         debugRenderer = new Box2DDebugRenderer();
+
+        batch = new SpriteBatch();
 
         // direction of gravity
         world = new World(new Vector2(0, -98f), true);
@@ -158,13 +160,13 @@ public class GameScreen implements Screen {
 
     public void handleInput(float dt) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            bodyBanana.applyLinearImpulse(new Vector2(0, 3f), bodyBanana.getWorldCenter(), true);
+            player.b2body.applyLinearImpulse(new Vector2(0, 3f), player.b2body.getWorldCenter(), true);
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && bodyBanana.getLinearVelocity().x >= -2) {
-            bodyBanana.applyLinearImpulse(new Vector2(-0.1f, 0), bodyBanana.getWorldCenter(), true);
+        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2) {
+            player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && bodyBanana.getLinearVelocity().x <= 2) {
-            bodyBanana.applyLinearImpulse(new Vector2(0.1f, 0), bodyBanana.getWorldCenter(), true);
+        else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2) {
+            player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
         }
     }
 
@@ -177,7 +179,7 @@ public class GameScreen implements Screen {
         player.update(dt);
 
 
-        camera.position.x = bodyBanana.getPosition().x;
+        camera.position.x = player.b2body.getPosition().x;
         // update game camera
         camera.update();
         // tell renderer to draw only what the camera can see of the game world
@@ -201,6 +203,7 @@ public class GameScreen implements Screen {
         //crate.setPosition(bodyCrate.getPosition().x, bodyCrate.getPosition().y);
 
         batch.begin();
+        player.setPosition(100,100);
         player.draw(batch);
         //banana.setPosition(spriteXposition, spriteYposition);
         //banana.setPosition(bodyBanana.getPosition().x, bodyBanana.getPosition().y);

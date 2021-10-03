@@ -53,7 +53,7 @@ public class NextLevel extends Game {
 	
 	@Override
 	public void dispose () {
-		batch.dispose();
+		//batch.dispose();
 		font.dispose();
 		//textureAtlas.dispose();
 	}
