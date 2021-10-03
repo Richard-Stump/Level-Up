@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 com/mygdx/nextlevel/Enemy.java
  com.mygdx.nextlevel.Enemy
 com/mygdx/nextlevel/Actor.java
@@ -8,3 +9,51 @@ com/mygdx/nextlevel/NextLevel.java
  com.mygdx.nextlevel.NextLevel
 com/mygdx/nextlevel/screens/GameScreen.java
  com.mygdx.nextlevel.screens.GameScreen
+=======
+com/mygdx/nextlevel/MetadataNode.java
+ com.mygdx.nextlevel.MetadataNode
+com/mygdx/nextlevel/TutorialScreen.java
+ com.mygdx.nextlevel.TutorialScreen
+com/mygdx/nextlevel/MainMenuScreen.java
+ com.mygdx.nextlevel.MainMenuScreen
+ com.mygdx.nextlevel.MainMenuScreen$1
+ com.mygdx.nextlevel.MainMenuScreen$2
+ com.mygdx.nextlevel.MainMenuScreen$3
+ com.mygdx.nextlevel.MainMenuScreen$4
+com/mygdx/nextlevel/actors/Enemy.java
+ com.mygdx.nextlevel.actors.Enemy
+com/mygdx/nextlevel/GameScreen.java
+ com.mygdx.nextlevel.GameScreen
+com/mygdx/nextlevel/Utility.java
+ com.mygdx.nextlevel.Utility
+com/mygdx/nextlevel/FixtureNode.java
+ com.mygdx.nextlevel.FixtureNode
+com/mygdx/nextlevel/Tile.java
+ com.mygdx.nextlevel.Tile
+com/mygdx/nextlevel/BodyDefNode.java
+ com.mygdx.nextlevel.BodyDefNode
+com/mygdx/nextlevel/PolygonNode.java
+ com.mygdx.nextlevel.PolygonNode
+com/mygdx/nextlevel/Level.java
+ com.mygdx.nextlevel.Level
+com/mygdx/nextlevel/BodyNode.java
+ com.mygdx.nextlevel.BodyNode
+com/mygdx/nextlevel/Tilemap.java
+ com.mygdx.nextlevel.Tilemap
+com/mygdx/nextlevel/LevelInfo.java
+ com.mygdx.nextlevel.LevelInfo
+com/mygdx/nextlevel/CircleNode.java
+ com.mygdx.nextlevel.CircleNode
+com/mygdx/nextlevel/CreateLevelMenuScreen.java
+ com.mygdx.nextlevel.CreateLevelMenuScreen
+com/mygdx/nextlevel/actors/Hero.java
+ com.mygdx.nextlevel.actors.Hero
+com/mygdx/nextlevel/NextLevel.java
+ com.mygdx.nextlevel.NextLevel
+com/mygdx/nextlevel/Actor.java
+ com.mygdx.nextlevel.Actor
+com/mygdx/nextlevel/WorldContactListener.java
+ com.mygdx.nextlevel.WorldContactListener
+com/mygdx/nextlevel/PhysicsShapeCache.java
+ com.mygdx.nextlevel.PhysicsShapeCache
+>>>>>>> Stashed changes

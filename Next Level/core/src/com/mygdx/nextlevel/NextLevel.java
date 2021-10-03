@@ -13,8 +13,17 @@ public class NextLevel extends Game {
 
 	@Override
 	public void create () {
+<<<<<<< Updated upstream
 		gameScreen = new GameScreen();
 		setScreen(gameScreen);
+=======
+		font = new BitmapFont();
+		camera = new OrthographicCamera();
+		viewport = new ExtendViewport(960, 500, camera);
+//		this.setScreen(new MainMenuScreen(this));
+		this.setScreen(new GameScreen(this));
+
+>>>>>>> Stashed changes
 	}
 
 //	@Override
