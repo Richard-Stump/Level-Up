@@ -5,7 +5,6 @@ import com.mygdx.nextlevel.dbUtil.DBConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class LevelsDBController {
@@ -37,6 +36,10 @@ public class LevelsDBController {
     public boolean isDBConnected() {
         return (connection != null);
     }
+
+    /*
+    -------------- Functions to modify the database:
+     */
 
     /**
      *  This will add a level into the local levels database
@@ -137,6 +140,10 @@ public class LevelsDBController {
         }
     }
 
+    /*
+    -------------- Functions to retrieve and sort levels:
+     */
+
     /**
      *  This function sorts the table alphabetically
      *
@@ -158,6 +165,10 @@ public class LevelsDBController {
             return null;
         }
     }
+
+    /*
+    -------------- Functions to search the database for specific values:
+     */
 
     /**
      * Searches a table for a LevelInfo object by the title
@@ -192,8 +203,7 @@ public class LevelsDBController {
                 " WHERE " + column + " LIKE ?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-
-            //add the arguments
+            //add the argument
             statement.setString(1, "%" + value + "%");
 
             //execute the statement
@@ -205,6 +215,64 @@ public class LevelsDBController {
             return null;
         }
     }
+
+    /**
+     * Searches a table from LevelInfo objects based on a decimal-type column
+     * Use: when sorting by rating, the user may specify they only want 5 star levels
+     *
+     * @param column Decimal-type SQL column name
+     * @param value the value to search for
+     * @return list of LevelInfo objects that match the search
+     */
+    private List<LevelInfo> searchByFloat(String column, float value) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " WHERE " + column + " LIKE ?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            //add the argument
+            statement.setFloat(1, value);
+
+            //execute the statement
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Searches a table from LevelInfo objects based on a integer-type column
+     *      Use: when sorting by difficulty, the user may specify they only want levels that have a difficulty of 1
+     *
+     * @param column Integer-type SQL column name
+     * @param value the value to search for
+     * @return list of LevelInfo objects that match the search
+     */
+    private List<LevelInfo> searchByInteger(String column, int value){
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " WHERE " + column + " LIKE ?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            //add the argument
+            statement.setInt(1, value);
+
+            //execute the statement
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /*
+    -------------- Helper functions:
+     */
 
     /**
      * Takes a ResultSet and makes a List of LevelInfo's out of it
