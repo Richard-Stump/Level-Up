@@ -4,22 +4,19 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.nextlevel.actors.Enemy;
 import com.mygdx.nextlevel.actors.Player;
-import org.graalvm.compiler.nodes.cfg.Block;
-
-import javax.sound.midi.Receiver;
 
 
 
-public class NextLevel extends ApplicationAdapter implements InputProcessor, ContactListener {
+
+public class NextLevel extends ApplicationAdapter implements InputProcessor {
 	SpriteBatch batch;
-	Player player1;
-	Texture player, enemy;
-	Sprite playerSprite, enemySprite;
+	Player player;
+	Enemy enemy;
 
 	World world;
 	Body bodyPlayer, bodyEnemy;
@@ -40,73 +37,36 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor, Con
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		player = new Texture("tyson.jpg");
-		playerSprite = new Sprite(player);
-		enemy = new Texture("enemy.jpg");
-		enemySprite = new Sprite(enemy);
-
-		//Scale sprite
-		playerSprite.setSize(64, 64);
-		enemySprite.setSize(64, 64);
-
-		playerSprite.setPosition(-playerSprite.getWidth()/2, -playerSprite.getHeight()/2 + 200);
-		enemySprite.setPosition(-enemySprite.getWidth()/2 + 20, -enemySprite.getHeight()/2 -100);
 
 		//Physics World
 		world = new World(new Vector2(0, -1F), true);
 
-		player1 = new Player(player, 0.2f, 0.5f);
-
-		//Body Player Definition
-		BodyDef bodyPlayerDef = new BodyDef();
-		bodyPlayerDef.type = BodyDef.BodyType.DynamicBody;
-		bodyPlayerDef.position.set((playerSprite.getX() + playerSprite.getWidth()/2)/PIXELS_TO_METERS, (playerSprite.getY() + playerSprite.getHeight()/2)/PIXELS_TO_METERS);
-
-		//Body Enemy Definition
-		BodyDef bodyEnemyDef = new BodyDef();
-		bodyEnemyDef.type = BodyDef.BodyType.StaticBody;
-		bodyEnemyDef.position.set((enemySprite.getX() + enemySprite.getWidth()/2)/PIXELS_TO_METERS, (enemySprite.getY() + enemySprite.getHeight()/2)/PIXELS_TO_METERS);
-
-		//Creat Body in world
-//		bodyPlayer = world.createBody(bodyPlayerDef);
-		bodyPlayer = world.createBody(player1.getBodyPlayerDef());
-		bodyEnemy = world.createBody(bodyEnemyDef);
-
-		//Define dimensions of physics shape
-		PolygonShape shapePlayer = new PolygonShape();
-		shapePlayer.setAsBox(playerSprite.getWidth()/2/PIXELS_TO_METERS, playerSprite.getHeight()/2/PIXELS_TO_METERS);
-		PolygonShape shapeEnemy = new PolygonShape();
-		shapeEnemy.setAsBox(enemySprite.getWidth()/2/PIXELS_TO_METERS, enemySprite.getHeight()/2/PIXELS_TO_METERS);
+		//Create Enemy and Player
+		Texture playerTexture = new Texture("tyson.jpg");
+		player = new Player(playerTexture, 0.2f, 0.5f);
+		Texture enemyTexture = new Texture("enemy.jpg");
+		enemy = new Enemy(enemyTexture, 0.2f, 0.5f);
 
 
-		//Fixture (Density & Mass)
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.density = 0.2f;
-		fixtureDef.restitution = 0.5f;
-		fixtureDef.filter.categoryBits = PHYSICS_ENTITY;
-		fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
 
-		//Player
-		fixtureDef.shape = shapePlayer;
-//		bodyPlayer.createFixture(fixtureDef);
-		bodyPlayer.createFixture(player1.getPlayerFixtureDef());
-		//Enemy
-		fixtureDef.shape = shapeEnemy;
-		fixtureDef.filter.categoryBits = BLOCK_ENTITY;
-		fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
-		bodyEnemy.createFixture(fixtureDef);
+		//Create Body in world
+		bodyPlayer = world.createBody(player.getBodyDef());
+		bodyEnemy = world.createBody(enemy.getBodyDef());
 
-		shapePlayer.dispose();
-		shapeEnemy.dispose();
+		bodyPlayer.createFixture(player.getFixtureDef());
+		player.disposeShape();
+
+		bodyEnemy.createFixture(enemy.getFixtureDef());
+		enemy.disposeShape();
 
 		//Bottom edge of screen
-		BodyDef bodyDefEdge = new BodyDef();
-		bodyDefEdge.type = BodyDef.BodyType.StaticBody;
+		BodyDef edgeBodyDef = new BodyDef();
+		edgeBodyDef.type = BodyDef.BodyType.StaticBody;
 
 		float w = Gdx.graphics.getWidth()/PIXELS_TO_METERS;
 		float h = Gdx.graphics.getHeight()/PIXELS_TO_METERS;
 
-		bodyDefEdge.position.set(0,0);
+		edgeBodyDef.position.set(0,0);
 		FixtureDef fixtureDefEdge = new FixtureDef();
 		fixtureDefEdge.filter.categoryBits = WORLD_ENTITY;
 		fixtureDefEdge.filter.maskBits = PHYSICS_ENTITY | BLOCK_ENTITY | WORLD_ENTITY;
@@ -114,25 +74,24 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor, Con
 		EdgeShape edgeShape = new EdgeShape();
 		edgeShape.set(-w/2, -h/2, w/2, -h/2);
 		fixtureDefEdge.shape = edgeShape;
-		bodyEdgeScreen = world.createBody(bodyDefEdge);
+		bodyEdgeScreen = world.createBody(edgeBodyDef);
 		bodyEdgeScreen.createFixture(fixtureDefEdge);
 
 		edgeShape.set(-w/2, -h/2, -w/2, h/2);
 		fixtureDefEdge.shape = edgeShape;
-		bodyEdgeScreen = world.createBody(bodyDefEdge);
+		bodyEdgeScreen = world.createBody(edgeBodyDef);
 		bodyEdgeScreen.createFixture(fixtureDefEdge);
 
 		edgeShape.set(-w/2, h/2, w/2, h/2);
 		fixtureDefEdge.shape = edgeShape;
-		bodyEdgeScreen = world.createBody(bodyDefEdge);
+		bodyEdgeScreen = world.createBody(edgeBodyDef);
 		bodyEdgeScreen.createFixture(fixtureDefEdge);
 
 		edgeShape.set(w/2, -h/2, w/2, h/2);
 		fixtureDefEdge.shape = edgeShape;
-		bodyEdgeScreen = world.createBody(bodyDefEdge);
+		bodyEdgeScreen = world.createBody(edgeBodyDef);
 		bodyEdgeScreen.createFixture(fixtureDefEdge);
 		edgeShape.dispose();
-
 		Gdx.input.setInputProcessor(this);
 
 		world.setContactListener(new ContactListener() {
@@ -143,9 +102,6 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor, Con
 
 			@Override
 			public void endContact(Contact contact) {
-//				contact.getFixtureB().getBody().applyForce(1f, 1f, 1f, 1f, true);
-//				if (contact.getFixtureA().getBody().getInertia() > 0)
-//					System.out.println("Test");
 				contact.getFixtureA().getBody().applyForceToCenter(100f, 1f, true);
 			}
 
@@ -159,6 +115,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor, Con
 
 			}
 		});
+
 		//Create box2dbug render
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -175,8 +132,8 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor, Con
 //		bodyPlayer.applyTorque(torque,true);
 
 		//Set position from updated physics
-		player1.getPlayerSprite().setPosition((bodyPlayer.getPosition().x * PIXELS_TO_METERS) - player1.getPlayerSprite().getWidth()/2, (bodyPlayer.getPosition().y * PIXELS_TO_METERS) - player1.getPlayerSprite().getHeight()/2);
-		enemySprite.setPosition((bodyEnemy.getPosition().x * PIXELS_TO_METERS) - enemySprite.getWidth()/2, (bodyEnemy.getPosition().y * PIXELS_TO_METERS) - enemySprite.getHeight()/2);
+		player.getSprite().setPosition((bodyPlayer.getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (bodyPlayer.getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
+		enemy.getSprite().setPosition((bodyEnemy.getPosition().x * PIXELS_TO_METERS) - enemy.getSprite().getWidth()/2, (bodyPlayer.getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
 
 		Gdx.gl.glClearColor(1,1,1,1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -185,8 +142,8 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor, Con
 
 		batch.begin();
 		if (drawSprite) {
-			batch.draw(player1.getPlayerSprite(), player1.getPlayerSprite().getX(), player1.getPlayerSprite().getY(), player1.getPlayerSprite().getOriginX(), player1.getPlayerSprite().getOriginY(), player1.getPlayerSprite().getWidth(), player1.getPlayerSprite().getHeight(), player1.getPlayerSprite().getScaleX(), player1.getPlayerSprite().getScaleY(), player1.getPlayerSprite().getRotation());
-			batch.draw(enemySprite, enemySprite.getX(), enemySprite.getY(), enemySprite.getOriginX(), enemySprite.getOriginY(), enemySprite.getWidth(), enemySprite.getHeight(), enemySprite.getScaleX(), enemySprite.getScaleY(), enemySprite.getRotation());
+			batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
+			batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
 		}
 		batch.end();
 		debugRenderer.render(world, debugMatrix);
@@ -196,8 +153,6 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor, Con
 	public void dispose () {
 		batch.dispose();
 		world.dispose();
-		player.dispose();
-		enemy.dispose();
 	}
 
 	@Override
@@ -230,7 +185,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor, Con
 		if(keycode == Input.Keys.SPACE) {
 			bodyPlayer.setLinearVelocity(0f, 0f);
 			torque = 0f;
-			playerSprite.setPosition(0f,0f);
+			player.getSprite().setPosition(0f,0f);
 			bodyPlayer.setTransform(0f,0f,0f);
 		}
 
@@ -268,24 +223,5 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor, Con
 	@Override
 	public boolean scrolled(float amountX, float amountY) {
 		return false;
-	}
-
-	@Override
-	public void beginContact(Contact contact) {
-	}
-
-	@Override
-	public void endContact(Contact contact) {
-
-	}
-
-	@Override
-	public void preSolve(Contact contact, Manifold oldManifold) {
-
-	}
-
-	@Override
-	public void postSolve(Contact contact, ContactImpulse impulse) {
-
 	}
 }
