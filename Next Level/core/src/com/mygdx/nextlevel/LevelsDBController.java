@@ -47,20 +47,18 @@ public class LevelsDBController {
     public int addLevelInfo(LevelInfo levelInfo) {
         int rowsChanged;
 
-        String sqlQuery = "INSERT INTO ? (id, title, author, bestTime, rating, difficulty, playCount, dateDownloaded)" +
+        String sqlQuery = "INSERT INTO " + tableName + " (id, title, author, bestTime, rating, difficulty, playCount, dateDownloaded)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, tableName);
-
-            statement.setString(2, levelInfo.getId());
-            statement.setString(3, levelInfo.getTitle());
-            statement.setString(4, levelInfo.getAuthor());
-            statement.setFloat(5, levelInfo.getBestTime());
-            statement.setFloat(6, levelInfo.getRating());
-            statement.setInt(7, levelInfo.getDifficulty());
-            statement.setInt(8, levelInfo.getPlayCount());
-            statement.setDate(9, levelInfo.getDateDownloaded());
+            statement.setString(1, levelInfo.getId());
+            statement.setString(2, levelInfo.getTitle());
+            statement.setString(3, levelInfo.getAuthor());
+            statement.setFloat(4, levelInfo.getBestTime());
+            statement.setFloat(5, levelInfo.getRating());
+            statement.setInt(6, levelInfo.getDifficulty());
+            statement.setInt(7, levelInfo.getPlayCount());
+            statement.setDate(8, levelInfo.getDateDownloaded());
 
             //will return the number of rows affected
             rowsChanged = statement.executeUpdate();
@@ -122,11 +120,12 @@ public class LevelsDBController {
     public int removeLevelInfo(LevelInfo levelInfo) {
         int rowsChanged;
 
-        String sqlQuery = "DELETE FROM downloaded " +
+        String sqlQuery = "DELETE FROM ? " +
                 "WHERE id LIKE ?";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, levelInfo.getId());
+            statement.setString(1, tableName);
+            statement.setString(2, levelInfo.getId());
 
             rowsChanged = statement.executeUpdate();
             if (rowsChanged == 1) {
@@ -139,7 +138,8 @@ public class LevelsDBController {
     }
 
     /**
-     *  This function
+     *  This function sorts the table alphabetically
+     *
      * @return a list of LevelInfo objects that are sorted alphabetically by title
      */
     public List<LevelInfo> sortByTitle() {
@@ -152,30 +152,82 @@ public class LevelsDBController {
             statement.setString(1, tableName);
             resultSet = statement.executeQuery();
 
-            int size = 0;
-            if (resultSet != null) {
-                resultSet.beforeFirst();
-                resultSet.last();
-                size = resultSet.getRow();
-                resultSet.beforeFirst();
-            }
-            List<LevelInfo> list = new ArrayList<>();
-
-            for (int i = 0; i < size; i++) {
-                LevelInfo levelInfo = new LevelInfo(resultSet.getString("id"));
-                levelInfo.setTitle(resultSet.getString("title"));
-                levelInfo.setAuthor(resultSet.getString("author"));
-                levelInfo.setPlayCount(resultSet.getInt("playCount"));
-                levelInfo.setDifficulty(resultSet.getInt("difficulty"));
-                levelInfo.setRating(resultSet.getFloat("rating"));
-                levelInfo.setBestTime(resultSet.getFloat("bestTime"));
-                levelInfo.setDateDownloaded(resultSet.getDate("dateDownloaded"));
-                list.add(levelInfo);
-            }
-            return list;
+            return resultAsList(resultSet);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * Searches a table for a LevelInfo object by the title
+     *
+     * @param title The string to search for in the title
+     * @return list of LevelInfo objects that match the search
+     */
+    public List<LevelInfo> searchByTitle(String title) {
+        return searchByString("title", title);
+    }
+
+    /**
+     * Searches a table for a LevelInfo object by the author
+     *
+     * @param author The string to search for in the author's username
+     * @return list of LevelInfo objects that match the search
+     */
+    public List<LevelInfo> searchByAuthor(String author) {
+        return searchByString("author", author);
+    }
+
+    /**
+     * Searches a table for a LevelInfo object by the column and value
+     *
+     * @param column the column to search in the table
+     * @param value The value to search for
+     * @return list of LevelInfo objects that match the search
+     */
+    private List<LevelInfo> searchByString(String column, String value) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " WHERE " + column + " LIKE ?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+
+            //add the arguments
+            statement.setString(1, "%" + value + "%");
+
+            //execute the statement
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Takes a ResultSet and makes a List of LevelInfo's out of it
+     *
+     * @param resultSet raw resultset
+     * @return a list of LevelInfo objects that match the search
+     * @throws SQLException if there's an SQL exception
+     */
+    private List<LevelInfo> resultAsList(ResultSet resultSet) throws SQLException {
+        List<LevelInfo> list = new ArrayList<>();
+
+        //cycle through results and add it to the list
+        while (resultSet.next()) {
+            LevelInfo levelInfo = new LevelInfo(resultSet.getString("id"));
+            levelInfo.setTitle(resultSet.getString("title"));
+            levelInfo.setAuthor(resultSet.getString("author"));
+            levelInfo.setPlayCount(resultSet.getInt("playCount"));
+            levelInfo.setDifficulty(resultSet.getInt("difficulty"));
+            levelInfo.setRating(resultSet.getFloat("rating"));
+            levelInfo.setBestTime(resultSet.getFloat("bestTime"));
+            levelInfo.setDateDownloaded(resultSet.getDate("dateDownloaded"));
+            list.add(levelInfo);
+        }
+        return list;
     }
 }
