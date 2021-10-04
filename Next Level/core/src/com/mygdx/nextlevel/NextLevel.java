@@ -114,7 +114,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		world.step(1f/60f, 6, 2);
 
 		//Apply Torque
-//		bodyPlayer.applyTorque(torque,true);
+		player.getBody().applyTorque(torque,true);
 
 		//Set position from updated physics
 		player.getSprite().setPosition((player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (player.getBody().getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
@@ -157,14 +157,14 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		if(keycode == Input.Keys.DOWN)
 			player.getBody().applyForceToCenter(0f, -10f, true);
 
-//		if(keycode == Input.Keys.RIGHT_BRACKET)
-//			torque += 0.1f;
-//		if(keycode == Input.Keys.LEFT_BRACKET)
-//			torque -= 0.1f;
-//
-//		// Remove the torque using backslash /
-//		if(keycode == Input.Keys.BACKSLASH)
-//			torque = 0.0f;
+		if(keycode == Input.Keys.RIGHT_BRACKET)
+			torque += 0.1f;
+		if(keycode == Input.Keys.LEFT_BRACKET)
+			torque -= 0.1f;
+
+		// Remove the torque using backslash /
+		if(keycode == Input.Keys.BACKSLASH)
+			torque = 0.0f;
 
 		// If user hits spacebar, reset everything back to normal
 		if(keycode == Input.Keys.SPACE) {

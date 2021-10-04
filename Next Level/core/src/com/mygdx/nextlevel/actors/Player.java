@@ -41,6 +41,7 @@ public class Player {
         bodyDef.position.set((sprite.getX() + sprite.getWidth()/2)/PIXELS_TO_METERS, (sprite.getY() + sprite.getHeight()/2)/PIXELS_TO_METERS);
 
         body = world.createBody(bodyDef);
+
     }
 
     private void setShape() {
