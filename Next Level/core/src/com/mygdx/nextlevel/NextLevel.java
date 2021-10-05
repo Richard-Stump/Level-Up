@@ -40,7 +40,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		//Create Enemy and Player
 		Texture playerTexture = new Texture("tyson.jpg");
 		player = new Player(playerTexture, world, 0.2f, 0.5f);
-		Texture enemyTexture = new Texture("enemy.jpg");
+		final Texture enemyTexture = new Texture("enemy.jpg");
 		enemy = new Enemy(enemyTexture, world,100f, 0.5f);
 
 		//Bottom edge of screen
@@ -60,16 +60,19 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		fixtureDefEdge.shape = edgeShape;
 		bodyEdgeScreen = world.createBody(edgeBodyDef);
 		bodyEdgeScreen.createFixture(fixtureDefEdge);
+		bodyEdgeScreen.setUserData(bodyEdgeScreen);
 
 		edgeShape.set(-w/2, -h/2, -w/2, h/2);
 		fixtureDefEdge.shape = edgeShape;
 		bodyEdgeScreen = world.createBody(edgeBodyDef);
 		bodyEdgeScreen.createFixture(fixtureDefEdge);
+		bodyEdgeScreen.setUserData(bodyEdgeScreen);
 
 		edgeShape.set(-w/2, h/2, w/2, h/2);
 		fixtureDefEdge.shape = edgeShape;
 		bodyEdgeScreen = world.createBody(edgeBodyDef);
 		bodyEdgeScreen.createFixture(fixtureDefEdge);
+		bodyEdgeScreen.setUserData(bodyEdgeScreen);
 
 		edgeShape.set(w/2, -h/2, w/2, h/2);
 		fixtureDefEdge.shape = edgeShape;
@@ -79,15 +82,22 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 
 		Gdx.input.setInputProcessor(this);
 
+		player.getBody().setUserData(player);
+		enemy.getBody().setUserData(enemy);
+		bodyEdgeScreen.setUserData(bodyEdgeScreen);
+
 		world.setContactListener(new ContactListener() {
 			@Override
-			public void beginContact(Contact contact) {
-				endContact(contact);
+			public void beginContact(Contact contact) { //called when two fixuers begin contact
+				if (contact.getFixtureA().getBody().getUserData().equals(player))
+					System.out.println("Fixture A");
+				if (contact.getFixtureB().getBody().getUserData().equals(player))
+					System.out.println("Fixture B");
 			}
 
 			@Override
-			public void endContact(Contact contact) {
-				contact.getFixtureA().getBody().applyForceToCenter(100f, 1f, true);
+			public void endContact(Contact contact) { //called when two fixtures stop contact
+//				contact.getFixtureA().getBody().applyForceToCenter(10f, 10f, true);
 			}
 
 			@Override
