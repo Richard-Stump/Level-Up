@@ -12,18 +12,19 @@ public class Enemy {
     FixtureDef fixtureDef;
     Body body;
     World world;
-
-    final float PIXELS_TO_METERS = 100f;
-
-    final short PHYSICS_ENTITY = 0x1; //0001
-    final short BLOCK_ENTITY = 0x1 << 2; //0100
-    final short WORLD_ENTITY = 0x1 << 1; //0010
+    final float PIXELS_TO_METERS = 100.0F;
+    final short PHYSICS_ENTITY = 1;
+    final short BLOCK_ENTITY = 4;
+    final short WORLD_ENTITY = 2;
+    final short BROKEN_ENTITY = 8;
+    boolean killable;
 
     public Enemy(Texture texture, World world, float density, float restitution) {
         this.texture = texture;
         this.world = world;
         sprite = new Sprite(texture);
-        sprite.setSize(64, 64);
+        sprite.setSize(64.0F, 64.0F);
+        this.killable = true;
 
         setPosition();
         setBody();
@@ -32,33 +33,31 @@ public class Enemy {
     }
 
     private void setPosition() {
-        sprite.setPosition(-sprite.getWidth()/2, -sprite.getHeight()/2 - 100);
+        sprite.setPosition(-sprite.getWidth()/2.0F, -sprite.getHeight()/2.0F - 100.0F);
     }
 
     private void setBody() {
-        bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set((sprite.getX() + sprite.getWidth()/2)/PIXELS_TO_METERS, (sprite.getY() + sprite.getHeight()/2)/PIXELS_TO_METERS);
+        this.bodyDef = new BodyDef();
+        this.bodyDef.type = BodyDef.BodyType.StaticBody;
+        this.bodyDef.position.set((this.sprite.getX() + this.sprite.getWidth()/2.0F)/PIXELS_TO_METERS, (this.sprite.getY() + this.sprite.getHeight()/2.0F)/PIXELS_TO_METERS);
 
-        body = world.createBody(bodyDef);
+        this.body = this.world.createBody(this.bodyDef);
     }
 
     private void setShape() {
-        shape = new PolygonShape();
-        shape.setAsBox(sprite.getWidth()/2/PIXELS_TO_METERS, sprite.getHeight()/2/PIXELS_TO_METERS);
+        this.shape = new PolygonShape();
+        this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
     }
 
     private void setFixture(float density, float restitution) {
-        fixtureDef = new FixtureDef();
-        fixtureDef.density = density;
-        fixtureDef.restitution = restitution;
-        fixtureDef.filter.categoryBits = BLOCK_ENTITY;
-        fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
-
-        fixtureDef.shape = shape;
-
-        body.createFixture(fixtureDef);
-        shape.dispose();
+        this.fixtureDef = new FixtureDef();
+        this.fixtureDef.density = density;
+        this.fixtureDef.restitution = restitution;
+        this.fixtureDef.filter.categoryBits = BLOCK_ENTITY;
+        this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY | BROKEN_ENTITY;
+        this.fixtureDef.shape = this.shape;
+        this.body.createFixture(this.fixtureDef);
+        this.shape.dispose();
     }
 
     public Sprite getSprite() {
@@ -66,6 +65,10 @@ public class Enemy {
     }
 
     public Body getBody() {
-        return body;
+        return this.body;
+    }
+
+    public boolean isKillable() {
+        return this.killable;
     }
 }

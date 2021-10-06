@@ -4,44 +4,50 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.nextlevel.actors.Enemy;
 import com.mygdx.nextlevel.actors.Player;
+import com.mygdx.nextlevel.NextLevel.1;
+import java.util.ArrayList;
 
 public class NextLevel extends ApplicationAdapter implements InputProcessor {
 	SpriteBatch batch;
 	Player player;
 	Enemy enemy;
-
 	World world;
 	Body bodyEdgeScreen;
-
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
 	OrthographicCamera camera;
-
-	float torque = 0.0f;
+	ArrayList<Body> deleteList = new ArrayList();
+	ArrayList<Sprite> spriteDelList = new ArrayList();
+	boolean facingRight = true;
+	float torque = 0.0F;
 	boolean drawSprite = true;
-	final float PIXELS_TO_METERS = 100f;
+	final float PIXELS_TO_METERS = 100.0F;
+	final short PHYSICS_ENTITY = 1;
+	final short WORLD_ENTITY = 2;
+	final short BLOCK_ENTITY = 4;
+	boolean landed = true;
+	boolean jumped = false;
 
-	final short PHYSICS_ENTITY = 0x1; //0001
-	final short BLOCK_ENTITY = 0x1 << 2; //0100
-	final short WORLD_ENTITY = 0x1 << 1; //0010
+	public NextLevel() {}
 
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
+		this.batch = new SpriteBatch();
 
 		//Physics World
-		world = new World(new Vector2(0, -1F), true);
+		this.world = new World(new Vector2(0.0F, -50.0F), true);
 
 		//Create Enemy and Player
 		Texture playerTexture = new Texture("tyson.jpg");
-		player = new Player(playerTexture, world, 0.2f, 0.5f);
+		this.player = new Player(playerTexture, this.world, 0.2f, 0.5f);
 		final Texture enemyTexture = new Texture("enemy.jpg");
-		enemy = new Enemy(enemyTexture, world,100f, 0.5f);
+		this.enemy = new Enemy(enemyTexture, this.world,100f, 0.5f);
 
 		//Bottom edge of screen
 		BodyDef edgeBodyDef = new BodyDef();
@@ -50,70 +56,47 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		float w = Gdx.graphics.getWidth()/PIXELS_TO_METERS;
 		float h = Gdx.graphics.getHeight()/PIXELS_TO_METERS;
 
-		edgeBodyDef.position.set(0,0);
+		edgeBodyDef.position.set(0.0F,0.0F);
 		FixtureDef fixtureDefEdge = new FixtureDef();
 		fixtureDefEdge.filter.categoryBits = WORLD_ENTITY;
 		fixtureDefEdge.filter.maskBits = PHYSICS_ENTITY | BLOCK_ENTITY | WORLD_ENTITY;
 
 		EdgeShape edgeShape = new EdgeShape();
-		edgeShape.set(-w/2, -h/2, w/2, -h/2);
+		edgeShape.set(-w/2.0F, -h/2.0F, w/2.0F, -h/2.0F);
 		fixtureDefEdge.shape = edgeShape;
-		bodyEdgeScreen = world.createBody(edgeBodyDef);
-		bodyEdgeScreen.createFixture(fixtureDefEdge);
-		bodyEdgeScreen.setUserData(bodyEdgeScreen);
+		this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
+		this.bodyEdgeScreen.createFixture(fixtureDefEdge);
+		this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
 
-		edgeShape.set(-w/2, -h/2, -w/2, h/2);
+		edgeShape.set(-w / 2.0F, -h / 2.0F, -w / 2.0F, h / 2.0F);
 		fixtureDefEdge.shape = edgeShape;
-		bodyEdgeScreen = world.createBody(edgeBodyDef);
-		bodyEdgeScreen.createFixture(fixtureDefEdge);
-		bodyEdgeScreen.setUserData(bodyEdgeScreen);
+		this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
+		this.bodyEdgeScreen.createFixture(fixtureDefEdge);
+		this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
 
-		edgeShape.set(-w/2, h/2, w/2, h/2);
+		edgeShape.set(-w / 2.0F, h / 2.0F, w / 2.0F, h / 2.0F);
 		fixtureDefEdge.shape = edgeShape;
-		bodyEdgeScreen = world.createBody(edgeBodyDef);
-		bodyEdgeScreen.createFixture(fixtureDefEdge);
-		bodyEdgeScreen.setUserData(bodyEdgeScreen);
+		this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
+		this.bodyEdgeScreen.createFixture(fixtureDefEdge);
+		this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
 
-		edgeShape.set(w/2, -h/2, w/2, h/2);
+		edgeShape.set(w / 2.0F, -h / 2.0F, w / 2.0F, h / 2.0F);
 		fixtureDefEdge.shape = edgeShape;
-		bodyEdgeScreen = world.createBody(edgeBodyDef);
-		bodyEdgeScreen.createFixture(fixtureDefEdge);
+		this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
+		this.bodyEdgeScreen.createFixture(fixtureDefEdge);
 		edgeShape.dispose();
 
 		Gdx.input.setInputProcessor(this);
 
-		player.getBody().setUserData(player);
-		enemy.getBody().setUserData(enemy);
-		bodyEdgeScreen.setUserData(bodyEdgeScreen);
+		this.player.getBody().setUserData(this.player);
+		this.enemy.getBody().setUserData(this.enemy);
+		this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
 
-		world.setContactListener(new ContactListener() {
-			@Override
-			public void beginContact(Contact contact) { //called when two fixuers begin contact
-				if (contact.getFixtureA().getBody().getUserData().equals(player))
-					System.out.println("Fixture A");
-				if (contact.getFixtureB().getBody().getUserData().equals(player))
-					System.out.println("Fixture B");
-			}
-
-			@Override
-			public void endContact(Contact contact) { //called when two fixtures stop contact
-//				contact.getFixtureA().getBody().applyForceToCenter(10f, 10f, true);
-			}
-
-			@Override
-			public void preSolve(Contact contact, Manifold oldManifold) {
-
-			}
-
-			@Override
-			public void postSolve(Contact contact, ContactImpulse impulse) {
-
-			}
-		});
+		this.world.setContactListener(new 1(this));
 
 		//Create box2bug render
-		debugRenderer = new Box2DDebugRenderer();
-		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		this.debugRenderer = new Box2DDebugRenderer();
+		this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 
 
@@ -152,41 +135,17 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
-		return false;
+		if (keycode == 19 && this.landed && !this.jumped) {
+			this.player.getBody().setLinearVelocity(0.0F, 100.0F);
+			this.jumped = true;
+			this.landed = false;
+		}
+
+		return true;
 	}
 
 	//	@Override
 	public boolean keyUp(int keycode) {
-		if (keycode == Input.Keys.RIGHT)
-			player.getBody().setLinearVelocity(1f,player.getBody().getLinearVelocity().y);
-		if (keycode == Input.Keys.LEFT)
-			player.getBody().setLinearVelocity(-1f, player.getBody().getLinearVelocity().y);
-
-		if(keycode == Input.Keys.UP)
-			player.getBody().applyForceToCenter(0f,8f,true);
-		if(keycode == Input.Keys.DOWN)
-			player.getBody().applyForceToCenter(0f, -10f, true);
-
-		if(keycode == Input.Keys.RIGHT_BRACKET)
-			torque += 0.1f;
-		if(keycode == Input.Keys.LEFT_BRACKET)
-			torque -= 0.1f;
-
-		// Remove the torque using backslash /
-		if(keycode == Input.Keys.BACKSLASH)
-			torque = 0.0f;
-
-		// If user hits spacebar, reset everything back to normal
-		if(keycode == Input.Keys.SPACE) {
-			player.getBody().setLinearVelocity(0f, 0f);
-			torque = 0f;
-			player.getSprite().setPosition(0f,0f);
-			player.getBody().setTransform(0f,0f,0f);
-		}
-
-		if(keycode == Input.Keys.ESCAPE)
-			drawSprite = !drawSprite;
-
 		return true;
 	}
 

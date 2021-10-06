@@ -12,18 +12,17 @@ public class Player {
     FixtureDef fixtureDef;
     Body body;
     World world;
-
     final float PIXELS_TO_METERS = 100f;
-
     final short PHYSICS_ENTITY = 0x1; //0001
-    final short BLOCK_ENTITY = 0x1 << 2; //0100
     final short WORLD_ENTITY = 0x1 << 1; //0010
+    final short BLOCK_ENTITY = 0x1 << 2; //0100
+
 
     public Player(Texture texture, World world, float density, float restitution) {
         this.texture = texture;
         this.world = world;
         sprite = new Sprite(texture);
-        sprite.setSize(64, 64);
+        sprite.setSize(64.0F, 64.0F);
 
         setPosition();
         setBody();
@@ -32,34 +31,31 @@ public class Player {
     }
 
     private void setPosition() {
-        this.sprite.setPosition(-sprite.getWidth()/2, -sprite.getHeight()/2 + 100);
+        this.sprite.setPosition(-this.sprite.getWidth()/2.0F - 300.0F, -this.sprite.getHeight()/2.0F);
     }
 
     private void setBody() {
-        bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set((sprite.getX() + sprite.getWidth()/2)/PIXELS_TO_METERS, (sprite.getY() + sprite.getHeight()/2)/PIXELS_TO_METERS);
-
-        body = world.createBody(bodyDef);
-
+        this.bodyDef = new BodyDef();
+        this.bodyDef.type = BodyDef.BodyType.DynamicBody;
+        this.bodyDef.position.set((this.sprite.getX() + this.sprite.getWidth()/2.0F)/PIXELS_TO_METERS, (this.sprite.getY() + this.sprite.getHeight()/2.0F)/PIXELS_TO_METERS);
+        this.body = world.createBody(bodyDef);
+        this.body.setFixedRotation(true);
     }
 
     private void setShape() {
-        shape = new PolygonShape();
-        shape.setAsBox(sprite.getWidth()/2/PIXELS_TO_METERS, sprite.getHeight()/2/PIXELS_TO_METERS);
+        this.shape = new PolygonShape();
+        this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
     }
 
     private void setFixture(float density, float restitution) {
-        fixtureDef = new FixtureDef();
-        fixtureDef.density = density;
-        fixtureDef.restitution = restitution;
-        fixtureDef.filter.categoryBits = PHYSICS_ENTITY;
-        fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
-
-        fixtureDef.shape = shape;
-
-        body.createFixture(fixtureDef);
-        shape.dispose();
+        this.fixtureDef = new FixtureDef();
+        this.fixtureDef.density = density;
+        this.fixtureDef.restitution = restitution;
+        this.fixtureDef.filter.categoryBits = PHYSICS_ENTITY;
+        this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
+        this.fixtureDef.shape = this.shape;
+        this.body.createFixture(this.fixtureDef);
+        this.fixtureDef.shape.dispose();
     }
 
     public Sprite getSprite() {
@@ -67,6 +63,6 @@ public class Player {
     }
 
     public Body getBody() {
-        return body;
+        return this.body;
     }
 }
