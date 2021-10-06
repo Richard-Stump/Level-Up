@@ -196,7 +196,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Input.Keys.UP && this.landed && !this.jumped) {
-			this.player.getBody().setLinearVelocity(0.0F, 100.0F);
+			this.player.getBody().setLinearVelocity(this.player.getBody().getLinearVelocity().x, 100.0F);
 			this.jumped = true;
 			this.landed = false;
 		}
