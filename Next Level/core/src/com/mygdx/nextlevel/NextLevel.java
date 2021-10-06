@@ -10,27 +10,32 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.nextlevel.actors.Enemy;
 import com.mygdx.nextlevel.actors.Player;
-import com.mygdx.nextlevel.NextLevel.1;
+
 import java.util.ArrayList;
 
 public class NextLevel extends ApplicationAdapter implements InputProcessor {
 	SpriteBatch batch;
 	Player player;
 	Enemy enemy;
+
 	World world;
 	Body bodyEdgeScreen;
+
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
 	OrthographicCamera camera;
-	ArrayList<Body> deleteList = new ArrayList();
-	ArrayList<Sprite> spriteDelList = new ArrayList();
+	ArrayList<Body> deleteList = new ArrayList<>();
+	ArrayList<Sprite> spriteDelList = new ArrayList<>();
 	boolean facingRight = true;
-	float torque = 0.0F;
+
+	float torque = 0.0f;
 	boolean drawSprite = true;
-	final float PIXELS_TO_METERS = 100.0F;
-	final short PHYSICS_ENTITY = 1;
-	final short WORLD_ENTITY = 2;
-	final short BLOCK_ENTITY = 4;
+	final float PIXELS_TO_METERS = 100f;
+
+	final short PHYSICS_ENTITY = 0x1; //0001
+	final short BLOCK_ENTITY = 0x1 << 2; //0100
+	final short WORLD_ENTITY = 0x1 << 1; //0010
+
 	boolean landed = true;
 	boolean jumped = false;
 
@@ -87,12 +92,41 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		edgeShape.dispose();
 
 		Gdx.input.setInputProcessor(this);
-
 		this.player.getBody().setUserData(this.player);
 		this.enemy.getBody().setUserData(this.enemy);
 		this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
 
-		this.world.setContactListener(new 1(this));
+		world.setContactListener(new ContactListener() {
+			@Override
+			public void beginContact(Contact contact) { //called when two fixuers begin contact
+				if (contact.getFixtureA().getBody().getUserData().equals(player)) {
+					System.out.println("Touching enemy");
+					System.out.println("Killed enemy");
+
+				}
+				if (contact.getFixtureB().getBody().getUserData().equals(player))
+					System.out.println("Touching ground");
+				landed = true;
+				jumped = false;
+			}
+
+			@Override
+			public void endContact(Contact contact) { //called when two fixtures stop contact
+			}
+
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold) {
+
+			}
+
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse) {
+				if (contact.getFixtureA().getBody().getUserData().equals(player)) {
+					deleteList.add(contact.getFixtureB().getBody());
+					spriteDelList.add(enemy.getSprite());
+				}
+			}
+		});
 
 		//Create box2bug render
 		this.debugRenderer = new Box2DDebugRenderer();
@@ -104,10 +138,10 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 	public void render () {
 		//Advance frame
 		camera.update();
-		world.step(1f/60f, 6, 2);
+		world.step(1f/60.0f, 6, 2);
 
 		//Apply Torque
-		player.getBody().applyTorque(torque,true);
+//		player.getBody().applyTorque(torque,true);
 
 		//Set position from updated physics
 		player.getSprite().setPosition((player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (player.getBody().getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
@@ -124,7 +158,33 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 			batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
 		}
 		batch.end();
+
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+			player.getBody().setLinearVelocity(5f, 0f);
+			if (facingRight) {
+				facingRight = false;
+				player.getSprite().flip(true, false);
+			}
+
+		} else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+			player.getBody().setLinearVelocity(-5f, 0f);
+			if (!facingRight) {
+				facingRight = true;
+				player.getSprite().flip(true, false);
+			}
+		} else {
+			player.getBody().setLinearVelocity(0f, 0f);
+		}
+
 		debugRenderer.render(world, debugMatrix);
+		if (deleteList.size() > 0) {
+			for (int i = 0; i < deleteList.size(); i++) {
+				world.destroyBody(deleteList.get(i));
+
+				deleteList.remove(i);
+				System.out.println("Deleted enemy.");
+			}
+		}
 	}
 
 	@Override
@@ -135,7 +195,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if (keycode == 19 && this.landed && !this.jumped) {
+		if (keycode == Input.Keys.UP && this.landed && !this.jumped) {
 			this.player.getBody().setLinearVelocity(0.0F, 100.0F);
 			this.jumped = true;
 			this.landed = false;
