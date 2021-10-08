@@ -1,33 +1,78 @@
 package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-public class Enemy extends Image {
-    private Body body;
-    private World world;
+public class Enemy {
+    Texture texture;
+    Sprite sprite;
+    BodyDef bodyDef;
+    PolygonShape shape;
+    FixtureDef fixtureDef;
+    Body body;
+    World world;
 
-    public Enemy(World aWorld, float posX, float posY) {
-        super(new Texture("test.png"));
-        this.setPosition(posX, posY);
-        world = aWorld;
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(posX, posY);
-        body = world.createBody(bodyDef);
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(this.getWidth()/2, this.getHeight()/2);
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.density = 5f;
-        fixtureDef.friction = 0f;
-        fixtureDef.restitution = 1f;
-        Fixture fixture = body.createFixture(fixtureDef);
-        shape.dispose();
-        this.setOrigin(this.getWidth()/2, this.getHeight()/2);
+    final float PIXELS_TO_METERS = 100f;
+
+    final short PHYSICS_ENTITY = 0x1; //0001
+    final short BLOCK_ENTITY = 0x1 << 2; //0100
+    final short WORLD_ENTITY = 0x1 << 1; //0010
+    final short BROKEN_ENTITY = 0x1 << 3; //1000
+    boolean killable;
+
+    public Enemy(Texture texture, World world, float density, float restitution) {
+        this.texture = texture;
+        this.world = world;
+        sprite = new Sprite(texture);
+        sprite.setSize(64, 64);
+        killable = true;
+
+        setPosition();
+        setBody();
+        setShape();
+        setFixture(density, restitution);
     }
 
+    private void setPosition() {
+        sprite.setPosition(-sprite.getWidth()/2, -sprite.getHeight()/2-100);
+    }
+
+    private void setBody() {
+        bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set((sprite.getX() + sprite.getWidth()/2)/PIXELS_TO_METERS, (sprite.getY() + sprite.getHeight()/2)/PIXELS_TO_METERS);
+
+        body = world.createBody(bodyDef);
+    }
+
+    private void setShape() {
+        shape = new PolygonShape();
+        shape.setAsBox(sprite.getWidth()/2/PIXELS_TO_METERS, sprite.getHeight()/2/PIXELS_TO_METERS);
+    }
+
+    private void setFixture(float density, float restitution) {
+        fixtureDef = new FixtureDef();
+        fixtureDef.density = density;
+        fixtureDef.restitution = restitution;
+        fixtureDef.filter.categoryBits = BLOCK_ENTITY;
+        fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY | BROKEN_ENTITY;
+
+        fixtureDef.shape = shape;
+
+        body.createFixture(fixtureDef);
+        shape.dispose();
+    }
+
+    public Sprite getSprite() {
+        return this.sprite;
+    }
+
+    public Body getBody() {
+        return body;
+    }
+
+    public boolean isKillable() {
+        return killable;
+    }
 }
