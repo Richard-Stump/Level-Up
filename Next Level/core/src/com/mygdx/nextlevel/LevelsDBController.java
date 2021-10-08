@@ -50,8 +50,9 @@ public class LevelsDBController {
     public int addLevelInfo(LevelInfo levelInfo) {
         int rowsChanged;
 
-        String sqlQuery = "INSERT INTO " + tableName + " (id, title, author, bestTime, rating, difficulty, playCount, dateDownloaded)" +
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String sqlQuery = "INSERT INTO " + tableName + " (id, title, author, bestTime, rating, " +
+                "difficulty, playCount, dateDownloaded, tags, dateCreated)" +
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setString(1, levelInfo.getId());
@@ -62,6 +63,8 @@ public class LevelsDBController {
             statement.setInt(6, levelInfo.getDifficulty());
             statement.setInt(7, levelInfo.getPlayCount());
             statement.setDate(8, levelInfo.getDateDownloaded());
+            statement.setString(9, levelInfo.getTags().toString());
+            statement.setDate(10, levelInfo.getDateCreated());
 
             //will return the number of rows affected
             rowsChanged = statement.executeUpdate();
@@ -152,13 +155,118 @@ public class LevelsDBController {
     public List<LevelInfo> sortByTitle() {
         ResultSet resultSet;
 
-        String sqlQuery = "SELECT * FROM ? " +
-                "ORDER BY title ASC;";
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " ORDER BY title ASC;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, tableName);
             resultSet = statement.executeQuery();
 
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Sorts the list by difficulty
+     * @return list of LevelInfo objects sorted from lowest to highest difficulty
+     */
+    public List<LevelInfo> sortByDifficulty() {
+        ResultSet resultSet;
+
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " ORDER BY difficulty ASC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Sorts the table from highest to lowest rating
+     *
+     * @return list with HIGHEST RATED levels FIRST
+     */
+    public List<LevelInfo> sortByRating() {
+        ResultSet resultSet;
+
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " ORDER BY rating DESC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Sorts the table from highest playCount to lowest playCount
+     * @return list with most popular levels FIRST
+     */
+    public List<LevelInfo> sortByPlayCount() {
+        ResultSet resultSet;
+
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " ORDER BY playCount DESC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Sorts table by the date it was downloaded
+     * Uses: displaying users recently downloaded levels without any search or sort params
+     *
+     * @return list of LevelInfo objects sorted by date downloaded
+     */
+    public List<LevelInfo> sortByDateDownloaded() {
+        ResultSet resultSet;
+
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " ORDER BY dateDownloaded DESC;";
+
+        //TODO: figure out how DATEs are stored!
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            resultSet = statement.executeQuery();
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Sorts table by the date a level was created
+     *
+     * @return list of LevelInfo objects sorted by date created
+     */
+    public List<LevelInfo> sortByDateCreated() {
+        ResultSet resultSet;
+
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " ORDER BY dateCreated DESC;";
+
+        //TODO: figure out how DATEs are stored!
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            resultSet = statement.executeQuery();
             return resultAsList(resultSet);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -191,7 +299,73 @@ public class LevelsDBController {
     }
 
     /**
-     * Searches a table for a LevelInfo object by the column and value
+     * Searches the table for all levels with a specific difficulty
+     *
+     * @param difficulty difficulty to search for
+     * @return list of LevelInfo's that have the specified difficulty
+     */
+    public List<LevelInfo> searchByDifficulty(int difficulty) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " WHERE difficulty LIKE ?" +
+                " ORDER BY title ASC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            //add the argument
+            statement.setInt(1, difficulty);
+
+            //execute the statement
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Searches table based on the rating
+     *
+     * @param rating rating of the level
+     * @return list of LevelInfo objects that contain the rating
+     */
+    public List<LevelInfo> searchByRating(float rating) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " WHERE rating LIKE ?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            //add the argument
+            statement.setFloat(1, rating);
+
+            //execute the statement
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /*
+    public List<LevelInfo> searchByTags(List<String> tags) {
+
+    }
+
+     */
+
+
+
+
+    /*
+    -------------- Helper functions:
+     */
+
+    /**
+     * Searches a table for a LevelInfo object by the column and value.
+     * Returns it sorted by title
      *
      * @param column the column to search in the table
      * @param value The value to search for
@@ -200,7 +374,8 @@ public class LevelsDBController {
     private List<LevelInfo> searchByString(String column, String value) {
         ResultSet resultSet;
         String sqlQuery = "SELECT * FROM " + tableName +
-                " WHERE " + column + " LIKE ?;";
+                " WHERE " + column + " LIKE ?" +
+                " ORDER BY title ASC;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             //add the argument
@@ -215,64 +390,6 @@ public class LevelsDBController {
             return null;
         }
     }
-
-    /**
-     * Searches a table from LevelInfo objects based on a decimal-type column
-     * Use: when sorting by rating, the user may specify they only want 5 star levels
-     *
-     * @param column Decimal-type SQL column name
-     * @param value the value to search for
-     * @return list of LevelInfo objects that match the search
-     */
-    private List<LevelInfo> searchByFloat(String column, float value) {
-        ResultSet resultSet;
-        String sqlQuery = "SELECT * FROM " + tableName +
-                " WHERE " + column + " LIKE ?;";
-
-        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            //add the argument
-            statement.setFloat(1, value);
-
-            //execute the statement
-            resultSet = statement.executeQuery();
-
-            return resultAsList(resultSet);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Searches a table from LevelInfo objects based on a integer-type column
-     *      Use: when sorting by difficulty, the user may specify they only want levels that have a difficulty of 1
-     *
-     * @param column Integer-type SQL column name
-     * @param value the value to search for
-     * @return list of LevelInfo objects that match the search
-     */
-    private List<LevelInfo> searchByInteger(String column, int value){
-        ResultSet resultSet;
-        String sqlQuery = "SELECT * FROM " + tableName +
-                " WHERE " + column + " LIKE ?;";
-
-        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            //add the argument
-            statement.setInt(1, value);
-
-            //execute the statement
-            resultSet = statement.executeQuery();
-
-            return resultAsList(resultSet);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /*
-    -------------- Helper functions:
-     */
 
     /**
      * Takes a ResultSet and makes a List of LevelInfo's out of it

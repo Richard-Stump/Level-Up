@@ -1,16 +1,19 @@
 package com.mygdx.nextlevel;
 
 import java.sql.Date;
+import java.util.List;
 
 public class LevelInfo {
     private final String id; //must be unique, won't ever change
     private String title;
     private String author;
+    private List<String> tags;
     private float bestTime;
     private float rating;
     private int difficulty;
     private int playCount;
     private Date dateDownloaded;
+    private Date dateCreated;
 
     /**
      * Constructor
@@ -23,6 +26,24 @@ public class LevelInfo {
         this.id = id;
     }
 
+    /**
+     * Add a tag to the tag list
+     *
+     * @param tag tag to insert
+     */
+    public void addTag(String tag) {
+        tags.add(tag);
+    }
+
+    /**
+     * Remove a tag from the list
+     *
+     * @param tag tag to remove
+     * @return true on success, false on failure
+     */
+    public boolean removeTag(String tag) {
+        return tags.remove(tag);
+    }
 
     /*
     Getters:
@@ -51,8 +72,16 @@ public class LevelInfo {
         return title;
     }
 
+    public List<String> getTags() {
+        return tags;
+    }
+
     public Date getDateDownloaded() {
         return dateDownloaded;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
     }
 
     public String getId() {
@@ -89,5 +118,13 @@ public class LevelInfo {
 
     public void setDateDownloaded(Date dateDownloaded) {
         this.dateDownloaded = dateDownloaded;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }
