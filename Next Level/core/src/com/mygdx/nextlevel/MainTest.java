@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainTest {
     public static void main(String[] args) {
@@ -60,14 +61,30 @@ public class MainTest {
          */
 
         System.out.println();
-        System.out.println("Searching all levels with 'standard' and 'bossbattle' tag");
+        System.out.println("Searching all levels with 'standard' tag");
         ArrayList<Tag> searchStandard = new ArrayList<>();
         searchStandard.add(Tag.STANDARD);
-        searchStandard.add(Tag.BOSSBATTLE);
-        ArrayList<LevelInfo> searchByTag = new ArrayList<>(db.searchByTags(searchStandard));
-        for (LevelInfo i: searchByTag) {
+        ArrayList<LevelInfo> searchByTagS = new ArrayList<>(db.searchByTags(searchStandard));
+        for (LevelInfo i: searchByTagS) {
             System.out.println("\tLevel title: " + i.getTitle() + "\n\t\tTags: " + i.getTags().toString());
         }
+
+        System.out.println();
+        System.out.println("Searching all levels with 'bossbattle' tag");
+        ArrayList<Tag> searchBoss = new ArrayList<>();
+        searchBoss.add(Tag.BOSSBATTLE);
+        ArrayList<LevelInfo> searchByTagBB = new ArrayList<>(db.searchByTags(searchBoss));
+        for (LevelInfo i: searchByTagBB) {
+            System.out.println("\tLevel title: " + i.getTitle() + "\n\t\tTags: " + i.getTags().toString());
+        }
+
+        System.out.println();
+        System.out.println("Combining the two tag lists:");
+        List<LevelInfo> combinedList = db.combineLists(searchByTagS, searchByTagBB);
+        for (LevelInfo i: combinedList) {
+            System.out.println("\tLevel title: " + i.getTitle() + "\n\t\tTags: " + i.getTags().toString());
+        }
+
 
         //Search
         System.out.println();

@@ -45,6 +45,32 @@ public class LevelInfo {
         return tags.remove(tag);
     }
 
+    /**
+     * Compares this level info object to another
+     *
+     * @param levelInfo LevelInfo to compare to
+     * @return true if they are equal, false otherwise
+     */
+    public boolean equals(LevelInfo levelInfo) {
+        if (id.equals(levelInfo.getId()) &&
+        author.equals(levelInfo.getAuthor()) &&
+        title.equals(levelInfo.getTitle()) &&
+        bestTime == levelInfo.getBestTime() &&
+        rating == levelInfo.getRating() &&
+        playCount == levelInfo.getPlayCount() &&
+        difficulty == levelInfo.getDifficulty() &&
+        dateCreated.equals(levelInfo.getDateCreated()) &&
+        dateDownloaded.equals(levelInfo.getDateDownloaded()) &&
+        tags.equals(levelInfo.getTags())) {
+
+            return true;
+        } else if (this.id.equals(levelInfo.id)) {
+            System.out.println("Uh oh: there are two LevelInfo objects that have the same id, but do not have" +
+                    "the same attributes!");
+        }
+        return false;
+    }
+
     /*
     Getters:
      */

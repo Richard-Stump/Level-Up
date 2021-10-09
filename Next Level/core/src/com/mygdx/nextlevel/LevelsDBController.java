@@ -6,6 +6,7 @@ import com.mygdx.nextlevel.dbUtil.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class LevelsDBController {
     private Connection connection;
@@ -391,38 +392,38 @@ public class LevelsDBController {
         }
     }
 
-
-
     /*
     -------------- Helper functions:
      */
 
-
-    /*
-     * Looks through both lists to find the
-     *
-     * @param list1 first list
-     * @param list2 second list
-     * @return
-     */
-    /*
-    public List<LevelInfo> levelInfoDiff(LevelInfo list1, LevelInfo list2) {
-
-    }
-     */
-
-    /*
+    /**
      * Combines 2 lists, with no repeats
+     * Can probably be optimized
+     * Use: multiple search parameters at the same time
+     *
      * @param list1 LevelInfo list to combine
      * @param list2 LevelInfo list
-     * @return
+     * @return combined list
      */
-    /*
-    public List<LevelInfo> combineLists(LevelInfo list1, LevelInfo list2) {
+    public List<LevelInfo> combineLists(List<LevelInfo> list1, List<LevelInfo> list2) {
+        Objects.requireNonNull(list1, "List may not be null");
+        Objects.requireNonNull(list2, "List may not be null");
 
+        ArrayList<LevelInfo> combined = new ArrayList<>(list1);
+
+        for (LevelInfo levelToAdd: list2) {
+            boolean isInList = false;
+            for (LevelInfo levelInList: combined) {
+                if (levelToAdd.equals(levelInList)) {
+                    isInList = true;
+                }
+            }
+            if (!isInList) {
+                combined.add(levelToAdd);
+            }
+        }
+        return combined;
     }
-
-     */
 
     /**
      * Searches a table for a LevelInfo object by the column and value.
