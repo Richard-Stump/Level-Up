@@ -7,7 +7,7 @@ public class LevelInfo {
     private final String id; //must be unique, won't ever change
     private String title;
     private String author;
-    private List<String> tags;
+    private List<Tag> tags;
     private float bestTime;
     private float rating;
     private int difficulty;
@@ -31,7 +31,7 @@ public class LevelInfo {
      *
      * @param tag tag to insert
      */
-    public void addTag(String tag) {
+    public void addTag(Tag tag) {
         tags.add(tag);
     }
 
@@ -41,7 +41,7 @@ public class LevelInfo {
      * @param tag tag to remove
      * @return true on success, false on failure
      */
-    public boolean removeTag(String tag) {
+    public boolean removeTag(Tag tag) {
         return tags.remove(tag);
     }
 
@@ -72,7 +72,7 @@ public class LevelInfo {
         return title;
     }
 
-    public List<String> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
@@ -124,7 +124,7 @@ public class LevelInfo {
         this.dateCreated = dateCreated;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 }

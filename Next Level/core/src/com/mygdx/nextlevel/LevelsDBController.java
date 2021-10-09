@@ -63,7 +63,16 @@ public class LevelsDBController {
             statement.setInt(6, levelInfo.getDifficulty());
             statement.setInt(7, levelInfo.getPlayCount());
             statement.setDate(8, levelInfo.getDateDownloaded());
-            statement.setString(9, levelInfo.getTags().toString());
+
+            //statement.setString(9, levelInfo.getTags().toString());
+            String tagString = "";
+            for (Tag tag: levelInfo.getTags()) {
+                tagString = tagString.concat(tag.toString());
+                tagString += ",";
+            }
+            tagString = tagString.substring(0, tagString.length() - 1);
+            statement.setString(9, tagString);
+
             statement.setDate(10, levelInfo.getDateCreated());
 
             //will return the number of rows affected
@@ -349,18 +358,70 @@ public class LevelsDBController {
         }
     }
 
-    /*
-    public List<LevelInfo> searchByTags(List<String> tags) {
-
-    }
-
+    /**
+     *
+     *
+     * @param tags tags that each level is required to have
+     * @return list of LevelInfo objects that contain all tags specified
      */
+    public List<LevelInfo> searchByTags(List<Tag> tags) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " WHERE tags LIKE ?";
 
+        for (int i = 0; i < tags.size() - 1; i++) {
+            sqlQuery = sqlQuery.concat(" AND tags LIKE ?");
+        }
+
+        sqlQuery += " ORDER BY title ASC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            //add the argument
+            for (int i = 1; i <= tags.size(); i++) {
+                statement.setString(i, "%" + tags.get(i - 1) + "%");
+            }
+
+            //execute the statement
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
 
     /*
     -------------- Helper functions:
+     */
+
+
+    /*
+     * Looks through both lists to find the
+     *
+     * @param list1 first list
+     * @param list2 second list
+     * @return
+     */
+    /*
+    public List<LevelInfo> levelInfoDiff(LevelInfo list1, LevelInfo list2) {
+
+    }
+     */
+
+    /*
+     * Combines 2 lists, with no repeats
+     * @param list1 LevelInfo list to combine
+     * @param list2 LevelInfo list
+     * @return
+     */
+    /*
+    public List<LevelInfo> combineLists(LevelInfo list1, LevelInfo list2) {
+
+    }
+
      */
 
     /**
@@ -411,6 +472,18 @@ public class LevelsDBController {
             levelInfo.setRating(resultSet.getFloat("rating"));
             levelInfo.setBestTime(resultSet.getFloat("bestTime"));
             levelInfo.setDateDownloaded(resultSet.getDate("dateDownloaded"));
+            levelInfo.setDateCreated(resultSet.getDate("dateCreated"));
+
+            ArrayList<Tag> tags = new ArrayList<>();
+            String tagString = resultSet.getString("tags");
+            while (tagString.contains(",")) {
+                tags.add(Tag.valueOf(tagString.substring(0, tagString.indexOf(','))));
+                tagString = tagString.substring(tagString.indexOf(',') + 1);
+            }
+            tags.add(Tag.valueOf(tagString));
+
+            levelInfo.setTags(tags);
+
             list.add(levelInfo);
         }
         return list;
