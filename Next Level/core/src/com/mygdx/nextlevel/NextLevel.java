@@ -48,7 +48,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		this.batch = new SpriteBatch();
 
 		//Physics World
-		this.world = new World(new Vector2(0.0F, -50.0F), true);
+		this.world = new World(new Vector2(0.0F, -40.0F), true);
 
 		//Create Enemy and Player
 		Texture playerTexture = new Texture("tyson.jpg");
@@ -109,8 +109,10 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 					System.out.println("Killed enemy");
 
 				}
-				if (contact.getFixtureB().getBody().getUserData().equals(player))
+				if (contact.getFixtureB().getBody().getUserData().equals(player)) {
 					System.out.println("Touching ground");
+					player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
+				}
 				landed = true;
 				jumped = false;
 			}
@@ -121,14 +123,18 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 
 			@Override
 			public void preSolve(Contact contact, Manifold oldManifold) {
-
 			}
 
 			@Override
 			public void postSolve(Contact contact, ContactImpulse impulse) {
+				if (contact.getFixtureB().getBody().getUserData().equals(checkpoint))
+					System.out.println("Checkpoint!");
+
 				if (contact.getFixtureA().getBody().getUserData().equals(player)) {
-					deleteList.add(contact.getFixtureB().getBody());
-					spriteDelList.add(enemy.getSprite());
+					if (!contact.getFixtureB().getBody().getUserData().equals(checkpoint)) {
+						deleteList.add(contact.getFixtureB().getBody());
+						spriteDelList.add(enemy.getSprite());
+					}
 				}
 			}
 		});
@@ -151,6 +157,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		//Set position from updated physics
 		player.getSprite().setPosition((player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (player.getBody().getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
 		enemy.getSprite().setPosition((enemy.getBody().getPosition().x * PIXELS_TO_METERS) - enemy.getSprite().getWidth()/2, (enemy.getBody().getPosition().y * PIXELS_TO_METERS) - enemy.getSprite().getHeight()/2);
+		checkpoint.getSprite().setPosition((checkpoint.getBody().getPosition().x * PIXELS_TO_METERS) - checkpoint.getSprite().getWidth()/2, (checkpoint.getBody().getPosition().y * PIXELS_TO_METERS) - checkpoint.getSprite().getHeight()/2);
 
 		Gdx.gl.glClearColor(1,1,1,1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -166,20 +173,18 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		batch.end();
 
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			player.getBody().setLinearVelocity(5f, 0f);
+			player.getBody().setLinearVelocity(3f, player.getBody().getLinearVelocity().y);
 			if (facingRight) {
 				facingRight = false;
 				player.getSprite().flip(true, false);
 			}
 
 		} else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			player.getBody().setLinearVelocity(-5f, 0f);
+			player.getBody().setLinearVelocity(-3f, player.getBody().getLinearVelocity().y);
 			if (!facingRight) {
 				facingRight = true;
 				player.getSprite().flip(true, false);
 			}
-		} else {
-			player.getBody().setLinearVelocity(0f, 0f);
 		}
 
 		debugRenderer.render(world, debugMatrix);
@@ -202,7 +207,8 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Input.Keys.UP && this.landed && !this.jumped) {
-			this.player.getBody().setLinearVelocity(this.player.getBody().getLinearVelocity().x, 100.0F);
+			Vector2 force = new Vector2(0f, 65f);
+			this.player.getBody().applyForceToCenter(force, true);
 			this.jumped = true;
 			this.landed = false;
 		}

@@ -1,6 +1,5 @@
 package com.mygdx.nextlevel.actors;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -14,8 +13,8 @@ public class Checkpoint extends Actor {
         sprite = new Sprite(texture);
         sprite.setSize(64.0F, 64.0F);
 
-        super.setPosition(-200,-200);
-        super.setBody(BodyDef.BodyType.KinematicBody);
+        super.setPosition(0,-200);
+        super.setBody(BodyDef.BodyType.StaticBody);
         setShape();
         setFixture(density, restitution);
     }
@@ -34,5 +33,9 @@ public class Checkpoint extends Actor {
         this.fixtureDef.shape = this.shape;
         this.body.createFixture(this.fixtureDef);
         this.fixtureDef.shape.dispose();
+    }
+
+    public void changeSpawn(Player player) {
+        //Change the spawn of the player from when they are played
     }
 }
