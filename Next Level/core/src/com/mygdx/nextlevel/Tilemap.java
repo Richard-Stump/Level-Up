@@ -29,8 +29,6 @@ public class Tilemap {
     }
 
     public void render(Batch batch) {
-        for(int y = 0; y < height; y++) {
-            for(int x =0;)
-        }
+
     }
 }
