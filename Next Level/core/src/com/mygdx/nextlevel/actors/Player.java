@@ -43,4 +43,14 @@ public class Player extends Actor {
     public Vector2 getSpawnpoint() {
         return this.spawnpoint;
     }
+
+    public BodyDef getBodyDef() {
+        return this.bodyDef;
+    }
+
+    public void setBodyPosition() {
+        world.destroyBody(this.body);
+        bodyDef.position.set(spawnpoint);
+        world.createBody(bodyDef);
+    }
 }

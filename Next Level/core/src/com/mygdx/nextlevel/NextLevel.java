@@ -110,13 +110,12 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 			public void beginContact(Contact contact) { //called when two fixuers begin contact
 				if (contact.getFixtureA().getBody().getUserData().equals(player)) {
 					if (contact.getFixtureB().getBody().getUserData().equals(checkpoint) && !checkpoint.isTriggered()) {
-						System.out.println("Checkpoint happen");
 						checkpoint.setTriggered();
 						checkpoint.changeSpawn(player);
 						return;
 					}
-					System.out.println("Touching enemy");
-					System.out.println("Killed enemy");
+//					System.out.println("Touching enemy");
+//					System.out.println("Killed enemy");
 				}
 				if (contact.getFixtureB().getBody().getUserData().equals(player)) {
 //					System.out.println("Touching ground");
@@ -172,9 +171,9 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 
 		batch.begin();
 		if (drawSprite) {
-			batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
 			batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
 			batch.draw(checkpoint.getSprite(), checkpoint.getSprite().getX(), checkpoint.getSprite().getY(), checkpoint.getSprite().getOriginX(), checkpoint.getSprite().getOriginY(), checkpoint.getSprite().getWidth(), checkpoint.getSprite().getHeight(), checkpoint.getSprite().getScaleX(), checkpoint.getSprite().getScaleY(), checkpoint.getSprite().getRotation());
+			batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
 		}
 		batch.end();
 
@@ -201,7 +200,6 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 				world.destroyBody(deleteList.get(i));
 
 				deleteList.remove(i);
-				System.out.println("Deleted enemy.");
 			}
 		}
 	}
@@ -225,10 +223,11 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 			drawSprite = !drawSprite;
 		}
 
+		//Simulate Player Movement
 		if (keycode == Input.Keys.SPACE) {
-//			player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2;
-//			player.getSprite().setPosition(player.getSpawnpoint().x,player.getSpawnpoint().y);
-//			player.getBody().setTransform(player.getSpawnpoint().x,player.getSpawnpoint().y,0f);
+			float x = player.getSprite().getWidth()/2.0f + this.player.getSpawnpoint().x;
+			float y = player.getSprite().getHeight()/2.0f + this.player.getSpawnpoint().y;
+			player.getBody().setTransform(x/PIXELS_TO_METERS, y/PIXELS_TO_METERS, 0);
 		}
 
 		return true;
