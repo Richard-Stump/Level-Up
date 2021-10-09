@@ -59,7 +59,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		final Texture enemyTexture = new Texture("enemy.jpg");
 		this.enemy = new Enemy(enemyTexture, this.world, enemySpawn, 100f, 0.5f);
 		Vector2 checkpointSpawn = new Vector2(0f, -200.0f);
-		final Texture checkpointTexture = new Texture("checkpoint.png");
+		final Texture checkpointTexture = new Texture("checkpoint2.jpg");
 		this.checkpoint = new Checkpoint(checkpointTexture, this.world, checkpointSpawn,0f, 0f, this.player);
 
 		//Bottom edge of screen
@@ -110,8 +110,11 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 			public void beginContact(Contact contact) { //called when two fixuers begin contact
 				if (contact.getFixtureA().getBody().getUserData().equals(player)) {
 					if (contact.getFixtureB().getBody().getUserData().equals(checkpoint) && !checkpoint.isTriggered()) {
-						checkpoint.setTriggered();
+						checkpoint.setTriggered(true);
 						checkpoint.changeSpawn(player);
+						checkpoint.setTexture(new Texture("checkpoint.png"));
+						player.addLife();
+						System.out.println(player.getLives());
 						return;
 					}
 //					System.out.println("Touching enemy");
@@ -223,13 +226,25 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 			drawSprite = !drawSprite;
 		}
 
-		//Simulate Player Movement
+		//Simulate Player Death
 		if (keycode == Input.Keys.SPACE) {
-			float x = player.getSprite().getWidth()/2.0f + this.player.getSpawnpoint().x;
-			float y = player.getSprite().getHeight()/2.0f + this.player.getSpawnpoint().y;
-			player.getBody().setTransform(x/PIXELS_TO_METERS, y/PIXELS_TO_METERS, 0);
-		}
+			player.subLife();
+			System.out.println(player.getLives());
+			if (this.player.getLives() < 1) {
+				player.addLife();
+				player.addLife();
+				player.addLife();
 
+				player.getBody().setTransform(this.player.getWorldSpawn().x/PIXELS_TO_METERS, this.player.getWorldSpawn().y/PIXELS_TO_METERS, 0);
+				player.setSpawnpoint(player.getWorldSpawn());
+				checkpoint.setTexture(new Texture("checkpoint2.jpg"));
+				checkpoint.setTriggered(false);
+			} else {
+				player.getBody().setTransform(this.player.getSpawnpoint().x/PIXELS_TO_METERS, this.player.getSpawnpoint().y/PIXELS_TO_METERS, 0);
+
+			}
+			player.getBody().setLinearVelocity(0, 0);
+		}
 		return true;
 	}
 

@@ -7,11 +7,13 @@ import com.badlogic.gdx.physics.box2d.*;
 
 public class Player extends Actor {
     Vector2 spawnpoint;
+    int lives;
 
     public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
         this.sprite = new Sprite(texture);
         this.sprite.setSize(64.0F, 64.0F);
+        this.lives = 3;
 
         super.setPosition(position.x, position.y);
         this.spawnpoint = this.worldSpawn;
@@ -44,13 +46,13 @@ public class Player extends Actor {
         return this.spawnpoint;
     }
 
-    public BodyDef getBodyDef() {
-        return this.bodyDef;
+    public int getLives() { return this.lives; }
+
+    public void addLife() {
+        this.lives++;
     }
 
-    public void setBodyPosition() {
-        world.destroyBody(this.body);
-        bodyDef.position.set(spawnpoint);
-        world.createBody(bodyDef);
-    }
+    public void subLife() { this.lives--; }
+
+    public Vector2 getWorldSpawn() { return this.worldSpawn; }
 }

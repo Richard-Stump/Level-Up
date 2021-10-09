@@ -48,7 +48,11 @@ public class Checkpoint extends Actor {
         return this.triggered;
     }
 
-    public void setTriggered() {
-        this.triggered = true;
+    public void setTriggered(boolean value) {
+        this.triggered = value;
+    }
+
+    public void setTexture(Texture texture) {
+        this.sprite.setTexture(texture);
     }
 }
