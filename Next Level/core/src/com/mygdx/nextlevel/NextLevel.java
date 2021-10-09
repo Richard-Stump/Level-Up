@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.nextlevel.actors.Checkpoint;
 import com.mygdx.nextlevel.actors.Enemy;
 import com.mygdx.nextlevel.actors.Player;
 
@@ -17,6 +18,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 	SpriteBatch batch;
 	Player player;
 	Enemy enemy;
+	Checkpoint checkpoint;
 
 	World world;
 	Body bodyEdgeScreen;
@@ -53,6 +55,8 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		this.player = new Player(playerTexture, this.world, 0.2f, 0.5f);
 		final Texture enemyTexture = new Texture("enemy.jpg");
 		this.enemy = new Enemy(enemyTexture, this.world,100f, 0.5f);
+		final Texture checkpointTexture = new Texture("checkpoint.png");
+		this.checkpoint = new Checkpoint(checkpointTexture, this.world, 100f, 100f, this.player);
 
 		//Bottom edge of screen
 		BodyDef edgeBodyDef = new BodyDef();
@@ -95,6 +99,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		this.player.getBody().setUserData(this.player);
 		this.enemy.getBody().setUserData(this.enemy);
 		this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
+		this.checkpoint.getBody().setUserData(this.checkpoint);
 
 		world.setContactListener(new ContactListener() {
 			@Override
@@ -156,6 +161,7 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		if (drawSprite) {
 			batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
 			batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
+			batch.draw(checkpoint.getSprite(), checkpoint.getSprite().getX(), checkpoint.getSprite().getY(), checkpoint.getSprite().getOriginX(), checkpoint.getSprite().getOriginY(), checkpoint.getSprite().getWidth(), checkpoint.getSprite().getHeight(), checkpoint.getSprite().getScaleX(), checkpoint.getSprite().getScaleY(), checkpoint.getSprite().getRotation());
 		}
 		batch.end();
 
