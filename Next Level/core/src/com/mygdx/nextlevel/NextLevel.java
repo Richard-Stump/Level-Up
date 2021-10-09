@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.nextlevel.actors.Checkpoint;
 import com.mygdx.nextlevel.actors.Enemy;
 import com.mygdx.nextlevel.actors.Player;
@@ -51,12 +52,15 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		this.world = new World(new Vector2(0.0F, -40.0F), true);
 
 		//Create Enemy and Player
-		Texture playerTexture = new Texture("tyson.jpg");
-		this.player = new Player(playerTexture, this.world, 0.2f, 0.5f);
+		Vector2 playerSpawn = new Vector2(-300.0f, 0f);
+		Texture playerTexture = new Texture("goomba.png");
+		this.player = new Player(playerTexture, this.world, playerSpawn, 0.2f, 0.5f);
+		Vector2 enemySpawn = new Vector2(0f, -100.0f);
 		final Texture enemyTexture = new Texture("enemy.jpg");
-		this.enemy = new Enemy(enemyTexture, this.world,100f, 0.5f);
+		this.enemy = new Enemy(enemyTexture, this.world, enemySpawn, 100f, 0.5f);
+		Vector2 checkpointSpawn = new Vector2(0f, -200.0f);
 		final Texture checkpointTexture = new Texture("checkpoint.png");
-		this.checkpoint = new Checkpoint(checkpointTexture, this.world, 100f, 100f, this.player);
+		this.checkpoint = new Checkpoint(checkpointTexture, this.world, checkpointSpawn,0f, 0f, this.player);
 
 		//Bottom edge of screen
 		BodyDef edgeBodyDef = new BodyDef();
@@ -105,12 +109,17 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 			@Override
 			public void beginContact(Contact contact) { //called when two fixuers begin contact
 				if (contact.getFixtureA().getBody().getUserData().equals(player)) {
+					if (contact.getFixtureB().getBody().getUserData().equals(checkpoint) && !checkpoint.isTriggered()) {
+						System.out.println("Checkpoint happen");
+						checkpoint.setTriggered();
+						checkpoint.changeSpawn(player);
+						return;
+					}
 					System.out.println("Touching enemy");
 					System.out.println("Killed enemy");
-
 				}
 				if (contact.getFixtureB().getBody().getUserData().equals(player)) {
-					System.out.println("Touching ground");
+//					System.out.println("Touching ground");
 					player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
 				}
 				landed = true;
@@ -127,9 +136,6 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 
 			@Override
 			public void postSolve(Contact contact, ContactImpulse impulse) {
-				if (contact.getFixtureB().getBody().getUserData().equals(checkpoint))
-					System.out.println("Checkpoint!");
-
 				if (contact.getFixtureA().getBody().getUserData().equals(player)) {
 					if (!contact.getFixtureB().getBody().getUserData().equals(checkpoint)) {
 						deleteList.add(contact.getFixtureB().getBody());
@@ -172,6 +178,8 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 		}
 		batch.end();
 
+
+
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
 			player.getBody().setLinearVelocity(3f, player.getBody().getLinearVelocity().y);
 			if (facingRight) {
@@ -211,6 +219,16 @@ public class NextLevel extends ApplicationAdapter implements InputProcessor {
 			this.player.getBody().applyForceToCenter(force, true);
 			this.jumped = true;
 			this.landed = false;
+		}
+
+		if (keycode == Input.Keys.ESCAPE) {
+			drawSprite = !drawSprite;
+		}
+
+		if (keycode == Input.Keys.SPACE) {
+//			player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2;
+//			player.getSprite().setPosition(player.getSpawnpoint().x,player.getSpawnpoint().y);
+//			player.getBody().setTransform(player.getSpawnpoint().x,player.getSpawnpoint().y,0f);
 		}
 
 		return true;

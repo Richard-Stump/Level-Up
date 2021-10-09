@@ -2,15 +2,19 @@ package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 public class Player extends Actor {
-    public Player(Texture texture, World world, float density, float restitution) {
+    Vector2 spawnpoint;
+
+    public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
         this.sprite = new Sprite(texture);
         this.sprite.setSize(64.0F, 64.0F);
 
-        super.setPosition(-300.0f, 0f);
+        super.setPosition(position.x, position.y);
+        this.spawnpoint = this.worldSpawn;
         super.setBody(BodyDef.BodyType.DynamicBody);
         setShape();
         setFixture(density, restitution);
@@ -30,5 +34,13 @@ public class Player extends Actor {
         this.fixtureDef.shape = this.shape;
         this.body.createFixture(this.fixtureDef);
         this.fixtureDef.shape.dispose();
+    }
+
+    public void setSpawnpoint(Vector2 position) {
+        this.spawnpoint = position;
+    }
+
+    public Vector2 getSpawnpoint() {
+        return this.spawnpoint;
     }
 }

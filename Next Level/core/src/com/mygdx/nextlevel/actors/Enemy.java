@@ -2,18 +2,19 @@ package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 public class Enemy extends Actor {
     boolean killable;
 
-    public Enemy(Texture texture, World world, float density, float restitution) {
+    public Enemy(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
         sprite = new Sprite(texture);
         sprite.setSize(64.0F, 64.0F);
         this.killable = true;
 
-        super.setPosition(0f,-100f);
+        super.setPosition(position.x, position.y);
         super.setBody(BodyDef.BodyType.StaticBody);
         setShape();
         setFixture(density, restitution);

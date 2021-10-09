@@ -2,18 +2,21 @@ package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Checkpoint extends Actor {
-    public Checkpoint(Texture texture, World world,float density, float restitution, Player player) {
+    boolean triggered = false;
+
+    public Checkpoint(Texture texture, World world, Vector2 position, float density, float restitution, Player player) {
         this.world = world;
         sprite = new Sprite(texture);
         sprite.setSize(64.0F, 64.0F);
 
-        super.setPosition(0,-200);
+        super.setPosition(position.x, position.y);
         super.setBody(BodyDef.BodyType.StaticBody);
         setShape();
         setFixture(density, restitution);
@@ -31,11 +34,21 @@ public class Checkpoint extends Actor {
         this.fixtureDef.filter.categoryBits = BLOCK_ENTITY;
         this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
         this.fixtureDef.shape = this.shape;
+        this.fixtureDef.isSensor = true;
         this.body.createFixture(this.fixtureDef);
         this.fixtureDef.shape.dispose();
     }
 
     public void changeSpawn(Player player) {
         //Change the spawn of the player from when they are played
+        player.setSpawnpoint(this.worldSpawn);
+    }
+
+    public boolean isTriggered() {
+        return this.triggered;
+    }
+
+    public void setTriggered() {
+        this.triggered = true;
     }
 }

@@ -1,6 +1,7 @@
 package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 public class Actor {
@@ -9,6 +10,7 @@ public class Actor {
     final short WORLD_ENTITY = 0x1 << 1; //0010
     final short BLOCK_ENTITY = 0x1 << 2; //0100
 
+    Vector2 worldSpawn = new Vector2();
     Sprite sprite;
     BodyDef bodyDef;
     PolygonShape shape;
@@ -16,8 +18,10 @@ public class Actor {
     Body body;
     World world;
 
-    void setPosition(float offsetx, float offsety) {
-        this.sprite.setPosition(-this.sprite.getWidth()/2.0F + offsetx, -this.sprite.getHeight()/2.0F + offsety);
+    void setPosition(float x, float y) {
+        this.sprite.setPosition(-this.sprite.getWidth()/2.0F + x, -this.sprite.getHeight()/2.0F + y);
+        this.worldSpawn.x = x;
+        this.worldSpawn.y = y;
     }
 
     void setBody(BodyDef.BodyType type) {
