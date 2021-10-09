@@ -78,7 +78,6 @@ public class LevelsDBController {
 
             //will return the number of rows affected
             rowsChanged = statement.executeUpdate();
-            System.out.println(rowsChanged);
 
             if (rowsChanged > 0) {
                 statement.close();
@@ -136,12 +135,11 @@ public class LevelsDBController {
     public int removeLevelInfo(LevelInfo levelInfo) {
         int rowsChanged;
 
-        String sqlQuery = "DELETE FROM ? " +
-                "WHERE id LIKE ?";
+        String sqlQuery = "DELETE FROM " + tableName +
+                " WHERE id LIKE ?";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, tableName);
-            statement.setString(2, levelInfo.getId());
+            statement.setString(1, levelInfo.getId());
 
             rowsChanged = statement.executeUpdate();
             if (rowsChanged == 1) {
@@ -488,5 +486,9 @@ public class LevelsDBController {
             list.add(levelInfo);
         }
         return list;
+    }
+
+    public void close() throws SQLException {
+        connection.close();
     }
 }

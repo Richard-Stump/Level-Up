@@ -27,6 +27,19 @@ public class LevelInfo {
     }
 
     /**
+     * Constructor
+     * @param id a unique level ID
+     */
+    public LevelInfo(String id, String title, String author) {
+        if (id == null) {
+            throw new NullPointerException();
+        }
+        this.id = id;
+        this.title = title;
+        this.author = author;
+    }
+
+    /**
      * Add a tag to the tag list
      *
      * @param tag tag to insert

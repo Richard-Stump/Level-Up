@@ -3,6 +3,8 @@ package com.mygdx.nextlevel;
 import com.badlogic.gdx.math.Interpolation;
 import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,48 @@ public class MainTest {
         } else {
             return;
         }
+
+        //Add 3 levels for testing
+
+        LevelInfo l1 = new LevelInfo("asdf1", "This is test 1", "Trenton");
+        List<Tag> tags1 = new ArrayList<>();
+        tags1.add(Tag.STANDARD);
+        tags1.add(Tag.PUZZLE);
+        l1.setTags(tags1);
+        l1.setRating((float) 4.5);
+        l1.setDifficulty(3);
+        l1.setDateDownloaded(new Date(202020));
+        l1.setPlayCount(34);
+        l1.setDateCreated(new Date(105062));
+        l1.setBestTime((float) 164.26);
+
+        LevelInfo l2 = new LevelInfo("qual2", "Quality level this is", "James");
+        List<Tag> tags2 = new ArrayList<>();
+        tags2.add(Tag.STANDARD);
+        tags2.add(Tag.BOSSBATTLE);
+        l2.setTags(tags2);
+        l2.setRating((float) 5);
+        l2.setDifficulty(9);
+        l2.setDateDownloaded(new Date(156545));
+        l2.setPlayCount(9062);
+        l2.setDateCreated(new Date(951320));
+        l2.setBestTime((float) 43.75);
+
+        LevelInfo l3 = new LevelInfo("pi3ngi9", "Calc 3 test", "Trenton");
+        List<Tag> tags3 = new ArrayList<>();
+        tags3.add(Tag.BOSSBATTLE);
+        tags3.add(Tag.SPEEDRUN);
+        l3.setTags(tags3);
+        l3.setRating((float) 0.05);
+        l3.setDifficulty(500);
+        l3.setDateDownloaded(new Date(222222));
+        l3.setPlayCount(4);
+        l3.setDateCreated(new Date(666666));
+        l3.setBestTime((float) 500.00);
+
+        db.addLevelInfo(l1);
+        db.addLevelInfo(l2);
+        db.addLevelInfo(l3);
 
         //Sort
         System.out.println("Fetching all levels, sorted by title");
@@ -105,11 +149,20 @@ public class MainTest {
         }
 
         System.out.println();
-        int difficultyToSearch = 6;
+        int difficultyToSearch = 3;
         System.out.println("Searching by difficulty " + difficultyToSearch);
         ArrayList<LevelInfo> levelsDif = new ArrayList<>(db.searchByDifficulty(difficultyToSearch));
         for (LevelInfo i: levelsDif) {
             System.out.println("\tLevel title: " + i.getTitle() + "\n\t\tDifficulty: " + i.getDifficulty());
+        }
+
+        System.out.println(db.removeLevelInfo(l1));
+        System.out.println(db.removeLevelInfo(l2));
+        System.out.println(db.removeLevelInfo(l3));
+        try {
+            db.close();
+        } catch (SQLException e){
+            e.printStackTrace();
         }
     }
 }
