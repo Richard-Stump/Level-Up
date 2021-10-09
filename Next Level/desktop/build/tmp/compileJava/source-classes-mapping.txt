@@ -1,2 +1,0 @@
-com/mygdx/nextlevel/desktop/DesktopLauncher.java
- com.mygdx.nextlevel.desktop.DesktopLauncher
