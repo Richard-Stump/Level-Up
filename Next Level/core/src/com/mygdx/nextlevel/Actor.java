@@ -6,6 +6,8 @@ public class Actor {
     Vector2 position;
     Vector2 size;
 
+    public Actor() {}
+
     public void onSpawn() {}    // Called after the Actor is placed in the level
     public void onDespawn() {}  // Called when the Actor is deactivated. Ex: killed
 
