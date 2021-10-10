@@ -1,5 +1,6 @@
 package com.mygdx.nextlevel.actors;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -15,7 +16,8 @@ public class Enemy extends Actor {
         this.killable = true;
 
         super.setPosition(position.x, position.y);
-        super.setBody(BodyDef.BodyType.StaticBody);
+//        super.setBody(BodyDef.BodyType.StaticBody);
+        super.setBody(BodyDef.BodyType.DynamicBody);
         setShape();
         setFixture(density, restitution);
     }
@@ -38,5 +40,19 @@ public class Enemy extends Actor {
 
     public boolean isKillable() {
         return this.killable;
+    }
+
+    public void movement() {
+        float timeSeconds = 0f;
+        float period = 1f;
+        timeSeconds += Gdx.graphics.getRawDeltaTime();
+        if(timeSeconds > period){
+            timeSeconds -= period;
+            move();
+        }
+        getBody().setLinearVelocity(-1f, getBody().getLinearVelocity().y);
+    }
+    public void move() {
+
     }
 }

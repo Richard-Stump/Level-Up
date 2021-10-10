@@ -143,6 +143,10 @@ public class GameScreen implements Screen, InputProcessor {
                         touchedItemBlock = true;
                     } else if (contact.getFixtureB().getBody().getUserData().equals(item) && !touchedPowerUp) {
                         touchedPowerUp = true;
+                        player.setPowerUp(true);
+                    } else if (contact.getFixtureB().getBody().getUserData().equals(enemy) && player.hasPowerUp()) {
+                        System.out.println("Touching enemy and has pwoer up");
+                        player.setPowerUp(false);
                     }
 //					System.out.println("Touching enemy");
 //					System.out.println("Killed enemy");
@@ -166,7 +170,7 @@ public class GameScreen implements Screen, InputProcessor {
             @Override
             public void postSolve(Contact contact, ContactImpulse impulse) {
                 if (contact.getFixtureA().getBody().getUserData().equals(player)) {
-                    if (contact.getFixtureB().getBody().getUserData().equals(enemy) || contact.getFixtureB().getBody().getUserData().equals(block1)) {
+                    if (contact.getFixtureB().getBody().getUserData().equals(enemy) || contact.getFixtureB().getBody().getUserData().equals(block1) || contact.getFixtureB().getBody().getUserData().equals(item)) {
                         deleteList.add(contact.getFixtureB().getBody());
 //						spriteDelList.add(enemy.getSprite());
                     }
@@ -257,10 +261,11 @@ public class GameScreen implements Screen, InputProcessor {
         if (drawSprite) {
             batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
             batch.draw(checkpoint.getSprite(), checkpoint.getSprite().getX(), checkpoint.getSprite().getY(), checkpoint.getSprite().getOriginX(), checkpoint.getSprite().getOriginY(), checkpoint.getSprite().getWidth(), checkpoint.getSprite().getHeight(), checkpoint.getSprite().getScaleX(), checkpoint.getSprite().getScaleY(), checkpoint.getSprite().getRotation());
-            if (touchedPowerUp) {
+            if (touchedPowerUp && player.hasPowerUp()) {
                 player.setTexture(new Texture("paragoomba.png"));
                 batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
             } else {
+                player.setTexture(new Texture("goomba.png"));
                 batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
             }
             batch.draw(block1.getSprite(), block1.getSprite().getX(), block1.getSprite().getY(), block1.getSprite().getOriginX(), block1.getSprite().getOriginY(), block1.getSprite().getWidth(), block1.getSprite().getHeight(), block1.getSprite().getScaleX(), block1.getSprite().getScaleY(), block1.getSprite().getRotation());
@@ -286,6 +291,7 @@ public class GameScreen implements Screen, InputProcessor {
                 player.getSprite().flip(true, false);
             }
         }
+        enemy.movement();
 
         debugRenderer.render(world, debugMatrix);
         if (deleteList.size() > 0) {

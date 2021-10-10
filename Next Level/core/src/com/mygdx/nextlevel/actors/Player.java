@@ -9,13 +9,14 @@ import com.mygdx.nextlevel.screens.GameScreen;
 public class Player extends Actor {
     Vector2 spawnpoint;
     int lives;
+    boolean powerUp;
 
     public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
         this.sprite = new Sprite(texture);
         this.sprite.setSize(64.0F, 64.0F);
         this.lives = 3;
-
+        this.powerUp = false;
         super.setPosition(position.x, position.y);
         this.spawnpoint = this.worldSpawn;
         super.setBody(BodyDef.BodyType.DynamicBody);
@@ -59,5 +60,13 @@ public class Player extends Actor {
 
     public void setTexture(Texture texture) {
         this.sprite.setTexture(texture);
+    }
+
+    public boolean hasPowerUp() {
+        return powerUp;
+    }
+
+    public void setPowerUp(boolean set) {
+        this.powerUp = set;
     }
 }
