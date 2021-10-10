@@ -15,7 +15,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 
 public class Tilemap {
-    //private ArrayList<Tile>     tiles;
     private int[][]             tiles;
     private Texture             tilesTexture;
     private TiledMapTileSet     tileSet;
@@ -25,12 +24,6 @@ public class Tilemap {
     private int                 mapHeight;
 
     public Tilemap() {
-        //tiles = new ArrayList<Tile>();
-
-        //tiles.add(new Tile("Tile1.png", true));
-        //tiles.add(new Tile("Tile2.png", true));
-
-
         tiles = new int[][] {
                 { 0, 0, 0, 0, 0, 0, 0, 0 },
                 { 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -43,16 +36,9 @@ public class Tilemap {
         };
     }
 
-    public void render(Batch batch) {
-        //for(int y = 0; y < height; y++) {
-            //for(int x =0;)
-        //}
-    }
-
     public TiledMap createMap(){
         for (int row = 0; row < mapHeight; row++) {
             for (int col = 0; col < mapWidth; col++) {
-                //pick tile
                 final int tileId = tiles[row][col];
                 final TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                 cell.setTile(tileSet.getTile(tileId));
@@ -63,7 +49,17 @@ public class Tilemap {
         return map;
     }
 
-    private void initMap(){
+    private void initTileSet(FileHandle tsConfigFile){
+        //load config file
+        final Json json = new Json();
 
+
+    }
+
+    private void initMap(){
+        //Create an empty map
+        map = new TiledMap();
+        mapLayer = new TiledMapTileLayer(mapWidth, mapHeight, 64, 64);
+        map.getLayers().add(mapLayer);
     }
 }
