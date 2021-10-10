@@ -49,9 +49,10 @@ public class Tilemap {
         return map;
     }
 
-    private void initTileSet(FileHandle tsConfigFile){
+    private void init(FileHandle tsConfigFile){
         //load config file
         final Json json = new Json();
+
 
 
     }
