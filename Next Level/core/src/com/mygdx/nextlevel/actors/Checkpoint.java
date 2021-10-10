@@ -3,16 +3,18 @@ package com.mygdx.nextlevel.actors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
-public class Enemy extends Actor {
-    boolean killable;
+public class Checkpoint extends Actor {
+    boolean triggered = false;
 
-    public Enemy(Texture texture, World world, Vector2 position, float density, float restitution) {
+    public Checkpoint(Texture texture, World world, Vector2 position, float density, float restitution, Player player) {
         this.world = world;
         sprite = new Sprite(texture);
         sprite.setSize(64.0F, 64.0F);
-        this.killable = true;
 
         super.setPosition(position.x, position.y);
         super.setBody(BodyDef.BodyType.StaticBody);
@@ -32,11 +34,25 @@ public class Enemy extends Actor {
         this.fixtureDef.filter.categoryBits = BLOCK_ENTITY;
         this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
         this.fixtureDef.shape = this.shape;
+        this.fixtureDef.isSensor = true;
         this.body.createFixture(this.fixtureDef);
-        this.shape.dispose();
+        this.fixtureDef.shape.dispose();
     }
 
-    public boolean isKillable() {
-        return this.killable;
+    public void changeSpawn(Player player) {
+        //Change the spawn of the player from when they are played
+        player.setSpawnpoint(this.worldSpawn);
+    }
+
+    public boolean isTriggered() {
+        return this.triggered;
+    }
+
+    public void setTriggered(boolean value) {
+        this.triggered = value;
+    }
+
+    public void setTexture(Texture texture) {
+        this.sprite.setTexture(texture);
     }
 }
