@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- created with https://www.codeandweb.com/physicseditor -->
+<bodydef>
+
+	<body name="banana - Copy">
+		<is_dynamic/>
+		<linear_damping>0</linear_damping>
+		<angular_damping>0</angular_damping>
+		<allow_sleep/>
+		<fixture>
+			<density>2</density>
+			<friction>0</friction>
+			<restitution>0</restitution>
+			<filter_category_bits>1</filter_category_bits>
+			<filter_mask_bits>65535</filter_mask_bits>
+			<filter_group_index>0</filter_group_index>
+			<polygon>106.0000, 128.0000, 89.0000, 122.0000, 94.0000, 107.0000, 105.0000, 107.0000</polygon>
+			<polygon>94.0000, 107.0000, 92.0000, 86.0000, 126.0000, 62.0000, 123.0000, 88.0000, 105.0000, 107.0000</polygon>
+			<polygon>92.0000, 86.0000, 85.0000, 67.0000, 76.0000, 4.0000, 105.0000, 20.0000, 120.0000, 41.0000, 126.0000, 62.0000</polygon>
+			<polygon>76.0000, 4.0000, 85.0000, 67.0000, 75.0000, 55.0000, 45.0000, 0.0000</polygon>
+			<polygon>0.0000, 29.0000, 8.0000, 16.0000, 45.0000, 0.0000, 27.0000, 35.0000, 3.0000, 35.0000</polygon>
+			<polygon>27.0000, 35.0000, 45.0000, 0.0000, 54.0000, 39.0000</polygon>
+			<polygon>54.0000, 39.0000, 45.0000, 0.0000, 75.0000, 55.0000</polygon>
+		</fixture>
+	</body>
+
+	<body name="crate">
+		<is_dynamic/>
+		<linear_damping>0</linear_damping>
+		<angular_damping>0</angular_damping>
+		<allow_sleep/>
+		<fixture>
+			<density>5</density>
+			<friction>0</friction>
+			<restitution>0</restitution>
+			<filter_category_bits>1</filter_category_bits>
+			<filter_mask_bits>65535</filter_mask_bits>
+			<filter_group_index>0</filter_group_index>
+			<polygon>124.0000, 119.0000, 5.0000, 119.0000, 120.0000, 92.0000, 124.0000, 92.0000</polygon>
+			<polygon>122.0000, 0.0000, 122.0000, 23.0000, 11.0000, 22.0000, 8.0000, 0.0000</polygon>
+			<polygon>5.0000, 92.0000, 9.0000, 92.0000, 5.0000, 119.0000</polygon>
+			<polygon>8.0000, 22.0000, 8.0000, 0.0000, 11.0000, 22.0000</polygon>
+			<polygon>120.0000, 92.0000, 5.0000, 119.0000, 9.0000, 92.0000, 119.0000, 23.0000</polygon>
+			<polygon>9.0000, 92.0000, 11.0000, 22.0000, 119.0000, 23.0000</polygon>
+		</fixture>
+	</body>
+
+	<metadata>
+		<format>1</format>
+		<ptm_ratio>32</ptm_ratio>
+	</metadata>
+
+</bodydef>
+
