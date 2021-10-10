@@ -1,6 +1,8 @@
-package com.mygdx.nextlevel;
+package com.mygdx.nextlevel.dbUtil;
 
 import com.badlogic.gdx.math.Interpolation;
+import com.mygdx.nextlevel.LevelInfo;
+import com.mygdx.nextlevel.Tag;
 import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 
 import java.sql.Date;
@@ -8,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainTest {
+public class DatabaseTest {
     public static void main(String[] args) {
         DownloadedLevelsDB db = new DownloadedLevelsDB();
         if (db.isDBConnected()) {
