@@ -38,6 +38,7 @@ public class GameScreen implements Screen, InputProcessor {
     boolean facingRight = true;
     boolean touchedItemBlock = false;
     boolean touchedPowerUp = false;
+    float time = 0;
 
     float torque = 0.0f;
     boolean drawSprite = true;
@@ -291,7 +292,12 @@ public class GameScreen implements Screen, InputProcessor {
                 player.getSprite().flip(true, false);
             }
         }
-        enemy.movement();
+        time += Gdx.graphics.getDeltaTime();
+        if (time % 10 < 5) {
+            enemy.moveLeft();
+        } else if (time % 10 >= 5) {
+            enemy.moveRight();
+        }
 
         debugRenderer.render(world, debugMatrix);
         if (deleteList.size() > 0) {

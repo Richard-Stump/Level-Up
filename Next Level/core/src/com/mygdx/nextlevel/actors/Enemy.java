@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 
 public class Enemy extends Actor {
     boolean killable;
@@ -25,6 +26,16 @@ public class Enemy extends Actor {
     private void setShape() {
         this.shape = new PolygonShape();
         this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
+
+        System.out.println("Enemy Vertices");
+        Array<Vector2> verts = new Array<Vector2>();
+        Vector2 tmp = new Vector2();
+        for (int i = 0; i < this.shape.getVertexCount(); i++) {
+            // fill tmp with the vertex
+            this.shape.getVertex(i, tmp);
+            verts.add(new Vector2(tmp));
+            System.out.println(tmp.toString());
+        }
     }
 
     private void setFixture(float density, float restitution) {
@@ -42,17 +53,10 @@ public class Enemy extends Actor {
         return this.killable;
     }
 
-    public void movement() {
-        float timeSeconds = 0f;
-        float period = 1f;
-        timeSeconds += Gdx.graphics.getRawDeltaTime();
-        if(timeSeconds > period){
-            timeSeconds -= period;
-            move();
-        }
+    public void moveLeft() {
         getBody().setLinearVelocity(-1f, getBody().getLinearVelocity().y);
     }
-    public void move() {
-
+    public void moveRight() {
+        getBody().setLinearVelocity(1f, getBody().getLinearVelocity().y);
     }
 }
