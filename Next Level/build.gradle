@@ -26,6 +26,7 @@ allprojects {
         ashleyVersion = '1.7.3'
         aiVersion = '1.8.2'
         gdxControllersVersion = '2.1.0'
+        visuiVersion = '1.5.0'
     }
 
     repositories {
@@ -54,11 +55,11 @@ project(":desktop") {
 project(":core") {
     apply plugin: "java-library"
 
-
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        compile "com.kotcrab.vis:vis-ui:$visuiVersion"
         compile group:'org.xerial', name:'sqlite-jdbc', version:'3.36.0.3'
     }
 }

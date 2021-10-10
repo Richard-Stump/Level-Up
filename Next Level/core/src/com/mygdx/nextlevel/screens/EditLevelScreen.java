@@ -1,23 +1,34 @@
 package com.mygdx.nextlevel.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.nextlevel.NextLevel;
+import com.kotcrab.*;
 
 public class EditLevelScreen implements Screen, InputProcessor {
     private NextLevel game;
+    private OrthographicCamera camera;
+    private ShapeRenderer shapeRenderer;
+    private int screenWidth, screenHeight;
+    private float pixelsPerTile;
+
+    private final Color backgroundColor = new Color(0.9f, 0.9f, 0.9f,1.0f);
+    private final Color gridColor = new Color(0.2f, 0.2f, 0.2f,1.0f);
 
     public EditLevelScreen(NextLevel game) {
         this.game = game;
+        this.screenWidth = Gdx.graphics.getWidth();
+        this.screenHeight = Gdx.graphics.getHeight();
+        this.camera = new OrthographicCamera(screenWidth, screenHeight);
+        this.shapeRenderer = new ShapeRenderer(1000);
+
+        pixelsPerTile = 64.0f;
     }
 
 
@@ -30,12 +41,34 @@ public class EditLevelScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
-        Gdx.gl20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        Gdx.gl20.glClear(Gdx.gl20.GL_COLOR_BUFFER_BIT);
+        ScreenUtils.clear(backgroundColor);
+        camera.zoom = 20.0f;
+
+        renderGrid();
     }
+
+    private void renderGrid() {
+        shapeRenderer.begin(ShapeType.Line);
+        shapeRenderer.setColor(gridColor);
+
+        for(int y = 0; y <= (float)screenHeight; y++) {  
+            shapeRenderer.line(0, y, screenWidth, y);
+        }
+
+        for(int x = 0; x <= (float)screenHeight; x++) {
+            shapeRenderer.line(x, 0, x, screenHeight);
+        }
+
+        shapeRenderer.end();
+    }
+
 
     @Override
     public void resize(int width, int height) {
+        screenWidth = width;
+        screenHeight = height;
+        camera.viewportWidth = width;
+        camera.viewportHeight = height;
     }
 
     @Override
