@@ -1,25 +1,14 @@
 package com.mygdx.nextlevel;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 
-public class Tile {
-    private Texture texture;
-    private int     flags;
+public interface Tile {
 
-    final short SOLID_BIT = 1 << 0;
-    final short BREAK_BIT = 1 << 1;
+    public int getId();
 
-    public Tile(String fileName, boolean solid) {
-        texture = new Texture(fileName);
+    public int setId(int id);
 
-        if(solid) {
-            flags |= SOLID_BIT;
-        }
-    }
-
-    boolean isSolid() { return (flags & SOLID_BIT) == SOLID_BIT; }
 
 }

@@ -2,41 +2,70 @@ package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
-public class Enemy extends Actor {
-    boolean killable;
+public class Enemy {
+    Texture texture;
+    Sprite sprite;
+    BodyDef bodyDef;
+    PolygonShape shape;
+    FixtureDef fixtureDef;
+    Body body;
+    World world;
 
-    public Enemy(Texture texture, World world, Vector2 position, float density, float restitution) {
+    final float PIXELS_TO_METERS = 100f;
+
+    final short PHYSICS_ENTITY = 0x1; //0001
+    final short BLOCK_ENTITY = 0x1 << 2; //0100
+    final short WORLD_ENTITY = 0x1 << 1; //0010
+
+    public Enemy(Texture texture, World world, float density, float restitution) {
+        this.texture = texture;
         this.world = world;
         sprite = new Sprite(texture);
-        sprite.setSize(64.0F, 64.0F);
-        this.killable = true;
+        sprite.setSize(64, 64);
 
-        super.setPosition(position.x, position.y);
-        super.setBody(BodyDef.BodyType.StaticBody);
+        setPosition();
+        setBody();
         setShape();
         setFixture(density, restitution);
     }
 
+    private void setPosition() {
+        sprite.setPosition(-sprite.getWidth()/2, -sprite.getHeight()/2 - 100);
+    }
+
+    private void setBody() {
+        bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set((sprite.getX() + sprite.getWidth()/2)/PIXELS_TO_METERS, (sprite.getY() + sprite.getHeight()/2)/PIXELS_TO_METERS);
+
+        body = world.createBody(bodyDef);
+    }
+
     private void setShape() {
-        this.shape = new PolygonShape();
-        this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
+        shape = new PolygonShape();
+        shape.setAsBox(sprite.getWidth()/2/PIXELS_TO_METERS, sprite.getHeight()/2/PIXELS_TO_METERS);
     }
 
     private void setFixture(float density, float restitution) {
-        this.fixtureDef = new FixtureDef();
-        this.fixtureDef.density = density;
-        this.fixtureDef.restitution = restitution;
-        this.fixtureDef.filter.categoryBits = BLOCK_ENTITY;
-        this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
-        this.fixtureDef.shape = this.shape;
-        this.body.createFixture(this.fixtureDef);
-        this.shape.dispose();
+        fixtureDef = new FixtureDef();
+        fixtureDef.density = density;
+        fixtureDef.restitution = restitution;
+        fixtureDef.filter.categoryBits = BLOCK_ENTITY;
+        fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
+
+        fixtureDef.shape = shape;
+
+        body.createFixture(fixtureDef);
+        shape.dispose();
     }
 
-    public boolean isKillable() {
-        return this.killable;
+    public Sprite getSprite() {
+        return this.sprite;
+    }
+
+    public Body getBody() {
+        return body;
     }
 }
