@@ -11,7 +11,10 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.WorldContactListener;
 import com.mygdx.nextlevel.actors.*;
+import com.mygdx.nextlevel.hud.Hud;
 
 import java.util.ArrayList;
 
@@ -22,6 +25,7 @@ public class GameScreen implements Screen, InputProcessor {
     Checkpoint checkpoint;
     Block block1, block2;
     Item item;
+    Hud hud;
 
     World world;
     Body bodyEdgeScreen;
@@ -46,8 +50,8 @@ public class GameScreen implements Screen, InputProcessor {
     boolean landed = true;
     boolean jumped = false;
 
-    public GameScreen(Game game){
-        this.batch = new SpriteBatch();
+    public GameScreen(NextLevel game){
+        this.batch = game.batch;
 
         //Physics World
         this.world = new World(new Vector2(0.0F, -40.0F), true);
@@ -118,9 +122,14 @@ public class GameScreen implements Screen, InputProcessor {
         this.block2.getBody().setUserData(this.block2);
         this.item.getBody().setUserData(this.item);
 
+        //Hud
+        hud = new Hud(game.batch);
+
         world.setContactListener(new ContactListener() {
+                //(new WorldContactListener(this));
+                //(new ContactListener() {
             @Override
-            public void beginContact(Contact contact) { //called when two fixuers begin contact
+            public void beginContact(Contact contact) { //called when two fixtures begin contact
                 if (contact.getFixtureA().getBody().getUserData().equals(player)) {
 //					System.out.println("Touching object");
                     if (contact.getFixtureB().getBody().getUserData().equals(checkpoint) && !checkpoint.isTriggered()) {
@@ -168,6 +177,50 @@ public class GameScreen implements Screen, InputProcessor {
         //Create box2bug render
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Checkpoint getCheckpoint() {
+        return checkpoint;
+    }
+
+    public Block getBlock2() {
+        return block2;
+    }
+
+    public Block getBlock1() {
+        return block1;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public Enemy getEnemy() {
+        return enemy;
+    }
+
+    public ArrayList<Body> getDeleteList() {
+        return deleteList;
+    }
+
+    public boolean isTouchedItemBlock() {
+        return touchedItemBlock;
+    }
+
+    public boolean isLanded() {
+        return landed;
+    }
+
+    public boolean isJumped() {
+        return jumped;
+    }
+
+    public boolean isTouchedPowerUp() {
+        return touchedPowerUp;
     }
 
     public void show() {
@@ -241,6 +294,9 @@ public class GameScreen implements Screen, InputProcessor {
                 deleteList.remove(i);
             }
         }
+
+        batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        hud.stage.draw();
     }
 
     public void resize(int width, int height) {

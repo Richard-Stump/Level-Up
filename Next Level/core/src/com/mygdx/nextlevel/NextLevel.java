@@ -30,6 +30,7 @@ public class NextLevel extends Game {
 
 	@Override
 	public void create () {
+		batch = new SpriteBatch();
 		font = new BitmapFont();
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(960, 500, camera);
