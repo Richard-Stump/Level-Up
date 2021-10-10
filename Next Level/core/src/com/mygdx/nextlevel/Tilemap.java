@@ -62,5 +62,6 @@ public class Tilemap {
         map = new TiledMap();
         mapLayer = new TiledMapTileLayer(mapWidth, mapHeight, 64, 64);
         map.getLayers().add(mapLayer);
+
     }
 }
