@@ -2,44 +2,25 @@ package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.nextlevel.screens.GameScreen;
 
-public class Player {
-    Texture texture;
-    Sprite sprite;
-    BodyDef bodyDef;
-    PolygonShape shape;
-    FixtureDef fixtureDef;
-    Body body;
-    World world;
-    final float PIXELS_TO_METERS = 100f;
-    final short PHYSICS_ENTITY = 0x1; //0001
-    final short WORLD_ENTITY = 0x1 << 1; //0010
-    final short BLOCK_ENTITY = 0x1 << 2; //0100
+public class Player extends Actor {
+    Vector2 spawnpoint;
+    int lives;
 
-
-    public Player(Texture texture, World world, float density, float restitution) {
-        this.texture = texture;
+    public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
-        sprite = new Sprite(texture);
-        sprite.setSize(64.0F, 64.0F);
+        this.sprite = new Sprite(texture);
+        this.sprite.setSize(64.0F, 64.0F);
+        this.lives = 3;
 
-        setPosition();
-        setBody();
+        super.setPosition(position.x, position.y);
+        this.spawnpoint = this.worldSpawn;
+        super.setBody(BodyDef.BodyType.DynamicBody);
         setShape();
         setFixture(density, restitution);
-    }
-
-    private void setPosition() {
-        this.sprite.setPosition(-this.sprite.getWidth()/2.0F - 300.0F, -this.sprite.getHeight()/2.0F);
-    }
-
-    private void setBody() {
-        this.bodyDef = new BodyDef();
-        this.bodyDef.type = BodyDef.BodyType.DynamicBody;
-        this.bodyDef.position.set((this.sprite.getX() + this.sprite.getWidth()/2.0F)/PIXELS_TO_METERS, (this.sprite.getY() + this.sprite.getHeight()/2.0F)/PIXELS_TO_METERS);
-        this.body = world.createBody(bodyDef);
-        this.body.setFixedRotation(true);
     }
 
     private void setShape() {
@@ -58,11 +39,25 @@ public class Player {
         this.fixtureDef.shape.dispose();
     }
 
-    public Sprite getSprite() {
-        return this.sprite;
+    public void setSpawnpoint(Vector2 position) {
+        this.spawnpoint = position;
     }
 
-    public Body getBody() {
-        return this.body;
+    public Vector2 getSpawnpoint() {
+        return this.spawnpoint;
+    }
+
+    public int getLives() { return this.lives; }
+
+    public void addLife() {
+        this.lives++;
+    }
+
+    public void subLife() { this.lives--; }
+
+    public Vector2 getWorldSpawn() { return this.worldSpawn; }
+
+    public void setTexture(Texture texture) {
+        this.sprite.setTexture(texture);
     }
 }

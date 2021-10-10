@@ -3,17 +3,16 @@ package com.mygdx.nextlevel.actors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
-public class Enemy extends Actor {
-    boolean killable;
-
-    public Enemy(Texture texture, World world, Vector2 position, float density, float restitution) {
+public class Item extends Actor {
+    public Item(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
-        sprite = new Sprite(texture);
-        sprite.setSize(64.0F, 64.0F);
-        this.killable = true;
-
+        this.sprite = new Sprite(texture);
+        this.sprite.setSize(64.0F, 64.0F);
         super.setPosition(position.x, position.y);
         super.setBody(BodyDef.BodyType.StaticBody);
         setShape();
@@ -33,10 +32,7 @@ public class Enemy extends Actor {
         this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
         this.fixtureDef.shape = this.shape;
         this.body.createFixture(this.fixtureDef);
+        this.fixtureDef.isSensor = true;
         this.shape.dispose();
-    }
-
-    public boolean isKillable() {
-        return this.killable;
     }
 }

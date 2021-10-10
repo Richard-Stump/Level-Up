@@ -3,17 +3,23 @@ package com.mygdx.nextlevel.actors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
-public class Enemy extends Actor {
-    boolean killable;
+public class Block extends Actor {
+    boolean breakable;
+    boolean spawnItem;
+    boolean spawned;
 
-    public Enemy(Texture texture, World world, Vector2 position, float density, float restitution) {
+    public Block(Texture texture, World world, Vector2 position, float density, float restitution, boolean breakable, boolean spawnItem) {
         this.world = world;
-        sprite = new Sprite(texture);
-        sprite.setSize(64.0F, 64.0F);
-        this.killable = true;
-
+        this.sprite = new Sprite(texture);
+        this.sprite.setSize(64.0F, 64.0F);
+        this.breakable = breakable;
+        this.spawnItem = spawnItem;
+        this.spawned = false;
         super.setPosition(position.x, position.y);
         super.setBody(BodyDef.BodyType.StaticBody);
         setShape();
@@ -36,7 +42,21 @@ public class Enemy extends Actor {
         this.shape.dispose();
     }
 
-    public boolean isKillable() {
-        return this.killable;
+    public boolean isBreakable() {
+        return this.breakable;
     }
+
+    public boolean canSpawnItem() {
+        return this.spawnItem;
+    }
+
+    public boolean isSpawned() {
+        return this.spawned;
+    }
+
+    public void setSpawned(boolean set) {
+        this.spawned = set;
+    }
+
+
 }
