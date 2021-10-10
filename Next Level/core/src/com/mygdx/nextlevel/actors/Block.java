@@ -3,22 +3,25 @@ package com.mygdx.nextlevel.actors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
-import com.mygdx.nextlevel.screens.GameScreen;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
-public class Player extends Actor {
-    Vector2 spawnpoint;
-    int lives;
+public class Block extends Actor {
+    boolean breakable;
+    boolean spawnItem;
+    boolean spawned;
 
-    public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
+    public Block(Texture texture, World world, Vector2 position, float density, float restitution, boolean breakable, boolean spawnItem) {
         this.world = world;
         this.sprite = new Sprite(texture);
         this.sprite.setSize(64.0F, 64.0F);
-        this.lives = 3;
-
+        this.breakable = breakable;
+        this.spawnItem = spawnItem;
+        this.spawned = false;
         super.setPosition(position.x, position.y);
-        this.spawnpoint = this.worldSpawn;
-        super.setBody(BodyDef.BodyType.DynamicBody);
+        super.setBody(BodyDef.BodyType.StaticBody);
         setShape();
         setFixture(density, restitution);
     }
@@ -32,32 +35,28 @@ public class Player extends Actor {
         this.fixtureDef = new FixtureDef();
         this.fixtureDef.density = density;
         this.fixtureDef.restitution = restitution;
-        this.fixtureDef.filter.categoryBits = PHYSICS_ENTITY;
+        this.fixtureDef.filter.categoryBits = BLOCK_ENTITY;
         this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
         this.fixtureDef.shape = this.shape;
         this.body.createFixture(this.fixtureDef);
-        this.fixtureDef.shape.dispose();
+        this.shape.dispose();
     }
 
-    public void setSpawnpoint(Vector2 position) {
-        this.spawnpoint = position;
+    public boolean isBreakable() {
+        return this.breakable;
     }
 
-    public Vector2 getSpawnpoint() {
-        return this.spawnpoint;
+    public boolean canSpawnItem() {
+        return this.spawnItem;
     }
 
-    public int getLives() { return this.lives; }
-
-    public void addLife() {
-        this.lives++;
+    public boolean isSpawned() {
+        return this.spawned;
     }
 
-    public void subLife() { this.lives--; }
-
-    public Vector2 getWorldSpawn() { return this.worldSpawn; }
-
-    public void setTexture(Texture texture) {
-        this.sprite.setTexture(texture);
+    public void setSpawned(boolean set) {
+        this.spawned = set;
     }
+
+
 }
