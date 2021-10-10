@@ -20,9 +20,9 @@ import com.mygdx.nextlevel.NextLevel;
 
 public class MainMenuScreen implements Screen {
 
-    private SpriteBatch batch;
-    protected Stage stage;
-    private Viewport viewport;
+    public SpriteBatch batch;
+    public Stage stage;
+    public Viewport viewport;
     private OrthographicCamera camera;
     private TextureAtlas atlas;
     protected Skin skin;
@@ -32,7 +32,7 @@ public class MainMenuScreen implements Screen {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
 
-        batch = new SpriteBatch();
+        batch = game.batch;
         camera = new OrthographicCamera();
         viewport = new FitViewport(960, 500, camera);
         viewport.apply();
@@ -79,7 +79,7 @@ public class MainMenuScreen implements Screen {
         tutorialButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new TutorialScreen());
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new TutorialScreen(game));
             }
         });
         exitButton.addListener(new ClickListener(){
