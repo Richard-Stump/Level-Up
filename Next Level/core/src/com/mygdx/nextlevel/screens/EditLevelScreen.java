@@ -30,7 +30,7 @@ import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPane.TabbedPaneStyle;
 import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneAdapter;
 import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneListener;
 import com.mygdx.nextlevel.NextLevel;
-import com.kotcrab.*;
+//import com.kotcrab.*;
 
 import static com.badlogic.gdx.scenes.scene2d.ui.Cell.defaults;
 

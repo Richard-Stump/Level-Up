@@ -145,15 +145,17 @@ public class GameScreen implements Screen, InputProcessor {
                     } else if (contact.getFixtureB().getBody().getUserData().equals(item) && !touchedPowerUp) {
                         touchedPowerUp = true;
                         player.setPowerUp(true);
+                        item.setDeleteSprite(true);
                     } else if (contact.getFixtureB().getBody().getUserData().equals(enemy) && player.hasPowerUp()) {
                         System.out.println("Touching enemy and has pwoer up");
                         player.setPowerUp(false);
+                    } else if (contact.getFixtureB().getBody().getUserData().equals(enemy)) {
+                        enemy.setDeleteSprite(true);
+                    } else if (contact.getFixtureB().getBody().getUserData().equals(block1)) {
+                        block1.setDeleteSprite(true);
                     }
-//					System.out.println("Touching enemy");
-//					System.out.println("Killed enemy");
                 }
                 if (contact.getFixtureB().getBody().getUserData().equals(player)) {
-//					System.out.println("Touching ground");
                     player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
                 }
                 landed = true;
@@ -173,7 +175,6 @@ public class GameScreen implements Screen, InputProcessor {
                 if (contact.getFixtureA().getBody().getUserData().equals(player)) {
                     if (contact.getFixtureB().getBody().getUserData().equals(enemy) || contact.getFixtureB().getBody().getUserData().equals(block1) || contact.getFixtureB().getBody().getUserData().equals(item)) {
                         deleteList.add(contact.getFixtureB().getBody());
-//						spriteDelList.add(enemy.getSprite());
                     }
                 }
             }
@@ -260,7 +261,9 @@ public class GameScreen implements Screen, InputProcessor {
 
         batch.begin();
         if (drawSprite) {
-            batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
+            if (!enemy.getDeleteSprite()) {
+                batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
+            }
             batch.draw(checkpoint.getSprite(), checkpoint.getSprite().getX(), checkpoint.getSprite().getY(), checkpoint.getSprite().getOriginX(), checkpoint.getSprite().getOriginY(), checkpoint.getSprite().getWidth(), checkpoint.getSprite().getHeight(), checkpoint.getSprite().getScaleX(), checkpoint.getSprite().getScaleY(), checkpoint.getSprite().getRotation());
             if (touchedPowerUp && player.hasPowerUp()) {
                 player.setTexture(new Texture("paragoomba.png"));
@@ -269,11 +272,15 @@ public class GameScreen implements Screen, InputProcessor {
                 player.setTexture(new Texture("goomba.png"));
                 batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
             }
-            batch.draw(block1.getSprite(), block1.getSprite().getX(), block1.getSprite().getY(), block1.getSprite().getOriginX(), block1.getSprite().getOriginY(), block1.getSprite().getWidth(), block1.getSprite().getHeight(), block1.getSprite().getScaleX(), block1.getSprite().getScaleY(), block1.getSprite().getRotation());
+            if (!block1.getDeleteSprite()) {
+                batch.draw(block1.getSprite(), block1.getSprite().getX(), block1.getSprite().getY(), block1.getSprite().getOriginX(), block1.getSprite().getOriginY(), block1.getSprite().getWidth(), block1.getSprite().getHeight(), block1.getSprite().getScaleX(), block1.getSprite().getScaleY(), block1.getSprite().getRotation());
+            }
             batch.draw(block2.getSprite(), block2.getSprite().getX(), block2.getSprite().getY(), block2.getSprite().getOriginX(), block2.getSprite().getOriginY(), block2.getSprite().getWidth(), block2.getSprite().getHeight(), block2.getSprite().getScaleX(), block2.getSprite().getScaleY(), block2.getSprite().getRotation());
             if (touchedItemBlock) {
-                batch.draw(item.getSprite(), item.getSprite().getX(), item.getSprite().getY(), item.getSprite().getOriginX(), item.getSprite().getOriginY(), item.getSprite().getWidth(), item.getSprite().getHeight(), item.getSprite().getScaleX(), item.getSprite().getScaleY(), item.getSprite().getRotation());
-                block2.setSpawned(true);
+                if (!item.getDeleteSprite()) {
+                    batch.draw(item.getSprite(), item.getSprite().getX(), item.getSprite().getY(), item.getSprite().getOriginX(), item.getSprite().getOriginY(), item.getSprite().getWidth(), item.getSprite().getHeight(), item.getSprite().getScaleX(), item.getSprite().getScaleY(), item.getSprite().getRotation());
+                    block2.setSpawned(true);
+                }
             }
         }
         batch.end();

@@ -17,8 +17,10 @@ public class Actor {
     FixtureDef fixtureDef;
     Body body;
     World world;
+    boolean deleteSprite;
 
     void setPosition(float x, float y) {
+        this.deleteSprite = false;
         this.sprite.setPosition(-this.sprite.getWidth()/2.0F + x, -this.sprite.getHeight()/2.0F + y);
         this.worldSpawn.x = x;
         this.worldSpawn.y = y;
@@ -34,6 +36,13 @@ public class Actor {
 
     public Sprite getSprite() {
         return this.sprite;
+    }
+
+    public boolean getDeleteSprite() {
+        return this.deleteSprite;
+    }
+    public void setDeleteSprite(boolean set) {
+        this.deleteSprite = set;
     }
 
     public Body getBody() {
