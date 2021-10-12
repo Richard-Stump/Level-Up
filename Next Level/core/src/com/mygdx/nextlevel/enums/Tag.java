@@ -1,6 +1,7 @@
-package com.mygdx.nextlevel;
+package com.mygdx.nextlevel.enums;
 
 public enum Tag {
+    NONE,
     STANDARD,
     PUZZLE,
     SPEEDRUN,
