@@ -58,8 +58,6 @@ public class MainMenuScreen implements Screen {
         mainTable.top();
 
         //Create buttons
-        //TODO: Remove postLevelCreation button
-        TextButton post = new TextButton("Post", skin);
         TextButton playButton = new TextButton("Play", skin);
         TextButton createLevelButton = new TextButton("Create Level", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
@@ -91,21 +89,9 @@ public class MainMenuScreen implements Screen {
             }
         });
 
-        post.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new PostLevelCreationMenuScreen(game));
-            }
-        });
-
-
-
         //Add buttons to table
         Label title = new Label("Next Level", skin);
         mainTable.add(title).colspan(3).center().expandY();
-        mainTable.row();
-
-        mainTable.add(post);
         mainTable.row();
 
         mainTable.add(playButton);
