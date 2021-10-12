@@ -34,6 +34,8 @@ public class Tilemap {
                 { 0, 0, 0, 0, 0, 0, 0, 0 },
                 { 1, 1, 1, 1, 1, 1, 1, 1 },
         };
+
+        init(null);
     }
 
     public TiledMap createMap(){
@@ -54,10 +56,15 @@ public class Tilemap {
         final Json json = new Json();
 
 
-
+        initMap();
     }
 
     private void initMap(){
+        //Create a tileset
+        tileSet = new TiledMapTileSet();
+        int tileId = 0;
+
+
         //Create an empty map
         map = new TiledMap();
         mapLayer = new TiledMapTileLayer(mapWidth, mapHeight, 64, 64);
