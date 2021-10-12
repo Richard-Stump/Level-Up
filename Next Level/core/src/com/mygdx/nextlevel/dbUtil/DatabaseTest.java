@@ -1,8 +1,7 @@
 package com.mygdx.nextlevel.dbUtil;
 
-import com.badlogic.gdx.math.Interpolation;
 import com.mygdx.nextlevel.LevelInfo;
-import com.mygdx.nextlevel.Tag;
+import com.mygdx.nextlevel.enums.Tag;
 import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 
 import java.sql.Date;
