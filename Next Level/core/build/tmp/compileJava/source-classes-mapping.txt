@@ -2,10 +2,10 @@ com/mygdx/nextlevel/actors/Item.java
  com.mygdx.nextlevel.actors.Item
 com/mygdx/nextlevel/FixtureNode.java
  com.mygdx.nextlevel.FixtureNode
-com/mygdx/nextlevel/TileSetConfig.java
- com.mygdx.nextlevel.TileSetConfig
-com/mygdx/nextlevel/Tile.java
- com.mygdx.nextlevel.Tile
+com/mygdx/nextlevel/PhysicsShapeCache.java
+ com.mygdx.nextlevel.PhysicsShapeCache
+com/mygdx/nextlevel/dbHandlers/CreatedLevelsDB.java
+ com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB
 com/mygdx/nextlevel/PolygonNode.java
  com.mygdx.nextlevel.PolygonNode
 com/mygdx/nextlevel/BodyDefNode.java
@@ -78,9 +78,7 @@ com/mygdx/nextlevel/screens/EditLevelScreen.java
  com.mygdx.nextlevel.screens.TestTab
 com/mygdx/nextlevel/WorldContactListener.java
  com.mygdx.nextlevel.WorldContactListener
-com/mygdx/nextlevel/dbHandlers/CreatedLevelsDB.java
- com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB
-com/mygdx/nextlevel/PhysicsShapeCache.java
- com.mygdx.nextlevel.PhysicsShapeCache
-com/mygdx/nextlevel/Tilemap.java
- com.mygdx.nextlevel.Tilemap
+com/mygdx/nextlevel/Tiles/TileSetConfig.java
+ com.mygdx.nextlevel.Tiles.TileSetConfig
+com/mygdx/nextlevel/Tiles/Tilemap.java
+ com.mygdx.nextlevel.Tiles.Tilemap

@@ -1,4 +1,4 @@
-package com.mygdx.nextlevel;
+package com.mygdx.nextlevel.Tiles;
 
 import com.badlogic.gdx.utils.Array;
 

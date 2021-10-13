@@ -1,4 +1,4 @@
-package com.mygdx.nextlevel;
+package com.mygdx.nextlevel.Tiles;
 
 
 import com.badlogic.gdx.Gdx;
@@ -42,8 +42,17 @@ public class Tilemap {
 
     public void parseTileMapFile(final FileHandle tmFile){
         //Create tile array
-
-
+        String input = tmFile.readString();
+        String[] info = input.split("\\r?\\n");
+        mapHeight = Integer.parseInt(info[0]);
+        mapWidth = Integer.parseInt(info[1]);
+        final int[][] tiles = new int[mapHeight][mapWidth];
+        for (int i = 2; i < info.length; i++) {
+            String[] buff = info[i].split(" ");
+            for (int j = 0; j < mapWidth; j++) {
+                tiles[i-2][j] = Integer.parseInt(buff[j]);
+            }
+        }
     }
 
     private void init(FileHandle tsConfigFile){
