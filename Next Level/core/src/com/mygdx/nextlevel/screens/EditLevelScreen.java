@@ -12,9 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -31,6 +29,8 @@ import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneAdapter;
 import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneListener;
 import com.mygdx.nextlevel.NextLevel;
 import com.kotcrab.*;
+
+import java.util.ArrayList;
 
 import static com.badlogic.gdx.scenes.scene2d.ui.Cell.defaults;
 
@@ -50,6 +50,9 @@ public class EditLevelScreen implements Screen {
     private final Color backgroundColor = new Color(0.1f, 0.1f, 0.1f,1.0f);
     private final Color gridColor = new Color(0.2f, 0.2f, 0.2f,1.0f);
 
+    public static final int STAGE_WIDTH = 1920;
+    public static final int STAGE_HEIGHT = 1000;
+
     public EditLevelScreen(NextLevel game) {
         this.game = game;
         this.screenWidth = Gdx.graphics.getWidth();
@@ -66,7 +69,7 @@ public class EditLevelScreen implements Screen {
         camera.update();
 
         //Set up the viewport
-        viewport = new FitViewport(960, 500, camera);
+        viewport = new FitViewport(STAGE_WIDTH, STAGE_HEIGHT, camera);
         viewport.apply();
 
         batch = game.batch;
@@ -74,7 +77,7 @@ public class EditLevelScreen implements Screen {
 
         // For some reason the tabbed pane won't work with the other skin.
         // TODO: Figure out how to use the same skin as the main menu
-        VisUI.load(VisUI.SkinScale.X1);
+        VisUI.load(VisUI.SkinScale.X2);
     }
 
 
@@ -90,6 +93,8 @@ public class EditLevelScreen implements Screen {
 
         TabWindow win = new TabWindow();
         stage.addActor(win);
+        MenuWindow win2 = new MenuWindow();
+        stage.addActor(win2);
 
         stage.addActor(table);
     }
@@ -130,6 +135,71 @@ public class EditLevelScreen implements Screen {
     }
 }
 
+class MenuWindow extends VisWindow {
+    Button addAssetButton;
+    Button addFinishFlagButton;
+    Button levelSettingsButton;
+    Button levelInfoButton;
+    Button testLevelButton;
+    Button saveAndExitButton;
+
+    final float BUTTON_WIDTH = 160.0f;
+    final float BUTTON_PADDING = 10.0f;
+
+    public MenuWindow() {
+        super("Menu:");
+
+        VisTable table = new VisTable();
+
+        constructButtons(table);
+
+        add(table).fill();
+
+        int numButtons = getButtonList().size();
+
+        float width = 50 + BUTTON_WIDTH * numButtons + BUTTON_PADDING * numButtons;
+        float x = EditLevelScreen.STAGE_WIDTH - width;
+        float y = EditLevelScreen.STAGE_HEIGHT;
+
+        setSize(width, 150);
+        setPosition(x, y);
+    }
+
+    private void constructButtons(Table table) {
+        ArrayList<Button> buttons = getButtonList();
+
+        // List of titles for the buttons. There should be one here for each button
+        String[] buttonTitles = {
+            "Add\nAssets",
+            "Add Finish\nFlag",
+            "Level\nSettings",
+            "Edit Level\nInfo",
+            "Test\nLevel",
+            "Save and\nExit",
+        };
+
+        for(int i = 0; i < buttons.size(); i++) {
+            Button b = buttons.get(i);
+
+            b = new TextButton(buttonTitles[i], VisUI.getSkin());
+            table.add(b).expand().fill().pad(BUTTON_PADDING).width(BUTTON_WIDTH);
+        }
+    }
+
+    private ArrayList<Button> getButtonList() {
+        ArrayList<Button> l = new ArrayList<Button>();
+
+        l.add(addAssetButton);
+        l.add(addFinishFlagButton);
+        l.add(levelSettingsButton);
+        l.add(levelInfoButton);
+        l.add(saveAndExitButton);
+        l.add(testLevelButton);
+
+        return l;
+    }
+}
+
 // This window class draws and handles the tabbed pane which will let players select
 // the various objects to place in their level.
 // This is incomplete!
@@ -166,8 +236,8 @@ class TabWindow extends VisWindow {
         pane.add(new TestTab("Actors"));
         pane.add(new TestTab("Enemies"));
 
-        setSize(300, 500);
-        setPosition(0, 0);
+        setSize(400, 500 * 2 - 50);
+        setPosition(0, -50);
     }
 }
 

@@ -29,7 +29,6 @@ import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
-import jdk.internal.org.jline.utils.DiffHelper;
 
 import java.sql.Date;
 import java.sql.SQLException;
