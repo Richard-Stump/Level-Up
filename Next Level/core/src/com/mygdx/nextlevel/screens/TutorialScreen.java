@@ -48,12 +48,15 @@ public class TutorialScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         //Create Table
+        //Table container = new Table();
         Table table = new Table();
         //Set table to fill stage
         table.setFillParent(true);
         //Set alignment of contents in the table.
         table.top();
 
+        //ScrollPane scrollPane = new ScrollPane(table, skin);
+        //container.add(scrollPane).expandY();
 
         // Back button          Tutorial
         //
@@ -119,6 +122,7 @@ public class TutorialScreen implements Screen {
 
         //Add table to stage
         stage.addActor(table);
+        //stage.addActor(container);
     }
 
     @Override
