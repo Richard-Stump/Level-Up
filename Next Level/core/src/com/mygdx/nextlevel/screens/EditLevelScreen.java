@@ -1,5 +1,6 @@
 package com.mygdx.nextlevel.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -7,26 +8,19 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.utils.viewport.*;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.util.TableUtils;
-import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisWindow;
-import com.kotcrab.vis.ui.widget.tabbedpane.Tab;
-import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPane;
+import com.kotcrab.vis.ui.widget.tabbedpane.*;
 import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPane.TabbedPaneStyle;
-import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneAdapter;
-import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneListener;
 import com.mygdx.nextlevel.NextLevel;
 import com.kotcrab.*;
 
@@ -77,7 +71,8 @@ public class EditLevelScreen implements Screen {
 
         // For some reason the tabbed pane won't work with the other skin.
         // TODO: Figure out how to use the same skin as the main menu
-        VisUI.load(VisUI.SkinScale.X2);
+        if(!VisUI.isLoaded())
+            VisUI.load(VisUI.SkinScale.X2);
     }
 
 
@@ -86,8 +81,21 @@ public class EditLevelScreen implements Screen {
         //Stage should control input:
         Gdx.input.setInputProcessor(stage);
 
+        //back button
+        TextButton backButton = new TextButton("Back", skin);
+
+        //back button listener
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+            }
+        });
+
         final VisTable table = new VisTable();
         table.setFillParent(true);
+        table.add(backButton).top().padLeft(300);
+
         table.add(new Label("Create Level", VisUI.getSkin())).center().expand();
         table.row();
 

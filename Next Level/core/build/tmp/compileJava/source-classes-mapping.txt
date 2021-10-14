@@ -70,6 +70,7 @@ com/mygdx/nextlevel/screens/MainMenuScreen.java
  com.mygdx.nextlevel.screens.MainMenuScreen$4
 com/mygdx/nextlevel/screens/EditLevelScreen.java
  com.mygdx.nextlevel.screens.EditLevelScreen
+ com.mygdx.nextlevel.screens.EditLevelScreen$1
  com.mygdx.nextlevel.screens.MenuWindow
  com.mygdx.nextlevel.screens.TabWindow
  com.mygdx.nextlevel.screens.TabWindow$1
