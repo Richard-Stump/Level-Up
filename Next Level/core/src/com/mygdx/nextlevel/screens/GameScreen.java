@@ -35,10 +35,13 @@ public class GameScreen implements Screen, InputProcessor {
     OrthographicCamera camera;
     ArrayList<Body> deleteList = new ArrayList<>();
     ArrayList<Sprite> spriteDelList = new ArrayList<>();
+    boolean destroyItem = false;
     boolean facingRight = true;
     boolean touchedItemBlock = false;
     boolean touchedPowerUp = false;
     float time = 0;
+    boolean itemConsumed = false;
+    boolean itemSpawned = false;
 
     float torque = 0.0f;
     boolean drawSprite = true;
@@ -73,9 +76,9 @@ public class GameScreen implements Screen, InputProcessor {
         Vector2 blockSpawn2 = new Vector2(200f, -100f);
         this.block1 = new Block(blockTexture1, this.world, blockSpawn, 100f, 0.5f, true, false);
         this.block2 = new Block(blockTexture2, this.world, blockSpawn2, 100f, 0.5f, false, true);
-        final Texture itemTexture = new Texture("mushroom.jpeg");
-        Vector2 itemSpawn = new Vector2(200f, 0f);
-        this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
+//        final Texture itemTexture = new Texture("mushroom.jpeg");
+//        Vector2 itemSpawn = new Vector2(200f, 0f);
+//        this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
 
         //Bottom edge of screen
         BodyDef edgeBodyDef = new BodyDef();
@@ -121,7 +124,14 @@ public class GameScreen implements Screen, InputProcessor {
         this.checkpoint.getBody().setUserData(this.checkpoint);
         this.block1.getBody().setUserData(this.block1);
         this.block2.getBody().setUserData(this.block2);
-        this.item.getBody().setUserData(this.item);
+
+
+//        if (touchedItemBlock) {
+//            final Texture itemTexture = new Texture("mushroom.jpeg");
+//            Vector2 itemSpawn = new Vector2(200f, 0f);
+//            this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
+//            this.item.getBody().setUserData(this.item);
+//        }
 
         //Hud
         hud = new Hud(game.batch);
@@ -146,9 +156,13 @@ public class GameScreen implements Screen, InputProcessor {
                         touchedPowerUp = true;
                         player.setPowerUp(true);
                         item.setDeleteSprite(true);
+                        itemConsumed = true;
+                    } else if (contact.getFixtureB().getBody().getUserData().equals(item) && touchedPowerUp) {
+                        destroyItem = true;
                     } else if (contact.getFixtureB().getBody().getUserData().equals(enemy) && player.hasPowerUp()) {
-                        System.out.println("Touching enemy and has pwoer up");
+//                        System.out.println("Touching enemy and has pwoer up");
                         player.setPowerUp(false);
+                        enemy.setDeleteSprite(true);
                     } else if (contact.getFixtureB().getBody().getUserData().equals(enemy)) {
                         enemy.setDeleteSprite(true);
                     } else if (contact.getFixtureB().getBody().getUserData().equals(block1)) {
@@ -173,7 +187,9 @@ public class GameScreen implements Screen, InputProcessor {
             @Override
             public void postSolve(Contact contact, ContactImpulse impulse) {
                 if (contact.getFixtureA().getBody().getUserData().equals(player)) {
-                    if (contact.getFixtureB().getBody().getUserData().equals(enemy) || contact.getFixtureB().getBody().getUserData().equals(block1) || contact.getFixtureB().getBody().getUserData().equals(item)) {
+                    if (contact.getFixtureB().getBody().getUserData().equals(enemy) || contact.getFixtureB().getBody().getUserData().equals(block1)) {
+                        deleteList.add(contact.getFixtureB().getBody());
+                    } else if (contact.getFixtureB().getBody().getUserData().equals(item) && destroyItem) {
                         deleteList.add(contact.getFixtureB().getBody());
                     }
                 }
@@ -237,10 +253,12 @@ public class GameScreen implements Screen, InputProcessor {
 
     }
 
+
+
     public void render(float delta) {
 //Advance frame
         camera.update();
-        world.step(1f/60.0f, 6, 2);
+//        world.step(1f/60.0f, 6, 2);
 
         //Apply Torque
 //		player.getBody().applyTorque(torque,true);
@@ -252,7 +270,14 @@ public class GameScreen implements Screen, InputProcessor {
 //		checkpoint.getSprite().setPosition((checkpoint.getBody().getPosition().x * PIXELS_TO_METERS) - checkpoint.getSprite().getWidth()/2, (checkpoint.getBody().getPosition().y * PIXELS_TO_METERS) - checkpoint.getSprite().getHeight()/2);
         block1.getSprite().setPosition((block1.getBody().getPosition().x * PIXELS_TO_METERS) - block1.getSprite().getWidth()/2, (block1.getBody().getPosition().y * PIXELS_TO_METERS) - block1.getSprite().getHeight()/2);
         block2.getSprite().setPosition((block2.getBody().getPosition().x * PIXELS_TO_METERS) - block2.getSprite().getWidth()/2, (block2.getBody().getPosition().y * PIXELS_TO_METERS) - block2.getSprite().getHeight()/2);
-        item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth()/2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight()/2);
+//        item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
+        if (touchedItemBlock && !itemConsumed) {
+            final Texture itemTexture = new Texture("mushroom.jpeg");
+            Vector2 itemSpawn = new Vector2(200f, 0f);
+            this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
+            this.item.getBody().setUserData(this.item);
+            item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
+        }
 
         Gdx.gl.glClearColor(1,1,1,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -313,7 +338,7 @@ public class GameScreen implements Screen, InputProcessor {
                 deleteList.remove(i);
             }
         }
-
+        world.step(1f/60.0f, 6, 2);
         batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
     }

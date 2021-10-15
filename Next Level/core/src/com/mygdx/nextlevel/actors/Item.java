@@ -9,9 +9,11 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Item extends Actor {
+    boolean destroy;
     public Item(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
         this.sprite = new Sprite(texture);
+        this.destroy = false;
         this.sprite.setSize(64.0F, 64.0F);
         super.setPosition(position.x, position.y);
         super.setBody(BodyDef.BodyType.StaticBody);
@@ -34,5 +36,13 @@ public class Item extends Actor {
         this.body.createFixture(this.fixtureDef);
         this.fixtureDef.isSensor = true;
         this.shape.dispose();
+    }
+
+    public void setDestroy(boolean destroy) {
+        this.destroy = destroy;
+    }
+
+    private boolean getDestroy() {
+        return this.destroy;
     }
 }
