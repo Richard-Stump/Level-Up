@@ -11,6 +11,7 @@ public class Player extends Actor {
     Vector2 spawnpoint;
     int lives;
     boolean powerUp;
+    Vector2 position;
 
     public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;

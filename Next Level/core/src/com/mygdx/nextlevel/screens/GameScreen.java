@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.WorldContactListener;
@@ -99,7 +101,7 @@ public class GameScreen implements Screen, InputProcessor {
         this.bodyEdgeScreen.createFixture(fixtureDefEdge);
         this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
 
-        edgeShape.set(-w / 2.0F, -h / 2.0F, -w / 2.0F, h / 2.0F);
+        /*edgeShape.set(-w / 2.0F, -h / 2.0F, -w / 2.0F, h / 2.0F);
         fixtureDefEdge.shape = edgeShape;
         this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
         this.bodyEdgeScreen.createFixture(fixtureDefEdge);
@@ -114,7 +116,7 @@ public class GameScreen implements Screen, InputProcessor {
         edgeShape.set(w / 2.0F, -h / 2.0F, w / 2.0F, h / 2.0F);
         fixtureDefEdge.shape = edgeShape;
         this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
-        this.bodyEdgeScreen.createFixture(fixtureDefEdge);
+        this.bodyEdgeScreen.createFixture(fixtureDefEdge);*/
         edgeShape.dispose();
 
         Gdx.input.setInputProcessor(this);
@@ -198,7 +200,8 @@ public class GameScreen implements Screen, InputProcessor {
 
         //Create box2bug render
         this.debugRenderer = new Box2DDebugRenderer();
-        this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        this.camera = new OrthographicCamera();
+        camera.setToOrtho(false,Gdx.graphics.getWidth() , Gdx.graphics.getHeight() );
     }
 
     public Player getPlayer() {
@@ -257,6 +260,18 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void render(float delta) {
 //Advance frame
+        /*float targetX = camera.position.x;
+
+        camera.position.x = MathUtils.lerp(camera.position.x, targetX, 0.1f);
+        if (Math.abs(camera.position.x - targetX) < 0.1f) {
+            camera.position.x = targetX;
+        }*/
+
+        Vector3 position = camera.position;
+        position.x = player.getBody().getPosition().x;
+        position.y = 4;
+        camera.position.set(position);
+
         camera.update();
 //        world.step(1f/60.0f, 6, 2);
 
@@ -344,7 +359,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public void resize(int width, int height) {
-
+        //camera.setToOrtho(false, width , height );
     }
 
     public void pause() {

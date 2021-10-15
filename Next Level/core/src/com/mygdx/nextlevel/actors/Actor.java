@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
-public class Actor {
+public class Actor extends Sprite {
     final float PIXELS_TO_METERS = 100.0f;
     final short PHYSICS_ENTITY = 0x1; //0001
     final short WORLD_ENTITY = 0x1 << 1; //0010
@@ -19,7 +19,8 @@ public class Actor {
     World world;
     boolean deleteSprite;
 
-    void setPosition(float x, float y) {
+    @Override
+    public void setPosition(float x, float y) {
         this.deleteSprite = false;
         this.sprite.setPosition(-this.sprite.getWidth()/2.0F + x, -this.sprite.getHeight()/2.0F + y);
         this.worldSpawn.x = x;
