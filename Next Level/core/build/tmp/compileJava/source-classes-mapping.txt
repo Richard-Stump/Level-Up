@@ -2,10 +2,10 @@ com/mygdx/nextlevel/actors/Item.java
  com.mygdx.nextlevel.actors.Item
 com/mygdx/nextlevel/FixtureNode.java
  com.mygdx.nextlevel.FixtureNode
-com/mygdx/nextlevel/PolygonNode.java
- com.mygdx.nextlevel.PolygonNode
 com/mygdx/nextlevel/BodyDefNode.java
  com.mygdx.nextlevel.BodyDefNode
+com/mygdx/nextlevel/PolygonNode.java
+ com.mygdx.nextlevel.PolygonNode
 com/mygdx/nextlevel/CircleNode.java
  com.mygdx.nextlevel.CircleNode
 com/mygdx/nextlevel/enums/Difficulty.java
@@ -23,10 +23,10 @@ com/mygdx/nextlevel/screens/GameScreen.java
  com.mygdx.nextlevel.screens.GameScreen$1
 com/mygdx/nextlevel/actors/Player.java
  com.mygdx.nextlevel.actors.Player
-com/mygdx/nextlevel/MetadataNode.java
- com.mygdx.nextlevel.MetadataNode
 com/mygdx/nextlevel/actors/Actor.java
  com.mygdx.nextlevel.actors.Actor
+com/mygdx/nextlevel/MetadataNode.java
+ com.mygdx.nextlevel.MetadataNode
 com/mygdx/nextlevel/enums/Tag.java
  com.mygdx.nextlevel.enums.Tag
 com/mygdx/nextlevel/screens/TutorialScreen.java
@@ -40,10 +40,10 @@ com/mygdx/nextlevel/Utility.java
  com.mygdx.nextlevel.Utility
 com/mygdx/nextlevel/hud/Hud.java
  com.mygdx.nextlevel.hud.Hud
-com/mygdx/nextlevel/screens/editor/TitlelessWindow.java
- com.mygdx.nextlevel.screens.editor.TitlelessWindow
 com/mygdx/nextlevel/Level.java
  com.mygdx.nextlevel.Level
+com/mygdx/nextlevel/screens/editor/TitlelessWindow.java
+ com.mygdx.nextlevel.screens.editor.TitlelessWindow
 com/mygdx/nextlevel/BodyNode.java
  com.mygdx.nextlevel.BodyNode
 com/mygdx/nextlevel/LevelInfo.java
@@ -56,12 +56,12 @@ com/mygdx/nextlevel/dbHandlers/DownloadedLevelsDB.java
  com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB
 com/mygdx/nextlevel/actors/Checkpoint.java
  com.mygdx.nextlevel.actors.Checkpoint
+com/mygdx/nextlevel/dbUtil/DatabaseTest.java
+ com.mygdx.nextlevel.dbUtil.DatabaseTest
 com/mygdx/nextlevel/NextLevel.java
  com.mygdx.nextlevel.NextLevel
 com/mygdx/nextlevel/Tiles/TileSetConfig.java
  com.mygdx.nextlevel.Tiles.TileSetConfig
-com/mygdx/nextlevel/dbUtil/DatabaseTest.java
- com.mygdx.nextlevel.dbUtil.DatabaseTest
 com/mygdx/nextlevel/screens/MainMenuScreen.java
  com.mygdx.nextlevel.screens.MainMenuScreen
  com.mygdx.nextlevel.screens.MainMenuScreen$1
@@ -86,3 +86,9 @@ com/mygdx/nextlevel/screens/PostLevelCreationMenuScreen.java
  com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$1
  com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$2
  com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$3
+com/mygdx/nextlevel/JUnitTests/LevelsDBControllerTest.java
+ com.mygdx.nextlevel.JUnitTests.LevelsDBControllerTest
+com/mygdx/nextlevel/TestRunner.java
+ com.mygdx.nextlevel.TestRunner
+com/mygdx/nextlevel/JUnitTests/CreatedLevelsDBTest.java
+ com.mygdx.nextlevel.JUnitTests.CreatedLevelsDBTest
