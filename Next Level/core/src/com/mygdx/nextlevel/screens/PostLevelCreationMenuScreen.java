@@ -149,7 +149,9 @@ public class PostLevelCreationMenuScreen implements Screen {
                 dbCreated.addLevelInfo(newLevelInfo);
                 dbDownloaded.addLevelInfo(newLevelInfo);
 
-//                LevelInfo itemInDatabase = dbCreated.searchByID(newLevelInfo.getId());
+
+                LevelInfo itemInDatabase = dbCreated.searchByID(newLevelInfo.getId());
+
                 System.out.printf("Success, level %s was created with ID %s\n", itemInDatabase.getTitle(), itemInDatabase.getId());
 
                 try {

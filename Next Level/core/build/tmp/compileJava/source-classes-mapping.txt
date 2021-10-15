@@ -2,6 +2,7 @@ com/mygdx/nextlevel/actors/Item.java
  com.mygdx.nextlevel.actors.Item
 com/mygdx/nextlevel/FixtureNode.java
  com.mygdx.nextlevel.FixtureNode
+<<<<<<< HEAD
 com/mygdx/nextlevel/Tile.java
  com.mygdx.nextlevel.Tile
 com/mygdx/nextlevel/PolygonNode.java
@@ -10,10 +11,21 @@ com/mygdx/nextlevel/BodyDefNode.java
  com.mygdx.nextlevel.BodyDefNode
 com/mygdx/nextlevel/Tilemap.java
  com.mygdx.nextlevel.Tilemap
+=======
+com/mygdx/nextlevel/BodyDefNode.java
+ com.mygdx.nextlevel.BodyDefNode
+com/mygdx/nextlevel/PolygonNode.java
+ com.mygdx.nextlevel.PolygonNode
+>>>>>>> development
 com/mygdx/nextlevel/CircleNode.java
  com.mygdx.nextlevel.CircleNode
 com/mygdx/nextlevel/enums/Difficulty.java
  com.mygdx.nextlevel.enums.Difficulty
+<<<<<<< HEAD
+=======
+com/mygdx/nextlevel/Tiles/Tilemap.java
+ com.mygdx.nextlevel.Tiles.Tilemap
+>>>>>>> development
 com/mygdx/nextlevel/actors/Block.java
  com.mygdx.nextlevel.actors.Block
 com/mygdx/nextlevel/screens/CreateLevelMenuScreen.java
@@ -25,6 +37,7 @@ com/mygdx/nextlevel/screens/GameScreen.java
  com.mygdx.nextlevel.screens.GameScreen$1
 com/mygdx/nextlevel/actors/Player.java
  com.mygdx.nextlevel.actors.Player
+<<<<<<< HEAD
 com/mygdx/nextlevel/MetadataNode.java
  com.mygdx.nextlevel.MetadataNode
 com/mygdx/nextlevel/actors/Actor.java
@@ -35,18 +48,47 @@ com/mygdx/nextlevel/actors/Enemy.java
  com.mygdx.nextlevel.actors.Enemy
 com/mygdx/nextlevel/hud/Hud.java
  com.mygdx.nextlevel.hud.Hud
+=======
+com/mygdx/nextlevel/actors/Actor.java
+ com.mygdx.nextlevel.actors.Actor
+com/mygdx/nextlevel/MetadataNode.java
+ com.mygdx.nextlevel.MetadataNode
+com/mygdx/nextlevel/enums/Tag.java
+ com.mygdx.nextlevel.enums.Tag
+com/mygdx/nextlevel/screens/TutorialScreen.java
+ com.mygdx.nextlevel.screens.TutorialScreen
+ com.mygdx.nextlevel.screens.TutorialScreen$1
+com/mygdx/nextlevel/actors/Enemy.java
+ com.mygdx.nextlevel.actors.Enemy
+com/mygdx/nextlevel/screens/editor/Button.java
+ com.mygdx.nextlevel.screens.editor.Button
+com/mygdx/nextlevel/Utility.java
+ com.mygdx.nextlevel.Utility
+com/mygdx/nextlevel/hud/Hud.java
+ com.mygdx.nextlevel.hud.Hud
+com/mygdx/nextlevel/Level.java
+ com.mygdx.nextlevel.Level
+com/mygdx/nextlevel/screens/editor/TitlelessWindow.java
+ com.mygdx.nextlevel.screens.editor.TitlelessWindow
+>>>>>>> development
 com/mygdx/nextlevel/BodyNode.java
  com.mygdx.nextlevel.BodyNode
 com/mygdx/nextlevel/LevelInfo.java
  com.mygdx.nextlevel.LevelInfo
 com/mygdx/nextlevel/LevelsDBController.java
  com.mygdx.nextlevel.LevelsDBController
+<<<<<<< HEAD
 com/mygdx/nextlevel/Tag.java
  com.mygdx.nextlevel.Tag
+=======
+com/mygdx/nextlevel/dbUtil/DBConnection.java
+ com.mygdx.nextlevel.dbUtil.DBConnection
+>>>>>>> development
 com/mygdx/nextlevel/dbHandlers/DownloadedLevelsDB.java
  com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB
 com/mygdx/nextlevel/actors/Checkpoint.java
  com.mygdx.nextlevel.actors.Checkpoint
+<<<<<<< HEAD
 com/mygdx/nextlevel/NextLevel.java
  com.mygdx.nextlevel.NextLevel
 com/mygdx/nextlevel/screens/EditLevelScreen.java
@@ -54,7 +96,38 @@ com/mygdx/nextlevel/screens/EditLevelScreen.java
  com.mygdx.nextlevel.screens.TabWindow
  com.mygdx.nextlevel.screens.TabWindow$1
  com.mygdx.nextlevel.screens.TestTab
+=======
+com/mygdx/nextlevel/dbUtil/DatabaseTest.java
+ com.mygdx.nextlevel.dbUtil.DatabaseTest
+com/mygdx/nextlevel/NextLevel.java
+ com.mygdx.nextlevel.NextLevel
+com/mygdx/nextlevel/Tiles/TileSetConfig.java
+ com.mygdx.nextlevel.Tiles.TileSetConfig
+com/mygdx/nextlevel/screens/MainMenuScreen.java
+ com.mygdx.nextlevel.screens.MainMenuScreen
+ com.mygdx.nextlevel.screens.MainMenuScreen$1
+ com.mygdx.nextlevel.screens.MainMenuScreen$2
+ com.mygdx.nextlevel.screens.MainMenuScreen$3
+ com.mygdx.nextlevel.screens.MainMenuScreen$4
+com/mygdx/nextlevel/screens/EditLevelScreen.java
+ com.mygdx.nextlevel.screens.EditLevelScreen
+ com.mygdx.nextlevel.screens.EditLevelScreen$1
+ com.mygdx.nextlevel.screens.MenuWindow
+ com.mygdx.nextlevel.screens.TabWindow
+ com.mygdx.nextlevel.screens.TabWindow$1
+ com.mygdx.nextlevel.screens.TestTab
+com/mygdx/nextlevel/WorldContactListener.java
+ com.mygdx.nextlevel.WorldContactListener
+>>>>>>> development
 com/mygdx/nextlevel/dbHandlers/CreatedLevelsDB.java
  com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB
 com/mygdx/nextlevel/PhysicsShapeCache.java
  com.mygdx.nextlevel.PhysicsShapeCache
+<<<<<<< HEAD
+=======
+com/mygdx/nextlevel/screens/PostLevelCreationMenuScreen.java
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$1
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$2
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$3
+>>>>>>> development

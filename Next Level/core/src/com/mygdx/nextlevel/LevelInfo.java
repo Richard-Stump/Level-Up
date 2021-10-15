@@ -1,6 +1,10 @@
 package com.mygdx.nextlevel;
 
+import com.mygdx.nextlevel.enums.Difficulty;
+import com.mygdx.nextlevel.enums.Tag;
+
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LevelInfo {
@@ -24,17 +28,21 @@ public class LevelInfo {
             throw new NullPointerException();
         }
         this.id = id;
+        this.tags = new ArrayList<>();
+        this.bestTime = 0;
+        this.rating = 0;
+        this.difficulty = Difficulty.NONE.ordinal();
+        this.playCount = 0;
     }
 
     /**
      * Constructor
-     * @param id a unique level ID
+     * @param id unique ID
+     * @param title title of level
+     * @param author author of level
      */
     public LevelInfo(String id, String title, String author) {
-        if (id == null) {
-            throw new NullPointerException();
-        }
-        this.id = id;
+        this(id);
         this.title = title;
         this.author = author;
     }

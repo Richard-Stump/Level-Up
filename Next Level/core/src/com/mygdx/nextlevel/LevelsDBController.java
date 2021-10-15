@@ -1,6 +1,7 @@
 package com.mygdx.nextlevel;
 
 import com.mygdx.nextlevel.dbUtil.DBConnection;
+import com.mygdx.nextlevel.enums.Tag;
 
 
 import java.sql.*;
@@ -67,11 +68,13 @@ public class LevelsDBController {
 
             //statement.setString(9, levelInfo.getTags().toString());
             String tagString = "";
-            for (Tag tag: levelInfo.getTags()) {
-                tagString = tagString.concat(tag.toString());
-                tagString += ",";
+            if (levelInfo.getTags().size() > 0) {
+                for (Tag tag : levelInfo.getTags()) {
+                    tagString = tagString.concat(tag.toString());
+                    tagString += ",";
+                }
+                tagString = tagString.substring(0, tagString.length() - 1);
             }
-            tagString = tagString.substring(0, tagString.length() - 1);
             statement.setString(9, tagString);
 
             statement.setDate(10, levelInfo.getDateCreated());
@@ -297,6 +300,37 @@ public class LevelsDBController {
     }
 
     /**
+     * Search database by a unique ID
+     *
+     * @param id ID to search for
+     * @return matching LevelInfo, or null if none exists
+     */
+    public LevelInfo searchByID(String id) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM " + tableName +
+                " WHERE id LIKE ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            //add the argument
+            statement.setString(1, id);
+
+            //execute the statement
+            resultSet = statement.executeQuery();
+
+            List<LevelInfo> resultList = resultAsList(resultSet);
+            resultSet.close();
+
+            if (resultList.size() == 1) {
+                return resultList.get(0);
+            }
+            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * Searches a table for a LevelInfo object by the author
      *
      * @param author The string to search for in the author's username
@@ -479,9 +513,10 @@ public class LevelsDBController {
                 tags.add(Tag.valueOf(tagString.substring(0, tagString.indexOf(','))));
                 tagString = tagString.substring(tagString.indexOf(',') + 1);
             }
-            tags.add(Tag.valueOf(tagString));
-
-            levelInfo.setTags(tags);
+            if (!tagString.equals("")) {
+                tags.add(Tag.valueOf(tagString));
+                levelInfo.setTags(tags);
+            }
 
             list.add(levelInfo);
         }
