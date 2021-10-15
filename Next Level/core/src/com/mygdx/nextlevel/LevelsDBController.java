@@ -59,6 +59,10 @@ public class LevelsDBController {
     public int addLevelInfo(LevelInfo levelInfo) {
         int rowsChanged;
 
+        if (searchByID(levelInfo.getId()) != null) {
+            return -1;
+        }
+
         String sqlQuery = "INSERT INTO " + tableName + " (id, title, author, bestTime, rating, " +
                 "difficulty, playCount, dateDownloaded, tags, dateCreated)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -106,28 +110,63 @@ public class LevelsDBController {
      *      level
      *
      * @param levelInfo level information associated with level with updated information
-     * @return 1 on success, -1 on failure
+     * @return number of entries changed, -1 on failure
      */
     public int updateLevelInfo(LevelInfo levelInfo) {
         int rowsChanged;
 
-        String sqlQuery = "UPDATE ? " +
-                "SET bestTime = ? " +
-                "AND rating = ? " +
-                "AND playCount = ? " +
-                "WHERE id LIKE ?;";
+        LevelInfo curr = searchByID(levelInfo.getId());
+
+        if (curr == null) {
+            return -1;
+        }
+
+        if ((curr.getPlayCount() == levelInfo.getPlayCount()) &&
+                (curr.getRating() == levelInfo.getRating()) &&
+                (curr.getBestTime() == levelInfo.getBestTime()) &&
+                (curr.getDifficulty() == levelInfo.getDifficulty())) {
+            return 0;
+        }
+
+        String sqlQuery = "UPDATE " + tableName +
+                " SET bestTime = ? , " +
+                "rating = ? , " +
+                "playCount = ? , " +
+                "difficulty = ? " +
+                "WHERE id = ?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, tableName);
-
-            statement.setFloat(2, levelInfo.getBestTime());
-            statement.setFloat(3, levelInfo.getRating());
-            statement.setInt(4, levelInfo.getPlayCount());
+            statement.setFloat(1, levelInfo.getBestTime());
+            statement.setFloat(2, levelInfo.getRating());
+            statement.setInt(3, levelInfo.getPlayCount());
+            statement.setInt(4, levelInfo.getDifficulty());
             statement.setString(5, levelInfo.getId());
 
             rowsChanged = statement.executeUpdate();
+            statement.close();
+            return rowsChanged;
+        } catch (SQLException e) {
+            return -1;
+        }
+    }
+
+    /**
+     * This function should be used when the user deletes a level from their local machine
+     *
+     * @param id the id to remove from the table
+     * @return 1 on success, -1 on failure
+     */
+    public int removeLevelInfo(String id) {
+        int rowsChanged;
+
+        String sqlQuery = "DELETE FROM " + tableName +
+                " WHERE id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, id);
+
+            rowsChanged = statement.executeUpdate();
             if (rowsChanged == 1) {
-                statement.close();
                 return 1;
             }
             return -1;
@@ -143,22 +182,7 @@ public class LevelsDBController {
      * @return 1 on success, -1 on failure
      */
     public int removeLevelInfo(LevelInfo levelInfo) {
-        int rowsChanged;
-
-        String sqlQuery = "DELETE FROM " + tableName +
-                " WHERE id LIKE ?";
-
-        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, levelInfo.getId());
-
-            rowsChanged = statement.executeUpdate();
-            if (rowsChanged == 1) {
-                return 1;
-            }
-            return -1;
-        } catch (SQLException e) {
-            return -1;
-        }
+        return removeLevelInfo(levelInfo.getId());
     }
 
     /*

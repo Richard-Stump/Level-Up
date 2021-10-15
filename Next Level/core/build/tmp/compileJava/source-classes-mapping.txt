@@ -6,8 +6,13 @@ com/mygdx/nextlevel/BodyDefNode.java
  com.mygdx.nextlevel.BodyDefNode
 com/mygdx/nextlevel/PolygonNode.java
  com.mygdx.nextlevel.PolygonNode
-com/mygdx/nextlevel/dbHandlers/CreatedLevelsDB.java
- com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB
+com/mygdx/nextlevel/screens/EditLevelScreen.java
+ com.mygdx.nextlevel.screens.EditLevelScreen
+ com.mygdx.nextlevel.screens.EditLevelScreen$1
+ com.mygdx.nextlevel.screens.MenuWindow
+ com.mygdx.nextlevel.screens.TabWindow
+ com.mygdx.nextlevel.screens.TabWindow$1
+ com.mygdx.nextlevel.screens.TestTab
 com/mygdx/nextlevel/CircleNode.java
  com.mygdx.nextlevel.CircleNode
 com/mygdx/nextlevel/enums/Difficulty.java
@@ -44,11 +49,12 @@ com/mygdx/nextlevel/Utility.java
  com.mygdx.nextlevel.Utility
 com/mygdx/nextlevel/hud/Hud.java
  com.mygdx.nextlevel.hud.Hud
-com/mygdx/nextlevel/screens/PostLevelCreationMenuScreen.java
- com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen
- com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$1
- com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$2
- com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$3
+com/mygdx/nextlevel/screens/MainMenuScreen.java
+ com.mygdx.nextlevel.screens.MainMenuScreen
+ com.mygdx.nextlevel.screens.MainMenuScreen$1
+ com.mygdx.nextlevel.screens.MainMenuScreen$2
+ com.mygdx.nextlevel.screens.MainMenuScreen$3
+ com.mygdx.nextlevel.screens.MainMenuScreen$4
 com/mygdx/nextlevel/Level.java
  com.mygdx.nextlevel.Level
 com/mygdx/nextlevel/screens/editor/TitlelessWindow.java
@@ -57,12 +63,12 @@ com/mygdx/nextlevel/BodyNode.java
  com.mygdx.nextlevel.BodyNode
 com/mygdx/nextlevel/LevelInfo.java
  com.mygdx.nextlevel.LevelInfo
-com/mygdx/nextlevel/LevelsDBController.java
- com.mygdx.nextlevel.LevelsDBController
+com/mygdx/nextlevel/WorldContactListener.java
+ com.mygdx.nextlevel.WorldContactListener
 com/mygdx/nextlevel/dbUtil/DBConnection.java
  com.mygdx.nextlevel.dbUtil.DBConnection
-com/mygdx/nextlevel/dbHandlers/DownloadedLevelsDB.java
- com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB
+com/mygdx/nextlevel/JUnitTests/CreatedLevelsDBTest.java
+ com.mygdx.nextlevel.JUnitTests.CreatedLevelsDBTest
 com/mygdx/nextlevel/actors/Checkpoint.java
  com.mygdx.nextlevel.actors.Checkpoint
 com/mygdx/nextlevel/dbUtil/DatabaseTest.java
@@ -71,24 +77,18 @@ com/mygdx/nextlevel/NextLevel.java
  com.mygdx.nextlevel.NextLevel
 com/mygdx/nextlevel/Tiles/TileSetConfig.java
  com.mygdx.nextlevel.Tiles.TileSetConfig
-com/mygdx/nextlevel/screens/MainMenuScreen.java
- com.mygdx.nextlevel.screens.MainMenuScreen
- com.mygdx.nextlevel.screens.MainMenuScreen$1
- com.mygdx.nextlevel.screens.MainMenuScreen$2
- com.mygdx.nextlevel.screens.MainMenuScreen$3
- com.mygdx.nextlevel.screens.MainMenuScreen$4
-com/mygdx/nextlevel/screens/EditLevelScreen.java
- com.mygdx.nextlevel.screens.EditLevelScreen
- com.mygdx.nextlevel.screens.EditLevelScreen$1
- com.mygdx.nextlevel.screens.MenuWindow
- com.mygdx.nextlevel.screens.TabWindow
- com.mygdx.nextlevel.screens.TabWindow$1
- com.mygdx.nextlevel.screens.TestTab
-com/mygdx/nextlevel/WorldContactListener.java
- com.mygdx.nextlevel.WorldContactListener
 com/mygdx/nextlevel/TestRunner.java
  com.mygdx.nextlevel.TestRunner
-com/mygdx/nextlevel/JUnitTests/CreatedLevelsDBTest.java
- com.mygdx.nextlevel.JUnitTests.CreatedLevelsDBTest
+com/mygdx/nextlevel/LevelsDBController.java
+ com.mygdx.nextlevel.LevelsDBController
+com/mygdx/nextlevel/dbHandlers/DownloadedLevelsDB.java
+ com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB
 com/mygdx/nextlevel/JUnitTests/LevelsDBControllerTest.java
  com.mygdx.nextlevel.JUnitTests.LevelsDBControllerTest
+com/mygdx/nextlevel/dbHandlers/CreatedLevelsDB.java
+ com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB
+com/mygdx/nextlevel/screens/PostLevelCreationMenuScreen.java
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$1
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$2
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$3
