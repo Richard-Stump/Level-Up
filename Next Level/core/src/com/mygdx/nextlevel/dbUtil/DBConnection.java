@@ -6,12 +6,16 @@ import java.sql.SQLException;
 
 public class DBConnection {
     private static final String CONNECTION = "jdbc:sqlite:Next Level/core/src/com" +
-            "/mygdx/nextlevel/data/levels.sqlite";
+            "/mygdx/nextlevel/data/";
 
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection(String databaseName) throws SQLException {
+        String connAll = CONNECTION;
+        connAll = connAll.concat(databaseName);
+        connAll = connAll.concat(".sqlite");
+
         try {
             Class.forName("org.sqlite.JDBC");
-            return DriverManager.getConnection(CONNECTION);
+            return DriverManager.getConnection(connAll);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

@@ -17,14 +17,17 @@ public class LevelsDBController {
      * Constructor - should only be called by the children
      */
     public LevelsDBController(String tableName) {
+        if (!tableName.equals("created") && !tableName.equals("downloaded")) {
+            throw new NullPointerException();
+        }
         //connect to the database
         try {
-            connection = DBConnection.getConnection();
+            connection = DBConnection.getConnection("levels");
         } catch (SQLException e) {
             //handle database errors (doesn't exist, etc)
             e.printStackTrace();
         }
-        if (isDBConnected()) {
+        if (isDBActive()) {
             this.tableName = tableName;
         } else {
             this.tableName = null;
@@ -33,10 +36,14 @@ public class LevelsDBController {
 
     /**
      *
-     * @return true if connected, false otherwise
+     * @return true if not closed, false otherwise
      */
-    public boolean isDBConnected() {
-        return (connection != null);
+    public boolean isDBActive() {
+        try {
+            return (!connection.isClosed());
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
     /*

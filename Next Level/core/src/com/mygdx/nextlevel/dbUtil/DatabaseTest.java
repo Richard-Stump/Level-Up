@@ -12,7 +12,7 @@ import java.util.List;
 public class DatabaseTest {
     public static void main(String[] args) {
         DownloadedLevelsDB db = new DownloadedLevelsDB();
-        if (db.isDBConnected()) {
+        if (db.isDBActive()) {
             System.out.println("db connected");
         } else {
             return;

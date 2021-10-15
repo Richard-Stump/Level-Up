@@ -25,7 +25,7 @@ public class CreatedLevelsDB extends LevelsDBController {
      * @return 1 if unique, 0 if not unique, -1 on failure
      */
     public int isUniqueID(String id) {
-        if (super.isDBConnected()) {
+        if (super.isDBActive()) {
             try {
                 if (searchByID(id) == null) {
                     return 1;

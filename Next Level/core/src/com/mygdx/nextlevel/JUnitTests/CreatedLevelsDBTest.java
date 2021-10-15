@@ -16,7 +16,7 @@ public class CreatedLevelsDBTest {
     public static void savePriorDB() throws Throwable{
         CreatedLevelsDB dbCreated = new CreatedLevelsDB();
 
-        if (dbCreated.isDBConnected()) {
+        if (dbCreated.isDBActive()) {
             savedListCreated = dbCreated.sortByTitle();
 
             //clear database
@@ -31,13 +31,18 @@ public class CreatedLevelsDBTest {
     public static void restorePriorDB() throws Throwable {
         CreatedLevelsDB dbCreated = new CreatedLevelsDB();
 
-        if (dbCreated.isDBConnected()) {
+        if (dbCreated.isDBActive()) {
+            //clear database
+            for (LevelInfo level: dbCreated.sortByTitle()) {
+                dbCreated.removeLevelInfo(level);
+            }
+
             //restore items to database
             for (LevelInfo levelInfo: savedListCreated) {
                 dbCreated.addLevelInfo(levelInfo);
             }
+            dbCreated.close();
         }
-        dbCreated.close();
     }
 
     @Before
@@ -75,7 +80,7 @@ public class CreatedLevelsDBTest {
     }
 
     @Test
-    public void testIsUniqueID1() throws Throwable {
+    public void testIsUniqueID0() throws Throwable {
         //Need in order to test
         CreatedLevelsDB db = new CreatedLevelsDB();
 
