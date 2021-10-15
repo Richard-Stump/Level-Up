@@ -21,6 +21,7 @@ import java.util.ArrayList;
 public class GameScreen implements Screen, InputProcessor {
     SpriteBatch batch;
     Player player;
+    TestActor testActor;
     Enemy enemy;
     Checkpoint checkpoint;
     Block block1, block2;
@@ -76,6 +77,9 @@ public class GameScreen implements Screen, InputProcessor {
         Vector2 blockSpawn2 = new Vector2(200f, -100f);
         this.block1 = new Block(blockTexture1, this.world, blockSpawn, 100f, 0.5f, true, false);
         this.block2 = new Block(blockTexture2, this.world, blockSpawn2, 100f, 0.5f, false, true);
+
+        Vector2 testActorSpawn = new Vector2(-100f, -400.0f);
+        this.testActor = new TestActor(new Texture("enemy.jpg"), this.world, testActorSpawn, 100f, 0.5f);
 //        final Texture itemTexture = new Texture("mushroom.jpeg");
 //        Vector2 itemSpawn = new Vector2(200f, 0f);
 //        this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
@@ -124,7 +128,8 @@ public class GameScreen implements Screen, InputProcessor {
         this.checkpoint.getBody().setUserData(this.checkpoint);
         this.block1.getBody().setUserData(this.block1);
         this.block2.getBody().setUserData(this.block2);
-
+        this.testActor.getBody().setUserData(this.testActor);
+//        this.testActor.getBody().setUserData(this.testActor.getFeet());
 
 //        if (touchedItemBlock) {
 //            final Texture itemTexture = new Texture("mushroom.jpeg");
@@ -142,7 +147,6 @@ public class GameScreen implements Screen, InputProcessor {
             @Override
             public void beginContact(Contact contact) { //called when two fixtures begin contact
                 if (contact.getFixtureA().getBody().getUserData().equals(player)) {
-//					System.out.println("Touching object");
                     if (contact.getFixtureB().getBody().getUserData().equals(checkpoint) && !checkpoint.isTriggered()) {
                         checkpoint.setTriggered(true);
                         checkpoint.changeSpawn(player);
@@ -167,9 +171,17 @@ public class GameScreen implements Screen, InputProcessor {
                         enemy.setDeleteSprite(true);
                     } else if (contact.getFixtureB().getBody().getUserData().equals(block1)) {
                         block1.setDeleteSprite(true);
+                    } else if (contact.getFixtureB().getBody().getUserData().equals(testActor)) {
+//                        System.out.println(contact.getFixtureB().getBody().getUserData());
                     }
                 }
                 if (contact.getFixtureB().getBody().getUserData().equals(player)) {
+                    System.out.println("Test Fixture ");
+                    if (contact.getFixtureA().getBody().getUserData().equals(testActor)) {
+//                        System.out.println(contact.getFixtureA().getBody().getUserData().getClass());
+                        System.out.println(contact.getFixtureA().getBody().getUserData());
+                        System.out.println(contact.getFixtureA().getBody().getFixtureList());
+                    }
                     player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
                 }
                 landed = true;
@@ -266,11 +278,10 @@ public class GameScreen implements Screen, InputProcessor {
         //Set position from updated physics
         player.getSprite().setPosition((player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (player.getBody().getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
         enemy.getSprite().setPosition((enemy.getBody().getPosition().x * PIXELS_TO_METERS) - enemy.getSprite().getWidth()/2, (enemy.getBody().getPosition().y * PIXELS_TO_METERS) - enemy.getSprite().getHeight()/2);
+        testActor.getSprite().setPosition((testActor.getBody().getPosition().x * PIXELS_TO_METERS) - testActor.getSprite().getWidth()/2, (testActor.getBody().getPosition().y * PIXELS_TO_METERS) - testActor.getSprite().getHeight()/2);
         checkpoint.getSprite().setPosition((checkpoint.getBody().getPosition().x * PIXELS_TO_METERS) - checkpoint.getSprite().getWidth()/2, (checkpoint.getBody().getPosition().y * PIXELS_TO_METERS) - checkpoint.getSprite().getHeight()/2);
-//		checkpoint.getSprite().setPosition((checkpoint.getBody().getPosition().x * PIXELS_TO_METERS) - checkpoint.getSprite().getWidth()/2, (checkpoint.getBody().getPosition().y * PIXELS_TO_METERS) - checkpoint.getSprite().getHeight()/2);
         block1.getSprite().setPosition((block1.getBody().getPosition().x * PIXELS_TO_METERS) - block1.getSprite().getWidth()/2, (block1.getBody().getPosition().y * PIXELS_TO_METERS) - block1.getSprite().getHeight()/2);
         block2.getSprite().setPosition((block2.getBody().getPosition().x * PIXELS_TO_METERS) - block2.getSprite().getWidth()/2, (block2.getBody().getPosition().y * PIXELS_TO_METERS) - block2.getSprite().getHeight()/2);
-//        item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
         if (touchedItemBlock && !itemConsumed) {
             final Texture itemTexture = new Texture("mushroom.jpeg");
             Vector2 itemSpawn = new Vector2(200f, 0f);
@@ -289,6 +300,9 @@ public class GameScreen implements Screen, InputProcessor {
             if (!enemy.getDeleteSprite()) {
                 batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
             }
+            //Test Enemy
+            batch.draw(testActor.getSprite(), testActor.getSprite().getX(), testActor.getSprite().getY(), testActor.getSprite().getOriginX(), testActor.getSprite().getOriginY(), testActor.getSprite().getWidth(), testActor.getSprite().getHeight(), testActor.getSprite().getScaleX(), testActor.getSprite().getScaleY(), testActor.getSprite().getRotation());
+
             batch.draw(checkpoint.getSprite(), checkpoint.getSprite().getX(), checkpoint.getSprite().getY(), checkpoint.getSprite().getOriginX(), checkpoint.getSprite().getOriginY(), checkpoint.getSprite().getWidth(), checkpoint.getSprite().getHeight(), checkpoint.getSprite().getScaleX(), checkpoint.getSprite().getScaleY(), checkpoint.getSprite().getRotation());
             if (touchedPowerUp && player.hasPowerUp()) {
                 player.setTexture(new Texture("paragoomba.png"));
