@@ -19,6 +19,13 @@ public class Actor {
     World world;
     boolean deleteSprite;
 
+    //Added For Contact Direction
+    FixtureDef bottom, head, leftSide, rightSide;
+    EdgeShape edgeShape;
+    float w = 0F;
+    float h = 0F;
+    float tolerance = 0.02F;
+
     void setPosition(float x, float y) {
         this.deleteSprite = false;
         this.sprite.setPosition(-this.sprite.getWidth()/2.0F + x, -this.sprite.getHeight()/2.0F + y);
@@ -32,6 +39,24 @@ public class Actor {
         this.bodyDef.position.set((this.sprite.getX() + this.sprite.getWidth()/2.0F)/PIXELS_TO_METERS, (this.sprite.getY() + this.sprite.getHeight()/2.0F)/PIXELS_TO_METERS);
         this.body = world.createBody(bodyDef);
         this.body.setFixedRotation(true);
+//        this.body.setUserData(body);
+    }
+
+    void setEdgeShape() {
+        this.edgeShape = new EdgeShape();
+        this.w = this.sprite.getWidth()/PIXELS_TO_METERS;
+        this.h = this.sprite.getHeight()/PIXELS_TO_METERS;
+    }
+
+    void setContactSide(FixtureDef def) {
+        def = new FixtureDef();
+        def.density = 0;
+        def.restitution = 0;
+        def.filter.categoryBits = PHYSICS_ENTITY;
+        def.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
+        def.shape = this.edgeShape;
+        def.isSensor = true;
+        this.body.createFixture(def);
     }
 
     public Sprite getSprite() {

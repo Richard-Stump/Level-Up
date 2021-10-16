@@ -29,6 +29,8 @@ public class Block extends Actor {
     private void setShape() {
         this.shape = new PolygonShape();
         this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
+
+        super.setEdgeShape();
     }
 
     private void setFixture(float density, float restitution) {
@@ -40,6 +42,19 @@ public class Block extends Actor {
         this.fixtureDef.shape = this.shape;
         this.body.createFixture(this.fixtureDef);
         this.shape.dispose();
+
+        this.edgeShape.set( -w / 2.0F + tolerance, -h / 2.0F -  4*tolerance, w / 2.0F - tolerance, -h / 2.0F - 4*tolerance); //Bottom
+        super.setContactSide(this.bottom);
+
+        this.edgeShape.set(-w / 2.0F - 2*tolerance, -h / 2.0F + tolerance, -w / 2.0F - 2*tolerance,h / 2.0F - tolerance); //Left
+        super.setContactSide(this.leftSide);
+
+        this.edgeShape.set( -w / 2.0F + tolerance, h / 2.0F + 2*tolerance, w / 2.0F - tolerance, h / 2.0F + 2*tolerance); //Head
+        super.setContactSide(this.head);
+
+        this.edgeShape.set(w / 2.0F + 2*tolerance, -h / 2.0F + tolerance, w / 2.0F + 2*tolerance, h / 2.0F - tolerance); //Right Side
+        super.setContactSide(this.rightSide);
+        this.edgeShape.dispose();
     }
 
     public boolean isBreakable() {

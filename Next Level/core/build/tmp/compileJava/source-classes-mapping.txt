@@ -1,5 +1,5 @@
-com/mygdx/nextlevel/actors/Item.java
- com.mygdx.nextlevel.actors.Item
+com/mygdx/nextlevel/Tiles/TileSetConfig.java
+ com.mygdx.nextlevel.Tiles.TileSetConfig
 com/mygdx/nextlevel/JUnitTests/LevelsDBControllerTest.java
  com.mygdx.nextlevel.JUnitTests.LevelsDBControllerTest
 com/mygdx/nextlevel/enums/Difficulty.java
@@ -11,8 +11,8 @@ com/mygdx/nextlevel/screens/PostLevelCreationMenuScreen.java
  com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$3
 com/mygdx/nextlevel/Tiles/Tilemap.java
  com.mygdx.nextlevel.Tiles.Tilemap
-com/mygdx/nextlevel/actors/Block.java
- com.mygdx.nextlevel.actors.Block
+com/mygdx/nextlevel/NextLevel.java
+ com.mygdx.nextlevel.NextLevel
 com/mygdx/nextlevel/screens/CreateLevelMenuScreen.java
  com.mygdx.nextlevel.screens.CreateLevelMenuScreen
  com.mygdx.nextlevel.screens.CreateLevelMenuScreen$1
@@ -21,17 +21,22 @@ com/mygdx/nextlevel/JUnitTests/CreatedLevelsDBTest.java
  com.mygdx.nextlevel.JUnitTests.CreatedLevelsDBTest
 com/mygdx/nextlevel/dbHandlers/CreatedLevelsDB.java
  com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB
-com/mygdx/nextlevel/actors/Player.java
- com.mygdx.nextlevel.actors.Player
-com/mygdx/nextlevel/actors/Actor.java
- com.mygdx.nextlevel.actors.Actor
+com/mygdx/nextlevel/screens/EditLevelScreen.java
+ com.mygdx.nextlevel.screens.EditLevelScreen
+ com.mygdx.nextlevel.screens.EditLevelScreen$1
+ com.mygdx.nextlevel.screens.MenuWindow
+ com.mygdx.nextlevel.screens.TabWindow
+ com.mygdx.nextlevel.screens.TabWindow$1
+ com.mygdx.nextlevel.screens.TestTab
+com/mygdx/nextlevel/dbUtil/DatabaseTest.java
+ com.mygdx.nextlevel.dbUtil.DatabaseTest
 com/mygdx/nextlevel/enums/Tag.java
  com.mygdx.nextlevel.enums.Tag
 com/mygdx/nextlevel/screens/TutorialScreen.java
  com.mygdx.nextlevel.screens.TutorialScreen
  com.mygdx.nextlevel.screens.TutorialScreen$1
-com/mygdx/nextlevel/actors/Enemy.java
- com.mygdx.nextlevel.actors.Enemy
+com/mygdx/nextlevel/dbHandlers/DownloadedLevelsDB.java
+ com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB
 com/mygdx/nextlevel/screens/editor/Button.java
  com.mygdx.nextlevel.screens.editor.Button
 com/mygdx/nextlevel/hud/Hud.java
@@ -48,25 +53,20 @@ com/mygdx/nextlevel/LevelsDBController.java
  com.mygdx.nextlevel.LevelsDBController
 com/mygdx/nextlevel/dbUtil/DBConnection.java
  com.mygdx.nextlevel.dbUtil.DBConnection
-com/mygdx/nextlevel/dbHandlers/DownloadedLevelsDB.java
- com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB
+com/mygdx/nextlevel/actors/Player.java
+ com.mygdx.nextlevel.actors.Player
+com/mygdx/nextlevel/actors/Actor.java
+ com.mygdx.nextlevel.actors.Actor
+com/mygdx/nextlevel/actors/Block.java
+ com.mygdx.nextlevel.actors.Block
 com/mygdx/nextlevel/actors/Checkpoint.java
  com.mygdx.nextlevel.actors.Checkpoint
-com/mygdx/nextlevel/dbUtil/DatabaseTest.java
- com.mygdx.nextlevel.dbUtil.DatabaseTest
-com/mygdx/nextlevel/NextLevel.java
- com.mygdx.nextlevel.NextLevel
-com/mygdx/nextlevel/Tiles/TileSetConfig.java
- com.mygdx.nextlevel.Tiles.TileSetConfig
+com/mygdx/nextlevel/actors/Enemy.java
+ com.mygdx.nextlevel.actors.Enemy
+com/mygdx/nextlevel/actors/Item.java
+ com.mygdx.nextlevel.actors.Item
 com/mygdx/nextlevel/actors/TestActor.java
  com.mygdx.nextlevel.actors.TestActor
-com/mygdx/nextlevel/screens/EditLevelScreen.java
- com.mygdx.nextlevel.screens.EditLevelScreen
- com.mygdx.nextlevel.screens.EditLevelScreen$1
- com.mygdx.nextlevel.screens.MenuWindow
- com.mygdx.nextlevel.screens.TabWindow
- com.mygdx.nextlevel.screens.TabWindow$1
- com.mygdx.nextlevel.screens.TestTab
 com/mygdx/nextlevel/screens/MainMenuScreen.java
  com.mygdx.nextlevel.screens.MainMenuScreen
  com.mygdx.nextlevel.screens.MainMenuScreen$1

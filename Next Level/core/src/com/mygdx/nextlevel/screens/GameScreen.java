@@ -75,13 +75,13 @@ public class GameScreen implements Screen, InputProcessor {
         this.checkpoint = new Checkpoint(checkpointTexture, this.world, checkpointSpawn,0f, 0f, this.player);
         final Texture blockTexture1 = new Texture("block.png");
         final Texture blockTexture2 = new Texture("item-block.png");
-        Vector2 blockSpawn = new Vector2((wTest/2) * 0.25f, -hTest/2 + 100f);
+        Vector2 blockSpawn = new Vector2((wTest/2) * 0.25f, -hTest/2 + 150f);
         Vector2 blockSpawn2 = new Vector2(200f, -hTest/2 + 100f);
         this.block1 = new Block(blockTexture1, this.world, blockSpawn, 100f, 0.5f, true, false);
 //        this.block2 = new Block(blockTexture2, this.world, blockSpawn2, 100f, 0.5f, false, true);
 
-        final Vector2 testActorSpawn = new Vector2(-(wTest/2) * 0.25f, -hTest/2 + 32 + 70);
-        this.testActor = new TestActor(new Texture("enemy.jpg"), this.world, testActorSpawn, 100f, 0.5f);
+        final Vector2 testActorSpawn = new Vector2(-(wTest/2) * 0.25f, -hTest/2 + 32);
+        this.testActor = new TestActor(new Texture("enemy.jpg"), this.world, testActorSpawn, 100f, 0f);
 //        final Texture itemTexture = new Texture("mushroom.jpeg");
 //        Vector2 itemSpawn = new Vector2(200f, 0f);
 //        this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
@@ -168,7 +168,11 @@ public class GameScreen implements Screen, InputProcessor {
                     } else if (contact.getFixtureB().getBody().getUserData().equals(enemy)) {
                         enemy.setDeleteSprite(true);
                     } else if (contact.getFixtureB().getBody().getUserData().equals(block1)) {
-                        block1.setDeleteSprite(true);
+                        System.out.println("Contact with Block");
+                        if (block1.getBody().getFixtureList().get(1).equals(contact.getFixtureB())) {
+                            System.out.println("Test");
+                            block1.setDeleteSprite(true);
+                        }
                     } else if (contact.getFixtureB().getBody().getUserData().equals(testActor)) {
 //                        System.out.println(contact.getFixtureB().getBody().getUserData());
                     }
@@ -183,9 +187,8 @@ public class GameScreen implements Screen, InputProcessor {
                         } else if (testActor.getBody().getFixtureList().get(4).equals(contact.getFixtureA())) {
                             System.out.println("Right Side");
                         }
-                    } else {
-                        player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
                     }
+                    player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
                 }
 
                 landed = true;
@@ -202,13 +205,13 @@ public class GameScreen implements Screen, InputProcessor {
 
             @Override
             public void postSolve(Contact contact, ContactImpulse impulse) {
-                if (contact.getFixtureA().getBody().getUserData().equals(player)) {
-                    if (contact.getFixtureB().getBody().getUserData().equals(enemy) || contact.getFixtureB().getBody().getUserData().equals(block1)) {
-                        deleteList.add(contact.getFixtureB().getBody());
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(item) && destroyItem) {
-                        deleteList.add(contact.getFixtureB().getBody());
-                    }
-                }
+//                if (contact.getFixtureA().getBody().getUserData().equals(player)) {
+//                    if (contact.getFixtureB().getBody().getUserData().equals(enemy) || contact.getFixtureB().getBody().getUserData().equals(block1)) {
+//                        deleteList.add(contact.getFixtureB().getBody());
+//                    } else if (contact.getFixtureB().getBody().getUserData().equals(item) && destroyItem) {
+//                        deleteList.add(contact.getFixtureB().getBody());
+//                    }
+//                }
             }
         });
 
