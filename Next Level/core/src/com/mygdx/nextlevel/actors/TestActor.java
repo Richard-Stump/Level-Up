@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 
 public class TestActor extends Actor {
     Vector2 spawnpoint;
@@ -18,6 +19,7 @@ public class TestActor extends Actor {
         super.setBody(BodyDef.BodyType.StaticBody);
         setShape();
         setFixture(density, restitution);
+        setEdgeShape();
     }
 
     /*
@@ -29,11 +31,11 @@ public class TestActor extends Actor {
     @Override
     void setBody(BodyDef.BodyType type) {
         super.setBody(type);
-        this.bodyDef = new BodyDef();
-        this.bodyDef.type = type;
-        this.bodyDef.position.set((this.sprite.getX() + this.sprite.getWidth()/2.0F)/PIXELS_TO_METERS, (this.sprite.getY() + this.sprite.getHeight()/2.0F)/PIXELS_TO_METERS);
-        this.body = world.createBody(bodyDef);
-        this.body.setFixedRotation(true);
+//        this.bodyDef = new BodyDef();
+//        this.bodyDef.type = type;
+//        this.bodyDef.position.set((this.sprite.getX() + this.sprite.getWidth()/2.0F)/PIXELS_TO_METERS, (this.sprite.getY() + this.sprite.getHeight()/2.0F)/PIXELS_TO_METERS);
+//        this.body = world.createBody(bodyDef);
+//        this.body.setFixedRotation(true);
     }
 
     private void setShape() {
@@ -47,23 +49,37 @@ public class TestActor extends Actor {
         this.fixtureDef.restitution = restitution;
         this.fixtureDef.filter.categoryBits = PHYSICS_ENTITY;
         this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
-
-        feet = new EdgeShape();
-        feet.set(-this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, -this.sprite.getHeight()/2.0F/PIXELS_TO_METERS, this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, -this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
-        this.fixtureDef.shape = feet;
-        this.body = this.world.createBody(this.bodyDef);
-        this.body.createFixture(this.fixtureDef);
-        this.body.setUserData(feet);
-
-//        this.body.createFixture(this.fixtureDef);
-//        EdgeShape head = new EdgeShape();
-//        head.set(-this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS, this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
-//        this.fixtureDef.shape = head;
-
-//        this.body.createFixture(this.fixtureDef);
         this.fixtureDef.shape = this.shape;
 //        this.body.createFixture(this.fixtureDef);
         this.fixtureDef.shape.dispose();
+    }
+
+    private void setEdgeShape() {
+        this.feet = new EdgeShape();
+        this.fixtureDef.density = 0;
+        this.fixtureDef.restitution = 0;
+        float w = this.sprite.getWidth()/PIXELS_TO_METERS;
+        float h = this.sprite.getHeight()/PIXELS_TO_METERS;
+        this.fixtureDef.isSensor = true;
+        this.fixtureDef.isSensor = false;
+
+        this.feet.set( -w / 2.0F , -h / 2.0F, w / 2.0F, -h / 2.0F); //Set correctly
+        this.fixtureDef.shape = this.feet;
+        this.body = this.world.createBody(this.bodyDef);
+        this.body.createFixture(this.fixtureDef);
+        this.body.setUserData(feet);
+        this.fixtureDef.shape.dispose();
+
+        this.head = new EdgeShape();
+        this.head.set(-w / 2.0F , h / 2.0F, w / 2.0F, h / 2.0F);
+        this.fixtureDef.shape = this.head;
+        this.body = this.world.createBody(this.bodyDef);
+        this.body.createFixture(this.fixtureDef);
+        this.body.setUserData(head);
+        this.fixtureDef.shape.dispose();
+
+        Array<Fixture> fixture = getBody().getFixtureList();
+        System.out.println(fixture.size);
     }
 
     public EdgeShape getFeet() { return this.feet; }

@@ -78,7 +78,7 @@ public class GameScreen implements Screen, InputProcessor {
         this.block1 = new Block(blockTexture1, this.world, blockSpawn, 100f, 0.5f, true, false);
         this.block2 = new Block(blockTexture2, this.world, blockSpawn2, 100f, 0.5f, false, true);
 
-        Vector2 testActorSpawn = new Vector2(-100f, -400.0f);
+        final Vector2 testActorSpawn = new Vector2(-100f, -400.0f);
         this.testActor = new TestActor(new Texture("enemy.jpg"), this.world, testActorSpawn, 100f, 0.5f);
 //        final Texture itemTexture = new Texture("mushroom.jpeg");
 //        Vector2 itemSpawn = new Vector2(200f, 0f);
@@ -129,7 +129,6 @@ public class GameScreen implements Screen, InputProcessor {
         this.block1.getBody().setUserData(this.block1);
         this.block2.getBody().setUserData(this.block2);
         this.testActor.getBody().setUserData(this.testActor);
-//        this.testActor.getBody().setUserData(this.testActor.getFeet());
 
 //        if (touchedItemBlock) {
 //            final Texture itemTexture = new Texture("mushroom.jpeg");
@@ -142,8 +141,6 @@ public class GameScreen implements Screen, InputProcessor {
         hud = new Hud(game.batch);
 
         world.setContactListener(new ContactListener() {
-                //(new WorldContactListener(this));
-                //(new ContactListener() {
             @Override
             public void beginContact(Contact contact) { //called when two fixtures begin contact
                 if (contact.getFixtureA().getBody().getUserData().equals(player)) {
@@ -174,16 +171,18 @@ public class GameScreen implements Screen, InputProcessor {
                     } else if (contact.getFixtureB().getBody().getUserData().equals(testActor)) {
 //                        System.out.println(contact.getFixtureB().getBody().getUserData());
                     }
-                }
-                if (contact.getFixtureB().getBody().getUserData().equals(player)) {
-                    System.out.println("Test Fixture ");
+                } else if (contact.getFixtureB().getBody().getUserData().equals(player)) {
+//                    System.out.println("Test Fixture ");
                     if (contact.getFixtureA().getBody().getUserData().equals(testActor)) {
-//                        System.out.println(contact.getFixtureA().getBody().getUserData().getClass());
-                        System.out.println(contact.getFixtureA().getBody().getUserData());
-                        System.out.println(contact.getFixtureA().getBody().getFixtureList());
+                        System.out.println();
+                        System.out.println(contact.getFixtureA().getShape()); //com.badlogic.gdx.physics.box2d.EdgeShape@57ec8c4d
+                        System.out.println(testActor.getFeet()); //com.badlogic.gdx.physics.box2d.EdgeShape@274e639b
+                        System.out.println(contact.getFixtureB().getShape());
+                        System.out.println();
                     }
                     player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
                 }
+
                 landed = true;
                 jumped = false;
             }

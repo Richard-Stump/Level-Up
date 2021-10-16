@@ -65,14 +65,14 @@ com/mygdx/nextlevel/screens/EditLevelScreen.java
  com.mygdx.nextlevel.screens.TabWindow
  com.mygdx.nextlevel.screens.TabWindow$1
  com.mygdx.nextlevel.screens.TestTab
-com/mygdx/nextlevel/actors/TestActor.java
- com.mygdx.nextlevel.actors.TestActor
 com/mygdx/nextlevel/screens/MainMenuScreen.java
  com.mygdx.nextlevel.screens.MainMenuScreen
  com.mygdx.nextlevel.screens.MainMenuScreen$1
  com.mygdx.nextlevel.screens.MainMenuScreen$2
  com.mygdx.nextlevel.screens.MainMenuScreen$3
  com.mygdx.nextlevel.screens.MainMenuScreen$4
+com/mygdx/nextlevel/actors/TestActor.java
+ com.mygdx.nextlevel.actors.TestActor
 com/mygdx/nextlevel/WorldContactListener.java
  com.mygdx.nextlevel.WorldContactListener
 com/mygdx/nextlevel/screens/GameScreen.java
