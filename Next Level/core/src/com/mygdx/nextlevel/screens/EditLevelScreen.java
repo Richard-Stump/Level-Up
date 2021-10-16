@@ -6,12 +6,16 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.*;
 import com.kotcrab.vis.ui.VisUI;
@@ -242,9 +246,32 @@ class TabWindow extends VisWindow {
         row();
         add(table).expand().fill();
 
-        pane.add(new TestTab("Tiles"));
-        pane.add(new TestTab("Actors"));
-        pane.add(new TestTab("Enemies"));
+        ArrayList<String> tileNames = new ArrayList<String>() {{
+                add("block.png");
+                add("checkpoint.png");
+                add("flag.png");
+                add("item-block.png");
+                add("pipe.png");
+                add("tile1.png");
+                add("tile2.png");
+                add("used-item-block.png");
+        }};
+
+        ArrayList<String> actorNames = new ArrayList<String>() {{
+            add("badlogic.jpg");
+            add("enemy.jpg");
+            add("goomba.png");
+            add("mushroom.jpeg");
+        }};
+
+        ArrayList<String> enemyNames = new ArrayList<String>() {{
+            add("goomba.png");
+            add("paragoomba.png");
+        }};
+
+        pane.add(new TestTab("Tiles", tileNames));
+        pane.add(new TestTab("Actors", actorNames));
+        pane.add(new TestTab("Enemies", enemyNames));
 
         setSize(400, 500 * 2 - 50);
         setPosition(0, -50);
@@ -256,7 +283,7 @@ class TestTab extends Tab {
     private ScrollPane scrollPane;
     private VisTable table;
 
-    public TestTab(String name) {
+    public TestTab(String name, ArrayList<String> imageNames) {
         super(false, false);
         this.name = name;
 
@@ -264,21 +291,27 @@ class TestTab extends Tab {
         Table innerTable = new Table();
         innerTable.top();
 
-        // We want the scroll pane to move smoothly, and we don't want the bar to disapear
+        // We want the scroll pane to move smoothly, and we don't want the bar to disappear
         scrollPane = new ScrollPane(innerTable, VisUI.getSkin());
         scrollPane.setSmoothScrolling(true);
         scrollPane.setFadeScrollBars(false);
 
-        // Add a bunch of test buttons to the scroll pane to test it
-        for(int i = 0; i < 50; i++) {
-            innerTable.add(new TextButton(name + (i* 2), VisUI.getSkin())).expand().fillX();
-            innerTable.add(new TextButton(name + (i * 2 + 1), VisUI.getSkin())).expand().fillX();
+        final float size = 128;
+        final float pad = 10.0f;
 
-            innerTable.row();
+        // Add the images for each of the resources to the table.
+        int i = 0;
+        for(String imageName : imageNames) {
+            Image im = new Image(new Texture(imageName));
+            innerTable.add(im).expand().fill().padBottom(pad).padTop(pad).size(size);
+
+            // A new row every 2 lines
+            if(++i % 2 == 0)
+                innerTable.row();
         }
 
         table = new VisTable();
-        table.add(scrollPane).expand().fillX();
+        table.add(scrollPane).expand().fillX().align(Align.top);
     }
 
     @Override
