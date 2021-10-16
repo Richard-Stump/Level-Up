@@ -1,4 +1,5 @@
 Next\ Level/.idea/
 Next\ Level/.gradle/
-Next\ Level/*/build/
+Next\ Level/core/build/
+Next\ Level/desktop/build/
 
