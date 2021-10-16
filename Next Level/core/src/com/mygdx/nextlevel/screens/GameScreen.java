@@ -92,8 +92,6 @@ public class GameScreen implements Screen, InputProcessor {
 
         float w = Gdx.graphics.getWidth()/PIXELS_TO_METERS;
         float h = Gdx.graphics.getHeight()/PIXELS_TO_METERS;
-//        float w = Gdx.graphics.getWidth();
-//        float h = Gdx.graphics.getHeight();
         edgeBodyDef.position.set(0.0F,0.0F);
         FixtureDef fixtureDefEdge = new FixtureDef();
         fixtureDefEdge.filter.categoryBits = WORLD_ENTITY;
@@ -175,15 +173,19 @@ public class GameScreen implements Screen, InputProcessor {
 //                        System.out.println(contact.getFixtureB().getBody().getUserData());
                     }
                 } else if (contact.getFixtureB().getBody().getUserData().equals(player)) {
-//                    System.out.println("Test Fixture ");
                     if (contact.getFixtureA().getBody().getUserData().equals(testActor)) {
-                        System.out.println();
-                        System.out.println(contact.getFixtureA().getShape()); //com.badlogic.gdx.physics.box2d.EdgeShape@57ec8c4d
-                        System.out.println(testActor.getFeet()); //com.badlogic.gdx.physics.box2d.EdgeShape@274e639b
-                        System.out.println(contact.getFixtureB().getShape());
-                        System.out.println();
+                        if (testActor.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
+                            System.out.println("Bottom");
+                        } else if (testActor.getBody().getFixtureList().get(2).equals(contact.getFixtureA())) {
+                            System.out.println("Left Side");
+                        } else if (testActor.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
+                            System.out.println("Head");
+                        } else if (testActor.getBody().getFixtureList().get(4).equals(contact.getFixtureA())) {
+                            System.out.println("Right Side");
+                        }
+                    } else {
+                        player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
                     }
-                    player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
                 }
 
                 landed = true;
@@ -280,10 +282,18 @@ public class GameScreen implements Screen, InputProcessor {
         //Set position from updated physics
         player.getSprite().setPosition((player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (player.getBody().getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
         enemy.getSprite().setPosition((enemy.getBody().getPosition().x * PIXELS_TO_METERS) - enemy.getSprite().getWidth()/2, (enemy.getBody().getPosition().y * PIXELS_TO_METERS) - enemy.getSprite().getHeight()/2);
+
+
+//        testActor.getSprite().setPosition((testActor.getFeet().getPosition().x * PIXELS_TO_METERS) - testActor.getSprite().getWidth()/2, (testActor.getFeet().getPosition().y * PIXELS_TO_METERS) - testActor.getSprite().getHeight()/2);
+
         testActor.getSprite().setPosition((testActor.getBody().getPosition().x * PIXELS_TO_METERS) - testActor.getSprite().getWidth()/2, (testActor.getBody().getPosition().y * PIXELS_TO_METERS) - testActor.getSprite().getHeight()/2);
+
+
+
         checkpoint.getSprite().setPosition((checkpoint.getBody().getPosition().x * PIXELS_TO_METERS) - checkpoint.getSprite().getWidth()/2, (checkpoint.getBody().getPosition().y * PIXELS_TO_METERS) - checkpoint.getSprite().getHeight()/2);
         block1.getSprite().setPosition((block1.getBody().getPosition().x * PIXELS_TO_METERS) - block1.getSprite().getWidth()/2, (block1.getBody().getPosition().y * PIXELS_TO_METERS) - block1.getSprite().getHeight()/2);
 //        block2.getSprite().setPosition((block2.getBody().getPosition().x * PIXELS_TO_METERS) - block2.getSprite().getWidth()/2, (block2.getBody().getPosition().y * PIXELS_TO_METERS) - block2.getSprite().getHeight()/2);
+
         if (touchedItemBlock && !itemConsumed) {
             final Texture itemTexture = new Texture("mushroom.jpeg");
             Vector2 itemSpawn = new Vector2(200f, 0f);
