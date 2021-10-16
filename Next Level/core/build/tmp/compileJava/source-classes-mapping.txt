@@ -4,11 +4,8 @@ com/mygdx/nextlevel/JUnitTests/LevelsDBControllerTest.java
  com.mygdx.nextlevel.JUnitTests.LevelsDBControllerTest
 com/mygdx/nextlevel/enums/Difficulty.java
  com.mygdx.nextlevel.enums.Difficulty
-com/mygdx/nextlevel/screens/PostLevelCreationMenuScreen.java
- com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen
- com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$1
- com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$2
- com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$3
+com/mygdx/nextlevel/actors/TestActor.java
+ com.mygdx.nextlevel.actors.TestActor
 com/mygdx/nextlevel/Tiles/Tilemap.java
  com.mygdx.nextlevel.Tiles.Tilemap
 com/mygdx/nextlevel/actors/Block.java
@@ -58,6 +55,11 @@ com/mygdx/nextlevel/NextLevel.java
  com.mygdx.nextlevel.NextLevel
 com/mygdx/nextlevel/Tiles/TileSetConfig.java
  com.mygdx.nextlevel.Tiles.TileSetConfig
+com/mygdx/nextlevel/screens/PostLevelCreationMenuScreen.java
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$1
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$2
+ com.mygdx.nextlevel.screens.PostLevelCreationMenuScreen$3
 com/mygdx/nextlevel/screens/EditLevelScreen.java
  com.mygdx.nextlevel.screens.EditLevelScreen
  com.mygdx.nextlevel.screens.EditLevelScreen$1
@@ -71,8 +73,6 @@ com/mygdx/nextlevel/screens/MainMenuScreen.java
  com.mygdx.nextlevel.screens.MainMenuScreen$2
  com.mygdx.nextlevel.screens.MainMenuScreen$3
  com.mygdx.nextlevel.screens.MainMenuScreen$4
-com/mygdx/nextlevel/actors/TestActor.java
- com.mygdx.nextlevel.actors.TestActor
 com/mygdx/nextlevel/WorldContactListener.java
  com.mygdx.nextlevel.WorldContactListener
 com/mygdx/nextlevel/screens/GameScreen.java

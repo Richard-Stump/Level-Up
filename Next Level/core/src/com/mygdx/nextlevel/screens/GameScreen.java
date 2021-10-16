@@ -62,23 +62,25 @@ public class GameScreen implements Screen, InputProcessor {
         this.world = new World(new Vector2(0.0F, -40.0F), true);
 
         //Create Enemy and Player
-        Vector2 playerSpawn = new Vector2(-300.0f, 0f);
-        Texture playerTexture = new Texture("goomba.png");
-        this.player = new Player(playerTexture, this.world, playerSpawn, 0.2f, 0.5f);
-        Vector2 enemySpawn = new Vector2(0f, -100.0f);
+        float wTest = Gdx.graphics.getWidth();
+        float hTest = Gdx.graphics.getHeight();
+
+        Vector2 playerSpawn = new Vector2(-(wTest/2) * 0.75f, -hTest/2 + 32); //assuming player height is 64
+        this.player = new Player(new Texture("goomba.png"), this.world, playerSpawn, 0.2f, 0.5f);
+        Vector2 enemySpawn = new Vector2((wTest/2) * 0.75f, -hTest/2 + 32);
         final Texture enemyTexture = new Texture("enemy.jpg");
         this.enemy = new Enemy(enemyTexture, this.world, enemySpawn, 100f, 0.5f);
-        Vector2 checkpointSpawn = new Vector2(0f, -200.0f);
+        Vector2 checkpointSpawn = new Vector2(0f, -hTest/2 + 32);
         final Texture checkpointTexture = new Texture("checkpoint2.jpg");
         this.checkpoint = new Checkpoint(checkpointTexture, this.world, checkpointSpawn,0f, 0f, this.player);
         final Texture blockTexture1 = new Texture("block.png");
         final Texture blockTexture2 = new Texture("item-block.png");
-        Vector2 blockSpawn = new Vector2(100f, -100f);
-        Vector2 blockSpawn2 = new Vector2(200f, -100f);
+        Vector2 blockSpawn = new Vector2((wTest/2) * 0.25f, -hTest/2 + 100f);
+        Vector2 blockSpawn2 = new Vector2(200f, -hTest/2 + 100f);
         this.block1 = new Block(blockTexture1, this.world, blockSpawn, 100f, 0.5f, true, false);
-        this.block2 = new Block(blockTexture2, this.world, blockSpawn2, 100f, 0.5f, false, true);
+//        this.block2 = new Block(blockTexture2, this.world, blockSpawn2, 100f, 0.5f, false, true);
 
-        final Vector2 testActorSpawn = new Vector2(-100f, -400.0f);
+        final Vector2 testActorSpawn = new Vector2(-(wTest/2) * 0.25f, -hTest/2 + 32 + 70);
         this.testActor = new TestActor(new Texture("enemy.jpg"), this.world, testActorSpawn, 100f, 0.5f);
 //        final Texture itemTexture = new Texture("mushroom.jpeg");
 //        Vector2 itemSpawn = new Vector2(200f, 0f);
@@ -90,7 +92,8 @@ public class GameScreen implements Screen, InputProcessor {
 
         float w = Gdx.graphics.getWidth()/PIXELS_TO_METERS;
         float h = Gdx.graphics.getHeight()/PIXELS_TO_METERS;
-
+//        float w = Gdx.graphics.getWidth();
+//        float h = Gdx.graphics.getHeight();
         edgeBodyDef.position.set(0.0F,0.0F);
         FixtureDef fixtureDefEdge = new FixtureDef();
         fixtureDefEdge.filter.categoryBits = WORLD_ENTITY;
@@ -127,7 +130,7 @@ public class GameScreen implements Screen, InputProcessor {
         this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
         this.checkpoint.getBody().setUserData(this.checkpoint);
         this.block1.getBody().setUserData(this.block1);
-        this.block2.getBody().setUserData(this.block2);
+//        this.block2.getBody().setUserData(this.block2);
         this.testActor.getBody().setUserData(this.testActor);
 
 //        if (touchedItemBlock) {
@@ -280,7 +283,7 @@ public class GameScreen implements Screen, InputProcessor {
         testActor.getSprite().setPosition((testActor.getBody().getPosition().x * PIXELS_TO_METERS) - testActor.getSprite().getWidth()/2, (testActor.getBody().getPosition().y * PIXELS_TO_METERS) - testActor.getSprite().getHeight()/2);
         checkpoint.getSprite().setPosition((checkpoint.getBody().getPosition().x * PIXELS_TO_METERS) - checkpoint.getSprite().getWidth()/2, (checkpoint.getBody().getPosition().y * PIXELS_TO_METERS) - checkpoint.getSprite().getHeight()/2);
         block1.getSprite().setPosition((block1.getBody().getPosition().x * PIXELS_TO_METERS) - block1.getSprite().getWidth()/2, (block1.getBody().getPosition().y * PIXELS_TO_METERS) - block1.getSprite().getHeight()/2);
-        block2.getSprite().setPosition((block2.getBody().getPosition().x * PIXELS_TO_METERS) - block2.getSprite().getWidth()/2, (block2.getBody().getPosition().y * PIXELS_TO_METERS) - block2.getSprite().getHeight()/2);
+//        block2.getSprite().setPosition((block2.getBody().getPosition().x * PIXELS_TO_METERS) - block2.getSprite().getWidth()/2, (block2.getBody().getPosition().y * PIXELS_TO_METERS) - block2.getSprite().getHeight()/2);
         if (touchedItemBlock && !itemConsumed) {
             final Texture itemTexture = new Texture("mushroom.jpeg");
             Vector2 itemSpawn = new Vector2(200f, 0f);
@@ -313,11 +316,11 @@ public class GameScreen implements Screen, InputProcessor {
             if (!block1.getDeleteSprite()) {
                 batch.draw(block1.getSprite(), block1.getSprite().getX(), block1.getSprite().getY(), block1.getSprite().getOriginX(), block1.getSprite().getOriginY(), block1.getSprite().getWidth(), block1.getSprite().getHeight(), block1.getSprite().getScaleX(), block1.getSprite().getScaleY(), block1.getSprite().getRotation());
             }
-            batch.draw(block2.getSprite(), block2.getSprite().getX(), block2.getSprite().getY(), block2.getSprite().getOriginX(), block2.getSprite().getOriginY(), block2.getSprite().getWidth(), block2.getSprite().getHeight(), block2.getSprite().getScaleX(), block2.getSprite().getScaleY(), block2.getSprite().getRotation());
+//            batch.draw(block2.getSprite(), block2.getSprite().getX(), block2.getSprite().getY(), block2.getSprite().getOriginX(), block2.getSprite().getOriginY(), block2.getSprite().getWidth(), block2.getSprite().getHeight(), block2.getSprite().getScaleX(), block2.getSprite().getScaleY(), block2.getSprite().getRotation());
             if (touchedItemBlock) {
                 if (!item.getDeleteSprite()) {
                     batch.draw(item.getSprite(), item.getSprite().getX(), item.getSprite().getY(), item.getSprite().getOriginX(), item.getSprite().getOriginY(), item.getSprite().getWidth(), item.getSprite().getHeight(), item.getSprite().getScaleX(), item.getSprite().getScaleY(), item.getSprite().getRotation());
-                    block2.setSpawned(true);
+//                    block2.setSpawned(true);
                 }
             }
         }
