@@ -232,11 +232,13 @@ class TabWindow extends VisWindow {
             @Override
             public void switchedTab (Tab tab) {
                 table.clearChildren();
-                table.add(tab.getContentTable()).expand().fill();
+                table.add(tab.getContentTable()).expandX().fillX();
             }
         });
 
-        add(pane.getTable()).expandX().fillX();
+        //The minHeight field ensures that the buttons don't get squashed with the scroll pane
+        //increases in height.
+        add(pane.getTable()).expandX().fillX().minHeight(50.0f);
         row();
         add(table).expand().fill();
 
@@ -251,14 +253,32 @@ class TabWindow extends VisWindow {
 
 class TestTab extends Tab {
     private String name;
+    private ScrollPane scrollPane;
     private VisTable table;
 
     public TestTab(String name) {
         super(false, false);
         this.name = name;
 
+        // This table holds the content the scroll pane will contain
+        Table innerTable = new Table();
+        innerTable.top();
+
+        // We want the scroll pane to move smoothly, and we don't want the bar to disapear
+        scrollPane = new ScrollPane(innerTable, VisUI.getSkin());
+        scrollPane.setSmoothScrolling(true);
+        scrollPane.setFadeScrollBars(false);
+
+        // Add a bunch of test buttons to the scroll pane to test it
+        for(int i = 0; i < 50; i++) {
+            innerTable.add(new TextButton(name + (i* 2), VisUI.getSkin())).expand().fillX();
+            innerTable.add(new TextButton(name + (i * 2 + 1), VisUI.getSkin())).expand().fillX();
+
+            innerTable.row();
+        }
+
         table = new VisTable();
-        table.add(new VisLabel(name));
+        table.add(scrollPane).expand().fillX();
     }
 
     @Override
