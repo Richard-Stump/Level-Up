@@ -43,6 +43,8 @@ public class GameScreen implements Screen, InputProcessor {
     float time = 0;
     boolean itemConsumed = false;
     boolean itemSpawned = false;
+    boolean killEnemy = false;
+    boolean breakBlock = false;
 
     float torque = 0.0f;
     boolean drawSprite = true;
@@ -168,28 +170,58 @@ public class GameScreen implements Screen, InputProcessor {
                     } else if (contact.getFixtureB().getBody().getUserData().equals(enemy)) {
                         enemy.setDeleteSprite(true);
                     } else if (contact.getFixtureB().getBody().getUserData().equals(block1)) {
-                        System.out.println("Contact with Block");
-                        if (block1.getBody().getFixtureList().get(1).equals(contact.getFixtureB())) {
-                            System.out.println("Test");
-                            block1.setDeleteSprite(true);
-                        }
+//                        System.out.println("Contact with Block");
+//                        if (block1.getBody().getFixtureList().get(1).equals(contact.getFixtureB())) {
+//                            System.out.println("Test");
+//                            block1.setDeleteSprite(true);
+//                        }
+                         if (player.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
+                             System.out.println("Head");
+                             deleteList.add(contact.getFixtureB().getBody());
+                         }
                     } else if (contact.getFixtureB().getBody().getUserData().equals(testActor)) {
 //                        System.out.println(contact.getFixtureB().getBody().getUserData());
-                    }
-                } else if (contact.getFixtureB().getBody().getUserData().equals(player)) {
-                    if (contact.getFixtureA().getBody().getUserData().equals(testActor)) {
-                        if (testActor.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
+                        if (player.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
                             System.out.println("Bottom");
-                        } else if (testActor.getBody().getFixtureList().get(2).equals(contact.getFixtureA())) {
+                            killEnemy = true;
+                            deleteList.add(contact.getFixtureB().getBody());
+                        } else if (player.getBody().getFixtureList().get(2).equals(contact.getFixtureA())) {
                             System.out.println("Left Side");
-                        } else if (testActor.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
+                            deleteList.add(contact.getFixtureA().getBody());
+                        } else if (player.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
                             System.out.println("Head");
-                        } else if (testActor.getBody().getFixtureList().get(4).equals(contact.getFixtureA())) {
+                            deleteList.add(contact.getFixtureA().getBody());
+                        } else if (player.getBody().getFixtureList().get(4).equals(contact.getFixtureA())) {
                             System.out.println("Right Side");
+                            deleteList.add(contact.getFixtureA().getBody());
                         }
                     }
-                    player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
                 }
+//                } else if (contact.getFixtureB().getBody().getUserData().equals(player)) {
+//                    System.out.println("Player contacts enemy");
+//                    if (contact.getFixtureA().getBody().getUserData().equals(testActor)) {
+//                        System.out.println("Contact is enemy");
+//                        if (testActor.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
+//                            System.out.println("Bottom");
+//                        } else if (testActor.getBody().getFixtureList().get(2).equals(contact.getFixtureA())) {
+//                            System.out.println("Left Side");
+//                        } else if (testActor.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
+//                            System.out.println("Head");
+//                        } else if (testActor.getBody().getFixtureList().get(4).equals(contact.getFixtureA())) {
+//                            System.out.println("Right Side");
+//                        }
+//                        if (player.getBody().getFixtureList().get(1).equals(contact.getFixtureB())) {
+//                            System.out.println("Bottom");
+//                        } else if (player.getBody().getFixtureList().get(2).equals(contact.getFixtureB())) {
+//                            System.out.println("Left Side");
+//                        } else if (player.getBody().getFixtureList().get(3).equals(contact.getFixtureB())) {
+//                            System.out.println("Head");
+//                        } else if (player.getBody().getFixtureList().get(4).equals(contact.getFixtureB())) {
+//                            System.out.println("Right Side");
+//                        }
+//                    }
+//                    player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
+//                }
 
                 landed = true;
                 jumped = false;
@@ -206,7 +238,17 @@ public class GameScreen implements Screen, InputProcessor {
             @Override
             public void postSolve(Contact contact, ContactImpulse impulse) {
 //                if (contact.getFixtureA().getBody().getUserData().equals(player)) {
-//                    if (contact.getFixtureB().getBody().getUserData().equals(enemy) || contact.getFixtureB().getBody().getUserData().equals(block1)) {
+//                    if (contact.getFixtureB().getBody().getUserData().equals(testActor) && killEnemy) {
+//                        deleteList.add(contact.getFixtureB().getBody());
+//                        killEnemy = false;
+//                    } else if (contact.getFixtureB().getBody().getUserData().equals(testActor) && !killEnemy) {
+//                        deleteList.add(contact.getFixtureA().getBody());
+//                    }
+//                    else if (contact.getFixtureB().getBody().getUserData().equals(block1) && breakBlock) {
+//                        deleteList.add(contact.getFixtureB().getBody());
+//                        breakBlock = false;
+//                    }
+//                    else if (contact.getFixtureB().getBody().getUserData().equals(block1)){
 //                        deleteList.add(contact.getFixtureB().getBody());
 //                    } else if (contact.getFixtureB().getBody().getUserData().equals(item) && destroyItem) {
 //                        deleteList.add(contact.getFixtureB().getBody());
@@ -218,6 +260,14 @@ public class GameScreen implements Screen, InputProcessor {
         //Create box2bug render
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    }
+
+    public void killEnemy(Contact contact) {
+        if (contact.getFixtureB().getBody().getUserData().equals(enemy) && player.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
+            deleteList.add(contact.getFixtureB().getBody());
+        } else {
+            deleteList.add(contact.getFixtureA().getBody());
+        }
     }
 
     public Player getPlayer() {
