@@ -33,7 +33,7 @@ import com.mygdx.nextlevel.enums.Tag;
 import java.sql.Date;
 import java.sql.SQLException;
 
-public class PostLevelCreationMenuScreen implements Screen {
+public class EditLevelInfoMenuScreen implements Screen {
     private NextLevel game;
     private Skin skin;
     private TextureAtlas atlas;
@@ -45,7 +45,7 @@ public class PostLevelCreationMenuScreen implements Screen {
     private DownloadedLevelsDB dbDownloaded;
     private CreatedLevelsDB dbCreated;
 
-    public PostLevelCreationMenuScreen(NextLevel game) {
+    public EditLevelInfoMenuScreen(NextLevel game) {
         this.game = game;
         atlas = new TextureAtlas(Gdx.files.internal("skin/neon-ui.atlas"));
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
