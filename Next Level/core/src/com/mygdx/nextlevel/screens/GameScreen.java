@@ -183,7 +183,7 @@ public class GameScreen implements Screen, InputProcessor {
 //                        System.out.println(contact.getFixtureB().getBody().getUserData());
                         if (player.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
                             System.out.println("Bottom");
-                            killEnemy = true;
+//                            killEnemy = true;
                             deleteList.add(contact.getFixtureB().getBody());
                         } else if (player.getBody().getFixtureList().get(2).equals(contact.getFixtureA())) {
                             System.out.println("Left Side");
@@ -417,7 +417,8 @@ public class GameScreen implements Screen, InputProcessor {
                 deleteList.remove(i);
             }
         }
-        world.step(1f/60.0f, 6, 2);
+//        world.step(1f/60.0f, 6, 2);
+        world.step(Gdx.graphics.getDeltaTime(), 6, 2);
         batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
     }
