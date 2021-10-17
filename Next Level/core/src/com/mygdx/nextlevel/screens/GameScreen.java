@@ -44,6 +44,7 @@ public class GameScreen implements Screen, InputProcessor {
     boolean itemConsumed = false;
     boolean itemSpawned = false;
     boolean killEnemy = false;
+    boolean breakBlock = false;
 
     float torque = 0.0f;
     boolean drawSprite = true;
@@ -174,17 +175,25 @@ public class GameScreen implements Screen, InputProcessor {
 //                            System.out.println("Test");
 //                            block1.setDeleteSprite(true);
 //                        }
+                         if (player.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
+                             System.out.println("Head");
+                             deleteList.add(contact.getFixtureB().getBody());
+                         }
                     } else if (contact.getFixtureB().getBody().getUserData().equals(testActor)) {
 //                        System.out.println(contact.getFixtureB().getBody().getUserData());
                         if (player.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
                             System.out.println("Bottom");
                             killEnemy = true;
+                            deleteList.add(contact.getFixtureB().getBody());
                         } else if (player.getBody().getFixtureList().get(2).equals(contact.getFixtureA())) {
                             System.out.println("Left Side");
+                            deleteList.add(contact.getFixtureA().getBody());
                         } else if (player.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
                             System.out.println("Head");
+                            deleteList.add(contact.getFixtureA().getBody());
                         } else if (player.getBody().getFixtureList().get(4).equals(contact.getFixtureA())) {
                             System.out.println("Right Side");
+                            deleteList.add(contact.getFixtureA().getBody());
                         }
                     }
                 }
@@ -228,18 +237,23 @@ public class GameScreen implements Screen, InputProcessor {
 
             @Override
             public void postSolve(Contact contact, ContactImpulse impulse) {
-                if (contact.getFixtureA().getBody().getUserData().equals(player)) {
-                    if (contact.getFixtureB().getBody().getUserData().equals(testActor) && killEnemy) {
-                        deleteList.add(contact.getFixtureB().getBody());
-                        killEnemy = false;
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(testActor) && !killEnemy) {
-                        deleteList.add(contact.getFixtureA().getBody());
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(block1)){
-                        deleteList.add(contact.getFixtureB().getBody());
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(item) && destroyItem) {
-                        deleteList.add(contact.getFixtureB().getBody());
-                    }
-                }
+//                if (contact.getFixtureA().getBody().getUserData().equals(player)) {
+//                    if (contact.getFixtureB().getBody().getUserData().equals(testActor) && killEnemy) {
+//                        deleteList.add(contact.getFixtureB().getBody());
+//                        killEnemy = false;
+//                    } else if (contact.getFixtureB().getBody().getUserData().equals(testActor) && !killEnemy) {
+//                        deleteList.add(contact.getFixtureA().getBody());
+//                    }
+//                    else if (contact.getFixtureB().getBody().getUserData().equals(block1) && breakBlock) {
+//                        deleteList.add(contact.getFixtureB().getBody());
+//                        breakBlock = false;
+//                    }
+//                    else if (contact.getFixtureB().getBody().getUserData().equals(block1)){
+//                        deleteList.add(contact.getFixtureB().getBody());
+//                    } else if (contact.getFixtureB().getBody().getUserData().equals(item) && destroyItem) {
+//                        deleteList.add(contact.getFixtureB().getBody());
+//                    }
+//                }
             }
         });
 
