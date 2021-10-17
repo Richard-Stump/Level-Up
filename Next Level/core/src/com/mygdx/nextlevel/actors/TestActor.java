@@ -3,24 +3,19 @@ package com.mygdx.nextlevel.actors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 
-public class Block extends Actor {
-    boolean breakable;
-    boolean spawnItem;
-    boolean spawned;
+public class TestActor extends Actor {
+    Vector2 spawnpoint;
 
-    public Block(Texture texture, World world, Vector2 position, float density, float restitution, boolean breakable, boolean spawnItem) {
+
+    public TestActor(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
         this.sprite = new Sprite(texture);
         this.sprite.setSize(64.0F, 64.0F);
-        this.breakable = breakable;
-        this.spawnItem = spawnItem;
-        this.spawned = false;
         super.setPosition(position.x, position.y);
+        this.spawnpoint = this.worldSpawn;
         super.setBody(BodyDef.BodyType.StaticBody);
         setShape();
         setFixture(density, restitution);
@@ -30,19 +25,23 @@ public class Block extends Actor {
         this.shape = new PolygonShape();
         this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
 
-        super.setEdgeShape();
+        super.setEdgeShape(); //Only needed if want collisions
     }
 
     private void setFixture(float density, float restitution) {
+        //This Fixture is so that the Actor Interacts with the Worlds
         this.fixtureDef = new FixtureDef();
         this.fixtureDef.density = density;
         this.fixtureDef.restitution = restitution;
         this.fixtureDef.filter.categoryBits = BLOCK_ENTITY;
         this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
         this.fixtureDef.shape = this.shape;
+        this.fixtureDef.isSensor = false;
         this.body.createFixture(this.fixtureDef);
-        this.shape.dispose();
+        this.fixtureDef.shape.dispose();
 
+
+        //Only need if wanting to set Contact Sides
         this.edgeShape.set( -w / 2.0F + tolerance, -h / 2.0F -  4*tolerance, w / 2.0F - tolerance, -h / 2.0F - 4*tolerance); //Bottom
         super.setContactSide(this.bottom);
 
@@ -56,22 +55,4 @@ public class Block extends Actor {
         super.setContactSide(this.rightSide);
         this.edgeShape.dispose();
     }
-
-    public boolean isBreakable() {
-        return this.breakable;
-    }
-
-    public boolean canSpawnItem() {
-        return this.spawnItem;
-    }
-
-    public boolean isSpawned() {
-        return this.spawned;
-    }
-
-    public void setSpawned(boolean set) {
-        this.spawned = set;
-    }
-
-
 }
