@@ -12,10 +12,9 @@ public class Enemy extends Actor {
 
     public Enemy(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
-        sprite = new Sprite(texture);
-        sprite.setSize(64.0F, 64.0F);
+        this.sprite = new Sprite(texture);
+        this.sprite.setSize(64.0F, 64.0F);
         this.killable = true;
-
         super.setPosition(position.x, position.y);
 //        super.setBody(BodyDef.BodyType.StaticBody);
         super.setBody(BodyDef.BodyType.DynamicBody);
@@ -36,6 +35,7 @@ public class Enemy extends Actor {
 //            verts.add(new Vector2(tmp));
 //            System.out.println(tmp.toString());
 //        }
+        super.setEdgeShape();
     }
 
     private void setFixture(float density, float restitution) {
@@ -45,8 +45,25 @@ public class Enemy extends Actor {
         this.fixtureDef.filter.categoryBits = BLOCK_ENTITY;
         this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
         this.fixtureDef.shape = this.shape;
+        this.fixtureDef.isSensor = false;
         this.body.createFixture(this.fixtureDef);
-        this.shape.dispose();
+        this.fixtureDef.shape.dispose();
+        this.edgeShape.set( -w / 2.0F + tolerance/2, -h / 2.0F -  tolerance, w / 2.0F - tolerance/2, -h / 2.0F - tolerance); //Bottom
+//        this.edgeShape.set( -w / 2.0F, -h / 2.0F, w / 2.0F, -h / 2.0F ); //Bottom
+        super.setContactSide(this.bottom);
+
+        this.edgeShape.set(-w / 2.0F - tolerance, (-h / 2.0F + tolerance/2)+0.1f, -w / 2.0F - tolerance,(h / 2.0F - tolerance/2)-0.1F); //Left
+//        this.edgeShape.set(-w / 2.0F, -h / 2.0F, -w / 2.0F ,h / 2.0F ); //Left
+        super.setContactSide(this.leftSide);
+
+        this.edgeShape.set( -w / 2.0F + tolerance/2, h / 2.0F + tolerance, w / 2.0F - tolerance/2, h / 2.0F + tolerance); //Head
+//        this.edgeShape.set( -w / 2.0F , h / 2.0F , w / 2.0F , h / 2.0F); //Head
+        super.setContactSide(this.head);
+
+        this.edgeShape.set(w / 2.0F + tolerance, (-h / 2.0F + tolerance/2)+0.1f, w / 2.0F + tolerance, (h / 2.0F - tolerance/2)-0.1f); //Right Side
+//        this.edgeShape.set(w / 2.0F, -h / 2.0F, w / 2.0F, h / 2.0F); //Right Side
+        super.setContactSide(this.rightSide);
+        this.edgeShape.dispose();
     }
 
     public boolean isKillable() {

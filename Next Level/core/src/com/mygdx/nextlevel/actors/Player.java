@@ -11,6 +11,7 @@ public class Player extends Actor {
     Vector2 spawnpoint;
     int lives;
     boolean powerUp;
+    boolean invulnerable = false;
 
     public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
@@ -18,6 +19,7 @@ public class Player extends Actor {
         this.sprite.setSize(64.0F, 64.0F);
         this.lives = 3;
         this.powerUp = false;
+        this.invulnerable = false;
         super.setPosition(position.x, position.y);
         this.spawnpoint = this.worldSpawn;
         super.setBody(BodyDef.BodyType.DynamicBody);
@@ -109,5 +111,13 @@ public class Player extends Actor {
 
     public void setPowerUp(boolean set) {
         this.powerUp = set;
+    }
+
+    public boolean getsInvulnerable() {
+        return this.invulnerable;
+    }
+
+    public void setInvulnerable(boolean invulnerable) {
+        this.invulnerable = invulnerable;
     }
 }
