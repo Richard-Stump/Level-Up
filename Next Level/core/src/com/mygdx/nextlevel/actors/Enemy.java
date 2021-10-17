@@ -27,15 +27,15 @@ public class Enemy extends Actor {
         this.shape = new PolygonShape();
         this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
 
-        System.out.println("Enemy Vertices");
-        Array<Vector2> verts = new Array<Vector2>();
-        Vector2 tmp = new Vector2();
-        for (int i = 0; i < this.shape.getVertexCount(); i++) {
-            // fill tmp with the vertex
-            this.shape.getVertex(i, tmp);
-            verts.add(new Vector2(tmp));
-            System.out.println(tmp.toString());
-        }
+//        System.out.println("Enemy Vertices");
+//        Array<Vector2> verts = new Array<Vector2>();
+//        Vector2 tmp = new Vector2();
+//        for (int i = 0; i < this.shape.getVertexCount(); i++) {
+//            // fill tmp with the vertex
+//            this.shape.getVertex(i, tmp);
+//            verts.add(new Vector2(tmp));
+//            System.out.println(tmp.toString());
+//        }
     }
 
     private void setFixture(float density, float restitution) {

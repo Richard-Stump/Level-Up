@@ -43,18 +43,18 @@ public class Block extends Actor {
         this.body.createFixture(this.fixtureDef);
         this.shape.dispose();
 
-        this.edgeShape.set( -w / 2.0F + tolerance, -h / 2.0F -  4*tolerance, w / 2.0F - tolerance, -h / 2.0F - 4*tolerance); //Bottom
-        super.setContactSide(this.bottom);
-
-        this.edgeShape.set(-w / 2.0F - 2*tolerance, -h / 2.0F + tolerance, -w / 2.0F - 2*tolerance,h / 2.0F - tolerance); //Left
-        super.setContactSide(this.leftSide);
-
-        this.edgeShape.set( -w / 2.0F + tolerance, h / 2.0F + 2*tolerance, w / 2.0F - tolerance, h / 2.0F + 2*tolerance); //Head
-        super.setContactSide(this.head);
-
-        this.edgeShape.set(w / 2.0F + 2*tolerance, -h / 2.0F + tolerance, w / 2.0F + 2*tolerance, h / 2.0F - tolerance); //Right Side
-        super.setContactSide(this.rightSide);
-        this.edgeShape.dispose();
+//        this.edgeShape.set( -w / 2.0F + tolerance, -h / 2.0F -  4*tolerance, w / 2.0F - tolerance, -h / 2.0F - 4*tolerance); //Bottom
+//        super.setContactSide(this.bottom);
+//
+//        this.edgeShape.set(-w / 2.0F - 2*tolerance, -h / 2.0F + tolerance, -w / 2.0F - 2*tolerance,h / 2.0F - tolerance); //Left
+//        super.setContactSide(this.leftSide);
+//
+//        this.edgeShape.set( -w / 2.0F + tolerance, h / 2.0F + 2*tolerance, w / 2.0F - tolerance, h / 2.0F + 2*tolerance); //Head
+//        super.setContactSide(this.head);
+//
+//        this.edgeShape.set(w / 2.0F + 2*tolerance, -h / 2.0F + tolerance, w / 2.0F + 2*tolerance, h / 2.0F - tolerance); //Right Side
+//        super.setContactSide(this.rightSide);
+//        this.edgeShape.dispose();
     }
 
     public boolean isBreakable() {

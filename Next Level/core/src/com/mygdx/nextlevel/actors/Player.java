@@ -29,15 +29,16 @@ public class Player extends Actor {
         this.shape = new PolygonShape();
         this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
 
-        System.out.println("Player Vertices");
-        Array<Vector2> verts = new Array<Vector2>();
-        Vector2 tmp = new Vector2();
-        for (int i = 0; i < this.shape.getVertexCount(); i++) {
-            // fill tmp with the vertex
-            this.shape.getVertex(i, tmp);
-            verts.add(new Vector2(tmp));
-            System.out.println(tmp.toString());
-        }
+        super.setEdgeShape(); //Only needed if want collisions
+//        System.out.println("Player Vertices");
+//        Array<Vector2> verts = new Array<Vector2>();
+//        Vector2 tmp = new Vector2();
+//        for (int i = 0; i < this.shape.getVertexCount(); i++) {
+//            // fill tmp with the vertex
+//            this.shape.getVertex(i, tmp);
+//            verts.add(new Vector2(tmp));
+//            System.out.println(tmp.toString());
+//        }
     }
 
     private void setFixture(float density, float restitution) {
@@ -56,8 +57,22 @@ public class Player extends Actor {
 //        this.fixtureDef.shape = head;
 //        this.body.createFixture(this.fixtureDef);
         this.fixtureDef.shape = this.shape;
+        this.fixtureDef.isSensor = false;
         this.body.createFixture(this.fixtureDef);
+
         this.fixtureDef.shape.dispose();
+        this.edgeShape.set( -w / 2.0F + tolerance, -h / 2.0F -  2*tolerance, w / 2.0F - tolerance, -h / 2.0F - 2*tolerance); //Bottom
+        super.setContactSide(this.bottom);
+
+        this.edgeShape.set(-w / 2.0F - 2*tolerance, -h / 2.0F + tolerance, -w / 2.0F - 2*tolerance,h / 2.0F - tolerance); //Left
+        super.setContactSide(this.leftSide);
+
+        this.edgeShape.set( -w / 2.0F + tolerance, h / 2.0F + 2*tolerance, w / 2.0F - tolerance, h / 2.0F + 2*tolerance); //Head
+        super.setContactSide(this.head);
+
+        this.edgeShape.set(w / 2.0F + 2*tolerance, -h / 2.0F + tolerance, w / 2.0F + 2*tolerance, h / 2.0F - tolerance); //Right Side
+        super.setContactSide(this.rightSide);
+        this.edgeShape.dispose();
     }
 
     public void setSpawnpoint(Vector2 position) {
