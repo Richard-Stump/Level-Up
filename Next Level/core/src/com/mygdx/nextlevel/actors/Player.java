@@ -12,6 +12,7 @@ public class Player extends Actor {
     int lives;
     boolean powerUp;
     boolean invulnerable = false;
+    boolean takeDamage = false;
 
     public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
@@ -20,6 +21,7 @@ public class Player extends Actor {
         this.lives = 3;
         this.powerUp = false;
         this.invulnerable = false;
+        this.takeDamage = false;
         super.setPosition(position.x, position.y);
         this.spawnpoint = this.worldSpawn;
         super.setBody(BodyDef.BodyType.DynamicBody);
@@ -65,7 +67,7 @@ public class Player extends Actor {
         this.body.createFixture(this.fixtureDef);
 
         this.fixtureDef.shape.dispose();
-        this.edgeShape.set( (-w / 2.0F + tolerance/2), -h / 2.0F -  2*tolerance, (w / 2.0F - tolerance/2), -h / 2.0F - 2*tolerance); //Bottom
+        this.edgeShape.set( (-w / 2.0F + tolerance/2)+0.1f, -h / 2.0F -  2*tolerance, (w / 2.0F - tolerance/2)-0.1f, -h / 2.0F - 2*tolerance); //Bottom
 //        this.edgeShape.set( -w / 2.0F, -h / 2.0F, w / 2.0F, -h / 2.0F ); //Bottom
         super.setContactSide(this.bottom);
 
@@ -120,4 +122,9 @@ public class Player extends Actor {
     public void setInvulnerable(boolean invulnerable) {
         this.invulnerable = invulnerable;
     }
+
+    public void setTakeDamage(boolean set) {
+        this.takeDamage = set;
+    }
+
 }

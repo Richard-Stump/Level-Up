@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.actors.Player;
 import com.mygdx.nextlevel.screens.MainMenuScreen;
 
 public class Hud {
@@ -25,7 +26,7 @@ public class Hud {
     protected Skin skin;
 
     public Integer worldTimer;
-    public float timeCount;
+    public float time;
     private Integer score;
 
     Label countdownLabel;
@@ -34,15 +35,17 @@ public class Hud {
     Label levelLabel;
     Label worldLabel;
     Label playerLabel;
+    Label livesLabel;
+    Label numLivesLabel;
 
     TextButton backButton;
 
-    public Hud( SpriteBatch spriteBatch) {
+    public Hud( SpriteBatch spriteBatch, Player player) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
 
         worldTimer = 300;
-        timeCount = 0;
+        time = 0;
         score = 0;
 
         viewport = new FitViewport(NextLevel.V_WIDTH, NextLevel.V_HEIGHT, new OrthographicCamera());
@@ -59,6 +62,8 @@ public class Hud {
         levelLabel = new Label("1-1", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         worldLabel = new Label("WORLD", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         playerLabel = new Label("PLAYER", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
+        livesLabel = new Label("LIVES", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
+        numLivesLabel = new Label(String.format("%d", player.getLives()), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
 
 //        backButton = new TextButton("Back", skin);
 //        //back button listener
@@ -72,14 +77,20 @@ public class Hud {
 //        table.add(backButton).top().left();
 //        table.row();
 
+        table.add(livesLabel).expandX().padTop(10);
         table.add(playerLabel).expandX().padTop(10);
         table.add(worldLabel).expandX().padTop(10);
         table.add(timeLabel).expandX().padTop(10);
         table.row();
+        table.add(numLivesLabel).expandX();
         table.add(scoreLabel).expandX();
         table.add(levelLabel).expandX();
         table.add(countdownLabel).expandX();
 
+
         stage.addActor(table);
+    }
+    public void update(float delta, Player player) {
+        numLivesLabel.setText(String.format("%d", player.getLives()));
     }
 }

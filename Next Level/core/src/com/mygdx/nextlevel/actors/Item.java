@@ -19,6 +19,7 @@ public class Item extends Actor {
         this.sprite.setSize(64.0F, 64.0F);
         super.setPosition(position.x, position.y);
         super.setBody(BodyDef.BodyType.StaticBody);
+//        super.setBody(BodyDef.BodyType.DynamicBody);
 
         setShape();
         setFixture(density, restitution);

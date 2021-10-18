@@ -48,22 +48,22 @@ public class Enemy extends Actor {
         this.fixtureDef.isSensor = false;
         this.body.createFixture(this.fixtureDef);
         this.fixtureDef.shape.dispose();
-        this.edgeShape.set( -w / 2.0F + tolerance/2, -h / 2.0F -  tolerance, w / 2.0F - tolerance/2, -h / 2.0F - tolerance); //Bottom
-//        this.edgeShape.set( -w / 2.0F, -h / 2.0F, w / 2.0F, -h / 2.0F ); //Bottom
-        super.setContactSide(this.bottom);
-
-        this.edgeShape.set(-w / 2.0F - tolerance, (-h / 2.0F + tolerance/2)+0.1f, -w / 2.0F - tolerance,(h / 2.0F - tolerance/2)-0.1F); //Left
-//        this.edgeShape.set(-w / 2.0F, -h / 2.0F, -w / 2.0F ,h / 2.0F ); //Left
-        super.setContactSide(this.leftSide);
-
-        this.edgeShape.set( -w / 2.0F + tolerance/2, h / 2.0F + tolerance, w / 2.0F - tolerance/2, h / 2.0F + tolerance); //Head
-//        this.edgeShape.set( -w / 2.0F , h / 2.0F , w / 2.0F , h / 2.0F); //Head
-        super.setContactSide(this.head);
-
-        this.edgeShape.set(w / 2.0F + tolerance, (-h / 2.0F + tolerance/2)+0.1f, w / 2.0F + tolerance, (h / 2.0F - tolerance/2)-0.1f); //Right Side
-//        this.edgeShape.set(w / 2.0F, -h / 2.0F, w / 2.0F, h / 2.0F); //Right Side
-        super.setContactSide(this.rightSide);
-        this.edgeShape.dispose();
+//        this.edgeShape.set( -w / 2.0F + tolerance/2, -h / 2.0F -  tolerance, w / 2.0F - tolerance/2, -h / 2.0F - tolerance); //Bottom
+////        this.edgeShape.set( -w / 2.0F, -h / 2.0F, w / 2.0F, -h / 2.0F ); //Bottom
+//        super.setContactSide(this.bottom);
+//
+//        this.edgeShape.set(-w / 2.0F - tolerance, (-h / 2.0F + tolerance/2)+0.1f, -w / 2.0F - tolerance,(h / 2.0F - tolerance/2)-0.1F); //Left
+////        this.edgeShape.set(-w / 2.0F, -h / 2.0F, -w / 2.0F ,h / 2.0F ); //Left
+//        super.setContactSide(this.leftSide);
+//
+//        this.edgeShape.set( -w / 2.0F + tolerance/2, h / 2.0F + tolerance, w / 2.0F - tolerance/2, h / 2.0F + tolerance); //Head
+////        this.edgeShape.set( -w / 2.0F , h / 2.0F , w / 2.0F , h / 2.0F); //Head
+//        super.setContactSide(this.head);
+//
+//        this.edgeShape.set(w / 2.0F + tolerance, (-h / 2.0F + tolerance/2)+0.1f, w / 2.0F + tolerance, (h / 2.0F - tolerance/2)-0.1f); //Right Side
+////        this.edgeShape.set(w / 2.0F, -h / 2.0F, w / 2.0F, h / 2.0F); //Right Side
+//        super.setContactSide(this.rightSide);
+//        this.edgeShape.dispose();
     }
 
     public boolean isKillable() {

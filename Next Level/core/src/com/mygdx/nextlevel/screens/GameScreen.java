@@ -143,7 +143,7 @@ public class GameScreen implements Screen, InputProcessor {
 //        }
 
         //Hud
-        hud = new Hud(game.batch);
+        hud = new Hud(game.batch, player);
 
         world.setContactListener(new ContactListener() {
             @Override
@@ -179,6 +179,7 @@ public class GameScreen implements Screen, InputProcessor {
                                 invulnerableTimer();
                             } else {
                                 player.setDeleteSprite(true);
+                                player.subLife();
                                 deleteList.add(contact.getFixtureA().getBody());
                             }
                         } else if (player.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
@@ -188,6 +189,7 @@ public class GameScreen implements Screen, InputProcessor {
                                 invulnerableTimer();
                             } else {
                                 player.setDeleteSprite(true);
+                                player.subLife();
                                 deleteList.add(contact.getFixtureA().getBody());
                             }
                         } else if (player.getBody().getFixtureList().get(4).equals(contact.getFixtureA())) {
@@ -197,6 +199,7 @@ public class GameScreen implements Screen, InputProcessor {
                                 invulnerableTimer();
                             } else {
                                 player.setDeleteSprite(true);
+                                player.subLife();
                                 deleteList.add(contact.getFixtureA().getBody());
                             }
                         }
@@ -465,6 +468,7 @@ public class GameScreen implements Screen, InputProcessor {
         world.step(Gdx.graphics.getDeltaTime(), 6, 2);
         batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
+        hud.update(delta, player);
     }
 
     public void resize(int width, int height) {
