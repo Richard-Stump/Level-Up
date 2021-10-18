@@ -41,6 +41,7 @@ public class GameScreen implements Screen, InputProcessor {
     boolean touchedItemBlock = false;
     boolean touchedPowerUp = false;
     float time = 0;
+//    float invTime = 0;
     boolean itemConsumed = false;
     boolean itemSpawned = false;
     boolean killEnemy = false;
@@ -67,9 +68,9 @@ public class GameScreen implements Screen, InputProcessor {
         float wTest = Gdx.graphics.getWidth();
         float hTest = Gdx.graphics.getHeight();
 
-        Vector2 playerSpawn = new Vector2(-(wTest/2) * 0.75f, -hTest/2 + 32); //assuming player height is 64
+        final Vector2 playerSpawn = new Vector2(-(wTest/2) * 0.75f, -hTest/2 + 32); //assuming player height is 64
         this.player = new Player(new Texture("goomba.png"), this.world, playerSpawn, 0.2f, 0.5f);
-        Vector2 enemySpawn = new Vector2((wTest/2) * 0.75f, -hTest/2 + 32);
+        Vector2 enemySpawn = new Vector2(-(wTest/2) * 0.25f, -hTest/2 + 32);
         final Texture enemyTexture = new Texture("enemy.jpg");
         this.enemy = new Enemy(enemyTexture, this.world, enemySpawn, 100f, 0.5f);
         Vector2 checkpointSpawn = new Vector2(0f, -hTest/2 + 32);
@@ -78,15 +79,15 @@ public class GameScreen implements Screen, InputProcessor {
         final Texture blockTexture1 = new Texture("block.png");
         final Texture blockTexture2 = new Texture("item-block.png");
         Vector2 blockSpawn = new Vector2((wTest/2) * 0.25f, -hTest/2 + 150f);
-        Vector2 blockSpawn2 = new Vector2(200f, -hTest/2 + 100f);
+        Vector2 blockSpawn2 = new Vector2((wTest/2) * 0.5f, -hTest/2 + 150f);
         this.block1 = new Block(blockTexture1, this.world, blockSpawn, 100f, 0.5f, true, false);
-//        this.block2 = new Block(blockTexture2, this.world, blockSpawn2, 100f, 0.5f, false, true);
+        this.block2 = new Block(blockTexture2, this.world, blockSpawn2, 100f, 0.5f, false, true);
 
-        final Vector2 testActorSpawn = new Vector2(-(wTest/2) * 0.25f, -hTest/2 + 32);
-        this.testActor = new TestActor(new Texture("enemy.jpg"), this.world, testActorSpawn, 100f, 0f);
-//        final Texture itemTexture = new Texture("mushroom.jpeg");
-//        Vector2 itemSpawn = new Vector2(200f, 0f);
-//        this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
+//        final Vector2 testActorSpawn = new Vector2(-(wTest/2) * 0.25f, -hTest/2 + 32);
+//        this.testActor = new TestActor(new Texture("enemy.jpg"), this.world, testActorSpawn, 100f, 0f);
+        final Texture itemTexture = new Texture("mushroom.jpeg");
+        Vector2 itemSpawn = new Vector2((wTest/2) * 0.5f, -hTest/2 + 250f);
+        this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
 
         //Bottom edge of screen
         BodyDef edgeBodyDef = new BodyDef();
@@ -130,8 +131,9 @@ public class GameScreen implements Screen, InputProcessor {
         this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
         this.checkpoint.getBody().setUserData(this.checkpoint);
         this.block1.getBody().setUserData(this.block1);
-//        this.block2.getBody().setUserData(this.block2);
-        this.testActor.getBody().setUserData(this.testActor);
+        this.block2.getBody().setUserData(this.block2);
+        this.item.getBody().setUserData(this.item);
+//        this.testActor.getBody().setUserData(this.testActor);
 
 //        if (touchedItemBlock) {
 //            final Texture itemTexture = new Texture("mushroom.jpeg");
@@ -141,7 +143,7 @@ public class GameScreen implements Screen, InputProcessor {
 //        }
 
         //Hud
-        hud = new Hud(game.batch);
+        hud = new Hud(game.batch, player);
 
         world.setContactListener(new ContactListener() {
             @Override
@@ -161,14 +163,46 @@ public class GameScreen implements Screen, InputProcessor {
                         player.setPowerUp(true);
                         item.setDeleteSprite(true);
                         itemConsumed = true;
+                        deleteList.add(contact.getFixtureB().getBody());
                     } else if (contact.getFixtureB().getBody().getUserData().equals(item) && touchedPowerUp) {
                         destroyItem = true;
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(enemy) && player.hasPowerUp()) {
-//                        System.out.println("Touching enemy and has pwoer up");
-                        player.setPowerUp(false);
-                        enemy.setDeleteSprite(true);
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(enemy)) {
-                        enemy.setDeleteSprite(true);
+                    } else if (contact.getFixtureB().getBody().getUserData().equals(enemy) && !player.getsInvulnerable()) {
+                        if (player.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
+                            System.out.println("Bottom");
+//                            killEnemy = true;
+                            deleteList.add(contact.getFixtureB().getBody());
+                            enemy.setDeleteSprite(true);
+                        } else if (player.getBody().getFixtureList().get(2).equals(contact.getFixtureA())) {
+                            System.out.println("Left Side");
+                            if (player.hasPowerUp()) {
+                                player.setPowerUp(false);
+                                invulnerableTimer();
+                            } else {
+                                player.setDeleteSprite(true);
+                                player.subLife();
+                                deleteList.add(contact.getFixtureA().getBody());
+                            }
+                        } else if (player.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
+                            System.out.println("Head");
+                            if (player.hasPowerUp()) {
+                                player.setPowerUp(false);
+                                invulnerableTimer();
+                            } else {
+                                player.setDeleteSprite(true);
+                                player.subLife();
+                                deleteList.add(contact.getFixtureA().getBody());
+                            }
+                        } else if (player.getBody().getFixtureList().get(4).equals(contact.getFixtureA())) {
+                            System.out.println("Right Side");
+                            if (player.hasPowerUp()) {
+                                player.setPowerUp(false);
+                                invulnerableTimer();
+                            } else {
+                                player.setDeleteSprite(true);
+                                player.subLife();
+                                deleteList.add(contact.getFixtureA().getBody());
+                            }
+                        }
                     } else if (contact.getFixtureB().getBody().getUserData().equals(block1)) {
 //                        System.out.println("Contact with Block");
 //                        if (block1.getBody().getFixtureList().get(1).equals(contact.getFixtureB())) {
@@ -178,23 +212,24 @@ public class GameScreen implements Screen, InputProcessor {
                          if (player.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
                              System.out.println("Head");
                              deleteList.add(contact.getFixtureB().getBody());
+                             block1.setDeleteSprite(true);
                          }
                     } else if (contact.getFixtureB().getBody().getUserData().equals(testActor)) {
 //                        System.out.println(contact.getFixtureB().getBody().getUserData());
-                        if (player.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
-                            System.out.println("Bottom");
-                            killEnemy = true;
-                            deleteList.add(contact.getFixtureB().getBody());
-                        } else if (player.getBody().getFixtureList().get(2).equals(contact.getFixtureA())) {
-                            System.out.println("Left Side");
-                            deleteList.add(contact.getFixtureA().getBody());
-                        } else if (player.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
-                            System.out.println("Head");
-                            deleteList.add(contact.getFixtureA().getBody());
-                        } else if (player.getBody().getFixtureList().get(4).equals(contact.getFixtureA())) {
-                            System.out.println("Right Side");
-                            deleteList.add(contact.getFixtureA().getBody());
-                        }
+//                        if (player.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
+//                            System.out.println("Bottom");
+////                            killEnemy = true;
+//                            deleteList.add(contact.getFixtureB().getBody());
+//                        } else if (player.getBody().getFixtureList().get(2).equals(contact.getFixtureA())) {
+//                            System.out.println("Left Side");
+//                            deleteList.add(contact.getFixtureA().getBody());
+//                        } else if (player.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
+//                            System.out.println("Head");
+//                            deleteList.add(contact.getFixtureA().getBody());
+//                        } else if (player.getBody().getFixtureList().get(4).equals(contact.getFixtureA())) {
+//                            System.out.println("Right Side");
+//                            deleteList.add(contact.getFixtureA().getBody());
+//                        }
                     }
                 }
 //                } else if (contact.getFixtureB().getBody().getUserData().equals(player)) {
@@ -339,19 +374,22 @@ public class GameScreen implements Screen, InputProcessor {
 
 //        testActor.getSprite().setPosition((testActor.getFeet().getPosition().x * PIXELS_TO_METERS) - testActor.getSprite().getWidth()/2, (testActor.getFeet().getPosition().y * PIXELS_TO_METERS) - testActor.getSprite().getHeight()/2);
 
-        testActor.getSprite().setPosition((testActor.getBody().getPosition().x * PIXELS_TO_METERS) - testActor.getSprite().getWidth()/2, (testActor.getBody().getPosition().y * PIXELS_TO_METERS) - testActor.getSprite().getHeight()/2);
+//        testActor.getSprite().setPosition((testActor.getBody().getPosition().x * PIXELS_TO_METERS) - testActor.getSprite().getWidth()/2, (testActor.getBody().getPosition().y * PIXELS_TO_METERS) - testActor.getSprite().getHeight()/2);
 
 
 
         checkpoint.getSprite().setPosition((checkpoint.getBody().getPosition().x * PIXELS_TO_METERS) - checkpoint.getSprite().getWidth()/2, (checkpoint.getBody().getPosition().y * PIXELS_TO_METERS) - checkpoint.getSprite().getHeight()/2);
         block1.getSprite().setPosition((block1.getBody().getPosition().x * PIXELS_TO_METERS) - block1.getSprite().getWidth()/2, (block1.getBody().getPosition().y * PIXELS_TO_METERS) - block1.getSprite().getHeight()/2);
-//        block2.getSprite().setPosition((block2.getBody().getPosition().x * PIXELS_TO_METERS) - block2.getSprite().getWidth()/2, (block2.getBody().getPosition().y * PIXELS_TO_METERS) - block2.getSprite().getHeight()/2);
+        block2.getSprite().setPosition((block2.getBody().getPosition().x * PIXELS_TO_METERS) - block2.getSprite().getWidth()/2, (block2.getBody().getPosition().y * PIXELS_TO_METERS) - block2.getSprite().getHeight()/2);
 
+//        if (touchedItemBlock && !itemConsumed) {
+//            final Texture itemTexture = new Texture("mushroom.jpeg");
+//            Vector2 itemSpawn = new Vector2(200f, 0f);
+//            this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
+//            this.item.getBody().setUserData(this.item);
+//            item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
+//        }
         if (touchedItemBlock && !itemConsumed) {
-            final Texture itemTexture = new Texture("mushroom.jpeg");
-            Vector2 itemSpawn = new Vector2(200f, 0f);
-            this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
-            this.item.getBody().setUserData(this.item);
             item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
         }
 
@@ -366,24 +404,33 @@ public class GameScreen implements Screen, InputProcessor {
                 batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
             }
             //Test Enemy
-            batch.draw(testActor.getSprite(), testActor.getSprite().getX(), testActor.getSprite().getY(), testActor.getSprite().getOriginX(), testActor.getSprite().getOriginY(), testActor.getSprite().getWidth(), testActor.getSprite().getHeight(), testActor.getSprite().getScaleX(), testActor.getSprite().getScaleY(), testActor.getSprite().getRotation());
+//            batch.draw(testActor.getSprite(), testActor.getSprite().getX(), testActor.getSprite().getY(), testActor.getSprite().getOriginX(), testActor.getSprite().getOriginY(), testActor.getSprite().getWidth(), testActor.getSprite().getHeight(), testActor.getSprite().getScaleX(), testActor.getSprite().getScaleY(), testActor.getSprite().getRotation());
 
             batch.draw(checkpoint.getSprite(), checkpoint.getSprite().getX(), checkpoint.getSprite().getY(), checkpoint.getSprite().getOriginX(), checkpoint.getSprite().getOriginY(), checkpoint.getSprite().getWidth(), checkpoint.getSprite().getHeight(), checkpoint.getSprite().getScaleX(), checkpoint.getSprite().getScaleY(), checkpoint.getSprite().getRotation());
-            if (touchedPowerUp && player.hasPowerUp()) {
-                player.setTexture(new Texture("paragoomba.png"));
-                batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
-            } else {
-                player.setTexture(new Texture("goomba.png"));
-                batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
+            if (!player.getDeleteSprite()) {
+                if (touchedPowerUp && player.hasPowerUp()) {
+                    player.setTexture(new Texture("paragoomba.png"));
+                    batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
+                } else {
+                    player.setTexture(new Texture("goomba.png"));
+                    batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
+                }
             }
             if (!block1.getDeleteSprite()) {
                 batch.draw(block1.getSprite(), block1.getSprite().getX(), block1.getSprite().getY(), block1.getSprite().getOriginX(), block1.getSprite().getOriginY(), block1.getSprite().getWidth(), block1.getSprite().getHeight(), block1.getSprite().getScaleX(), block1.getSprite().getScaleY(), block1.getSprite().getRotation());
             }
-//            batch.draw(block2.getSprite(), block2.getSprite().getX(), block2.getSprite().getY(), block2.getSprite().getOriginX(), block2.getSprite().getOriginY(), block2.getSprite().getWidth(), block2.getSprite().getHeight(), block2.getSprite().getScaleX(), block2.getSprite().getScaleY(), block2.getSprite().getRotation());
+            batch.draw(block2.getSprite(), block2.getSprite().getX(), block2.getSprite().getY(), block2.getSprite().getOriginX(), block2.getSprite().getOriginY(), block2.getSprite().getWidth(), block2.getSprite().getHeight(), block2.getSprite().getScaleX(), block2.getSprite().getScaleY(), block2.getSprite().getRotation());
             if (touchedItemBlock) {
                 if (!item.getDeleteSprite()) {
+//                    this.item.setBody(BodyDef.BodyType.StaticBody);
+//                    this.item.setShape();
+//                    this.item.setFixture(0f,0f);
+//                    this.item.getBody().setUserData(this.item);
+//                    if (touchedItemBlock && !itemConsumed) {
+//                        item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
+//                    }
                     batch.draw(item.getSprite(), item.getSprite().getX(), item.getSprite().getY(), item.getSprite().getOriginX(), item.getSprite().getOriginY(), item.getSprite().getWidth(), item.getSprite().getHeight(), item.getSprite().getScaleX(), item.getSprite().getScaleY(), item.getSprite().getRotation());
-//                    block2.setSpawned(true);
+                    block2.setSpawned(true);
                 }
             }
         }
@@ -417,9 +464,11 @@ public class GameScreen implements Screen, InputProcessor {
                 deleteList.remove(i);
             }
         }
-        world.step(1f/60.0f, 6, 2);
+//        world.step(1f/60.0f, 6, 2);
+        world.step(Gdx.graphics.getDeltaTime(), 6, 2);
         batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
+        hud.update(delta, player);
     }
 
     public void resize(int width, int height) {
@@ -437,6 +486,16 @@ public class GameScreen implements Screen, InputProcessor {
     public void dispose() {
         batch.dispose();
         world.dispose();
+    }
+
+    private void invulnerableTimer() {
+        float invTime = 0;
+        player.setInvulnerable(true);
+        while (invTime < 5) {
+            invTime += Gdx.graphics.getDeltaTime();
+        }
+        player.setInvulnerable(false);
+
     }
 
     @Override
@@ -473,7 +532,8 @@ public class GameScreen implements Screen, InputProcessor {
         }
         return true;
     }
-    //	@Override
+
+    @Override
     public boolean keyUp(int keycode) {
         return true;
     }

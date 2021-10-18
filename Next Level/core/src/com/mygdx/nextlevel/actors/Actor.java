@@ -39,7 +39,6 @@ public class Actor {
         this.bodyDef.position.set((this.sprite.getX() + this.sprite.getWidth()/2.0F)/PIXELS_TO_METERS, (this.sprite.getY() + this.sprite.getHeight()/2.0F)/PIXELS_TO_METERS);
         this.body = world.createBody(bodyDef);
         this.body.setFixedRotation(true);
-//        this.body.setUserData(body);
     }
 
     void setEdgeShape() {
