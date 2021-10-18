@@ -1,13 +1,11 @@
 package com.mygdx.nextlevel.screens;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -52,6 +50,12 @@ public class GameScreen implements Screen, InputProcessor {
     final short BLOCK_ENTITY = 0x1 << 2; //0100
     final short WORLD_ENTITY = 0x1 << 1; //0010
 
+    //Directional Collisions
+    final int bottom = 1;
+    final int left = 2;
+    final int top = 3;
+    final int right = 4;
+
     boolean landed = true;
     boolean jumped = false;
 
@@ -62,78 +66,89 @@ public class GameScreen implements Screen, InputProcessor {
         this.world = new World(new Vector2(0.0F, -40.0F), true);
 
         //Create Enemy and Player
-        float wTest = Gdx.graphics.getWidth();
-        float hTest = Gdx.graphics.getHeight();
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
 
-        Vector2 playerSpawn = new Vector2(-(wTest/2) * 0.75f, -hTest/2 + 32); //assuming player height is 64
+        //Player Initialization
+        final Vector2 playerSpawn = new Vector2(-(w/2) * 0.75f, -h/2 + 32); //assuming player height is 64
         this.player = new Player(new Texture("goomba.png"), this.world, playerSpawn, 0.2f, 0.5f);
-        Vector2 enemySpawn = new Vector2((wTest/2) * 0.75f, -hTest/2 + 32);
-        final Texture enemyTexture = new Texture("enemy.jpg");
-        this.enemy = new Enemy(enemyTexture, this.world, enemySpawn, 100f, 0.5f);
-        Vector2 checkpointSpawn = new Vector2(0f, -hTest/2 + 32);
-        final Texture checkpointTexture = new Texture("checkpoint2.jpg");
-        this.checkpoint = new Checkpoint(checkpointTexture, this.world, checkpointSpawn,0f, 0f, this.player);
-        final Texture blockTexture1 = new Texture("block.png");
-        final Texture blockTexture2 = new Texture("item-block.png");
-        Vector2 blockSpawn = new Vector2((wTest/2) * 0.25f, -hTest/2 + 150f);
-        Vector2 blockSpawn2 = new Vector2(200f, -hTest/2 + 100f);
-        this.block1 = new Block(blockTexture1, this.world, blockSpawn, 100f, 0.5f, true, false);
-//        this.block2 = new Block(blockTexture2, this.world, blockSpawn2, 100f, 0.5f, false, true);
 
-        final Vector2 testActorSpawn = new Vector2(-(wTest/2) * 0.25f, -hTest/2 + 32);
-        this.testActor = new TestActor(new Texture("enemy.jpg"), this.world, testActorSpawn, 100f, 0f);
-//        final Texture itemTexture = new Texture("mushroom.jpeg");
-//        Vector2 itemSpawn = new Vector2(200f, 0f);
-//        this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
+        //Enemy Initialization
+        Vector2 enemySpawn = new Vector2((w/2) * 0.95f, -h/2 + 32);
+        this.enemy = new Enemy(new Texture("enemy.jpg"), this.world, enemySpawn, 100f, 0.5f);
 
-        //Bottom edge of screen
+        //Checkpoint Initialization
+        Vector2 checkpointSpawn = new Vector2(0f, -h/2 + 32);
+        this.checkpoint = new Checkpoint(new Texture("checkpoint2.jpg"), this.world, checkpointSpawn,0f, 0f, this.player);
+
+        //Block1 Initialization (Brick Block)
+        Vector2 blockSpawn = new Vector2((w/2) * 0.25f, -h/2 + 150f);
+        this.block1 = new Block(new Texture("block.png"), this.world, blockSpawn, 100f, 0.5f, true, false);
+
+
+        //Block2 Initialization (Item Block)
+        Vector2 blockSpawn2 = new Vector2((w/2) * 0.5f, -h/2 + 150f);
+        this.block2 = new Block(new Texture("item-block.png"), this.world, blockSpawn2, 100f, 0.5f, false, true);
+
+        //Item Initialization (Item)
+        Vector2 itemSpawn = new Vector2((w/2) * 0.5f, -h/2 + 250f);
+        this.item = new Item(new Texture("mushroom.jpeg"), this.world, itemSpawn, 0f, 0f);
+
+
+        //Update to screen parameters
+        w /= PIXELS_TO_METERS;
+        h /= PIXELS_TO_METERS;
+
+        //Screen Border
         BodyDef edgeBodyDef = new BodyDef();
-        edgeBodyDef.type = BodyDef.BodyType.StaticBody;
-
-        float w = Gdx.graphics.getWidth()/PIXELS_TO_METERS;
-        float h = Gdx.graphics.getHeight()/PIXELS_TO_METERS;
+        edgeBodyDef.type = BodyDef.BodyType.KinematicBody;
         edgeBodyDef.position.set(0.0F,0.0F);
-        FixtureDef fixtureDefEdge = new FixtureDef();
-        fixtureDefEdge.filter.categoryBits = WORLD_ENTITY;
-        fixtureDefEdge.filter.maskBits = PHYSICS_ENTITY | BLOCK_ENTITY | WORLD_ENTITY;
+        this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
 
+        //Fixture Setup for Border
+        FixtureDef fixtureDefEdgeLeftRightTop = new FixtureDef();
+        FixtureDef fixtureDefEdgeBottom = new FixtureDef();
+        fixtureDefEdgeLeftRightTop.filter.categoryBits = WORLD_ENTITY;
+        fixtureDefEdgeBottom.filter.categoryBits = WORLD_ENTITY;
+        fixtureDefEdgeLeftRightTop.filter.maskBits = PHYSICS_ENTITY | BLOCK_ENTITY | WORLD_ENTITY;
+        fixtureDefEdgeBottom.filter.maskBits = PHYSICS_ENTITY | BLOCK_ENTITY | WORLD_ENTITY;
+
+        //Bottom of the world
         EdgeShape edgeShape = new EdgeShape();
         edgeShape.set(-w/2.0F, -h/2.0F, w/2.0F, -h/2.0F);
-        fixtureDefEdge.shape = edgeShape;
-        this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
-        this.bodyEdgeScreen.createFixture(fixtureDefEdge);
-        this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
+        fixtureDefEdgeBottom.shape = edgeShape;
+        this.bodyEdgeScreen.createFixture(fixtureDefEdgeBottom);
 
+        //Left Side of the world
         edgeShape.set(-w / 2.0F, -h / 2.0F, -w / 2.0F, h / 2.0F);
-        fixtureDefEdge.shape = edgeShape;
-        this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
-        this.bodyEdgeScreen.createFixture(fixtureDefEdge);
-        this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
+        fixtureDefEdgeLeftRightTop.shape = edgeShape;
+        this.bodyEdgeScreen.createFixture(fixtureDefEdgeLeftRightTop);
 
+        //Top of the world
         edgeShape.set(-w / 2.0F, h / 2.0F, w / 2.0F, h / 2.0F);
-        fixtureDefEdge.shape = edgeShape;
-        this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
-        this.bodyEdgeScreen.createFixture(fixtureDefEdge);
-        this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
+        fixtureDefEdgeLeftRightTop.shape = edgeShape;
+        this.bodyEdgeScreen.createFixture(fixtureDefEdgeLeftRightTop);
 
+        //Right side of the world
         edgeShape.set(w / 2.0F, -h / 2.0F, w / 2.0F, h / 2.0F);
-        fixtureDefEdge.shape = edgeShape;
-        this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
-        this.bodyEdgeScreen.createFixture(fixtureDefEdge);
+        fixtureDefEdgeLeftRightTop.shape = edgeShape;
+        this.bodyEdgeScreen.createFixture(fixtureDefEdgeLeftRightTop);
         edgeShape.dispose();
 
+        //Setup User Data for Collision detection
         Gdx.input.setInputProcessor(this);
         this.player.getBody().setUserData(this.player);
         this.enemy.getBody().setUserData(this.enemy);
-        this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
         this.checkpoint.getBody().setUserData(this.checkpoint);
         this.block1.getBody().setUserData(this.block1);
-//        this.block2.getBody().setUserData(this.block2);
-        this.testActor.getBody().setUserData(this.testActor);
+        this.block2.getBody().setUserData(this.block2);
+        this.item.getBody().setUserData(this.item);
+        this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
 
+        //TODO Causes an Error if item loaded after block hit
 //        if (touchedItemBlock) {
 //            final Texture itemTexture = new Texture("mushroom.jpeg");
-//            Vector2 itemSpawn = new Vector2(200f, 0f);
+//            Vector2 itemSpawn = new Vector2((w * PIXELS_TO_METERS/2) * 0.5f, -h * PIXELS_TO_METERS/2 + 250f);
 //            this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
 //            this.item.getBody().setUserData(this.item);
 //        }
@@ -141,59 +156,77 @@ public class GameScreen implements Screen, InputProcessor {
         //Hud
         hud = new Hud(game.batch);
 
+        //Collisions between bodies
         world.setContactListener(new ContactListener() {
             @Override
-            public void beginContact(Contact contact) { //called when two fixtures begin contact
-                if (contact.getFixtureA().getBody().getUserData().equals(player)) {
-                    if (contact.getFixtureB().getBody().getUserData().equals(checkpoint) && !checkpoint.isTriggered()) {
-                        checkpoint.setTriggered(true);
-                        checkpoint.changeSpawn(player);
-                        checkpoint.setTexture(new Texture("checkpoint.png"));
-                        player.addLife();
-                        System.out.println(player.getLives());
-                        return;
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(block2) && !touchedItemBlock) {
-                        touchedItemBlock = true;
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(item) && !touchedPowerUp) {
+            public void beginContact(Contact contact) {
+                //Two different bodies in the contact
+                Body bodyA = contact.getFixtureA().getBody();
+                Body bodyB = contact.getFixtureB().getBody();
+
+                if (bodyA.getUserData().equals(player)) { //If BodyA is player
+                    //Check to see what is in contact with BodyA
+                    if (bodyB.getUserData().equals(checkpoint)) { //Checkpoint
+                        if (!checkpoint.isTriggered()) {
+                            checkpoint.setTriggered(true);
+                            checkpoint.changeSpawn(player);
+                            checkpoint.setTexture(new Texture("checkpoint.png"));
+                            player.addLife(1);
+                        }
+                    } else if (bodyB.getUserData().equals(block2) && !touchedItemBlock) { //Item Block
+                        if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA())) { //Check if Contact on Top Side of player
+                            touchedItemBlock = true;
+                        }
+                    } else if (bodyB.getUserData().equals(item) && !touchedPowerUp) { //Item
                         touchedPowerUp = true;
                         player.setPowerUp(true);
                         item.setDeleteSprite(true);
                         itemConsumed = true;
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(item) && touchedPowerUp) {
-                        destroyItem = true;
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(enemy) && player.hasPowerUp()) {
-//                        System.out.println("Touching enemy and has pwoer up");
-                        player.setPowerUp(false);
-                        enemy.setDeleteSprite(true);
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(enemy)) {
-                        enemy.setDeleteSprite(true);
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(block1)) {
-                        System.out.println("Contact with Block");
-                        if (block1.getBody().getFixtureList().get(1).equals(contact.getFixtureB())) {
-                            System.out.println("Test");
+                    } else if (bodyB.getUserData().equals(enemy) && !player.getsInvulnerable()) { //Enemy
+                        if (bodyA.getFixtureList().get(bottom).equals(contact.getFixtureA())) { //Check if Contact on Bottom of player
+                            deleteList.add(bodyB);
+                            enemy.setDeleteSprite(true);
+                        } else if (bodyA.getFixtureList().get(left).equals(contact.getFixtureA())) { //Check if Contact on Left of player
+                            if (player.hasPowerUp()) {
+                                player.setPowerUp(false);
+                                invulnerableTimer();
+                            } else {
+                                player.subLife();
+                                player.death(checkpoint);
+                            }
+                        } else if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA())) { //Check if Contact on Top of player
+                            if (player.hasPowerUp()) {
+                                player.setPowerUp(false);
+                                invulnerableTimer();
+                            } else {
+                                player.subLife();
+                                player.death(checkpoint);
+                            }
+                        } else if (bodyA.getFixtureList().get(right).equals(contact.getFixtureA())) { //Check if Contact on Right of Player
+                            if (player.hasPowerUp()) {
+                                player.setPowerUp(false);
+                                invulnerableTimer();
+                            } else {
+                                player.subLife();
+                                player.death(checkpoint);
+                            }
+                        }
+                    } else if (bodyB.getUserData().equals(block1)) { //Breakable block
+                        if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA())) {
+                            deleteList.add(bodyB);
                             block1.setDeleteSprite(true);
                         }
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(testActor)) {
-//                        System.out.println(contact.getFixtureB().getBody().getUserData());
                     }
-                } else if (contact.getFixtureB().getBody().getUserData().equals(player)) {
-                    if (contact.getFixtureA().getBody().getUserData().equals(testActor)) {
-                        if (testActor.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
-                            System.out.println("Bottom");
-                        } else if (testActor.getBody().getFixtureList().get(2).equals(contact.getFixtureA())) {
-                            System.out.println("Left Side");
-                        } else if (testActor.getBody().getFixtureList().get(3).equals(contact.getFixtureA())) {
-                            System.out.println("Head");
-                        } else if (testActor.getBody().getFixtureList().get(4).equals(contact.getFixtureA())) {
-                            System.out.println("Right Side");
+                } else if (bodyB.getUserData().equals(player)) { //If BodyB is player
+                    if (bodyA.getUserData().equals(bodyEdgeScreen)) {
+                        if (bodyA.getFixtureList().get(bottom - 1).equals(contact.getFixtureA())) {
+                            bodyB.setLinearVelocity(bodyB.getLinearVelocity().x, 0);
                         }
                     }
-                    player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
                 }
-
                 landed = true;
                 jumped = false;
-            }
+                }
 
             @Override
             public void endContact(Contact contact) { //called when two fixtures stop contact
@@ -275,27 +308,20 @@ public class GameScreen implements Screen, InputProcessor {
 
 
     public void render(float delta) {
-//Advance frame
+        //Camera Setup
+        camera.position.set(player.getBody().getPosition().x, player.getBody().getPosition().y, 0);
         camera.update();
-//        world.step(1f/60.0f, 6, 2);
-
-        //Apply Torque
-//		player.getBody().applyTorque(torque,true);
 
         //Set position from updated physics
         player.getSprite().setPosition((player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (player.getBody().getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
         enemy.getSprite().setPosition((enemy.getBody().getPosition().x * PIXELS_TO_METERS) - enemy.getSprite().getWidth()/2, (enemy.getBody().getPosition().y * PIXELS_TO_METERS) - enemy.getSprite().getHeight()/2);
 
-
-//        testActor.getSprite().setPosition((testActor.getFeet().getPosition().x * PIXELS_TO_METERS) - testActor.getSprite().getWidth()/2, (testActor.getFeet().getPosition().y * PIXELS_TO_METERS) - testActor.getSprite().getHeight()/2);
-
-        testActor.getSprite().setPosition((testActor.getBody().getPosition().x * PIXELS_TO_METERS) - testActor.getSprite().getWidth()/2, (testActor.getBody().getPosition().y * PIXELS_TO_METERS) - testActor.getSprite().getHeight()/2);
-
-
+        //testing new tile code
+        //groundT.groundTile.setPosition(groundT.groundTileWorldBody.getPosition().x, groundT.groundTileWorldBody.getPosition().y);
 
         checkpoint.getSprite().setPosition((checkpoint.getBody().getPosition().x * PIXELS_TO_METERS) - checkpoint.getSprite().getWidth()/2, (checkpoint.getBody().getPosition().y * PIXELS_TO_METERS) - checkpoint.getSprite().getHeight()/2);
         block1.getSprite().setPosition((block1.getBody().getPosition().x * PIXELS_TO_METERS) - block1.getSprite().getWidth()/2, (block1.getBody().getPosition().y * PIXELS_TO_METERS) - block1.getSprite().getHeight()/2);
-//        block2.getSprite().setPosition((block2.getBody().getPosition().x * PIXELS_TO_METERS) - block2.getSprite().getWidth()/2, (block2.getBody().getPosition().y * PIXELS_TO_METERS) - block2.getSprite().getHeight()/2);
+        block2.getSprite().setPosition((block2.getBody().getPosition().x * PIXELS_TO_METERS) - block2.getSprite().getWidth()/2, (block2.getBody().getPosition().y * PIXELS_TO_METERS) - block2.getSprite().getHeight()/2);
 
         if (touchedItemBlock && !itemConsumed) {
             final Texture itemTexture = new Texture("mushroom.jpeg");
@@ -315,8 +341,6 @@ public class GameScreen implements Screen, InputProcessor {
             if (!enemy.getDeleteSprite()) {
                 batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
             }
-            //Test Enemy
-            batch.draw(testActor.getSprite(), testActor.getSprite().getX(), testActor.getSprite().getY(), testActor.getSprite().getOriginX(), testActor.getSprite().getOriginY(), testActor.getSprite().getWidth(), testActor.getSprite().getHeight(), testActor.getSprite().getScaleX(), testActor.getSprite().getScaleY(), testActor.getSprite().getRotation());
 
             batch.draw(checkpoint.getSprite(), checkpoint.getSprite().getX(), checkpoint.getSprite().getY(), checkpoint.getSprite().getOriginX(), checkpoint.getSprite().getOriginY(), checkpoint.getSprite().getWidth(), checkpoint.getSprite().getHeight(), checkpoint.getSprite().getScaleX(), checkpoint.getSprite().getScaleY(), checkpoint.getSprite().getRotation());
             if (touchedPowerUp && player.hasPowerUp()) {
@@ -329,11 +353,11 @@ public class GameScreen implements Screen, InputProcessor {
             if (!block1.getDeleteSprite()) {
                 batch.draw(block1.getSprite(), block1.getSprite().getX(), block1.getSprite().getY(), block1.getSprite().getOriginX(), block1.getSprite().getOriginY(), block1.getSprite().getWidth(), block1.getSprite().getHeight(), block1.getSprite().getScaleX(), block1.getSprite().getScaleY(), block1.getSprite().getRotation());
             }
-//            batch.draw(block2.getSprite(), block2.getSprite().getX(), block2.getSprite().getY(), block2.getSprite().getOriginX(), block2.getSprite().getOriginY(), block2.getSprite().getWidth(), block2.getSprite().getHeight(), block2.getSprite().getScaleX(), block2.getSprite().getScaleY(), block2.getSprite().getRotation());
+            batch.draw(block2.getSprite(), block2.getSprite().getX(), block2.getSprite().getY(), block2.getSprite().getOriginX(), block2.getSprite().getOriginY(), block2.getSprite().getWidth(), block2.getSprite().getHeight(), block2.getSprite().getScaleX(), block2.getSprite().getScaleY(), block2.getSprite().getRotation());
             if (touchedItemBlock) {
                 if (!item.getDeleteSprite()) {
                     batch.draw(item.getSprite(), item.getSprite().getX(), item.getSprite().getY(), item.getSprite().getOriginX(), item.getSprite().getOriginY(), item.getSprite().getWidth(), item.getSprite().getHeight(), item.getSprite().getScaleX(), item.getSprite().getScaleY(), item.getSprite().getRotation());
-//                    block2.setSpawned(true);
+                    block2.setSpawned(true);
                 }
             }
         }
@@ -367,7 +391,7 @@ public class GameScreen implements Screen, InputProcessor {
                 deleteList.remove(i);
             }
         }
-        world.step(1f/60.0f, 6, 2);
+        world.step(Gdx.graphics.getDeltaTime(), 6, 2);
         batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
     }
@@ -389,6 +413,16 @@ public class GameScreen implements Screen, InputProcessor {
         world.dispose();
     }
 
+    private void invulnerableTimer() {
+        float invTime = 0;
+        player.setInvulnerable(true);
+        while (invTime < 5) {
+            invTime += Gdx.graphics.getDeltaTime();
+        }
+        player.setInvulnerable(false);
+
+    }
+
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.UP && this.landed && !this.jumped) {
@@ -405,11 +439,8 @@ public class GameScreen implements Screen, InputProcessor {
         //Simulate Player Death
         if (keycode == Input.Keys.SPACE) {
             player.subLife();
-            System.out.println(player.getLives());
             if (this.player.getLives() < 1) {
-                player.addLife();
-                player.addLife();
-                player.addLife();
+                player.addLife(3);
 
                 player.getBody().setTransform(this.player.getWorldSpawn().x/PIXELS_TO_METERS, this.player.getWorldSpawn().y/PIXELS_TO_METERS, 0);
                 player.setSpawnpoint(player.getWorldSpawn());
