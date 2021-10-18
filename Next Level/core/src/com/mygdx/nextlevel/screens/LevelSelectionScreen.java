@@ -8,14 +8,18 @@ package com.mygdx.nextlevel.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -77,27 +81,59 @@ public class LevelSelectionScreen implements Screen {
         });
 
         backButton.setPosition(0.0f, STAGE_HEIGHT - backButton.getHeight());
-        stage.addActor(backButton);
 
 
-        Table levels = new Table();
+        HorizontalGroup mainLayout = new HorizontalGroup();
+        //mainLayout.setFillParent(true);
+        mainLayout.setPosition(0.0f, STAGE_HEIGHT);
 
-        levels.left();
-        levels.setPosition(10.0f, STAGE_HEIGHT - backButton.getHeight() - 100.0f);
+        //add stuff to main layout, in horizontal order
 
-        //for each level (that we can fit on the screen)
-        //need to implement a scrolling thing
-        float rightSide = 300.0f;
-        float padding = 20.0f;
+
+        VerticalGroup leftSide = new VerticalGroup();
+
+        //add stuff on left side
+
+        Label levelSelectLabel = new Label("Select Level", skin);
+
+
+        //add stuff the level boxes group
+
+        Table levelsTable = new Table();
+
         for (int i = 0; i < dbDownloaded.sortByTitle().size(); i++) {
-            ArrayList<VerticalGroup> levelBox = getLevelTable(dbDownloaded.sortByTitle().get(i).getId());
-            for (VerticalGroup group: levelBox) {
-                group.padRight(rightSide - group.getWidth());
-                levels.add(group).left().padBottom(padding);
+            ArrayList<VerticalGroup> levelParts = getLevelTable(dbDownloaded.sortByTitle().get(i).getId());
+            HorizontalGroup level = new HorizontalGroup();
+            for (int j = 0; j < levelParts.size(); j++) {
+                level.addActor(levelParts.get(j));
             }
-            levels.row();
+            levelsTable.add(level);
+            levelsTable.row();
         }
-        stage.addActor(levels);
+
+        //Skin scrollSkin = new Skin(Gdx.files.internal("data/uiskin.json"));
+
+        ScrollPane scrollPane = new ScrollPane(levelsTable, skin);
+        scrollPane.setForceScroll(true, true);
+
+
+
+        leftSide.addActor(levelSelectLabel);
+        leftSide.addActor(scrollPane);
+
+
+        VerticalGroup rightSide = new VerticalGroup();
+
+
+        //add stuff to right side
+
+
+
+        mainLayout.addActor(leftSide);
+        mainLayout.addActor(rightSide);
+
+        stage.addActor(mainLayout);
+        stage.addActor(backButton);
     }
 
     private ArrayList<VerticalGroup> getLevelTable(String id) {
