@@ -11,7 +11,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Tiles.TileMapTest;
 import com.mygdx.nextlevel.WorldContactListener;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.hud.Hud;
@@ -58,6 +60,8 @@ public class GameScreen implements Screen, InputProcessor {
     boolean landed = true;
     boolean jumped = false;
 
+    //public TileMapTest groundT;
+
     public GameScreen(NextLevel game){
         this.batch = game.batch;
 
@@ -67,6 +71,8 @@ public class GameScreen implements Screen, InputProcessor {
         //Create Enemy and Player
         float wTest = Gdx.graphics.getWidth();
         float hTest = Gdx.graphics.getHeight();
+
+        //groundT = new TileMapTest(this.world);
 
         final Vector2 playerSpawn = new Vector2(-(wTest/2) * 0.75f, -hTest/2 + 32); //assuming player height is 64
         this.player = new Player(new Texture("goomba.png"), this.world, playerSpawn, 0.2f, 0.5f);
@@ -92,6 +98,20 @@ public class GameScreen implements Screen, InputProcessor {
         //Bottom edge of screen
         BodyDef edgeBodyDef = new BodyDef();
         edgeBodyDef.type = BodyDef.BodyType.StaticBody;
+
+//        this.bodyEdgeScreen = this.world.createBody(edgeBodyDef);
+//
+//        PolygonShape groundShape = new PolygonShape();
+//        groundShape.setAsBox(1000f, 100f);
+//
+//        this.bodyEdgeScreen.createFixture(groundShape, 1f);
+//        FixtureDef fixtureDefEdge = new FixtureDef();
+//        fixtureDefEdge.filter.categoryBits = WORLD_ENTITY;
+//        fixtureDefEdge.filter.maskBits = PHYSICS_ENTITY | BLOCK_ENTITY | WORLD_ENTITY;
+//
+//        edgeBodyDef.position.set(-Gdx.graphics.getWidth() / 2f, -Gdx.graphics.getHeight() / 2f);
+//        this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
+
 
         float w = Gdx.graphics.getWidth()/PIXELS_TO_METERS;
         float h = Gdx.graphics.getHeight()/PIXELS_TO_METERS;
@@ -361,6 +381,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void render(float delta) {
 //Advance frame
+        camera.position.set(player.getBody().getPosition().x, player.getBody().getPosition().y, 0);
         camera.update();
 //        world.step(1f/60.0f, 6, 2);
 
@@ -376,7 +397,8 @@ public class GameScreen implements Screen, InputProcessor {
 
 //        testActor.getSprite().setPosition((testActor.getBody().getPosition().x * PIXELS_TO_METERS) - testActor.getSprite().getWidth()/2, (testActor.getBody().getPosition().y * PIXELS_TO_METERS) - testActor.getSprite().getHeight()/2);
 
-
+//testing new tile code
+        //groundT.groundTile.setPosition(groundT.groundTileWorldBody.getPosition().x, groundT.groundTileWorldBody.getPosition().y);
 
         checkpoint.getSprite().setPosition((checkpoint.getBody().getPosition().x * PIXELS_TO_METERS) - checkpoint.getSprite().getWidth()/2, (checkpoint.getBody().getPosition().y * PIXELS_TO_METERS) - checkpoint.getSprite().getHeight()/2);
         block1.getSprite().setPosition((block1.getBody().getPosition().x * PIXELS_TO_METERS) - block1.getSprite().getWidth()/2, (block1.getBody().getPosition().y * PIXELS_TO_METERS) - block1.getSprite().getHeight()/2);
@@ -399,6 +421,7 @@ public class GameScreen implements Screen, InputProcessor {
         debugMatrix = batch.getProjectionMatrix().cpy().scale(PIXELS_TO_METERS, PIXELS_TO_METERS, 0);
 
         batch.begin();
+        batch.draw(new Texture("tempBack.png"),-Gdx.graphics.getWidth() / 2f, -Gdx.graphics.getHeight() / 2f);
         if (drawSprite) {
             if (!enemy.getDeleteSprite()) {
                 batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
@@ -434,6 +457,7 @@ public class GameScreen implements Screen, InputProcessor {
                 }
             }
         }
+
         batch.end();
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
