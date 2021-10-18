@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -29,6 +30,7 @@ import jdk.internal.org.jline.utils.DiffHelper;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class LevelSelectionScreen implements Screen {
     private NextLevel game;
@@ -78,24 +80,28 @@ public class LevelSelectionScreen implements Screen {
         stage.addActor(backButton);
 
 
+        Table levels = new Table();
+
+        levels.left();
+        levels.setPosition(10.0f, STAGE_HEIGHT - backButton.getHeight() - 100.0f);
+
         //for each level (that we can fit on the screen)
         //need to implement a scrolling thing
-        float tableStartPos = STAGE_HEIGHT - backButton.getHeight() - 50.0f;
+        float rightSide = 300.0f;
+        float padding = 20.0f;
         for (int i = 0; i < dbDownloaded.sortByTitle().size(); i++) {
-            HorizontalGroup levelBox = getLevelTable(dbDownloaded.sortByTitle().get(i).getId());
-
-            float position = tableStartPos - (levelBox.getHeight() * i);
-
-            levelBox.setPosition(10.0f, position);
-            stage.addActor(levelBox);
+            ArrayList<VerticalGroup> levelBox = getLevelTable(dbDownloaded.sortByTitle().get(i).getId());
+            for (VerticalGroup group: levelBox) {
+                group.padRight(rightSide - group.getWidth());
+                levels.add(group).left().padBottom(padding);
+            }
+            levels.row();
         }
+        stage.addActor(levels);
     }
 
-    private HorizontalGroup getLevelTable(String id) {
-        HorizontalGroup group = new HorizontalGroup();
-        Table metadata = new Table();
-        metadata.top();
-
+    private ArrayList<VerticalGroup> getLevelTable(String id) {
+        ArrayList<VerticalGroup> levelTable = new ArrayList<>();
         LevelInfo levelInfo;
 
         if (!dbDownloaded.isDBActive()) {
@@ -106,16 +112,34 @@ public class LevelSelectionScreen implements Screen {
         }
 
         //add stuff to the table here
+        //TODO: if using image preview for levels, figure out how to get image from tilemap or something
+        //Image imagePreview = new Image();
+
+        //group together title, author, difficulty, and tags
+        VerticalGroup metadata = new VerticalGroup();
+        metadata.columnAlign(Align.left);
         Label levelName = new Label(levelInfo.getTitle(), skin);
         Label author = new Label(levelInfo.getAuthor(), skin);
-        Label difficulty = new Label(Difficulty.values()[levelInfo.getDifficulty()].getDisplayName(), skin);
-        Label tags = new Label(levelInfo.getTags().toString(), skin);
+        String difficultyString = Difficulty.values()[levelInfo.getDifficulty()].getDisplayName();
+        Label difficultyAndTags = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
+
+        metadata.addActor(levelName);
+        metadata.addActor(author);
+        metadata.addActor(difficultyAndTags);
+        levelTable.add(metadata);
+
+        //rating and playcount will be on the right side of the box
+        VerticalGroup ratingAndPlayCount = new VerticalGroup();
+        ratingAndPlayCount.columnAlign(Align.right);
         Label rating = new Label("" + levelInfo.getRating(), skin);
         Label playCount = new Label("" + levelInfo.getPlayCount(), skin);
+        ratingAndPlayCount.addActor(rating);
+        ratingAndPlayCount.addActor(playCount);
 
-        group.addActor(levelName);
+        ratingAndPlayCount.right();
+        levelTable.add(ratingAndPlayCount);
 
-        return group;
+        return levelTable;
     }
 
     public void render(float delta) {
