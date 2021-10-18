@@ -27,6 +27,7 @@ import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneAdapter;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.screens.editor.AssetSelectionPane;
 import com.mygdx.nextlevel.screens.editor.AssetSelectorWindow;
+import com.mygdx.nextlevel.screens.editor.TestTilemap;
 import com.mygdx.nextlevel.screens.editor.TilemapView;
 
 import java.util.ArrayList;
@@ -46,7 +47,6 @@ public class EditLevelScreen implements Screen {
     private TilemapView tilemapView;
 
     private final Color backgroundColor = new Color(0.1f, 0.1f, 0.1f,1.0f);
-    private final Color gridColor = new Color(0.2f, 0.2f, 0.2f,1.0f);
 
     public static final int STAGE_WIDTH = 1920;
     public static final int STAGE_HEIGHT = 1000;
@@ -60,7 +60,6 @@ public class EditLevelScreen implements Screen {
         this.atlas = new TextureAtlas(Gdx.files.internal("skin/neon-ui.atlas"));
         this.skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
 
-
         // Create a new orthographic camera and set it to view the center of the screen.
         camera = new OrthographicCamera();
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
@@ -73,14 +72,13 @@ public class EditLevelScreen implements Screen {
         batch = game.batch;
         stage = new Stage(viewport, batch);
 
-        tilemapView = new TilemapView(STAGE_WIDTH, STAGE_HEIGHT);
+        tilemapView = new TilemapView(new TestTilemap(16, 16), STAGE_WIDTH, STAGE_HEIGHT);
 
         // For some reason the tabbed pane won't work with the other skin.
         // TODO: Figure out how to use the same skin as the main menu
         if(!VisUI.isLoaded())
             VisUI.load(VisUI.SkinScale.X2);
     }
-
 
     @Override
     public void show() {
@@ -98,7 +96,6 @@ public class EditLevelScreen implements Screen {
             }
         });
 
-
         stage.addActor(tilemapView);
 
         AssetSelectorWindow win = new AssetSelectorWindow();
@@ -108,7 +105,6 @@ public class EditLevelScreen implements Screen {
 
         backButton.setPosition(0.0f, STAGE_HEIGHT - backButton.getHeight());
         stage.addActor(backButton);
-
     }
 
     @Override
@@ -126,10 +122,9 @@ public class EditLevelScreen implements Screen {
         camera.update();
     }
 
-    @Override
-    public void pause() {
-
+    @Override public void pause () {
     }
+
 
     @Override
     public void resume() {

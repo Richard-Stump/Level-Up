@@ -1,10 +1,11 @@
 package com.mygdx.nextlevel.screens.editor;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
@@ -17,6 +18,7 @@ public class AssetSelectionPane extends Tab {
     private String name;
     private ScrollPane scrollPane;
     private VisTable table;
+    protected int selectionIndex;
 
     public AssetSelectionPane(String name, ArrayList<String> imageNames) {
         super(false, false);
@@ -34,24 +36,40 @@ public class AssetSelectionPane extends Tab {
         final float size = 128;
         final float pad = 10.0f;
 
+        // The button group adds the functionality for selecting objects.
+        // For each pane we want exactly 1 object to be selected.
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.setMaxCheckCount(1);
+        buttonGroup.setMinCheckCount(1);
+        buttonGroup.setUncheckLast(true);
+
         // Add the images for each of the resources to the table.
         int i = 0;
         for(String imageName : imageNames) {
-            Texture tex = new Texture(imageName);
+            Texture tex1 = new Texture(imageName);
 
-            TextureRegionDrawable trd = new TextureRegionDrawable(tex);
+            TextureRegionDrawable trdNormal = new TextureRegionDrawable(tex1);
+            Drawable dChecked = trdNormal.tint(new Color(0.2f, 0.2f, 0.5f, 0.5f));
 
-            ImageButton ib = new ImageButton(trd, trd);
+            final ImageButton ib = new ImageButton(trdNormal, dChecked, dChecked);
+
+            TextButton b = new TextButton("test", VisUI.getSkin(), "toggle");
 
             innerTable.add(ib).expand().fill().padBottom(pad).padTop(pad).size(size);
+            buttonGroup.add(ib);
 
             // A new row every 2 lines
             if(++i % 2 == 0)
                 innerTable.row();
         }
 
+        //Select the first object
+        buttonGroup.setChecked("test");
+
         table = new VisTable();
         table.add(scrollPane).expand().fillX().align(Align.top);
+
+        selectionIndex = 0;
     }
 
     @Override
@@ -62,5 +80,9 @@ public class AssetSelectionPane extends Tab {
     @Override
     public Table getContentTable() {
         return table;
+    }
+
+    public int getSelectionIndex() {
+        return selectionIndex;
     }
 }
