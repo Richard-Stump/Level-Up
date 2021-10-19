@@ -43,6 +43,7 @@ public class GameScreen implements Screen, InputProcessor {
     float time = 0;
 //    float invTime = 0;
     boolean itemConsumed = false;
+    boolean playerKilled = false;
     boolean itemSpawned = false;
     boolean killEnemy = false;
     boolean breakBlock = false;
@@ -201,7 +202,7 @@ public class GameScreen implements Screen, InputProcessor {
                                 invulnerableTimer();
                             } else {
                                 player.subLife();
-                                player.death(checkpoint);
+                                playerKilled = true;
                             }
                         } else if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA())) { //Check if Contact on Top of player
                             if (player.hasPowerUp()) {
@@ -209,7 +210,7 @@ public class GameScreen implements Screen, InputProcessor {
                                 invulnerableTimer();
                             } else {
                                 player.subLife();
-                                player.death(checkpoint);
+                                playerKilled = true;
                             }
                         } else if (bodyA.getFixtureList().get(right).equals(contact.getFixtureA())) { //Check if Contact on Right of Player
                             if (player.hasPowerUp()) {
@@ -217,7 +218,7 @@ public class GameScreen implements Screen, InputProcessor {
                                 invulnerableTimer();
                             } else {
                                 player.subLife();
-                                player.death(checkpoint);
+                                playerKilled = true;
                             }
                         }
                     } else if (bodyB.getUserData().equals(block1)) { //Breakable block
@@ -415,6 +416,13 @@ public class GameScreen implements Screen, InputProcessor {
                 deleteList.remove(i);
             }
         }
+
+        //Player killed
+        if (playerKilled) {
+            player.death(checkpoint);
+            playerKilled = false;
+        }
+
         world.step(Gdx.graphics.getDeltaTime(), 6, 2);
         batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
