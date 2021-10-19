@@ -46,7 +46,7 @@ public class WorldContactListener implements ContactListener {
                 checkpoint.setTriggered(true);
                 checkpoint.changeSpawn(player);
                 checkpoint.setTexture(new Texture("checkpoint.png"));
-                player.addLife();
+                player.addLife(1);
                 System.out.println(player.getLives());
                 return;
             } else if (contact.getFixtureB().getBody().getUserData().equals(block2) && !touchedItemBlock) {

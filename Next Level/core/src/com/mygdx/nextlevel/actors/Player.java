@@ -4,8 +4,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
-import com.mygdx.nextlevel.screens.GameScreen;
 
 public class Player extends Actor {
     Vector2 spawnpoint;
@@ -33,16 +31,7 @@ public class Player extends Actor {
         this.shape = new PolygonShape();
         this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
 
-        super.setEdgeShape(); //Only needed if want collisions
-//        System.out.println("Player Vertices");
-//        Array<Vector2> verts = new Array<Vector2>();
-//        Vector2 tmp = new Vector2();
-//        for (int i = 0; i < this.shape.getVertexCount(); i++) {
-//            // fill tmp with the vertex
-//            this.shape.getVertex(i, tmp);
-//            verts.add(new Vector2(tmp));
-//            System.out.println(tmp.toString());
-//        }
+        super.setEdgeShape();
     }
 
     private void setFixture(float density, float restitution) {
@@ -51,36 +40,26 @@ public class Player extends Actor {
         this.fixtureDef.restitution = restitution;
         this.fixtureDef.filter.categoryBits = PHYSICS_ENTITY;
         this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
-
-//        EdgeShape feet = new EdgeShape();
-//        feet.set(-this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, -this.sprite.getHeight()/2.0F/PIXELS_TO_METERS, this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, -this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
-//        this.fixtureDef.filter.categoryBits = PHYSICS_ENTITY;
-//        this.fixtureDef.shape = feet;
-//        this.body.createFixture(this.fixtureDef);
-//        EdgeShape head = new EdgeShape();
-//        head.set(-this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS, this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
-//        this.fixtureDef.shape = head;
-
-//        this.body.createFixture(this.fixtureDef);
         this.fixtureDef.shape = this.shape;
         this.fixtureDef.isSensor = false;
         this.body.createFixture(this.fixtureDef);
 
         this.fixtureDef.shape.dispose();
+
+        //Bottom Side of Player Fixture
         this.edgeShape.set( (-w / 2.0F + tolerance/2)+0.1f, -h / 2.0F -  2*tolerance, (w / 2.0F - tolerance/2)-0.1f, -h / 2.0F - 2*tolerance); //Bottom
-//        this.edgeShape.set( -w / 2.0F, -h / 2.0F, w / 2.0F, -h / 2.0F ); //Bottom
         super.setContactSide(this.bottom);
 
+        //Left Side of Player Fixture
         this.edgeShape.set(-w / 2.0F - tolerance, (-h / 2.0F + tolerance/2)+0.1f, -w / 2.0F - tolerance,(h / 2.0F - tolerance/2)-0.1f); //Left
-//        this.edgeShape.set(-w / 2.0F, -h / 2.0F, -w / 2.0F ,h / 2.0F ); //Left
         super.setContactSide(this.leftSide);
 
+        //Top Side of Player fixture
         this.edgeShape.set( (-w / 2.0F + tolerance/2)+0.1f, (h / 2.0F + 2*tolerance), (w / 2.0F - tolerance/2)-0.1f, (h / 2.0F + 2*tolerance)); //Head
-//        this.edgeShape.set( -w / 2.0F , h / 2.0F , w / 2.0F , h / 2.0F); //Head
         super.setContactSide(this.head);
 
+        //Right Side of Player Fixture
         this.edgeShape.set(w / 2.0F + tolerance, (-h / 2.0F + tolerance/2)+0.1f, w / 2.0F + tolerance, (h / 2.0F - tolerance/2)-0.1f); //Right Side
-//        this.edgeShape.set(w / 2.0F, -h / 2.0F, w / 2.0F, h / 2.0F); //Right Side
         super.setContactSide(this.rightSide);
         this.edgeShape.dispose();
     }
@@ -95,8 +74,8 @@ public class Player extends Actor {
 
     public int getLives() { return this.lives; }
 
-    public void addLife() {
-        this.lives++;
+    public void addLife(int numLives) {
+        this.lives += numLives;
     }
 
     public void subLife() { this.lives--; }
@@ -127,4 +106,21 @@ public class Player extends Actor {
         this.takeDamage = set;
     }
 
+    public void death(Checkpoint checkpoint) {
+        if (getLives() < 1) { //Player has no lives left
+            addLife(3);
+
+            setSpawnpoint(getWorldSpawn());
+            Vector2 spawn = getSpawnpoint();
+//            while (this.world.isLocked());
+            this.body.setTransform(spawn.x/PIXELS_TO_METERS, spawn.y/PIXELS_TO_METERS, 0);
+            checkpoint.setTexture(new Texture("checkpoint2.jpg"));
+            checkpoint.setTriggered(false);
+        } else { //Player has lives
+            Vector2 spawn = getSpawnpoint();
+//            while (this.world.isLocked());
+            this.body.setTransform(spawn.x/PIXELS_TO_METERS, spawn.y/PIXELS_TO_METERS, 0);
+        }
+        this.body.setLinearVelocity(0, 0);
+    }
 }
