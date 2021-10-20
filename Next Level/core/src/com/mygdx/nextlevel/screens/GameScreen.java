@@ -71,21 +71,23 @@ public class GameScreen implements Screen, InputProcessor {
         this.batch = game.batch;
 
         //Physics World
-        this.world = new World(new Vector2(0.0F, -40.0F), true);
+        this.world = new World(new Vector2(0.0F, -9.8F), true);
 
         //Create Enemy and Player
         float w = Gdx.graphics.getWidth();
+//        float w  = 2000F;
         float h = Gdx.graphics.getHeight();
 
         //groundT = new TileMapTest(this.world);
         
         //Player Initialization
         final Vector2 playerSpawn = new Vector2(-(w/2) * 0.75f, -h/2 + 32); //assuming player height is 64
-        this.player = new Player(new Texture("goomba.png"), this.world, playerSpawn, 0.2f, 0.5f);
+        //TODO Set density to jump a little higher than 3 tiles
+        this.player = new Player(new Texture("goomba.png"), this.world, playerSpawn, 0.25f, 0f);
 
         //Enemy Initialization
         Vector2 enemySpawn = new Vector2((w/2) * 0.95f, -h/2 + 32);
-        this.enemy = new Enemy(new Texture("enemy.jpg"), this.world, enemySpawn, 100f, 0.5f);
+        this.enemy = new Enemy(new Texture("enemy.jpg"), this.world, enemySpawn, 100f, 0f);
 
         //Checkpoint Initialization
         Vector2 checkpointSpawn = new Vector2(0f, -h/2 + 32);
@@ -93,12 +95,11 @@ public class GameScreen implements Screen, InputProcessor {
 
         //Block1 Initialization (Brick Block)
         Vector2 blockSpawn = new Vector2((w/2) * 0.25f, -h/2 + 150f);
-        this.block1 = new Block(new Texture("block.png"), this.world, blockSpawn, 100f, 0.5f, true, false);
-
+        this.block1 = new Block(new Texture("block.png"), this.world, blockSpawn, 100f, 0f, true, false);
 
         //Block2 Initialization (Item Block)
         Vector2 blockSpawn2 = new Vector2((w/2) * 0.5f, -h/2 + 150f);
-        this.block2 = new Block(new Texture("item-block.png"), this.world, blockSpawn2, 100f, 0.5f, false, true);
+        this.block2 = new Block(new Texture("item-block.png"), this.world, blockSpawn2, 100f, 0f, false, true);
 
         //Item Initialization (Item)
         Vector2 itemSpawn = new Vector2((w/2) * 0.5f, -h/2 + 250f);
@@ -127,6 +128,9 @@ public class GameScreen implements Screen, InputProcessor {
         EdgeShape edgeShape = new EdgeShape();
         edgeShape.set(-w/2.0F, -h/2.0F, w/2.0F, -h/2.0F);
         fixtureDefEdgeBottom.shape = edgeShape;
+        fixtureDefEdgeBottom.density = 100.0f;
+        fixtureDefEdgeBottom.restitution = 0f;
+        fixtureDefEdgeBottom.friction = 1f;
         this.bodyEdgeScreen.createFixture(fixtureDefEdgeBottom);
 
         //Left Side of the world
@@ -229,9 +233,7 @@ public class GameScreen implements Screen, InputProcessor {
                     }
                 } else if (bodyB.getUserData().equals(player)) { //If BodyB is player
                     if (bodyA.getUserData().equals(bodyEdgeScreen)) {
-                        if (bodyA.getFixtureList().get(bottom - 1).equals(contact.getFixtureA())) {
-                            bodyB.setLinearVelocity(bodyB.getLinearVelocity().x, 0);
-                        }
+                        //Contact with the Sides of the Screen
                     }
                 }
                 landed = true;
@@ -459,31 +461,14 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.UP && this.landed && !this.jumped) {
-            Vector2 force = new Vector2(0f, 65f);
-            this.player.getBody().applyForceToCenter(force, true);
+            float impulse = this.player.getBody().getMass() * 6.5f;
+            this.player.getBody().applyLinearImpulse(new Vector2(0, impulse), this.player.getBody().getWorldCenter(), true);
             this.jumped = true;
             this.landed = false;
         }
 
         if (keycode == Input.Keys.ESCAPE) {
             drawSprite = !drawSprite;
-        }
-
-        //Simulate Player Death
-        if (keycode == Input.Keys.SPACE) {
-            player.subLife();
-            if (this.player.getLives() < 1) {
-                player.addLife(3);
-
-                player.getBody().setTransform(this.player.getWorldSpawn().x/PIXELS_TO_METERS, this.player.getWorldSpawn().y/PIXELS_TO_METERS, 0);
-                player.setSpawnpoint(player.getWorldSpawn());
-                checkpoint.setTexture(new Texture("checkpoint2.jpg"));
-                checkpoint.setTriggered(false);
-            } else {
-                player.getBody().setTransform(this.player.getSpawnpoint().x/PIXELS_TO_METERS, this.player.getSpawnpoint().y/PIXELS_TO_METERS, 0);
-
-            }
-            player.getBody().setLinearVelocity(0, 0);
         }
         return true;
     }
