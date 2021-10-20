@@ -315,6 +315,10 @@ public class GameScreen implements Screen, InputProcessor {
         //Create box2bug render
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        //sets camera to 0,0 at left bottom corner
+        //this.camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
+        this.camera.position.set(player.getBody().getPosition().x, player.getBody().getPosition().y, 0);
     }
 
     public void killEnemy(Contact contact) {
@@ -381,8 +385,6 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void render(float delta) {
 //Advance frame
-        camera.position.set(player.getBody().getPosition().x, player.getBody().getPosition().y, 0);
-        camera.update();
 //        world.step(1f/60.0f, 6, 2);
 
         //Apply Torque
@@ -417,6 +419,12 @@ public class GameScreen implements Screen, InputProcessor {
 
         Gdx.gl.glClearColor(1,1,1,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        camera.position.x = player.getBody().getPosition().x + player.getBody().getPosition().x + player.getSprite().getWidth() /2 ;
+        //camera.position.x = player.getBody().getPosition().x;
+        //float currentPosition = camera.position.x;
+        //System.out.printf("%f\n", currentPosition);
+        camera.update();
         batch.setProjectionMatrix(camera.combined);
         debugMatrix = batch.getProjectionMatrix().cpy().scale(PIXELS_TO_METERS, PIXELS_TO_METERS, 0);
 
