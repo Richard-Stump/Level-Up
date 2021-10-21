@@ -6,9 +6,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.badlogic.gdx.utils.Null;
 
-public class TilemapView extends Actor {
+public class TilemapView extends Widget {
     protected ShapeRenderer shapeRenderer;
     protected Texture tex;
     protected float scale;              //The number of pixels per tile
@@ -18,7 +19,7 @@ public class TilemapView extends Actor {
     private int count = 0;
     private InputListener inputListener;
 
-    protected final Color gridColor = Color.WHITE;
+    protected Color gridColor = Color.WHITE;
 
     public TilemapView(TestTilemap map, int screenWidth, int screenHeight) {
         this(screenWidth, screenHeight);
@@ -41,6 +42,9 @@ public class TilemapView extends Actor {
         shapeRenderer = new ShapeRenderer(1000);
         tex = new Texture("block.png");
 
+        setPosition(0,0);
+        setBounds(0, 0, screenWidth, screenHeight);
+
         scale = 32.0f;
         originX = 0.0f;
         originY = 0.0f;
@@ -50,13 +54,13 @@ public class TilemapView extends Actor {
                 System.out.println("enter " + (count));
             }
             public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                System.out.println("exit " + (++count));
+                System.out.println("exit " + (count++));
             }
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                int tileX = (int)((x / scale) - originX);
-                int tileY = (int)((y / scale) - originY);
+                int tileX = (int)((x / scale) + originX);
+                int tileY = (int)((- y / scale) + originY);
 
                 System.out.println("Clicked at tile (" + tileX + "," + tileY + ")");
 
@@ -80,8 +84,6 @@ public class TilemapView extends Actor {
         super.draw(batch,parentAlpha);
 
         drawTiles(batch, (int)scale);
-
-        setPosition(getX() + 1.0f, getY() + 1.0f);
 
         //The batch must be shut off before rendering the grid because batches don't
         //play well with shape renderers
