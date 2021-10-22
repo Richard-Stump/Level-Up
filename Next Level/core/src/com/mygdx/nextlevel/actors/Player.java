@@ -13,6 +13,7 @@ public class Player extends Actor {
     boolean powerUp;
     boolean invulnerable = false;
     boolean takeDamage = false;
+    boolean slowItem = false;
 
     public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
@@ -22,6 +23,7 @@ public class Player extends Actor {
         this.powerUp = false;
         this.invulnerable = false;
         this.takeDamage = false;
+        this.slowItem = false;
         super.setPosition(position.x, position.y);
         this.spawnpoint = this.worldSpawn;
         super.setBody(BodyDef.BodyType.DynamicBody);
@@ -127,4 +129,11 @@ public class Player extends Actor {
         this.takeDamage = set;
     }
 
+    public boolean getSlowItem() {
+        return this.slowItem;
+    }
+
+    public void setSlowItem(boolean slowItem) {
+        this.slowItem = slowItem;
+    }
 }

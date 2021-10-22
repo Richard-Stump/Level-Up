@@ -29,6 +29,7 @@ public class GameScreen implements Screen, InputProcessor {
     Block block1, block2;
     Item item;
     Hud hud;
+    Item slowItem;
 
     World world;
     Body bodyEdgeScreen;
@@ -48,6 +49,8 @@ public class GameScreen implements Screen, InputProcessor {
     boolean itemSpawned = false;
     boolean killEnemy = false;
     boolean breakBlock = false;
+    float speedRight = 3f;
+    float speedLeft = -3f;
 
     float torque = 0.0f;
     boolean drawSprite = true;
@@ -91,9 +94,14 @@ public class GameScreen implements Screen, InputProcessor {
 
 //        final Vector2 testActorSpawn = new Vector2(-(wTest/2) * 0.25f, -hTest/2 + 32);
 //        this.testActor = new TestActor(new Texture("enemy.jpg"), this.world, testActorSpawn, 100f, 0f);
-        final Texture itemTexture = new Texture("mushroom.jpeg");
-        Vector2 itemSpawn = new Vector2((wTest/2) * 0.5f, -hTest/2 + 250f);
-        this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
+//        final Texture itemTexture = new Texture("mushroom.jpeg");
+//        Vector2 itemSpawn = new Vector2((wTest/2) * 0.5f, -hTest/2 + 250f);
+//        this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
+
+        final Texture slowItemTexture = new Texture("slow-mushroom.png");
+        Vector2 slowItemSpawn = new Vector2((wTest/2) * 0.5f, -hTest/2 + 250f);
+        this.slowItem = new Item(slowItemTexture, this.world, slowItemSpawn, 0f, 0f);
+
 
         //Bottom edge of screen
         BodyDef edgeBodyDef = new BodyDef();
@@ -152,7 +160,8 @@ public class GameScreen implements Screen, InputProcessor {
         this.checkpoint.getBody().setUserData(this.checkpoint);
         this.block1.getBody().setUserData(this.block1);
         this.block2.getBody().setUserData(this.block2);
-        this.item.getBody().setUserData(this.item);
+//        this.item.getBody().setUserData(this.item);
+        this.slowItem.getBody().setUserData(this.slowItem);
 //        this.testActor.getBody().setUserData(this.testActor);
 
 //        if (touchedItemBlock) {
@@ -178,14 +187,18 @@ public class GameScreen implements Screen, InputProcessor {
                         return;
                     } else if (contact.getFixtureB().getBody().getUserData().equals(block2) && !touchedItemBlock) {
                         touchedItemBlock = true;
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(item) && !touchedPowerUp) {
-                        touchedPowerUp = true;
-                        player.setPowerUp(true);
-                        item.setDeleteSprite(true);
-                        itemConsumed = true;
-                        deleteList.add(contact.getFixtureB().getBody());
-                    } else if (contact.getFixtureB().getBody().getUserData().equals(item) && touchedPowerUp) {
+                    }
+//                    else if (contact.getFixtureB().getBody().getUserData().equals(item) && !touchedPowerUp) {
+//                        touchedPowerUp = true;
+//                        player.setPowerUp(true);
+//                        item.setDeleteSprite(true);
+//                        itemConsumed = true;
+//                        deleteList.add(contact.getFixtureB().getBody());
+//                    }
+                    else if (contact.getFixtureB().getBody().getUserData().equals(item) && touchedPowerUp) {
                         destroyItem = true;
+                    } else if (contact.getFixtureB().getBody().getUserData().equals(slowItem)) {
+                        player.setSlowItem(true);
                     } else if (contact.getFixtureB().getBody().getUserData().equals(enemy) && !player.getsInvulnerable()) {
                         if (player.getBody().getFixtureList().get(1).equals(contact.getFixtureA())) {
                             System.out.println("Bottom");
@@ -411,8 +424,11 @@ public class GameScreen implements Screen, InputProcessor {
 //            this.item.getBody().setUserData(this.item);
 //            item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
 //        }
-        if (touchedItemBlock && !itemConsumed) {
-            item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
+//        if (touchedItemBlock && !itemConsumed) {
+//            item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
+//        }
+        if (touchedItemBlock) {
+            slowItem.getSprite().setPosition((slowItem.getBody().getPosition().x * PIXELS_TO_METERS) - slowItem.getSprite().getWidth() / 2, (slowItem.getBody().getPosition().y * PIXELS_TO_METERS) - slowItem.getSprite().getHeight() / 2);
         }
 
         Gdx.gl.glClearColor(1,1,1,1);
@@ -444,15 +460,19 @@ public class GameScreen implements Screen, InputProcessor {
             }
             batch.draw(block2.getSprite(), block2.getSprite().getX(), block2.getSprite().getY(), block2.getSprite().getOriginX(), block2.getSprite().getOriginY(), block2.getSprite().getWidth(), block2.getSprite().getHeight(), block2.getSprite().getScaleX(), block2.getSprite().getScaleY(), block2.getSprite().getRotation());
             if (touchedItemBlock) {
-                if (!item.getDeleteSprite()) {
-//                    this.item.setBody(BodyDef.BodyType.StaticBody);
-//                    this.item.setShape();
-//                    this.item.setFixture(0f,0f);
-//                    this.item.getBody().setUserData(this.item);
-//                    if (touchedItemBlock && !itemConsumed) {
-//                        item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
-//                    }
-                    batch.draw(item.getSprite(), item.getSprite().getX(), item.getSprite().getY(), item.getSprite().getOriginX(), item.getSprite().getOriginY(), item.getSprite().getWidth(), item.getSprite().getHeight(), item.getSprite().getScaleX(), item.getSprite().getScaleY(), item.getSprite().getRotation());
+//                if (!item.getDeleteSprite()) {
+////                    this.item.setBody(BodyDef.BodyType.StaticBody);
+////                    this.item.setShape();
+////                    this.item.setFixture(0f,0f);
+////                    this.item.getBody().setUserData(this.item);
+////                    if (touchedItemBlock && !itemConsumed) {
+////                        item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
+////                    }
+//                    batch.draw(item.getSprite(), item.getSprite().getX(), item.getSprite().getY(), item.getSprite().getOriginX(), item.getSprite().getOriginY(), item.getSprite().getWidth(), item.getSprite().getHeight(), item.getSprite().getScaleX(), item.getSprite().getScaleY(), item.getSprite().getRotation());
+//                    block2.setSpawned(true);
+//                }
+                if (!slowItem.getDeleteSprite()) {
+                    batch.draw(slowItem.getSprite(), slowItem.getSprite().getX(), slowItem.getSprite().getY(), slowItem.getSprite().getOriginX(), slowItem.getSprite().getOriginY(), slowItem.getSprite().getWidth(), slowItem.getSprite().getHeight(), slowItem.getSprite().getScaleX(), slowItem.getSprite().getScaleY(), slowItem.getSprite().getRotation());
                     block2.setSpawned(true);
                 }
             }
@@ -461,14 +481,21 @@ public class GameScreen implements Screen, InputProcessor {
         batch.end();
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            player.getBody().setLinearVelocity(3f, player.getBody().getLinearVelocity().y);
+            if (player.getSlowItem()) {
+                speedLeft = -1f;
+                speedRight = 1f;
+            } else {
+                speedLeft = -3f;
+                speedRight = 3f;
+            }
+            player.getBody().setLinearVelocity(speedRight, player.getBody().getLinearVelocity().y);
             if (!facingRight) {
                 facingRight = true;
                 player.getSprite().flip(true, false);
             }
 
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            player.getBody().setLinearVelocity(-3f, player.getBody().getLinearVelocity().y);
+            player.getBody().setLinearVelocity(speedLeft, player.getBody().getLinearVelocity().y);
             if (facingRight) {
                 facingRight = false;
                 player.getSprite().flip(true, false);
