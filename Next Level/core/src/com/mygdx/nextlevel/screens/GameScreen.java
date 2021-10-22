@@ -21,7 +21,6 @@ import java.util.ArrayList;
 public class GameScreen implements Screen, InputProcessor {
     SpriteBatch batch;
     Player player;
-    TestActor testActor;
     Enemy enemy;
     Checkpoint checkpoint;
     Block block1, block2;
@@ -74,35 +73,34 @@ public class GameScreen implements Screen, InputProcessor {
         this.world = new World(new Vector2(0.0F, -9.8F), true);
 
         //Create Enemy and Player
-        float w = Gdx.graphics.getWidth();
-//        float w  = 2000F;
+//        float w = Gdx.graphics.getWidth();
+        float w = Gdx.graphics.getWidth() * 1.25f;
         float h = Gdx.graphics.getHeight();
 
         //groundT = new TileMapTest(this.world);
         
         //Player Initialization
-        final Vector2 playerSpawn = new Vector2(-(w/2) * 0.75f, -h/2 + 32); //assuming player height is 64
-        //TODO Set density to jump a little higher than 3 tiles
+        final Vector2 playerSpawn = new Vector2(32, 32);
         this.player = new Player(new Texture("goomba.png"), this.world, playerSpawn, 0.25f, 0f);
 
         //Enemy Initialization
-        Vector2 enemySpawn = new Vector2((w/2) * 0.95f, -h/2 + 32);
+        Vector2 enemySpawn = new Vector2(w * 0.95f, 32);
         this.enemy = new Enemy(new Texture("enemy.jpg"), this.world, enemySpawn, 100f, 0f);
 
         //Checkpoint Initialization
-        Vector2 checkpointSpawn = new Vector2(0f, -h/2 + 32);
+        Vector2 checkpointSpawn = new Vector2(w/2, 32);
         this.checkpoint = new Checkpoint(new Texture("checkpoint2.jpg"), this.world, checkpointSpawn,0f, 0f, this.player);
 
         //Block1 Initialization (Brick Block)
-        Vector2 blockSpawn = new Vector2((w/2) * 0.25f, -h/2 + 150f);
+        Vector2 blockSpawn = new Vector2(w * 0.625f, 32 + 2*64);
         this.block1 = new Block(new Texture("block.png"), this.world, blockSpawn, 100f, 0f, true, false);
 
         //Block2 Initialization (Item Block)
-        Vector2 blockSpawn2 = new Vector2((w/2) * 0.5f, -h/2 + 150f);
+        Vector2 blockSpawn2 = new Vector2(w * 0.75f, 32 + 2*64);
         this.block2 = new Block(new Texture("item-block.png"), this.world, blockSpawn2, 100f, 0f, false, true);
 
         //Item Initialization (Item)
-        Vector2 itemSpawn = new Vector2((w/2) * 0.5f, -h/2 + 250f);
+        Vector2 itemSpawn = new Vector2(w * 0.75f, 32 + 64*3);
         this.item = new Item(new Texture("mushroom.jpeg"), this.world, itemSpawn, 0f, 0f);
 
 
@@ -126,7 +124,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         //Bottom of the world
         EdgeShape edgeShape = new EdgeShape();
-        edgeShape.set(-w/2.0F, -h/2.0F, w/2.0F, -h/2.0F);
+        edgeShape.set(0,0,w,0);
         fixtureDefEdgeBottom.shape = edgeShape;
         fixtureDefEdgeBottom.density = 100.0f;
         fixtureDefEdgeBottom.restitution = 0f;
@@ -134,17 +132,17 @@ public class GameScreen implements Screen, InputProcessor {
         this.bodyEdgeScreen.createFixture(fixtureDefEdgeBottom);
 
         //Left Side of the world
-        edgeShape.set(-w / 2.0F, -h / 2.0F, -w / 2.0F, h / 2.0F);
+        edgeShape.set(0,0,0,h);
         fixtureDefEdgeLeftRightTop.shape = edgeShape;
         this.bodyEdgeScreen.createFixture(fixtureDefEdgeLeftRightTop);
 
         //Top of the world
-        edgeShape.set(-w / 2.0F, h / 2.0F, w / 2.0F, h / 2.0F);
+        edgeShape.set(0,h,w,h);
         fixtureDefEdgeLeftRightTop.shape = edgeShape;
         this.bodyEdgeScreen.createFixture(fixtureDefEdgeLeftRightTop);
 
         //Right side of the world
-        edgeShape.set(w / 2.0F, -h / 2.0F, w / 2.0F, h / 2.0F);
+        edgeShape.set(w,0,w,h);
         fixtureDefEdgeLeftRightTop.shape = edgeShape;
         this.bodyEdgeScreen.createFixture(fixtureDefEdgeLeftRightTop);
         edgeShape.dispose();
@@ -322,7 +320,16 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void render(float delta) {
         //Camera Setup
-        camera.position.set(player.getBody().getPosition().x, player.getBody().getPosition().y, 0);
+        float width = Gdx.graphics.getWidth() * 1.25f;
+        if (player.getSprite().getX() < Gdx.graphics.getWidth()/2f) {
+            camera.position.x = Gdx.graphics.getWidth()/2f;
+        } else if (width - player.getSprite().getX() < Gdx.graphics.getWidth()/2f) {
+            camera.position.x = width - Gdx.graphics.getWidth()/2f;
+        } else {
+            camera.position.x = player.getSprite().getX();
+        }
+//        camera.position.x = player.getSprite().getX();
+        camera.position.y = Gdx.graphics.getHeight()/2f;
         camera.update();
 
         //Set position from updated physics
@@ -353,7 +360,7 @@ public class GameScreen implements Screen, InputProcessor {
         debugMatrix = batch.getProjectionMatrix().cpy().scale(PIXELS_TO_METERS, PIXELS_TO_METERS, 0);
 
         batch.begin();
-        batch.draw(new Texture("tempBack.png"),-Gdx.graphics.getWidth() / 2f, -Gdx.graphics.getHeight() / 2f);
+        batch.draw(new Texture("tempBack.png"),0, 0);
         if (drawSprite) {
             if (!enemy.getDeleteSprite()) {
                 batch.draw(enemy.getSprite(), enemy.getSprite().getX(), enemy.getSprite().getY(), enemy.getSprite().getOriginX(), enemy.getSprite().getOriginY(), enemy.getSprite().getWidth(), enemy.getSprite().getHeight(), enemy.getSprite().getScaleX(), enemy.getSprite().getScaleY(), enemy.getSprite().getRotation());
