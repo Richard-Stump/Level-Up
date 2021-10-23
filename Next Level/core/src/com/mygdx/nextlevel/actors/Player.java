@@ -12,6 +12,8 @@ public class Player extends Actor {
     boolean invulnerable = false;
     boolean takeDamage = false;
     boolean slowItem = false;
+    boolean star = false;
+    boolean fire = false;
 
     public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
@@ -22,6 +24,8 @@ public class Player extends Actor {
         this.invulnerable = false;
         this.takeDamage = false;
         this.slowItem = false;
+        this.star = false;
+        this.fire = false;
         super.setPosition(position.x, position.y);
         this.spawnpoint = this.worldSpawn;
         super.setBody(BodyDef.BodyType.DynamicBody);
@@ -114,6 +118,22 @@ public class Player extends Actor {
 
     public void setSlowItem(boolean slowItem) {
         this.slowItem = slowItem;
+    }
+
+    public boolean getStar() {
+        return this.star;
+    }
+
+    public void setStar(boolean star) {
+        this.star = star;
+    }
+
+    public boolean getFire() {
+        return this.fire;
+    }
+
+    public void setFire(boolean fire) {
+        this.fire = fire;
     }
 
     public void death(Checkpoint checkpoint) {

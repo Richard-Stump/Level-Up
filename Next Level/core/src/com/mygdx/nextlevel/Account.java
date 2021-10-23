@@ -1,12 +1,11 @@
 package com.mygdx.nextlevel;
 
 public class Account {
-    public String username;
-    public String password;
+    private String username;
+    private String password;
+    private String email;
 
-    public Account(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public Account() {
     }
 
     public String getUsername() {
@@ -25,5 +24,11 @@ public class Account {
         this.password = password;
     }
 
+    public String getEmail() {
+        return this.email;
+    }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

@@ -29,7 +29,14 @@ public class GameScreen implements Screen, InputProcessor {
     Hud hud;
     Item slowItem;
     Item oneUpItem;
+    Item star;
     int itemIndex;
+    boolean shootFire;
+//    Fire fireball;
+    Texture fireballTexture;
+    Sprite fireballSprite;
+    ArrayList<Fire> fireballList = new ArrayList();
+    boolean fireballRight = true;
 
     World world;
     Body bodyEdgeScreen;
@@ -85,7 +92,7 @@ public class GameScreen implements Screen, InputProcessor {
         float h = Gdx.graphics.getHeight();
 
         //groundT = new TileMapTest(this.world);
-        
+
         //Player Initialization
         final Vector2 playerSpawn = new Vector2(32, 32);
         this.player = new Player(new Texture("goomba.png"), this.world, playerSpawn, 0.25f, 0f);
@@ -117,6 +124,13 @@ public class GameScreen implements Screen, InputProcessor {
         //1-Up Item Initialization
         Vector2 oneUpSpawn = new Vector2(w * 0.75f, -32 + 64*4);
         this.oneUpItem = new Item(new Texture("1up-mushroom.jpeg"), this.world, oneUpSpawn, 0f, 0f);
+
+        //star item initialization
+        Vector2 starSpawn = new Vector2(w * 0.75f, -32 + 64*4);
+        this.star = new Item(new Texture("star.jpg"), this.world, starSpawn, 0f, 0f);
+
+        //fireball initialization
+//        this.fireball = new Fire(playerSpawn, new Texture("fireball.png"), this.world);
 
 
         //Update to screen parameters
@@ -169,14 +183,15 @@ public class GameScreen implements Screen, InputProcessor {
         this.checkpoint.getBody().setUserData(this.checkpoint);
         this.block1.getBody().setUserData(this.block1);
         this.block2.getBody().setUserData(this.block2);
-        this.item.getBody().setUserData(this.item);
         this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
-        this.slowItem.getBody().setUserData(this.slowItem);
-        this.oneUpItem.getBody().setUserData(this.oneUpItem);
+//        this.item.getBody().setUserData(this.item);
+//        this.slowItem.getBody().setUserData(this.slowItem);
+//        this.oneUpItem.getBody().setUserData(this.oneUpItem);
 
         itemList.add(this.item);
         itemList.add(this.slowItem);
         itemList.add(this.oneUpItem);
+        itemList.add(this.star);
 
         //TODO Causes an Error if item loaded after block hit
 //        if (touchedItemBlock) {
@@ -211,11 +226,18 @@ public class GameScreen implements Screen, InputProcessor {
                             touchedItemBlock = true;
                             Random rand = new Random();
                             itemIndex = rand.nextInt(itemList.size());
+//                            item.setPosition(item.getSpawn().x, item.getSpawn().y);
+//                            item.setBody(BodyDef.BodyType.StaticBody);
+//                            item.setShape();
+//                            item.setFixture(0f, 0f);
+//                            item.getBody().setUserData(item);
                         }
                     } else if (bodyB.getUserData().equals(slowItem)) {
                         player.setSlowItem(true);
                     } else if (bodyB.getUserData().equals(oneUpItem)) {
                         player.addLife(1);
+                    } else if (bodyB.getUserData().equals(star)) {
+
                     } else if (bodyB.getUserData().equals(item) && !touchedPowerUp) { //Item
                         touchedPowerUp = true;
                         player.setPowerUp(true);
@@ -358,6 +380,7 @@ public class GameScreen implements Screen, InputProcessor {
 //        camera.position.x = player.getSprite().getX();
         camera.position.y = Gdx.graphics.getHeight()/2f;
         camera.update();
+//        fireball.update();
 
         //Set position from updated physics
         player.getSprite().setPosition((player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (player.getBody().getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
@@ -387,7 +410,16 @@ public class GameScreen implements Screen, InputProcessor {
 //            getItemSprite(oneUpItem);
 //        }
         if (touchedItemBlock) {
-            getItemSprite(itemList.get(itemIndex));
+            Item i = itemList.get(itemIndex);
+            if (i == item) {
+                createItem(item);
+            } else if (i == oneUpItem) {
+                createItem(oneUpItem);
+            } else if (i == slowItem) {
+                createItem(slowItem);
+            }
+//            getItemSprite(itemList.get(itemIndex));
+            getItemSprite(i);
         }
 
         Gdx.gl.glClearColor(1,1,1,1);
@@ -410,6 +442,7 @@ public class GameScreen implements Screen, InputProcessor {
                 } else {
                     player.setTexture(new Texture("goomba.png"));
                     batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
+//                    batch.draw(fireball.getSprite(), fireball.position.x, fireball.position.y);
                 }
             }
             if (!block1.getDeleteSprite()) {
@@ -443,6 +476,14 @@ public class GameScreen implements Screen, InputProcessor {
 
             }
         }
+        int count = 0;
+        while (count < fireballList.size()) {
+            Fire curFire = fireballList.get(count);
+            curFire.update();
+            batch.draw(curFire.getSprite(), curFire.position.x, curFire.position.y);
+            count++;
+        }
+
 
         batch.end();
 
@@ -501,6 +542,10 @@ public class GameScreen implements Screen, InputProcessor {
         hud.update(delta, player);
     }
 
+    public Vector2 getPlayerLocation() {
+        return new Vector2(player.getSprite().getX(), player.getSprite().getY());
+    }
+
     public void getItemSprite(Item b) {
         b.getSprite().setPosition((b.getBody().getPosition().x * PIXELS_TO_METERS) - b.getSprite().getWidth()/2, (b.getBody().getPosition().y * PIXELS_TO_METERS) - b.getSprite().getHeight()/2);
     }
@@ -526,6 +571,14 @@ public class GameScreen implements Screen, InputProcessor {
         world.dispose();
     }
 
+    public void createItem(Item i) {
+        i.setPosition(i.getSpawn().x, i.getSpawn().y);
+        i.setBody(BodyDef.BodyType.StaticBody);
+        i.setShape();
+        i.setFixture(0f, 0f);
+        i.getBody().setUserData(i);
+    }
+
     private void invulnerableTimer() {
         float invTime = 0;
         player.setInvulnerable(true);
@@ -548,6 +601,23 @@ public class GameScreen implements Screen, InputProcessor {
         if (keycode == Input.Keys.ESCAPE) {
             drawSprite = !drawSprite;
         }
+
+        if (keycode == Input.Keys.Z) {
+            if (facingRight) {
+                Fire fireball = new Fire(getPlayerLocation(), new Texture("fireball.png"), this.world, 4f);
+                fireballList.add(fireball);
+                if (!fireballRight) {
+                    fireball.getSprite().flip(true, false);
+                }
+            } else {
+                Fire fireball = new Fire(getPlayerLocation(), new Texture("fireball.png"), this.world, -4f);
+                fireballList.add(fireball);
+                if (fireballRight) {
+                    fireball.getSprite().flip(true, false);
+                }
+            }
+        }
+
         return true;
     }
 

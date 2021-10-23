@@ -12,11 +12,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.NextLevel;
 
-public class RegisterScreen implements Screen {
+import java.util.ArrayList;
+
+public class RegisterScreen extends Account implements Screen{
 
     public SpriteBatch batch;
     public Stage stage;
@@ -42,6 +46,8 @@ public class RegisterScreen implements Screen {
     public static int textBoxWidth = 200;
     public static int textBoxBottomPadding = 20;
     public static int buttonWidth = 170;
+
+    public ArrayList<Account> accList = new ArrayList<>();
 
     public boolean isInfoCorrect = true;
     public Stage errorStage;
@@ -135,6 +141,16 @@ public class RegisterScreen implements Screen {
                 pass = textPass.getText();
                 verifyPass = textVerifyPass.getText();
 
+                //check if username or email exists already
+                for (Account account : accList) {
+                    if (account.getUsername().equals(username)) {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Username already exists"));
+                        isInfoCorrect = false;
+                    } else if (account.getEmail().equals(email)) {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Email is already connected to an account"));
+                        isInfoCorrect = false;
+                    }
+                }
                 //TODO: if there is no input
                 if ((username.isEmpty()) & (email.isEmpty()) & (pass.isEmpty())) {
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Not enough information"));
@@ -158,6 +174,13 @@ public class RegisterScreen implements Screen {
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Passwords do not match"));
 
                     isInfoCorrect = false;
+                } else {
+                    Account a = new Account();
+                    a.setPassword(pass);
+                    a.setUsername(username);
+                    a.setEmail(email);
+                    //TODO: add account into database
+                    accList.add(a);
                 }
 
                 //System.out.println(isInfoCorrect);
@@ -174,6 +197,13 @@ public class RegisterScreen implements Screen {
                 if (isInfoCorrect) {
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
                 }
+
+                //using arraylist for now since database is not setup
+                for (int i = 0; i < accList.size(); i++) {
+                    Account ac = accList.get(i);
+                    System.out.println(String.format("User: %s, Pass: %s, Email: %s", ac.getUsername(), ac.getPassword(), ac.getEmail()));
+                }
+                System.out.println();
             }
         });
 
