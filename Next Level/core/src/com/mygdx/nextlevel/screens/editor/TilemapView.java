@@ -8,7 +8,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
-import com.badlogic.gdx.utils.Null;
+import com.mygdx.nextlevel.screens.EditLevelScreen;
+
+import java.util.ArrayList;
 
 public class TilemapView extends Widget {
     protected ShapeRenderer shapeRenderer;
@@ -18,11 +20,18 @@ public class TilemapView extends Widget {
     protected Vector2 panStart;
     protected TestTilemap tilemap;
     private InputListener inputListener;
+    private ArrayList<Texture> tiles;
+    private int dragButton;
+
+    private EditLevelScreen screen;
 
     protected Color gridColor = Color.WHITE;
 
-    public TilemapView(TestTilemap map, int screenWidth, int screenHeight) {
+    public TilemapView(EditLevelScreen screen, TestTilemap map, int screenWidth, int screenHeight) {
         this(screenWidth, screenHeight);
+
+        this.screen = screen;
+        this.tiles = screen.getTiles();
 
         tilemap = map;
 
@@ -54,6 +63,8 @@ public class TilemapView extends Widget {
         inputListener = new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                dragButton = button;
+
                 if(button == Input.Buttons.RIGHT) {
                     // We need to keep track of where the mouse started so we can keep track of how far
                     // the user has panned
@@ -62,9 +73,9 @@ public class TilemapView extends Widget {
                 }
                 else if (button == Input.Buttons.LEFT) {
                     Vector2 tilePos = screenToWorld(x, y);
+                    placeCurrentTileSelection((int) tilePos.x, (int) tilePos.y);
 
-                    System.out.println("Clicked at tile (" + (int)tilePos.x + "," + (int)tilePos.y + ")");
-                    return false;
+                    return true;
                 }
 
                 return false;
@@ -83,14 +94,19 @@ public class TilemapView extends Widget {
                 }
             }
 
-
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                //move the origin by the amount that mouse has moved since the last update
-                originX += x - panStart.x;
-                originY += y - panStart.y;
+                if(dragButton == Input.Buttons.RIGHT) {
+                    //move the origin by the amount that mouse has moved since the last update
+                    originX += x - panStart.x;
+                    originY += y - panStart.y;
 
-                //update the start point
-                panStart.set(x, y);
+                    //update the start point
+                    panStart.set(x, y);
+                }
+                else if(dragButton == Input.Buttons.LEFT) {
+                    Vector2 tilePos = screenToWorld(x, y);
+                    placeCurrentTileSelection((int) tilePos.x, (int) tilePos.y);
+                }
             }
 
             public boolean scrolled(InputEvent event, float x, float y, float amountX, float amountY) {
@@ -182,12 +198,26 @@ public class TilemapView extends Widget {
     protected void drawTiles(Batch batch) {
         for(int yi = 0; yi < tilemap.height; yi++) {
             for(int xi = 0; xi < tilemap.width; xi++) {
-                if(tilemap.map[xi][yi] != TestTilemap.NONE) {
+                int tileNumber = tilemap.map[xi][yi];
+
+                if(tileNumber != TestTilemap.NONE) {
                     Vector2 tileScreenPos = worldToScreen(xi, yi);
+
+                    Texture tex = tiles.get(tileNumber);
 
                     batch.draw(tex, tileScreenPos.x, tileScreenPos.y, scale, scale);
                 }
             }
+        }
+    }
+
+    protected void placeCurrentTileSelection(int x, int y) {
+        AssetSelectorWindow selWin = screen.getSelectorWindow();
+
+        if(selWin.getCurrentTabTitle().equals("Tiles")) {
+            int index = selWin.getSelectionIndex();
+
+            tilemap.map[x][y] = index;
         }
     }
 }

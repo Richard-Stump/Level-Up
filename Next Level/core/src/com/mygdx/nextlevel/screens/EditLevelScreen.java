@@ -1,36 +1,17 @@
 package com.mygdx.nextlevel.screens;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.utils.*;
+import com.badlogic.gdx.utils.viewport.*;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.util.TableUtils;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisWindow;
-import com.kotcrab.vis.ui.widget.tabbedpane.Tab;
-import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPane;
-import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPane.TabbedPaneStyle;
-import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneAdapter;
+import com.kotcrab.vis.ui.widget.*;
 import com.mygdx.nextlevel.NextLevel;
-import com.mygdx.nextlevel.screens.editor.AssetSelectionPane;
-import com.mygdx.nextlevel.screens.editor.AssetSelectorWindow;
-import com.mygdx.nextlevel.screens.editor.TestTilemap;
-import com.mygdx.nextlevel.screens.editor.TilemapView;
+import com.mygdx.nextlevel.screens.editor.*;
 
 import java.util.ArrayList;
 
@@ -46,7 +27,11 @@ public class EditLevelScreen implements Screen {
     private Stage stage;
     private Viewport viewport;
     private int screenWidth, screenHeight;
+
     private TilemapView tilemapView;
+    private AssetSelectorWindow win;
+
+    private ArrayList<Texture> tiles;
 
     private final Color backgroundColor = new Color(0.1f, 0.1f, 0.1f,1.0f);
 
@@ -54,6 +39,10 @@ public class EditLevelScreen implements Screen {
     public static final int STAGE_HEIGHT = 1000;
 
     public EditLevelScreen(NextLevel game) {
+        this(game, 32, 32);
+    }
+
+    public EditLevelScreen(NextLevel game, int mapWidth, int mapHeight) {
         this.game = game;
         this.screenWidth = Gdx.graphics.getWidth();
         this.screenHeight = Gdx.graphics.getHeight();
@@ -61,6 +50,8 @@ public class EditLevelScreen implements Screen {
 
         this.atlas = new TextureAtlas(Gdx.files.internal("skin/neon-ui.atlas"));
         this.skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
+
+        this.tiles = new ArrayList<Texture>();
 
         // Create a new orthographic camera and set it to view the center of the screen.
         camera = new OrthographicCamera();
@@ -74,7 +65,8 @@ public class EditLevelScreen implements Screen {
         batch = game.batch;
         stage = new Stage(viewport, batch);
 
-        tilemapView = new TilemapView(new TestTilemap(16, 16), STAGE_WIDTH, STAGE_HEIGHT);
+        loadTiles();
+        tilemapView = new TilemapView(this, new TestTilemap(mapWidth, mapHeight), STAGE_WIDTH, STAGE_HEIGHT);
 
         // For some reason the tabbed pane won't work with the other skin.
         // TODO: Figure out how to use the same skin as the main menu
@@ -105,7 +97,7 @@ public class EditLevelScreen implements Screen {
             }
         });
 
-        AssetSelectorWindow win = new AssetSelectorWindow();
+        win = new AssetSelectorWindow(tiles);
         stage.addActor(win);
         MenuWindow win2 = new MenuWindow();
         stage.addActor(win2);
@@ -146,6 +138,34 @@ public class EditLevelScreen implements Screen {
     @Override
     public void dispose() {
         VisUI.dispose();
+    }
+
+    public void loadTiles() {
+        tiles = new ArrayList<Texture>();
+
+        ArrayList<String> tileNames = new ArrayList<String>() {{
+            add("block.png");
+            add("checkpoint.png");
+            add("flag.png");
+            add("item-block.png");
+            add("pipe.png");
+            add("tile1.png");
+            add("tile2.png");
+            add("used-item-block.png");
+        }};
+
+        for(String name : tileNames) {
+            tiles.add(new Texture(name));
+        }
+
+    }
+
+    public ArrayList<Texture> getTiles() {
+        return tiles;
+    }
+
+    public AssetSelectorWindow getSelectorWindow() {
+        return win;
     }
 }
 

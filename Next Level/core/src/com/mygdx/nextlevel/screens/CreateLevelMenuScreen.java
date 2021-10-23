@@ -72,8 +72,10 @@ public class CreateLevelMenuScreen implements Screen {
         mainTable.add(title).center().expandX();
 
         // Create the fields to set the window width and height
-        TextField widthField = new TextField("32", skin);
-        TextField heightField = new TextField("32", skin);
+        final TextField widthField = new TextField("32", skin);
+        widthField.setTextFieldFilter(new TextField.TextFieldFilter.DigitsOnlyFilter());
+        final TextField heightField = new TextField("32", skin);
+        heightField.setTextFieldFilter(new TextField.TextFieldFilter.DigitsOnlyFilter());
 
         // Use a new table to center the settings. This is probably not the best to do this,
         // but it's what I found simple.
@@ -92,7 +94,10 @@ public class CreateLevelMenuScreen implements Screen {
         TextButton createButton = new TextButton("Create", skin);
         createButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new EditLevelScreen(game));
+                int width = Integer.parseInt(widthField.getText());
+                int height = Integer.parseInt(heightField.getText());
+
+                game.setScreen(new EditLevelScreen(game, width, height));
             }
         });
 

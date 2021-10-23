@@ -15,10 +15,7 @@ public class TestTilemap {
 
         for(int y = 0; y < height; y++) {
             for(int x = 0; x < width; x++) {
-                if(x == y)
-                    map[x][y] = 0;
-                else
-                    map[x][y] = NONE;
+                map[x][y] = NONE;
             }
         }
     }
