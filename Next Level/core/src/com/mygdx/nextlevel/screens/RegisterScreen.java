@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -41,6 +42,9 @@ public class RegisterScreen implements Screen {
     public static int textBoxWidth = 200;
     public static int textBoxBottomPadding = 20;
     public static int buttonWidth = 170;
+
+    public boolean isInfoCorrect = true;
+    public Stage errorStage;
 
     public RegisterScreen (NextLevel game) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
@@ -83,47 +87,16 @@ public class RegisterScreen implements Screen {
         TextButton back = new TextButton("I have an account!", skin);
         TextButton signUp = new TextButton("Sign Up", skin);
 
-        //button event listeners
-        back.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                //TODO: send back to login page
-                //((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
-            }
-        });
-        signUp.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                //after clicking sign up code should get all the inputs
-                //getting the inputs
-                username = textUsername.getText();
-                email = textEmail.getText();
-                pass = textPass.getText();
-                verifyPass = textVerifyPass.getText();
-
-                //TODO: Verification
-
-                //reset all textFields
-                textUsername.setText("");
-                textEmail.setText("");
-                textPass.setText("");
-                textVerifyPass.setText("");
-
-                //TODO: set to next screen
-                //((Game)Gdx.app.getApplicationListener()).setScreen(new ---Screen(game));
-            }
-        });
-
-        Table table = new Table();
+        final Table table = new Table();
         Table textFieldTable = new Table();
 
         //debug lines table, cell, and widgets
         table.setDebug(true);
         textFieldTable.setDebug(true);
 
-        table.add(title).colspan(2);
+        table.add(title).colspan(2).padBottom(textBoxBottomPadding);
         table.row();
-        table.add(welcome).colspan(2);
+        table.add(welcome).colspan(2).padBottom(textBoxBottomPadding);
         table.row();
         textFieldTable.add(textUsername).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
         textFieldTable.row();
@@ -140,6 +113,69 @@ public class RegisterScreen implements Screen {
 
         table.setFillParent(true);
         stage.addActor(table);
+
+        //button event listeners
+        back.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //TODO: send back to login page
+                //((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+            }
+        });
+        signUp.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                isInfoCorrect = true;
+
+
+                //after clicking sign up code should get all the inputs
+                //getting the inputs
+                username = textUsername.getText();
+                email = textEmail.getText();
+                pass = textPass.getText();
+                verifyPass = textVerifyPass.getText();
+
+                //TODO: if there is no input
+                if ((username.isEmpty()) & (email.isEmpty()) & (pass.isEmpty())) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Not enough information"));
+
+                    isInfoCorrect = false;
+                }
+
+                //TODO: error message if pass and verify pass do not match
+                if (pass.compareTo(verifyPass) != 0) {
+//                        errorStage = new Stage(viewport, batch);
+//                        Table errorTable = new Table();
+//                        errorTable.add(new Label("Passwords do not match", skin));
+//                        RunnableAction setErrorMessage = new RunnableAction();
+//                        setErrorMessage.setRunnable(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                game.setScreen(new ErrorMessageScreen(game, "Passwords do not match"));
+//                                dispose();
+//                            }
+//                        });
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Passwords do not match"));
+
+                    isInfoCorrect = false;
+                }
+
+                //System.out.println(isInfoCorrect);
+
+                //TODO: Verification
+
+                //reset all textFields
+                textUsername.setText("");
+                textEmail.setText("");
+                textPass.setText("");
+                textVerifyPass.setText("");
+
+                //TODO: set to next screen
+                if (isInfoCorrect) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+                }
+            }
+        });
 
     }
 
