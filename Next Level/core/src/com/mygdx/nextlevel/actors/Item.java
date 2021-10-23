@@ -16,7 +16,7 @@ public class Item extends Actor {
         this.sprite = new Sprite(texture);
         this.destroy = false;
         this.position = position;
-        this.sprite.setSize(64.0F, 64.0F);
+        this.sprite.setSize(32.0F, 32.0F);
         super.setPosition(position.x, position.y);
         super.setBody(BodyDef.BodyType.StaticBody);
 //        super.setBody(BodyDef.BodyType.DynamicBody);
