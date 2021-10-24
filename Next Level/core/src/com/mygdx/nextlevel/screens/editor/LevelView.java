@@ -11,7 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.mygdx.nextlevel.screens.EditLevelScreen;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
+/**
+ * Widget to display a preview of the level
+ */
 public class LevelView extends Widget {
     protected ShapeRenderer shapeRenderer;
     protected float scale;              //The number of pixels per tile
@@ -27,24 +31,36 @@ public class LevelView extends Widget {
 
     protected Color gridColor = Color.WHITE;
 
-    public LevelView(EditLevelScreen screen, EditorLevel map, int screenWidth, int screenHeight) {
+    /**
+     * Initialize the view widget
+     * @param screen The EditLevelScreen that owns this
+     * @param editorLevel The loaded level to display
+     * @param screenWidth The width of the screen
+     * @param screenHeight The height of the screen
+     */
+    public LevelView(EditLevelScreen screen, EditorLevel editorLevel, int screenWidth, int screenHeight) {
         this(screenWidth, screenHeight);
 
         this.screen = screen;
         this.tiles = screen.getTiles();
         this.actorTextures = screen.getActorTextures();
 
-        editorLevel = map;
+        this.editorLevel = editorLevel;
 
         editorLevel.map[0][0] = 0;
         editorLevel.map[editorLevel.width - 1][editorLevel.height - 1] = 0;
 
-        originX = 20;
-        originY = 8;
-
         panStart = new Vector2(0.0f,0.0f);
+
+        scale = 32.0f;
+        centerLevel();
     }
 
+    /**
+     * Initialize the widget
+     * @param screenWidth   Width of the Screen
+     * @param screenHeight  Height of the Screen
+     */
     public LevelView(int screenWidth, int screenHeight) {
         super();
 
@@ -55,10 +71,6 @@ public class LevelView extends Widget {
 
         setPosition(0,0);
         setBounds(0, 0, screenWidth, screenHeight);
-
-        scale = 32.0f;
-        originX = 0.0f;
-        originY = 0.0f;
 
         inputListener = new InputListener() {
             @Override
@@ -136,6 +148,14 @@ public class LevelView extends Widget {
         addListener(inputListener);
     }
 
+    public void centerLevel() {
+        Vector2 screenMiddle = new Vector2(getWidth()/ 2, getHeight() / 2);
+        Vector2 middleTileInScreen = worldToScreen(editorLevel.width / 2, editorLevel.height / 2);
+
+        originX = screenMiddle.x - middleTileInScreen.x;
+        originY = screenMiddle.y - middleTileInScreen.y;
+    }
+
     // These methods are used to perform coordinate conversions. Screen coordinates originate from the bottom
     // left corner of the screen, up is +y, right is +x. World coordinates originate from the bottom left
     // corner of the the tilemap, up is +y, right is +x.
@@ -174,6 +194,10 @@ public class LevelView extends Widget {
         batch.begin();
     }
 
+    protected float clamp(float val, float low, float high) {
+        return Math.max(Math.min(val, low), high);
+    }
+
     protected void drawGrid() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
@@ -181,9 +205,9 @@ public class LevelView extends Widget {
 
         //Convert the edges of the tilemap into screen space coordinates
         float leftX   = originX;
-        float rightX  = (originX + editorLevel.width * scale + 1);
+        float rightX  = originX + editorLevel.width * scale + 1;
         float bottomY = originY;
-        float topY    = (originY + editorLevel.height * scale + 1);
+        float topY    = originY + editorLevel.height * scale + 1;
 
         for(float x = leftX; x <= rightX; x += scale) {
             shapeRenderer.line(x, bottomY, x, topY);
@@ -196,9 +220,24 @@ public class LevelView extends Widget {
         shapeRenderer.end();
     }
 
+    /**
+     * Draws the tiles of the level attached to the widget
+     * @param batch The sprite batch to use for rendering
+     */
     protected void drawTiles(Batch batch) {
-        for(int yi = 0; yi < editorLevel.height; yi++) {
-            for(int xi = 0; xi < editorLevel.width; xi++) {
+        //Calculate what tile position the bottom-left and top-right corners
+        //of the screen are in. This is so that only tiles in view are drawn
+        Vector2 bottomLeft = screenToWorld(0.0f, 0.0f);
+        Vector2 topRight = screenToWorld(getWidth(), getHeight());
+
+        //If the two positions are outside the level's tile map, clamp them
+        bottomLeft.x = clamp(bottomLeft.x, 0, editorLevel.width);
+        bottomLeft.y = clamp(bottomLeft.y, 0, editorLevel.height);
+        topRight.x = clamp(topRight.x, 0, editorLevel.width);
+        topRight.y = clamp(topRight.y, 0, editorLevel.height);
+
+        for(int yi = (int)bottomLeft.y; yi < (int)topRight.y; yi++) {
+            for(int xi = (int)bottomLeft.x; xi < (int)topRight.x; xi++) {
                 int tileNumber = editorLevel.map[xi][yi];
 
                 if(tileNumber != EditorLevel.NONE) {
@@ -212,32 +251,47 @@ public class LevelView extends Widget {
         }
     }
 
+    /**
+     * Draws all of the actors listed in the attached level
+     * @param batch Rendering Batch to use
+     */
     protected void drawActors(Batch batch) {
         for(EditorActor a : editorLevel.actors) {
             Vector2 actorScreenPos = worldToScreen(a.x, a.y);
 
-            batch.draw(actorTextures.get(0), actorScreenPos.x, actorScreenPos.y, scale, scale);
+            batch.draw(actorTextures.get(a.actorId), actorScreenPos.x, actorScreenPos.y, scale, scale);
         }
     }
 
+    /**
+     * Placed screen's current selection at the specified location
+     * @param x X coordinate
+     * @param y Y coordinate
+     */
     protected void placeCurrentSelection(float x, float y) {
         if (!coordinatesInMap(x, y))
             return;
 
         AssetSelectorWindow selWin = screen.getSelectorWindow();
 
+        //Placement rules are different depending on whether the object being placed
+        //is an actor or a tile
         if (selWin.getCurrentTabTitle().equals("Tiles")) {
             int index = selWin.getSelectionIndex();
-
             editorLevel.map[(int)x][(int)y] = index;
         }
         else if (selWin.getCurrentTabTitle().equals("Actors")) {
             int index = selWin.getSelectionIndex();
-
             editorLevel.placeActor(x, y, index);
         }
     }
 
+    /**
+     * returns whether a coordinate is inside the level's playable area
+     * @param x X Coordinate
+     * @param y Y Coordinate
+     * @return Whether the coordinates are in the level
+     */
     public boolean coordinatesInMap(float x, float y) {
         return x >= 0 && x < editorLevel.width && y >= 0 && y < editorLevel.height;
     }

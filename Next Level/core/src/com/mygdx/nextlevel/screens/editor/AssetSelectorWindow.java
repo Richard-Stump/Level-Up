@@ -1,7 +1,6 @@
 package com.mygdx.nextlevel.screens.editor;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.util.TableUtils;
 import com.kotcrab.vis.ui.widget.VisTable;
@@ -12,9 +11,20 @@ import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneAdapter;
 
 import java.util.ArrayList;
 
+/**
+ * Window for asset selection in the level editor
+ *
+ * This is a window that features multiple tabs for sorting assets that can
+ * be placed around the level. Each tab should be an @code AssetSelectionPane.
+ */
 public class AssetSelectorWindow extends VisWindow {
     protected TabbedPane pane;
 
+    /**
+     * Constructs the new asset window given a list of textures for tiles and actors
+     * @param tiles         A list of tiles that can be selected
+     * @param actorTextures A list of actors that can be selected
+     */
     public AssetSelectorWindow(ArrayList<Texture> tiles, ArrayList<Texture> actorTextures) {
         super("Level Objects:");
         TableUtils.setSpacingDefaults(this);
@@ -52,12 +62,21 @@ public class AssetSelectorWindow extends VisWindow {
         setPosition(0, -50);
     }
 
+    /**
+     * Gets the index for the currently selected item. Does not return any information
+     * about which tab is selected
+     * @return The current index
+     */
     public int getSelectionIndex() {
         AssetSelectionPane currentTab = (AssetSelectionPane)pane.getActiveTab();
 
         return currentTab.getSelectionIndex();
     }
 
+    /**
+     * Returns the name of the tab that is currently selected
+     * @return The name of the tab.
+     */
     public String getCurrentTabTitle() {
         return pane.getActiveTab().getTabTitle();
     }

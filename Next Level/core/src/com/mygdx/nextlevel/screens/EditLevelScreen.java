@@ -54,6 +54,7 @@ public class EditLevelScreen implements Screen {
     public EditLevelScreen(NextLevel game) {
         this(game, 32, 32);
     }
+
     /**
      * Initializes the level editor with an empty level of the given size
      *
@@ -94,6 +95,9 @@ public class EditLevelScreen implements Screen {
             VisUI.load(VisUI.SkinScale.X2);
     }
 
+    /**
+     * Called by LibGDX when the screen is shown
+     */
     @Override
     public void show() {
         //Stage should control input:
@@ -126,6 +130,10 @@ public class EditLevelScreen implements Screen {
         stage.addActor(backButton);
     }
 
+    /**
+     * Called by libGDX each frame.
+     * @param delta The change in time since the last frame
+     */
     @Override
     public void render(float delta) {
         ScreenUtils.clear(backgroundColor);
@@ -160,6 +168,9 @@ public class EditLevelScreen implements Screen {
         VisUI.dispose();
     }
 
+    /**
+     * Loads the list of tiles into a list for the level editor
+     */
     public void loadTiles() {
         tiles = new ArrayList<Texture>();
 
@@ -179,6 +190,9 @@ public class EditLevelScreen implements Screen {
         }
     }
 
+    /**
+     * Loads the list of actors for use in the level editor
+     */
     public void loadActors() {
         ArrayList<String> actorNames = new ArrayList<String>() {{
             add("badlogic.jpg");
@@ -209,6 +223,9 @@ public class EditLevelScreen implements Screen {
     }
 }
 
+/**
+ * The window that handles load/save etc...
+ */
 class MenuWindow extends VisWindow {
     Button addAssetButton;
     Button addFinishFlagButton;
