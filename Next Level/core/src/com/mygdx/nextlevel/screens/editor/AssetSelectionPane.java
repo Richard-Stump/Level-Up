@@ -12,6 +12,11 @@ import com.kotcrab.vis.ui.widget.tabbedpane.Tab;
 
 import java.util.ArrayList;
 
+/**
+ * A pane that holds a single list of assets to be selected.
+ *
+ * This is to be used as a tab for the AssetSelectorWindow.
+ */
 public class AssetSelectionPane extends Tab {
     private String name;
     private ScrollPane scrollPane;
@@ -19,6 +24,11 @@ public class AssetSelectionPane extends Tab {
     private ButtonGroup buttonGroup;
     private Table innerTable;
 
+    /**
+     * Constructs the pane
+     * @param name Name of the pane to be displayed in a TabbedPane
+     * @param list A list of objects to be selectavle
+     */
     public AssetSelectionPane(String name, ArrayList list) {
         super(false, false);
         this.name = name;
@@ -39,6 +49,7 @@ public class AssetSelectionPane extends Tab {
         buttonGroup.setMinCheckCount(1);
         buttonGroup.setUncheckLast(true);
 
+        //Handle different types of array lists that can be passed
         if(list != null && list.size() > 0) {
             if(list.get(0) instanceof String)
                 addFromNameList(list);
@@ -52,6 +63,10 @@ public class AssetSelectionPane extends Tab {
         table.add(scrollPane).expand().fillX().align(Align.top);
     }
 
+    /**
+     * Loads a bunch of images with a list of given file names.
+     * @param names A list of file names to use to load the images
+     */
     protected void addFromNameList(ArrayList<String> names) {
         ArrayList<Texture> textures = new ArrayList<Texture>();
 
@@ -64,6 +79,10 @@ public class AssetSelectionPane extends Tab {
         addFromTextureList(textures);
     }
 
+    /**
+     * Adds a list of textures to be selected from
+     * @param textures An ArrayList of textures
+     */
     protected void addFromTextureList(ArrayList<Texture> textures) {
         buttonGroup.clear();
 
@@ -74,8 +93,9 @@ public class AssetSelectionPane extends Tab {
         // Add the images for each of the resources to the table.
         int i = 0;
         for(Texture tex : textures) {
+            //Create a highlighted version of the texture for selection
             TextureRegionDrawable trdNormal = new TextureRegionDrawable(tex);
-            Drawable dChecked = trdNormal.tint(new Color(0.2f, 0.2f, 0.5f, 0.5f));
+            Drawable dChecked = trdNormal.tint(new Color(0.5f, 0.5f, 0.5f, 0.5f));
 
             final ImageButton ib = new ImageButton(trdNormal, dChecked, dChecked);
 

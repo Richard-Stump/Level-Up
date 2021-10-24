@@ -1,10 +1,11 @@
 package com.mygdx.nextlevel.screens.editor;
 
-
-import com.badlogic.gdx.graphics.Texture;
-
-import java.util.HashMap;
-
+/**
+ * Class to represent an actor placed in an editor
+ *
+ * This class exists because there is a large difference in need between
+ * an actor in game and in the editor
+ */
 public class EditorActor {
     public float x, y;
     public int actorId;

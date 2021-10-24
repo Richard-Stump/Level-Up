@@ -31,7 +31,7 @@ class EditorGame extends NextLevel {
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(960, 500, camera);
 
-        EditLevelScreen screen = new EditLevelScreen(this, 64, 64);
+        EditLevelScreen screen = new EditLevelScreen(this, 32, 32);
 
         this.setScreen(screen);
     }
