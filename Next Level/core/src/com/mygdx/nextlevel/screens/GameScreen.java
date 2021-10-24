@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Tiles.TileMapTest;
@@ -62,6 +63,7 @@ public class GameScreen implements Screen, InputProcessor {
     float speedRight = 3f;
     float speedLeft = -3f;
     float slowTime = 0f;
+    float starTime = 0f;
 
     float torque = 0.0f;
     boolean drawSprite = true;
@@ -249,6 +251,9 @@ public class GameScreen implements Screen, InputProcessor {
                         player.setPowerUp(true);
                         item.setDeleteSprite(true);
                         itemConsumed = true;
+                    } else if (bodyB.getUserData().equals(enemy) && player.getStar()) {
+                        deleteList.add(bodyB);
+                        enemy.setDeleteSprite(true);
                     } else if (bodyB.getUserData().equals(enemy) && !player.getsInvulnerable()) { //Enemy
                         if (bodyA.getFixtureList().get(bottom).equals(contact.getFixtureA())) { //Check if Contact on Bottom of player
                             deleteList.add(bodyB);
@@ -501,6 +506,14 @@ public class GameScreen implements Screen, InputProcessor {
                 player.setSlowItem(false);
             }
         }
+        
+        if (player.getStar()) {
+            starTime += Gdx.graphics.getDeltaTime();
+            if (starTime > 5f) {
+                player.setStar(false);
+            }
+        }
+
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             if (player.getSlowItem()) {
@@ -627,11 +640,17 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         if (keycode == Input.Keys.X) {
-            player.setHeldItem(null);
+            System.out.println(star);
+            System.out.println(player.getHeldItem());
+            if (player.getHeldItem() == star) {
+                player.setHeldItem(null);
+                player.setStar(true);
+            }
         }
 
         return true;
     }
+
 
     @Override
     public boolean keyUp(int keycode) {

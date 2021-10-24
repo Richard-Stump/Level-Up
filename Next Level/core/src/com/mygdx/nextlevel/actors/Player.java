@@ -137,6 +137,7 @@ public class Player extends Actor {
         this.fire = fire;
     }
 
+
     public Item getHeldItem() {
         return this.heldItem;
     }
