@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
+import org.w3c.dom.Text;
 
 public class MainMenuScreen implements Screen {
 
@@ -60,6 +61,7 @@ public class MainMenuScreen implements Screen {
         //Create buttons
         TextButton playButton = new TextButton("Play", skin);
         TextButton createLevelButton = new TextButton("Create Level", skin);
+        TextButton selectLevelButton = new TextButton("Select Level", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
         TextButton exitButton = new TextButton("Exit", skin);
 
@@ -74,6 +76,12 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new CreateLevelMenuScreen(game));
+            }
+        });
+        selectLevelButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new LevelSelectionScreen(game));
             }
         });
         tutorialButton.addListener(new ClickListener() {
@@ -97,6 +105,8 @@ public class MainMenuScreen implements Screen {
         mainTable.add(playButton);
         mainTable.row();
         mainTable.add(createLevelButton);
+        mainTable.row();
+        mainTable.add(selectLevelButton);
         mainTable.row();
         mainTable.add(tutorialButton);
         mainTable.row();
