@@ -50,7 +50,6 @@ public class RegisterScreen extends Account implements Screen{
     public ArrayList<Account> accList = new ArrayList<>();
 
     public boolean isInfoCorrect = true;
-    public Stage errorStage;
 
     public RegisterScreen (NextLevel game) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
@@ -125,14 +124,13 @@ public class RegisterScreen extends Account implements Screen{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //TODO: send back to login page
-                //((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
             }
         });
         signUp.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 isInfoCorrect = true;
-
 
                 //after clicking sign up code should get all the inputs
                 //getting the inputs
