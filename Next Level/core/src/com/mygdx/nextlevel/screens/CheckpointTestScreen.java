@@ -42,9 +42,12 @@ public class CheckpointTestScreen implements Screen {
         this.batch = game.batch;
 
         //Physics World
-        this.world = new World(new Vector2(0.0F, -9.8F), true);
-        float w = Gdx.graphics.getWidth() * 1.25f;
-        float h = Gdx.graphics.getHeight();
+        this.world = new World(new Vector2(0.0F, -9.8F), false);
+
+        System.out.println("AFter World");
+        float w = 960;
+        float h = 500;
+
 
         //Player Initialization
         final Vector2 playerSpawn = new Vector2(32, 32);
@@ -100,6 +103,8 @@ public class CheckpointTestScreen implements Screen {
         //Setup User Data for Collision detection
         this.player.getBody().setUserData(this.player);
         this.checkpoint.getBody().setUserData(this.checkpoint);
+        this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
+
 
         //Hud
         hud = new Hud(game.batch, player);
