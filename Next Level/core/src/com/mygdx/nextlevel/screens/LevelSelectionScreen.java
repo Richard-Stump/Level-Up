@@ -31,6 +31,7 @@ import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 import jdk.internal.org.jline.utils.DiffHelper;
+import org.w3c.dom.Text;
 
 import java.sql.Date;
 import java.sql.SQLException;
@@ -72,74 +73,88 @@ public class LevelSelectionScreen implements Screen {
 
     public void show() {
         Gdx.input.setInputProcessor(stage);
-        TextButton backButton = new TextButton("Back", skin);
 
+        //start new layout
+        Table table = new Table();
+        table.setFillParent(true);
+        stage.addActor(table);
+        table.setDebug(true);
+
+        //row 1: back button, screen title, current user overview
+        //back button
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.left();
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new MainMenuScreen(game));
             }
         });
 
-        backButton.setPosition(0.0f, STAGE_HEIGHT - backButton.getHeight());
-
-
-        HorizontalGroup mainLayout = new HorizontalGroup();
-        //mainLayout.setFillParent(true);
-        mainLayout.setPosition(0.0f, STAGE_HEIGHT);
-
-        //add stuff to main layout, in horizontal order
-
-
-        VerticalGroup leftSide = new VerticalGroup();
-
-        //add stuff on left side
-
+        //screen title
         Label levelSelectLabel = new Label("Select Level", skin);
 
+        //current user overview
+        HorizontalGroup userInfo = new HorizontalGroup();
+        //add stuff here for user info
 
-        //add stuff the level boxes group
+        table.add(backButton);
+        table.add(levelSelectLabel);
+        table.add(userInfo);
+        table.row();
 
+
+        //row 2: empty placeholder, scrollable table with levels, sorting box
+
+        //populate a table full of information
         Table levelsTable = new Table();
-
-        for (int i = 0; i < dbDownloaded.sortByTitle().size(); i++) {
-            ArrayList<VerticalGroup> levelParts = getLevelTable(dbDownloaded.sortByTitle().get(i).getId());
-            HorizontalGroup level = new HorizontalGroup();
-            for (int j = 0; j < levelParts.size(); j++) {
-                level.addActor(levelParts.get(j));
-            }
-            levelsTable.add(level);
+        //columns: {image}, {title, author, difficulty, tags}, {rating, play count}
+        for (LevelInfo levelInfo: dbDownloaded.sortByTitle()) {
+            String id = levelInfo.getId();
+            //levelsTable.add(getImage(id));
+            levelsTable.add(getTitleGroup(id));
+            levelsTable.add(getRatingGroup(id));
             levelsTable.row();
         }
-
-        //Skin scrollSkin = new Skin(Gdx.files.internal("data/uiskin.json"));
 
         ScrollPane scrollPane = new ScrollPane(levelsTable, skin);
         scrollPane.setForceScroll(true, true);
 
+        //make the sorting and search thing on right side
+        VerticalGroup searchSortGroup = new VerticalGroup();
 
+        table.add();
+        table.add(scrollPane);
+        table.add(searchSortGroup);
+        table.row();
 
-        leftSide.addActor(levelSelectLabel);
-        leftSide.addActor(scrollPane);
+        //row 3: empty placeholder, empty placeholder, play button
 
+        TextButton playButton = new TextButton("Play", skin);
+        playButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
 
-        VerticalGroup rightSide = new VerticalGroup();
+            }
+        });
 
+        table.add();
+        table.add();
+        table.add(playButton);
 
-        //add stuff to right side
+        //end
 
-
-
-        mainLayout.addActor(leftSide);
-        mainLayout.addActor(rightSide);
-
-        stage.addActor(mainLayout);
-        stage.addActor(backButton);
+        stage.addActor(table);
     }
 
-    private ArrayList<VerticalGroup> getLevelTable(String id) {
-        ArrayList<VerticalGroup> levelTable = new ArrayList<>();
+    /**
+     * Groups title, author, difficulty, and tags into one VerticalGroup
+     * @param id id of level
+     * @return VerticalGroup
+     */
+    private VerticalGroup getTitleGroup(String id) {
         LevelInfo levelInfo;
 
+        //verify database is connected
         if (!dbDownloaded.isDBActive()) {
             System.out.println("db is not active");
             return null;
@@ -147,36 +162,40 @@ public class LevelSelectionScreen implements Screen {
             levelInfo = dbDownloaded.searchByID(id);
         }
 
-        //add stuff to the table here
-        //TODO: if using image preview for levels, figure out how to get image from tilemap or something
-        //Image imagePreview = new Image();
+        VerticalGroup titleGroup = new VerticalGroup();
 
-        //group together title, author, difficulty, and tags
-        VerticalGroup metadata = new VerticalGroup();
-        metadata.columnAlign(Align.left);
         Label levelName = new Label(levelInfo.getTitle(), skin);
         Label author = new Label(levelInfo.getAuthor(), skin);
         String difficultyString = Difficulty.values()[levelInfo.getDifficulty()].getDisplayName();
         Label difficultyAndTags = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
 
-        metadata.addActor(levelName);
-        metadata.addActor(author);
-        metadata.addActor(difficultyAndTags);
-        levelTable.add(metadata);
+        titleGroup.addActor(levelName);
+        titleGroup.addActor(author);
+        titleGroup.addActor(difficultyAndTags);
+        return titleGroup;
+    }
 
-        //rating and playcount will be on the right side of the box
-        VerticalGroup ratingAndPlayCount = new VerticalGroup();
-        ratingAndPlayCount.columnAlign(Align.right);
+    private VerticalGroup getRatingGroup(String id) {
+        LevelInfo levelInfo;
+
+        //verify database is connected
+        if (!dbDownloaded.isDBActive()) {
+            System.out.println("db is not active");
+            return null;
+        } else {
+            levelInfo = dbDownloaded.searchByID(id);
+        }
+
+        VerticalGroup ratingGroup = new VerticalGroup();
+
         Label rating = new Label("" + levelInfo.getRating(), skin);
         Label playCount = new Label("" + levelInfo.getPlayCount(), skin);
-        ratingAndPlayCount.addActor(rating);
-        ratingAndPlayCount.addActor(playCount);
+        ratingGroup.addActor(rating);
+        ratingGroup.addActor(playCount);
 
-        ratingAndPlayCount.right();
-        levelTable.add(ratingAndPlayCount);
-
-        return levelTable;
+        return ratingGroup;
     }
+
 
     public void render(float delta) {
         Gdx.gl.glClearColor(0.1F, 0.12F, 0.16F, 1.0F);

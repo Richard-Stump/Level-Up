@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.mygdx.nextlevel.screens.LevelSelectionScreen;
 import com.mygdx.nextlevel.screens.MainMenuScreen;
 import com.mygdx.nextlevel.screens.RegisterScreen;
 
@@ -35,7 +36,7 @@ public class NextLevel extends Game {
 		font = new BitmapFont();
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(960, 500, camera);
-		this.setScreen(new RegisterScreen(this));
+		this.setScreen(new LevelSelectionScreen(this));
 	}
 
 
