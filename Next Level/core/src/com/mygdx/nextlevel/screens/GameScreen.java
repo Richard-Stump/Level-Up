@@ -26,7 +26,7 @@ public class GameScreen implements Screen, InputProcessor {
     Player player;
     Enemy enemy;
     Checkpoint checkpoint;
-    Block block1, block2;
+    Block block1, block2, block;
     Item item;
     Hud hud;
     Item slowItem;
@@ -74,10 +74,10 @@ public class GameScreen implements Screen, InputProcessor {
     final short WORLD_ENTITY = 0x1 << 1; //0010
 
     //Directional Collisions
-    final int bottom = 1;
-    final int left = 2;
-    final int top = 3;
-    final int right = 4;
+    final short bottom = 1;
+    final short left = 2;
+    final short top = 3;
+    final short right = 4;
 
     boolean landed = true;
     boolean jumped = false;
@@ -91,7 +91,6 @@ public class GameScreen implements Screen, InputProcessor {
         this.world = new World(new Vector2(0.0F, -9.8F), true);
 
         //Create Enemy and Player
-//        float w = Gdx.graphics.getWidth();
         float w = Gdx.graphics.getWidth() * 1.25f;
         float h = Gdx.graphics.getHeight();
 
@@ -111,11 +110,11 @@ public class GameScreen implements Screen, InputProcessor {
 
         //Block1 Initialization (Brick Block)
         Vector2 blockSpawn = new Vector2(w * 0.625f, 32 + 2*64);
-        this.block1 = new Block(new Texture("block.png"), this.world, blockSpawn, 100f, 0f, true, false);
+        this.block1 = new Block(new Texture("block.png"), this.world, blockSpawn, 100f, 0f, (short) (0x1 << (bottom - 1)), false);
 
         //Block2 Initialization (Item Block)
         Vector2 blockSpawn2 = new Vector2(w * 0.75f, 32 + 2*64);
-        this.block2 = new Block(new Texture("item-block.png"), this.world, blockSpawn2, 100f, 0f, false, true);
+        this.block2 = new Block(new Texture("item-block.png"), this.world, blockSpawn2, 100f, 0f, (short) (0x1 << (bottom - 1)), true);
 
         //Item Initialization (Item)
         Vector2 itemSpawn = new Vector2(w * 0.75f, 32 + 64*3);
@@ -229,8 +228,8 @@ public class GameScreen implements Screen, InputProcessor {
                             checkpoint.setTexture(new Texture("checkpoint.png"));
                             player.addLife(1);
                         }
-                    } else if (bodyB.getUserData().equals(block2) && !touchedItemBlock) { //Item Block
-                        if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA())) { //Check if Contact on Top Side of player
+                    } else if (bodyB.getUserData().equals(block2) && !touchedItemBlock ) { //Item Block
+                        if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA()) && ((block2.getCollision() & (short) (0x1 << (bottom - 1))) == (short) (0x1 << (bottom - 1)))) { //Check if Contact on Top Side of player
                             touchedItemBlock = true;
                             Random rand = new Random();
                             itemIndex = rand.nextInt(itemList.size());
@@ -284,7 +283,7 @@ public class GameScreen implements Screen, InputProcessor {
                             }
                         }
                     } else if (bodyB.getUserData().equals(block1)) { //Breakable block
-                        if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA())) {
+                        if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA()) && ((block1.getCollision() & (short) (0x1 << (bottom - 1))) == (short) (0x1 << (bottom - 1)))) {
                             deleteList.add(bodyB);
                             block1.setDeleteSprite(true);
                         }
