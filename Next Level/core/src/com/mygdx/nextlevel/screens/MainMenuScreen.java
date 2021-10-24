@@ -5,14 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -28,6 +26,16 @@ public class MainMenuScreen implements Screen {
     private TextureAtlas atlas;
     protected Skin skin;
     private NextLevel game;
+
+    //player information
+    public String username;
+    public Image profilePic;
+
+    //static vars
+    public static int textBoxBottomPadding = 20;
+    public static int buttonWidth = 200;
+    public static int rightMargin = 870;
+    public static int topMargin = 450;
 
     public MainMenuScreen (NextLevel game) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
@@ -53,10 +61,14 @@ public class MainMenuScreen implements Screen {
 
         //Create Table
         Table mainTable = new Table();
-        //Set table to fill stage
-        mainTable.setFillParent(true);
+        Table buttonTable = new Table();
+
         //Set alignment of contents in the table.
-        mainTable.top();
+        //mainTable.top();
+
+        //debug lines
+        mainTable.setDebug(true);
+        buttonTable.setDebug(true);
 
         //Create buttons
         TextButton playButton = new TextButton("Play", skin);
@@ -64,6 +76,40 @@ public class MainMenuScreen implements Screen {
         TextButton selectLevelButton = new TextButton("Select Level", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
         TextButton exitButton = new TextButton("Exit", skin);
+
+        buttonTable.add(playButton).width(buttonWidth);
+        buttonTable.row();
+        buttonTable.add(createLevelButton).width(buttonWidth);
+        buttonTable.row();
+        buttonTable.add(selectLevelButton).width(buttonWidth);
+        buttonTable.row();
+        buttonTable.add(tutorialButton).width(buttonWidth);
+        buttonTable.row();
+        buttonTable.add(exitButton).width(buttonWidth);
+
+        //Add buttons to table
+        Label titleLabel = new Label("Next Level", skin);
+        Label welcomeLabel = new Label("Welcome back!", skin);
+
+        //use player username
+        Label usernameLabel = new Label("Username", skin);
+        //use player profile pic
+        Image playerPic = new Image(new Texture(Gdx.files.internal("userIcon.png")));
+
+        playerPic.setPosition(rightMargin, topMargin);
+        usernameLabel.setPosition(rightMargin - 80, topMargin);
+        stage.addActor(playerPic);
+        stage.addActor(usernameLabel);
+
+        //mainTable.add(usernameLabel).right();
+        //mainTable.row();
+        mainTable.add(titleLabel).padBottom(textBoxBottomPadding);
+        mainTable.row();
+        mainTable.add(welcomeLabel).padBottom(textBoxBottomPadding);
+        mainTable.row();
+
+
+        mainTable.add(buttonTable);
 
         //Add listeners to buttons
         playButton.addListener(new ClickListener(){
@@ -97,20 +143,8 @@ public class MainMenuScreen implements Screen {
             }
         });
 
-        //Add buttons to table
-        Label title = new Label("Next Level", skin);
-        mainTable.add(title).colspan(3).center().expandY();
-        mainTable.row();
-
-        mainTable.add(playButton);
-        mainTable.row();
-        mainTable.add(createLevelButton);
-        mainTable.row();
-        mainTable.add(selectLevelButton);
-        mainTable.row();
-        mainTable.add(tutorialButton);
-        mainTable.row();
-        mainTable.add(exitButton);
+        //Set table to fill stage
+        mainTable.setFillParent(true);
 
         //Add table to stage
         stage.addActor(mainTable);

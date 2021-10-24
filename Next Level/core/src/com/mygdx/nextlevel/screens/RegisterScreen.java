@@ -96,8 +96,8 @@ public class RegisterScreen extends Account implements Screen{
         Table textFieldTable = new Table();
 
         //debug lines table, cell, and widgets
-        table.setDebug(true);
-        textFieldTable.setDebug(true);
+        //table.setDebug(true);
+        //textFieldTable.setDebug(true);
 
         table.add(title).colspan(2).padBottom(textBoxBottomPadding);
         table.row();
