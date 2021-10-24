@@ -16,13 +16,13 @@ public class Item extends Actor {
         this.sprite = new Sprite(texture);
         this.destroy = false;
         this.position = position;
-        this.sprite.setSize(64.0F, 64.0F);
-        super.setPosition(position.x, position.y);
-        super.setBody(BodyDef.BodyType.StaticBody);
+        this.sprite.setSize(32.0F, 32.0F);
+//        super.setPosition(position.x, position.y);
+//        super.setBody(BodyDef.BodyType.StaticBody);
 //        super.setBody(BodyDef.BodyType.DynamicBody);
 
-        setShape();
-        setFixture(density, restitution);
+//        setShape();
+//        setFixture(density, restitution);
     }
     public Vector2 getSpawn() {
         return this.position;
@@ -38,6 +38,13 @@ public class Item extends Actor {
         this.bodyDef.position.set((this.sprite.getX() + this.sprite.getWidth()/2.0F)/PIXELS_TO_METERS, (this.sprite.getY() + this.sprite.getHeight()/2.0F)/PIXELS_TO_METERS);
         this.body = world.createBody(bodyDef);
         this.body.setFixedRotation(true);
+    }
+
+    public void setPosition(float x, float y) {
+        this.deleteSprite = false;
+        this.sprite.setPosition(-this.sprite.getWidth()/2.0F + x, -this.sprite.getHeight()/2.0F + y);
+        this.worldSpawn.x = x;
+        this.worldSpawn.y = y;
     }
 
     public void setFixture(float density, float restitution) {
