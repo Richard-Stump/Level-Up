@@ -32,6 +32,7 @@ public class GameScreen implements Screen, InputProcessor {
     Item slowItem;
     Item oneUpItem;
     Item star;
+    Item fireflower;
     int itemIndex;
     boolean shootFire;
 //    Fire fireball;
@@ -140,6 +141,11 @@ public class GameScreen implements Screen, InputProcessor {
         //fireball initialization
 //        this.fireball = new Fire(playerSpawn, new Texture("fireball.png"), this.world);
 
+        //fire flower intiialization
+        Vector2 fireFlowerSpawn = new Vector2(w * 0.75f, -32 + 64*4);
+        this.fireflower = new Item(new Texture("fireflower.png"), this.world, fireFlowerSpawn, 0f, 0f);
+        itemToName.put(fireflower, "fireflower.png");
+
 
         //Update to screen parameters
         w /= PIXELS_TO_METERS;
@@ -200,6 +206,7 @@ public class GameScreen implements Screen, InputProcessor {
         itemList.add(this.slowItem);
         itemList.add(this.oneUpItem);
         itemList.add(this.star);
+        itemList.add(this.fireflower);
 
         //TODO Causes an Error if item loaded after block hit
 //        if (touchedItemBlock) {
@@ -242,10 +249,17 @@ public class GameScreen implements Screen, InputProcessor {
                         }
                     } else if (bodyB.getUserData().equals(slowItem)) {
                         player.setSlowItem(true);
+                        slowItem.setDeleteSprite(true);
                     } else if (bodyB.getUserData().equals(oneUpItem)) {
                         player.addLife(1);
+                        oneUpItem.setDeleteSprite(true);
                     } else if (bodyB.getUserData().equals(star)) {
                         player.setHeldItem(star);
+                        star.setDeleteSprite(true);
+                    } else if (bodyB.getUserData().equals(fireflower)) {
+                        player.setFireflower(true);
+                        player.setPowerUp(true);
+                        fireflower.setDeleteSprite(true);
                     } else if (bodyB.getUserData().equals(item) && !touchedPowerUp) { //Item
                         touchedPowerUp = true;
                         player.setPowerUp(true);
@@ -261,6 +275,7 @@ public class GameScreen implements Screen, InputProcessor {
                         } else if (bodyA.getFixtureList().get(left).equals(contact.getFixtureA())) { //Check if Contact on Left of player
                             if (player.hasPowerUp()) {
                                 player.setPowerUp(false);
+                                player.setFireflower(false);
                                 invulnerableTimer();
                             } else {
                                 player.subLife();
@@ -269,6 +284,7 @@ public class GameScreen implements Screen, InputProcessor {
                         } else if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA())) { //Check if Contact on Top of player
                             if (player.hasPowerUp()) {
                                 player.setPowerUp(false);
+                                player.setFireflower(false);
                                 invulnerableTimer();
                             } else {
                                 player.subLife();
@@ -277,6 +293,7 @@ public class GameScreen implements Screen, InputProcessor {
                         } else if (bodyA.getFixtureList().get(right).equals(contact.getFixtureA())) { //Check if Contact on Right of Player
                             if (player.hasPowerUp()) {
                                 player.setPowerUp(false);
+                                player.setFireflower(false);
                                 invulnerableTimer();
                             } else {
                                 player.subLife();
@@ -284,7 +301,7 @@ public class GameScreen implements Screen, InputProcessor {
                             }
                         }
                     } else if (bodyB.getUserData().equals(block1)) { //Breakable block
-                        if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA())) {
+                        if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA()) && player.hasPowerUp()) {
                             deleteList.add(bodyB);
                             block1.setDeleteSprite(true);
                         }
@@ -430,8 +447,12 @@ public class GameScreen implements Screen, InputProcessor {
 //                createItem(slowItem);
 //            }
 //            getItemSprite(i);
-            createItem(star);
-            getItemSprite(star);
+//            createItem(star);
+//            getItemSprite(star);
+//            createItem(item);
+//            getItemSprite(item);
+            createItem(fireflower);
+            getItemSprite(fireflower);
         }
 
         Gdx.gl.glClearColor(1,1,1,1);
@@ -451,7 +472,11 @@ public class GameScreen implements Screen, InputProcessor {
                 if (touchedPowerUp && player.hasPowerUp()) {
                     player.setTexture(new Texture("paragoomba.png"));
                     batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
-                } else {
+                } else if (player.getFireFlower()) {
+                    player.setTexture(new Texture("firegoomba.png"));
+                    batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
+                }
+                else {
                     player.setTexture(new Texture("goomba.png"));
                     batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
 //                    batch.draw(fireball.getSprite(), fireball.position.x, fireball.position.y);
@@ -483,7 +508,9 @@ public class GameScreen implements Screen, InputProcessor {
 //                }
                 if (!itemList.get(itemIndex).getDeleteSprite()) {
 //                    drawItemSprite(itemList.get(itemIndex));
-                    drawItemSprite(star);
+//                    drawItemSprite(star);
+//                    drawItemSprite(item);
+                    drawItemSprite(fireflower);
                     block2.setSpawned(true);
                 }
 
@@ -493,6 +520,9 @@ public class GameScreen implements Screen, InputProcessor {
         while (count < fireballList.size()) {
             Fire curFire = fireballList.get(count);
             curFire.update();
+//            curFire.getBody().setLinearVelocity(3.0f, 0f);
+//            curFire.getBody().setUserData(curFire);
+//            curFire.getSprite().setSize(20.f,20.f);
             batch.draw(curFire.getSprite(), curFire.position.x, curFire.position.y);
             count++;
         }
@@ -506,7 +536,7 @@ public class GameScreen implements Screen, InputProcessor {
                 player.setSlowItem(false);
             }
         }
-        
+
         if (player.getStar()) {
             starTime += Gdx.graphics.getDeltaTime();
             if (starTime > 5f) {
@@ -624,17 +654,21 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         if (keycode == Input.Keys.Z) {
-            if (facingRight) {
-                Fire fireball = new Fire(getPlayerLocation(), new Texture("fireball.png"), this.world, 4f);
-                fireballList.add(fireball);
-                if (!fireballRight) {
-                    fireball.getSprite().flip(true, false);
-                }
-            } else {
-                Fire fireball = new Fire(getPlayerLocation(), new Texture("fireball.png"), this.world, -4f);
-                fireballList.add(fireball);
-                if (fireballRight) {
-                    fireball.getSprite().flip(true, false);
+            if (player.getFireFlower()) {
+                if (facingRight) {
+                    Fire fireball = new Fire(getPlayerLocation(), new Texture("fireball.png"), this.world, 4f);
+                    fireball.getBody().setUserData(fireball);
+                    fireballList.add(fireball);
+                    if (!fireballRight) {
+                        fireball.getSprite().flip(true, false);
+                    }
+                } else {
+                    Fire fireball = new Fire(getPlayerLocation(), new Texture("fireball.png"), this.world, -4f);
+                    fireballList.add(fireball);
+                    fireball.getBody().setUserData(fireball);
+                    if (fireballRight) {
+                        fireball.getSprite().flip(true, false);
+                    }
                 }
             }
         }
