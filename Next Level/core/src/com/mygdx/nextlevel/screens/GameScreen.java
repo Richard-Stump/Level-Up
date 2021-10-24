@@ -17,6 +17,7 @@ import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.hud.Hud;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class GameScreen implements Screen, InputProcessor {
@@ -37,6 +38,7 @@ public class GameScreen implements Screen, InputProcessor {
     Sprite fireballSprite;
     ArrayList<Fire> fireballList = new ArrayList();
     boolean fireballRight = true;
+    HashMap<Item, String> itemToName = new HashMap<>();
 
     World world;
     Body bodyEdgeScreen;
@@ -116,18 +118,22 @@ public class GameScreen implements Screen, InputProcessor {
         //Item Initialization (Item)
         Vector2 itemSpawn = new Vector2(w * 0.75f, 32 + 64*3);
         this.item = new Item(new Texture("mushroom.jpeg"), this.world, itemSpawn, 0f, 0f);
+        itemToName.put(item, "mushroom.jpeg");
 
         //Slow Item Initialization
         Vector2 slowItemSpawn = new Vector2(w * 0.75f, -32 + 64*4);
         this.slowItem = new Item(new Texture("slow-mushroom.png"), this.world, slowItemSpawn, 0f, 0f);
+        itemToName.put(slowItem, "slow-mushroom.png");
 
         //1-Up Item Initialization
         Vector2 oneUpSpawn = new Vector2(w * 0.75f, -32 + 64*4);
         this.oneUpItem = new Item(new Texture("1up-mushroom.jpeg"), this.world, oneUpSpawn, 0f, 0f);
+        itemToName.put(oneUpItem, "1up-mushroom.jpeg");
 
         //star item initialization
         Vector2 starSpawn = new Vector2(w * 0.75f, -32 + 64*4);
         this.star = new Item(new Texture("star.jpg"), this.world, starSpawn, 0f, 0f);
+        itemToName.put(star, "star.jpg");
 
         //fireball initialization
 //        this.fireball = new Fire(playerSpawn, new Texture("fireball.png"), this.world);
@@ -237,7 +243,7 @@ public class GameScreen implements Screen, InputProcessor {
                     } else if (bodyB.getUserData().equals(oneUpItem)) {
                         player.addLife(1);
                     } else if (bodyB.getUserData().equals(star)) {
-
+                        player.setHeldItem(star);
                     } else if (bodyB.getUserData().equals(item) && !touchedPowerUp) { //Item
                         touchedPowerUp = true;
                         player.setPowerUp(true);
@@ -410,16 +416,17 @@ public class GameScreen implements Screen, InputProcessor {
 //            getItemSprite(oneUpItem);
 //        }
         if (touchedItemBlock) {
-            Item i = itemList.get(itemIndex);
-            if (i == item) {
-                createItem(item);
-            } else if (i == oneUpItem) {
-                createItem(oneUpItem);
-            } else if (i == slowItem) {
-                createItem(slowItem);
-            }
-//            getItemSprite(itemList.get(itemIndex));
-            getItemSprite(i);
+//            Item i = itemList.get(itemIndex);
+//            if (i == item) {
+//                createItem(item);
+//            } else if (i == oneUpItem) {
+//                createItem(oneUpItem);
+//            } else if (i == slowItem) {
+//                createItem(slowItem);
+//            }
+//            getItemSprite(i);
+            createItem(star);
+            getItemSprite(star);
         }
 
         Gdx.gl.glClearColor(1,1,1,1);
@@ -470,7 +477,8 @@ public class GameScreen implements Screen, InputProcessor {
 //                    block2.setSpawned(true);
 //                }
                 if (!itemList.get(itemIndex).getDeleteSprite()) {
-                    drawItemSprite(itemList.get(itemIndex));
+//                    drawItemSprite(itemList.get(itemIndex));
+                    drawItemSprite(star);
                     block2.setSpawned(true);
                 }
 
@@ -539,7 +547,7 @@ public class GameScreen implements Screen, InputProcessor {
         world.step(Gdx.graphics.getDeltaTime(), 6, 2);
         batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
-        hud.update(delta, player);
+        hud.update(delta, player, itemToName);
     }
 
     public Vector2 getPlayerLocation() {
@@ -616,6 +624,10 @@ public class GameScreen implements Screen, InputProcessor {
                     fireball.getSprite().flip(true, false);
                 }
             }
+        }
+
+        if (keycode == Input.Keys.X) {
+            player.setHeldItem(null);
         }
 
         return true;

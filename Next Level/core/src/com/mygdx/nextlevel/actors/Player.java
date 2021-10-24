@@ -14,6 +14,7 @@ public class Player extends Actor {
     boolean slowItem = false;
     boolean star = false;
     boolean fire = false;
+    Item heldItem = null;
 
     public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
@@ -134,6 +135,14 @@ public class Player extends Actor {
 
     public void setFire(boolean fire) {
         this.fire = fire;
+    }
+
+    public Item getHeldItem() {
+        return this.heldItem;
+    }
+
+    public void setHeldItem(Item heldItem) {
+        this.heldItem = heldItem;
     }
 
     public void death(Checkpoint checkpoint) {
