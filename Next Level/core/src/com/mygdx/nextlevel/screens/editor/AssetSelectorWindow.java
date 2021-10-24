@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class AssetSelectorWindow extends VisWindow {
     protected TabbedPane pane;
 
-    public AssetSelectorWindow(ArrayList<Texture> tiles) {
+    public AssetSelectorWindow(ArrayList<Texture> tiles, ArrayList<Texture> actorTextures) {
         super("Level Objects:");
         TableUtils.setSpacingDefaults(this);
 
@@ -45,21 +45,8 @@ public class AssetSelectorWindow extends VisWindow {
         row();
         add(table).expand().fill();
 
-        ArrayList<String> actorNames = new ArrayList<String>() {{
-            add("badlogic.jpg");
-            add("enemy.jpg");
-            add("goomba.png");
-            add("mushroom.jpeg");
-        }};
-
-        ArrayList<String> enemyNames = new ArrayList<String>() {{
-            add("goomba.png");
-            add("paragoomba.png");
-        }};
-
         pane.add(new AssetSelectionPane("Tiles", tiles));
-        pane.add(new AssetSelectionPane("Actors", actorNames));
-        pane.add(new AssetSelectionPane("Enemies", enemyNames));
+        pane.add(new AssetSelectionPane("Actors", actorTextures));
 
         setSize(400, 500 * 2 - 50);
         setPosition(0, -50);

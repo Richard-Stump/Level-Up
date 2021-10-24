@@ -9,16 +9,16 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Block extends Actor {
-    boolean breakable;
     boolean spawnItem;
     boolean spawned;
+    short collision;
 
-    public Block(Texture texture, World world, Vector2 position, float density, float restitution, boolean breakable, boolean spawnItem) {
+    public Block(Texture texture, World world, Vector2 position, float density, float restitution, short breakableSides, boolean spawnItem) {
         this.world = world;
         this.sprite = new Sprite(texture);
         this.sprite.setSize(64.0F, 64.0F);
-        this.breakable = breakable;
         this.spawnItem = spawnItem;
+        this.collision = breakableSides;
         this.spawned = false;
         super.setPosition(position.x, position.y);
         super.setBody(BodyDef.BodyType.StaticBody);
@@ -42,23 +42,10 @@ public class Block extends Actor {
         this.fixtureDef.shape = this.shape;
         this.body.createFixture(this.fixtureDef);
         this.shape.dispose();
-
-//        this.edgeShape.set( -w / 2.0F + tolerance, -h / 2.0F -  4*tolerance, w / 2.0F - tolerance, -h / 2.0F - 4*tolerance); //Bottom
-//        super.setContactSide(this.bottom);
-//
-//        this.edgeShape.set(-w / 2.0F - 2*tolerance, -h / 2.0F + tolerance, -w / 2.0F - 2*tolerance,h / 2.0F - tolerance); //Left
-//        super.setContactSide(this.leftSide);
-//
-//        this.edgeShape.set( -w / 2.0F + tolerance, h / 2.0F + 2*tolerance, w / 2.0F - tolerance, h / 2.0F + 2*tolerance); //Head
-//        super.setContactSide(this.head);
-//
-//        this.edgeShape.set(w / 2.0F + 2*tolerance, -h / 2.0F + tolerance, w / 2.0F + 2*tolerance, h / 2.0F - tolerance); //Right Side
-//        super.setContactSide(this.rightSide);
-//        this.edgeShape.dispose();
     }
 
-    public boolean isBreakable() {
-        return this.breakable;
+    public short getCollision() {
+        return this.collision;
     }
 
     public boolean canSpawnItem() {
@@ -72,6 +59,4 @@ public class Block extends Actor {
     public void setSpawned(boolean set) {
         this.spawned = set;
     }
-
-
 }

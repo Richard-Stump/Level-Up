@@ -14,10 +14,16 @@ import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.screens.editor.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /* TODO: Make it so that the object TabbedPane always aligns to the left.
  */
 
+/**
+ * Screen for the level editor
+ *
+ * This is the screen that the user is taken to when they want to edit a level.
+ */
 public class EditLevelScreen implements Screen {
     private NextLevel game;
     private OrthographicCamera camera;
@@ -28,20 +34,33 @@ public class EditLevelScreen implements Screen {
     private Viewport viewport;
     private int screenWidth, screenHeight;
 
-    private TilemapView tilemapView;
+    private LevelView levelView;
     private AssetSelectorWindow win;
 
     private ArrayList<Texture> tiles;
+    private ArrayList<Texture> actorTextures;
 
     private final Color backgroundColor = new Color(0.1f, 0.1f, 0.1f,1.0f);
 
     public static final int STAGE_WIDTH = 1920;
     public static final int STAGE_HEIGHT = 1000;
 
+
+    /**
+     * Initializes the level editor with an empty level of size 32x32
+     *
+     * @param game A reference to the NextLevel class in use
+     */
     public EditLevelScreen(NextLevel game) {
         this(game, 32, 32);
     }
-
+    /**
+     * Initializes the level editor with an empty level of the given size
+     *
+     * @param game A reference to the NextLevel class in use
+     * @param mapWidth How many tiles wide the new level should be
+     * @param mapHeight How many tiles tall the new level should be
+     */
     public EditLevelScreen(NextLevel game, int mapWidth, int mapHeight) {
         this.game = game;
         this.screenWidth = Gdx.graphics.getWidth();
@@ -66,7 +85,8 @@ public class EditLevelScreen implements Screen {
         stage = new Stage(viewport, batch);
 
         loadTiles();
-        tilemapView = new TilemapView(this, new TestTilemap(mapWidth, mapHeight), STAGE_WIDTH, STAGE_HEIGHT);
+        loadActors();
+        levelView = new LevelView(this, new EditorLevel(mapWidth, mapHeight), STAGE_WIDTH, STAGE_HEIGHT);
 
         // For some reason the tabbed pane won't work with the other skin.
         // TODO: Figure out how to use the same skin as the main menu
@@ -90,14 +110,14 @@ public class EditLevelScreen implements Screen {
             }
         });
 
-        stage.addActor(tilemapView);
-        tilemapView.addListener(new InputListener() {
+        stage.addActor(levelView);
+        levelView.addListener(new InputListener() {
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                stage.setScrollFocus(tilemapView);
+                stage.setScrollFocus(levelView);
             }
         });
 
-        win = new AssetSelectorWindow(tiles);
+        win = new AssetSelectorWindow(tiles, actorTextures);
         stage.addActor(win);
         MenuWindow win2 = new MenuWindow();
         stage.addActor(win2);
@@ -157,11 +177,31 @@ public class EditLevelScreen implements Screen {
         for(String name : tileNames) {
             tiles.add(new Texture(name));
         }
+    }
 
+    public void loadActors() {
+        ArrayList<String> actorNames = new ArrayList<String>() {{
+            add("badlogic.jpg");
+            add("enemy.jpg");
+            add("goomba.png");
+            add("mushroom.jpeg");
+            add("goomba.png");
+            add("paragoomba.png");
+        }};
+
+        actorTextures = new ArrayList<Texture>();
+
+        for(String name : actorNames) {
+            actorTextures.add(new Texture(name));
+        }
     }
 
     public ArrayList<Texture> getTiles() {
         return tiles;
+    }
+
+    public ArrayList<Texture> getActorTextures() {
+        return actorTextures;
     }
 
     public AssetSelectorWindow getSelectorWindow() {

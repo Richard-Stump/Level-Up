@@ -21,7 +21,7 @@ public class Fire extends Actor{
         super.setPosition(position.x, position.y);
         super.setBody(BodyDef.BodyType.StaticBody);
         setShape();
-//        setFixture();
+        setFixture();
         v = velocity;
     }
 
@@ -37,12 +37,13 @@ public class Fire extends Actor{
         this.fixtureDef.filter.categoryBits = BLOCK_ENTITY;
         this.fixtureDef.filter.maskBits = WORLD_ENTITY | PHYSICS_ENTITY | BLOCK_ENTITY;
         this.fixtureDef.shape = this.shape;
-        this.body.createFixture(this.fixtureDef);
         this.fixtureDef.isSensor = true;
+        this.body.createFixture(this.fixtureDef);
         this.shape.dispose();
     }
 
     public void update() {
         this.position.x += v;
+
     }
 }
