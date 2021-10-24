@@ -20,9 +20,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.nextlevel.Level;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
@@ -37,6 +39,7 @@ import org.w3c.dom.Text;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class LevelSelectionScreen implements Screen {
     private NextLevel game;
@@ -55,6 +58,14 @@ public class LevelSelectionScreen implements Screen {
 
     private String selectedId;
     private Label selectedLevel;
+    private Table mainTable;
+    private VerticalGroup levelVerticalGroup;
+
+    //search parameters:
+    private TextField searchBar;
+    private SelectBox<Difficulty> difficultyDropdown;
+    private ArrayList<CheckBox> tagCheckBoxes;
+    private ScrollPane scrollPane;
 
     public LevelSelectionScreen(NextLevel game) {
         this.game = game;
@@ -81,10 +92,10 @@ public class LevelSelectionScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         //start new layout
-        Table table = new Table();
-        table.setFillParent(true);
-        stage.addActor(table);
-        table.setDebug(true);
+        mainTable = new Table();
+        mainTable.setFillParent(true);
+        stage.addActor(mainTable);
+        mainTable.setDebug(true);
 
         //row 1: back button, screen title, current user overview
         //back button
@@ -103,79 +114,65 @@ public class LevelSelectionScreen implements Screen {
         HorizontalGroup userInfo = new HorizontalGroup();
         //add stuff here for user info
 
-        table.add(backButton);
-        table.add(levelSelectLabel);
-        table.add(userInfo);
-        table.row();
+        mainTable.add(backButton);
+        mainTable.add(levelSelectLabel);
+        mainTable.add(userInfo);
+        mainTable.row();
 
 
         //row 2: empty placeholder, scrollable table with levels, sorting box
 
         //populate a table full of information
-        VerticalGroup levelTable = new VerticalGroup();
-        //columns: {image}, {title, author, difficulty, tags}, empty space, {rating, play count}
-        for (LevelInfo levelInfo: dbDownloaded.sortByTitle()) {
-            String id = levelInfo.getId();
-            HorizontalGroup levelGroup = new HorizontalGroup();
+        levelVerticalGroup = getLevelVerticalGroup(new ArrayList<>(dbDownloaded.sortByTitle()));
+        levelVerticalGroup.top();
+        levelVerticalGroup.padRight(20);
 
-            levelGroup.addListener(selectLevel(levelGroup, id));
-
-            //Image levelPreview = new Image();
-
-            //levelGroup.addActor(levelPreview);
-            levelGroup.addActor(getTitleGroup(id));
-            levelGroup.addActor(getRatingGroup(id));
-            levelGroup.padBottom(20);
-            levelTable.addActor(levelGroup);
-        }
-
-        levelTable.top();
-        levelTable.padRight(20);
-
-        ScrollPane scrollPane = new ScrollPane(levelTable, skin);
+        scrollPane = new ScrollPane(levelVerticalGroup, skin);
         scrollPane.setForceScroll(true, true);
 
         //make the sorting and search thing on right side
         Table searchSortGroup = getSearchSortTable();
 
-        table.add();
-        table.add(scrollPane);
-        table.add(searchSortGroup).top();
-        table.row();
+        mainTable.add();
+        mainTable.add(scrollPane);
+        mainTable.add(searchSortGroup).top();
+        mainTable.row();
 
         //row 3: empty placeholder, currently selected level, play button
 
         TextButton playButton = new TextButton("Play", skin);
         playButton.addListener(playLevel());
 
-        table.add();
-        table.add(selectedLevel).left();
-        table.add(playButton);
+        mainTable.add();
+        mainTable.add(selectedLevel).left();
+        mainTable.add(playButton);
 
         //end
 
-        stage.addActor(table);
+        stage.addActor(mainTable);
     }
 
     private Table getSearchSortTable() {
-        Table table = new Table();
+        final Table table = new Table();
         Label searchLabel = new Label("Search:", skin);
-        TextField searchBar = new TextField("Search", skin);
+        searchBar = new TextField("Search", skin);
 
         Label diffLabel = new Label("Difficulty:", skin);
-        SelectBox<Difficulty> difficultyDropdown = new SelectBox<>(skin);
+        difficultyDropdown = new SelectBox<>(skin);
         difficultyDropdown.setItems(Difficulty.class.getEnumConstants());
 
         Label tagLabel = new Label("Tags:", skin);
-        ArrayList<CheckBox> tagCheckBoxes = new ArrayList<>();
+        tagCheckBoxes = new ArrayList<>();
         for (Tag t: Tag.values()) {
-            tagCheckBoxes.add(new CheckBox(t.toString(), skin));
+            if (!t.equals(Tag.NONE)) {
+                tagCheckBoxes.add(new CheckBox(t.toString(), skin));
+            }
         }
 
+        //TODO: add search by (star) rating
+
         TextButton searchButton = new TextButton("Search", skin);
-        searchButton.addListener(new ClickListener() {
-            //apply search and update table
-        });
+        searchButton.addListener(searchButton());
 
         table.add(searchLabel);
         table.row();
@@ -196,6 +193,26 @@ public class LevelSelectionScreen implements Screen {
         table.add(searchButton);
         table.row();
         return table;
+    }
+
+    private VerticalGroup getLevelVerticalGroup(ArrayList<LevelInfo> levels) {
+        VerticalGroup vGroup = new VerticalGroup();
+        //columns: {image}, {title, author, difficulty, tags}, empty space, {rating, play count}
+        for (LevelInfo levelInfo: levels) {
+            String id = levelInfo.getId();
+            HorizontalGroup levelGroup = new HorizontalGroup();
+
+            levelGroup.addListener(selectLevel(levelGroup, id));
+
+            //Image levelPreview = new Image();
+
+            //levelGroup.addActor(levelPreview);
+            levelGroup.addActor(getTitleGroup(id));
+            levelGroup.addActor(getRatingGroup(id));
+            levelGroup.padBottom(20);
+            vGroup.addActor(levelGroup);
+        }
+        return vGroup;
     }
 
     /**
@@ -269,12 +286,93 @@ public class LevelSelectionScreen implements Screen {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (selectedId.equals("")) {
+                    return;
+                }
                 System.out.println("Should be playing: " + dbDownloaded.searchByID(selectedId).getTitle());
                 //TODO: open the game screen with the level that is selected
 
             }
         };
     }
+
+    private ClickListener searchButton() {
+        return new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                selectedId = "";
+                selectedLevel.setText("Select a level");
+
+                //search all levels and make a list that contains this string in the title or author:
+                ArrayList<LevelInfo> ongoingList;
+                if (!searchBar.getText().equals("")) {
+                    ArrayList<LevelInfo> listTitles = new ArrayList<>(dbDownloaded.searchByTitle(searchBar.getText()));
+                    ArrayList<LevelInfo> listAuthors = new ArrayList<>(dbDownloaded.searchByAuthor(searchBar.getText()));
+
+                    ongoingList = new ArrayList<>(dbDownloaded.combineLists(listTitles, listAuthors));
+                } else {
+                    ongoingList = new ArrayList<>(dbDownloaded.sortByTitle());
+                }
+                System.out.println("after searching titles and authors: " + ongoingList.size());
+
+                ArrayList<Tag> searchTags = new ArrayList<>();
+                for (CheckBox cb: tagCheckBoxes) {
+                    if (cb.isChecked()) {
+                        searchTags.add(Tag.valueOf(cb.getLabel().getText().toString()));
+                    }
+                }
+
+                ArrayList<LevelInfo> newList = new ArrayList<>();
+                //filter out the ones that don't have at least one of these tags
+                if (searchTags.size() != 0) {
+                    for (LevelInfo level : ongoingList) {
+                        ArrayList<Tag> tags = new ArrayList<>(level.getTags());
+                        boolean hasAtLeastOne = false;
+                        for (Tag levelTag : tags) {
+                            for (Tag sTag : searchTags) {
+                                //for each tag that the level has, if it matches one of the tags the user searched for, add it
+                                if (levelTag.equals(sTag)) {
+                                    hasAtLeastOne = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (hasAtLeastOne) {
+                            newList.add(level);
+                        }
+                    }
+                    ongoingList.clear();
+                    ongoingList = new ArrayList<>(newList);
+                }
+                System.out.println("after filtering tags: " + ongoingList.size());
+
+
+                //search the list and only keep those that have this difficulty:
+                ArrayList<LevelInfo> finalList = new ArrayList<>();
+                if (!difficultyDropdown.getSelected().equals(Difficulty.NONE)) {
+                    for (LevelInfo level : ongoingList) {
+                        if (level.getDifficulty() == difficultyDropdown.getSelected().ordinal()) {
+                            finalList.add(level);
+                        }
+                    }
+                } else {
+                    finalList = new ArrayList<>(ongoingList);
+                }
+
+                System.out.println("after filtering difficulty: " + finalList.size());
+
+                //redo the table
+                levelVerticalGroup.clear();
+                levelVerticalGroup = getLevelVerticalGroup(finalList);
+                levelVerticalGroup.top();
+                levelVerticalGroup.padRight(20);
+                scrollPane.setActor(levelVerticalGroup);
+                scrollPane.setForceScroll(true, true);
+            }
+        };
+    }
+
+
 
 
     public void render(float delta) {
