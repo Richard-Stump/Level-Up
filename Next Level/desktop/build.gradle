@@ -22,6 +22,14 @@ task debug(dependsOn: classes, type: JavaExec) {
     debug = true
 }
 
+task testEditor(dependsOn: classes, type: JavaExec) {
+    main = "com.mygdx.nextlevel.desktop.EditorLauncher";
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = project.assetsDir
+    ignoreExitValue = true
+}
+
 task dist(type: Jar) {
     manifest {
         attributes 'Main-Class': project.mainClassName
