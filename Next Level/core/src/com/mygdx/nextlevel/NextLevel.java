@@ -36,7 +36,7 @@ public class NextLevel extends Game {
 		font = new BitmapFont();
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(960, 500, camera);
-		this.setScreen(new LevelSelectionScreen(this));
+		this.setScreen(new RegisterScreen(this));
 	}
 
 
