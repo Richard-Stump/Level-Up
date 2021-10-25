@@ -15,10 +15,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
 
-public class LoginScreen implements Screen {
+import java.util.ArrayList;
+
+public class LoginScreen extends AccountList implements Screen {
 
     public SpriteBatch batch;
     public Stage stage;
@@ -46,7 +50,10 @@ public class LoginScreen implements Screen {
     public static int textBoxBottomPadding = 20;
     public static int buttonWidth = 170;
 
-    public LoginScreen(NextLevel game) {
+    public boolean loginSuccessful = false;
+    public boolean incorrectPass = false;
+
+    public LoginScreen(NextLevel game)  {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
 
@@ -142,9 +149,23 @@ public class LoginScreen implements Screen {
                 pass = textPass.getText();
 
                 //TODO: verification
+                for (Account a : getAccList()) {
+                    if (a.getUsername().equals(username) && (a.getPassword().equals(pass))) {
+                        loginSuccessful = true;
+                        ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+                        break;
+                    } else if (a.getUsername().equals(username) && !a.getPassword().equals(pass)) {
+                        System.out.println("Incorrect password.");
+                        incorrectPass = true;
+                        textPass.setMessageText("Password");
+                        break;
+                    }
+                }
+                if (!loginSuccessful && !incorrectPass) {
+                    System.out.println("There is no account associated with this username.");
+                }
+                incorrectPass = false;
 
-
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
             }
         });
 
@@ -188,4 +209,6 @@ public class LoginScreen implements Screen {
         skin.dispose();
         atlas.dispose();
     }
+
+
 }

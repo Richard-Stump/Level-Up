@@ -16,11 +16,12 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
 
 import java.util.ArrayList;
 
-public class RegisterScreen extends Account implements Screen{
+public class RegisterScreen extends AccountList implements Screen{
 
     public SpriteBatch batch;
     public Stage stage;
@@ -46,8 +47,6 @@ public class RegisterScreen extends Account implements Screen{
     public static int textBoxWidth = 200;
     public static int textBoxBottomPadding = 20;
     public static int buttonWidth = 170;
-
-    public ArrayList<Account> accList = new ArrayList<>();
 
     public boolean isInfoCorrect = true;
 
@@ -178,7 +177,7 @@ public class RegisterScreen extends Account implements Screen{
                     a.setUsername(username);
                     a.setEmail(email);
                     //TODO: add account into database
-                    accList.add(a);
+                    getAccList().add(a);
                 }
 
                 //System.out.println(isInfoCorrect);
@@ -193,7 +192,8 @@ public class RegisterScreen extends Account implements Screen{
 
                 //TODO: set to next screen
                 if (isInfoCorrect) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
                 }
 
                 //using arraylist for now since database is not setup
@@ -243,4 +243,5 @@ public class RegisterScreen extends Account implements Screen{
         skin.dispose();
         atlas.dispose();
     }
+
 }
