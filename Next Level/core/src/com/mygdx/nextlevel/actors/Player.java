@@ -15,6 +15,7 @@ public class Player extends Actor {
     boolean star = false;
     boolean fire = false;
     boolean fireflower = false;
+    boolean speedItem = false;
     Item heldItem = null;
 
     public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
@@ -29,6 +30,7 @@ public class Player extends Actor {
         this.star = false;
         this.fire = false;
         this.fireflower = false;
+        this.speedItem = false;
         super.setPosition(position.x, position.y);
         this.spawnpoint = this.worldSpawn;
         super.setBody(BodyDef.BodyType.DynamicBody);
@@ -143,6 +145,13 @@ public class Player extends Actor {
 
     public void setFireflower(boolean fireflower) { this.fireflower = fireflower;}
 
+    public boolean getSpeedItem() {
+        return this.speedItem;
+    }
+
+    public void setSpeedItem(boolean speedItem) {
+        this.speedItem = speedItem;
+    }
 
     public Item getHeldItem() {
         return this.heldItem;

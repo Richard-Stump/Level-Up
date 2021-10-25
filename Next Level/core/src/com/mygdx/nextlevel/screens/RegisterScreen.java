@@ -138,6 +138,15 @@ public class RegisterScreen extends AccountList implements Screen{
                 pass = textPass.getText();
                 verifyPass = textVerifyPass.getText();
 
+                if (verifyPass.length() < 8 || verifyPass.length() > 16) {
+                    System.out.println("Password must be at least 8 characters and no more than 16 characters");
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must be at least 8 characters and no more than 16 characters"));
+                    isInfoCorrect = false;
+
+                }
+                //TODO: check if password contains at least one capital, number, and special character
+                //TODO: fix bug where account is still added to arraylist (temp database) despite it not meeting requirements
+
                 //check if username or email exists already
                 for (Account account : accList) {
                     if (account.getUsername().equals(username)) {

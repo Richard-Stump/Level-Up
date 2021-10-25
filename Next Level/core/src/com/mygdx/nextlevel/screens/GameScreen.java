@@ -29,17 +29,21 @@ public class GameScreen implements Screen, InputProcessor {
     Block block1, block2, block3;
     Item item;
     Hud hud;
+
+    //Items
     Item slowItem;
     Item oneUpItem;
     Item star;
     Item fireflower;
+    Item speedItem;
     int itemIndex;
-    boolean shootFire;
-//    Fire fireball;
+
+    //Sprite Directions
+    boolean fireballRight = true;
+
     Texture fireballTexture;
     Sprite fireballSprite;
     ArrayList<Fire> fireballList = new ArrayList();
-    boolean fireballRight = true;
     HashMap<Item, String> itemToName = new HashMap<>();
 
     World world;
@@ -56,12 +60,13 @@ public class GameScreen implements Screen, InputProcessor {
     boolean touchedPowerUp = false;
     boolean touchedItemBlock2 = false;
     float time = 0;
+    float speedTime = 0f;
 //    float invTime = 0;
     boolean itemConsumed = false;
     boolean playerKilled = false;
-    boolean itemSpawned = false;
-    boolean killEnemy = false;
-    boolean breakBlock = false;
+//    boolean itemSpawned = false;
+//    boolean killEnemy = false;
+//    boolean breakBlock = false;
     float speedRight = 3f;
     float speedLeft = -3f;
     float slowTime = 0f;
@@ -151,6 +156,9 @@ public class GameScreen implements Screen, InputProcessor {
         this.fireflower = new Item(new Texture("fireflower.png"), this.world, fireFlowerSpawn, 0f, 0f);
         itemToName.put(fireflower, "fireflower.png");
 
+        Vector2 speedItemSpawn = new Vector2(w * 0.75f, -32 + 64*4);
+        this.speedItem = new Item(new Texture("speeditem.png"), this.world, speedItemSpawn, 0f, 0f);
+        itemToName.put(speedItem, "speeditem.png");
 
         //Update to screen parameters
         w /= PIXELS_TO_METERS;
@@ -262,7 +270,11 @@ public class GameScreen implements Screen, InputProcessor {
                     } else if (bodyB.getUserData().equals(slowItem)) {
                         player.setSlowItem(true);
                         slowItem.setDeleteSprite(true);
-                    } else if (bodyB.getUserData().equals(oneUpItem)) {
+                    } else if (bodyB.getUserData().equals(speedItem)) {
+                        player.setSpeedItem(true);
+                        speedItem.setDeleteSprite(true);
+                    }
+                    else if (bodyB.getUserData().equals(oneUpItem)) {
                         player.addLife(1);
                         oneUpItem.setDeleteSprite(true);
                     } else if (bodyB.getUserData().equals(star)) {
@@ -471,8 +483,10 @@ public class GameScreen implements Screen, InputProcessor {
 //            getItemSprite(star);
 //            createItem(item);
 //            getItemSprite(item);
-            createItem(fireflower);
-            getItemSprite(fireflower);
+//            createItem(fireflower);
+//            getItemSprite(fireflower);
+              createItem(speedItem);
+              getItemSprite(speedItem);
         }
         if (touchedItemBlock2) {
             createItem(star);
@@ -539,10 +553,13 @@ public class GameScreen implements Screen, InputProcessor {
 //                    drawItemSprite(itemList.get(itemIndex));
 //                    drawItemSprite(star);
 //                    drawItemSprite(item);
-                    if (!fireflower.getDeleteSprite()) {
-                        drawItemSprite(fireflower);
+//                    if (!fireflower.getDeleteSprite()) {
+//                        drawItemSprite(fireflower);
+////                    }
+//                        block2.setSpawned(true);
 //                    }
-                    block2.setSpawned(true);
+                if (!speedItem.getDeleteSprite()) {
+                    drawItemSprite(speedItem);
                 }
             }
             if (touchedItemBlock2) {
@@ -572,6 +589,13 @@ public class GameScreen implements Screen, InputProcessor {
             }
         }
 
+        if (player.getSpeedItem()) {
+            speedTime += Gdx.graphics.getDeltaTime();
+            if (speedTime > 3f) {
+                player.setSpeedItem(false);
+            }
+        }
+
         if (player.getStar()) {
             starTime += Gdx.graphics.getDeltaTime();
             if (starTime > 5f) {
@@ -584,6 +608,9 @@ public class GameScreen implements Screen, InputProcessor {
             if (player.getSlowItem()) {
                 speedLeft = -1f;
                 speedRight = 1f;
+            } else if (player.getSpeedItem()) {
+                speedLeft = -5f;
+                speedRight = 5f;
             } else {
                 speedLeft = -3f;
                 speedRight = 3f;
