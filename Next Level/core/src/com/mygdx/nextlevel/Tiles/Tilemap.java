@@ -3,16 +3,19 @@ package com.mygdx.nextlevel.Tiles;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Json;
 
-public class Tilemap {
+public class Tilemap{
     private int[][]             tiles;
     private Texture             tilesTexture;
     private TiledMapTileSet     tileSet;
@@ -21,13 +24,20 @@ public class Tilemap {
     private int                 mapWidth;
     private int                 mapHeight;
     private int                 tileSize;
+    public FileHandle           tmFile;
+    public TiledMapRenderer     tiledMapRenderer;
+    public OrthographicCamera   orthographicCamera;
 
-    public Tilemap(final FileHandle tsConfigFile, final FileHandle tmFile) {
-        parseTileMapFile(tmFile);
+    /*public Tilemap(final FileHandle tsConfigFile) {
         init(tsConfigFile);
+    }*/
+
+    public Tilemap() {
+        initMap();
     }
 
-    public TiledMap createMap(){
+    public TiledMap createMap(final FileHandle tmFile){
+        parseTileMapFile(tmFile);
         for (int row = 0; row < mapHeight; row++) {
             for (int col = 0; col < mapWidth; col++) {
                 final int tileId = tiles[row][col];
@@ -38,6 +48,22 @@ public class Tilemap {
         }
 
         return map;
+    }
+
+    public void load(FileHandle tmFile){
+        this.tmFile = tmFile;
+        Tilemap tm = new Tilemap();
+        map = tm.createMap(tmFile);
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(map);
+
+
+        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        orthographicCamera.update();
+        tiledMapRenderer.setView(orthographicCamera);
+        tiledMapRenderer.render();
     }
 
     public void parseTileMapFile(final FileHandle tmFile){
@@ -55,6 +81,7 @@ public class Tilemap {
         }
     }
 
+    /*
     private void init(FileHandle tsConfigFile){
         //load config file
         final Json json = new Json();
@@ -79,6 +106,7 @@ public class Tilemap {
             throw e;
         }
     }
+*/
 
     private void initMap(){
         final TextureRegion[][] tileSplit = TextureRegion.split(tilesTexture, tileSize, tileSize);
