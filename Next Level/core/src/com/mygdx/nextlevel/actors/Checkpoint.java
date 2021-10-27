@@ -22,6 +22,14 @@ public class Checkpoint extends Actor {
         setFixture(density, restitution);
     }
 
+    public Checkpoint(Vector2 position, Player player) {
+        this.worldSpawn.x = position.x;
+        this.worldSpawn.y = position.y;
+        this.body = null;
+        this.bodyDef = null;
+        this.shape = null;
+    }
+
     private void setShape() {
         this.shape = new PolygonShape();
         this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);

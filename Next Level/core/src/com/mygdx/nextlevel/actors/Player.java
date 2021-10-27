@@ -38,6 +38,24 @@ public class Player extends Actor {
         setFixture(density, restitution);
     }
 
+
+    //Constructor Used for Test cases
+    public Player(Vector2 position, float density, float resistution) {
+        this.world = null;
+        this.sprite = null;
+        this.lives = 3;
+        this.powerUp = false;
+        this.invulnerable = false;
+        this.takeDamage = false;
+        this.worldSpawn.x = position.x;
+        this.worldSpawn.y = position.y;
+        this.spawnpoint = this.worldSpawn;
+        setSpawnpoint(spawnpoint);
+        this.body = null;
+        this.bodyDef = null;
+        this.shape = null;
+    }
+
     private void setShape() {
         this.shape = new PolygonShape();
         this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
@@ -167,19 +185,12 @@ public class Player extends Actor {
 
             setSpawnpoint(getWorldSpawn());
             Vector2 spawn = getSpawnpoint();
-//            while (this.world.isLocked());
             this.body.setTransform(spawn.x/PIXELS_TO_METERS, spawn.y/PIXELS_TO_METERS, 0);
-//            this.body.applyLinearImpulse(new Vector2(100,100), spawn, true);
-//            this.body.applyLinearImpulse(new Vector2(-1000f, -10f), spawn, true);
             checkpoint.setTexture(new Texture("checkpoint2.jpg"));
             checkpoint.setTriggered(false);
         } else { //Player has lives
             Vector2 spawn = getSpawnpoint();
-//            while (this.world.isLocked());
             this.body.setTransform(spawn.x/PIXELS_TO_METERS, spawn.y/PIXELS_TO_METERS, 0);
-//            this.body.applyLinearImpulse(spawn.x, spawn.y, true);
-//            this.body.applyLinearImpulse( spawn, true);
-//            this.body.applyLinearImpulse(new Vector2(-1000f, -10f), spawn, true);
         }
         this.body.setLinearVelocity(0, 0);
     }
