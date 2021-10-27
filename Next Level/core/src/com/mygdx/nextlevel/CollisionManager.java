@@ -9,7 +9,7 @@ public class CollisionManager implements ContactListener {
     public World world;
 
     private CollisionManager() {
-        world = new World(new Vector2(0.0f, -9.81f), true);
+        world = new World(new Vector2(0.0f, 0.0f), true);
         world.setContactListener(this);
     }
 
@@ -45,7 +45,7 @@ public class CollisionManager implements ContactListener {
     }
 
     @Override
-    public void endContact(Contact contact) { //called when two fixtures stop contact
+        public void endContact(Contact contact) { //called when two fixtures stop contact
     }
 
     @Override

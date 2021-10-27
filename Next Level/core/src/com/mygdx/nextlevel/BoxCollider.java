@@ -68,8 +68,21 @@ public class BoxCollider {
 
         float angle = dir.angleDeg();
 
-        if(angle > 45.0f && angle < 135.0f) {
+        if(angle >= 45.0f && angle <= 135.0f) {
             System.out.println("top");
         }
+        else if (angle > 135.0f && angle < 225.0f) {
+            System.out.println("left");
+        }
+        else if (angle >= 225.0f && angle <= 315.0f ) {
+            System.out.println("bottom");
+        }
+        else {
+            System.out.println("right");
+        }
+    }
+
+    public void setVelocity(Vector2 v) {
+        body.setLinearVelocity(v.scl(PPM));
     }
 }
