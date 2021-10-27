@@ -29,7 +29,9 @@ public class GameScreen2 implements Screen, InputProcessor {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         b1 = new BoxCollider(new Vector2(0, 0), new Vector2(1, 1), true);
-        b2 = new BoxCollider(new Vector2(0, -3), new Vector2(1, 1), false);
+        b1.debugPrint = false;
+        b2 = new BoxCollider(new Vector2(0, -3), new Vector2(8, 0.5f), false);
+        b2.debugPrint = true;
         b1Vel = new Vector2(Vector2.Zero);
     }
 
