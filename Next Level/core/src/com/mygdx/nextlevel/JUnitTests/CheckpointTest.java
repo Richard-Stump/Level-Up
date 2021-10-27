@@ -1,6 +1,5 @@
 package com.mygdx.nextlevel.JUnitTests;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,7 +10,6 @@ import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.actors.Checkpoint;
 import com.mygdx.nextlevel.actors.Player;
 import com.mygdx.nextlevel.screens.CheckpointTestScreen;
-import com.mygdx.nextlevel.screens.MainMenuScreen;
 import org.junit.*;
 
 public final class CheckpointTest extends Game{

@@ -14,13 +14,13 @@ public class TestRunner {
         for (Failure failure: resultCheckpoint.getFailures()) {
             System.out.println(failure.toString());
         }
-        System.out.println("Passed all tests: " + resultCheckpoint.wasSuccessful());
+        System.out.println("CheckpointTest - Passed all tests: " + resultCheckpoint.wasSuccessful());
 
 
-//        Result resultDB = JUnitCore.runClasses(CreatedLevelsDBTest.class, LevelsDBControllerTest.class);
-//        for (Failure failure: resultDB.getFailures()) {
-//            System.out.println(failure.toString());
-//        }
-//        System.out.println("Passed all tests: " + resultDB.wasSuccessful());
+        Result resultDB = JUnitCore.runClasses(CreatedLevelsDBTest.class, LevelsDBControllerTest.class);
+        for (Failure failure: resultDB.getFailures()) {
+            System.out.println(failure.toString());
+        }
+        System.out.println("DatabaseTest - Passed all tests: " + resultDB.wasSuccessful());
     }
 }
