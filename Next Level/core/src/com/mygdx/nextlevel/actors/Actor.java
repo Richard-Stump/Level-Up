@@ -3,6 +3,7 @@ package com.mygdx.nextlevel.actors;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.nextlevel.BoxCollider;
 
 public class Actor {
     final float PIXELS_TO_METERS = 100.0f;
@@ -11,6 +12,7 @@ public class Actor {
     final short BLOCK_ENTITY = 0x1 << 2; //0100
 
     Vector2 worldSpawn = new Vector2();
+    Vector2 position;
     Sprite sprite;
     BodyDef bodyDef;
     PolygonShape shape;
@@ -31,6 +33,15 @@ public class Actor {
         this.sprite.setPosition(-this.sprite.getWidth()/2.0F + x, -this.sprite.getHeight()/2.0F + y);
         this.worldSpawn.x = x;
         this.worldSpawn.y = y;
+        this.position.set(x, y);
+    }
+
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public Vector2 getSize() {
+        return new Vector2(w, h);
     }
 
     void setBody(BodyDef.BodyType type) {
@@ -73,5 +84,7 @@ public class Actor {
         return this.body;
     }
 
-
+    public void onCollisionEnter(BoxCollider o) {}
+    public void onCollisionStay(BoxCollider o) {}
+    public void onCollisionExit(BoxCollider o) {}
 }

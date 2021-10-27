@@ -8,7 +8,6 @@ import com.mygdx.nextlevel.screens.GameScreen;
 import java.util.ArrayList;
 
 public class WorldContactListener implements ContactListener {
-
     public Player player;
     public Enemy enemy;
     public Checkpoint checkpoint;
@@ -21,8 +20,6 @@ public class WorldContactListener implements ContactListener {
     public boolean touchedPowerUp;
     public boolean landed;
     public boolean jumped;
-
-
     public WorldContactListener (GameScreen gameScreen) {
         this.player = gameScreen.getPlayer();
         this.enemy = gameScreen.getEnemy();

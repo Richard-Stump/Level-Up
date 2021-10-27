@@ -32,5 +32,5 @@ public class EditorLevel {
 
     public void placeActor(float x, float y, int actorId) {
         actors.add(new EditorActor(x, y, actorId));
-    }
+     }
 }
