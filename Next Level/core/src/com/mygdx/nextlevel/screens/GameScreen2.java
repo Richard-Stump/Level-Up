@@ -3,9 +3,11 @@ package com.mygdx.nextlevel.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionManager;
 
@@ -20,17 +22,21 @@ public class GameScreen2 implements Screen, InputProcessor {
         box2dRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        BoxCollider b = new BoxCollider(new Vector2(0, 0), new Vector2(1, 1), true);
+        BoxCollider b1 = new BoxCollider(new Vector2(0, 0), new Vector2(1, 1), true);
+        BoxCollider b2 = new BoxCollider(new Vector2(0, -3), new Vector2(1, 1), false);
     }
 
     @Override
     public void show() {
-        box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
     }
 
     @Override
     public void render(float delta) {
+        ScreenUtils.clear(Color.BLACK);
 
+        CollisionManager.getWorld().step(delta, 9, 3);
+
+        box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
     }
 
     @Override

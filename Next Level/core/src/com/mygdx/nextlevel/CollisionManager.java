@@ -10,6 +10,7 @@ public class CollisionManager implements ContactListener {
 
     private CollisionManager() {
         world = new World(new Vector2(0.0f, -9.81f), true);
+        world.setContactListener(this);
     }
 
     private static void checkForInstance() {
@@ -33,7 +34,14 @@ public class CollisionManager implements ContactListener {
 
     @Override
     public void beginContact(Contact contact) { //called when two fixtures begin contact
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
 
+        BoxCollider colliderA = (BoxCollider)fixtureA.getUserData();
+        BoxCollider colliderB = (BoxCollider)fixtureB.getUserData();
+
+        colliderA.onCollisionEnter(colliderB);
+        colliderB.onCollisionEnter(colliderA);
     }
 
     @Override
