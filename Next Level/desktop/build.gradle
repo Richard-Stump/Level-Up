@@ -38,6 +38,15 @@ task testGameScreen2(dependsOn: classes, type: JavaExec) {
     ignoreExitValue = true
 }
 
+
+task testMainMenu(dependsOn: classes, type: JavaExec) {
+    main = "com.mygdx.nextlevel.desktop.MainMenuLauncher";
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = project.assetsDir
+    ignoreExitValue = true
+}
+
 task dist(type: Jar) {
     manifest {
         attributes 'Main-Class': project.mainClassName

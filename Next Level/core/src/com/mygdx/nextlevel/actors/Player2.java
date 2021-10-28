@@ -15,11 +15,13 @@ public class Player2 extends Actor2 {
     protected Vector2 velocity;
     protected BoxCollider boxCollider;
 
-    public Player2() {
-        super(0.0f, 0.0f, 1.0f, 1.0f);
+    private boolean canJump = false;
+
+    public Player2(float x, float y) {
+        super(x, y, 1.0f, 1.0f);
 
         boxCollider = new BoxCollider(this,
-                new Vector2(0.0f, 0.0f),
+                new Vector2(x, x),
                 new Vector2(1, 1),
                 true);
 
@@ -29,30 +31,38 @@ public class Player2 extends Actor2 {
     }
 
     public void update(float delta) {
-        Vector2 vel = boxCollider.getVelocity();
+        Vector2 dir = new Vector2();
+        dir.y = boxCollider.getVelocity().y;
 
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            vel.add(-1.0f, 0.0f);
+            dir.add(-5.0f, 0);
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            vel.add(1.0f, 0.0f);
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            dir.add(5.0f, 0);
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            vel.add(0.0f, 1.0f);
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            if(canJump) {
+                dir.add(0.0f, 13.0f);
+                canJump = false;
+            }
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 
         }
 
-        boxCollider.setVelocity(vel);
+        boxCollider.setVelocity(dir);
         setPosition(boxCollider.getPosition().x, boxCollider.getPosition().y);
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         System.out.println("On Player Collision, side = " + side.toString());
 
-        if(side == Side.LEFT || side == Side.RIGHT) {
+        if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT)) {
             System.out.println("Player die");
+        }
+
+        if(side == Side.BOTTOM) {
+            canJump = true;
         }
     }
 }

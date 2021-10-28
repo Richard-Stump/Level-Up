@@ -36,15 +36,21 @@ public class GameScreen2 implements Screen, InputProcessor {
         CollisionManager.init();
 
         box2dRenderer = new Box2DDebugRenderer();
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        b2 = new BoxCollider(new Vector2(0, -3), new Vector2(8, 0.5f), false);
+        float aspect = (float)Gdx.graphics.getWidth() / (float)Gdx.graphics.getHeight();
+        float numTilesVisibleY = 15.0f;
+        camera = new OrthographicCamera(numTilesVisibleY * aspect, numTilesVisibleY);
+        camera.translate(camera.viewportWidth * 0.5f - 0.5f, camera.viewportHeight * 0.5f - 0.5f);
+        camera.update();
+
+        b2 = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false);
         b2.debugPrint = false;
         b1Vel = new Vector2(Vector2.Zero);
 
-        actors = new ArrayList<Actor2>();
-        actors.add(new Player2());
-        actors.add(new Enemy2(-4, -2));
+        actors = new ArrayList<>();
+        actors.add(new Player2(7,2));
+        actors.add(new Enemy2(5, 2));
+        actors.add(new Block2(7, 4, true));
     }
 
     @Override
@@ -53,7 +59,8 @@ public class GameScreen2 implements Screen, InputProcessor {
     }
 
     private void update(float delta) {
-        CollisionManager.getWorld().step(delta, 9, 3);
+        //I think higher iteration constants decreases the chances for side detection failure.
+        CollisionManager.getWorld().step(delta, 100, 100);
 
         for(Actor2 a : actors) {
             a.update(delta);

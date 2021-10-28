@@ -20,7 +20,7 @@ public class BoxCollider {
      *    these do not detect other sensors, just the solid part of the box colider.
      */
 
-    public static float PPM = 64.0f;    // How many pixels is a meter in the game world.
+    public static float PPM = 1.0f;    // How many pixels is a meter in the game world.
 
     public enum Side {
         NONE, TOP, LEFT, RIGHT, BOTTOM;
@@ -70,51 +70,48 @@ public class BoxCollider {
     }
 
     protected void setupShapes(Vector2 position, Vector2 size) {
-        Vector2 distanceFromCenter = size.scl(0.5f, 0.5f);
+        Vector2 halfSize = size.scl(0.5f);
         mainShape = new PolygonShape();
-        mainShape.setAsBox(size.x * PPM, size.y * PPM);
+        mainShape.setAsBox(halfSize.x * PPM, halfSize.y * PPM);
 
         //Calculate where the edges for the box collider will be in the world.
-        Vector2 halfSize = size.scl(1.0f);
         float x = (position.x * PPM);
         float y = (position.y * PPM);
         float width = (size.x * PPM);
         float height = (size.y * PPM);
-        float top = (position.y + halfSize.y) * PPM;
-        float bottom = (position.y - halfSize.y) * PPM;
-        float left = (position.x - halfSize.x) * PPM;
-        float right = (position.x + halfSize.x) * PPM;
 
         // An epsilon value is used to move the vertices of the edges slightly away from the sides
         // they run perpendicular to. This prevents multiple sides from triggering.
         final float epsilon = 0.05f * PPM;
-        final float thickness = 0.01f * PPM;            //How thick to make the sensors
-        final float offset = 0.5f * thickness + 0.01f;  //How much to offset the sensors from being flush with the shape
+        final float thickness = 0.01f * PPM;             //How thick to make the sensors. Thicker decreases the chances
+                                                        //for the side detection to fail
+        final float xOffset = width - thickness + 0.05f;
+        final float yOffset = height - thickness + 0.05f;
 
         // Here the sensor shapes are created in this order: right, top, left, bottom
         sensorShapes = new PolygonShape[4];
         sensorShapes[0] = new PolygonShape();
         sensorShapes[0].setAsBox(
                 thickness, height - epsilon,
-                new Vector2(right - offset, y),
+                new Vector2(xOffset, 0),
                 0.0f
         );
         sensorShapes[1] = new PolygonShape();
         sensorShapes[1].setAsBox(
                 width - epsilon, thickness,
-                new Vector2(x, top - offset),
+                new Vector2(0, yOffset),
                 0.0f
         );
         sensorShapes[2] = new PolygonShape();
         sensorShapes[2].setAsBox(
                 thickness, height - epsilon,
-                new Vector2(left + offset,y),
+                new Vector2(-xOffset, 0),
                 0.0f
         );
         sensorShapes[3] = new PolygonShape();
         sensorShapes[3].setAsBox(
                 width - epsilon, thickness,
-                new Vector2(x, bottom + offset),
+                new Vector2(0, -yOffset),
                 0.0f
         );
     }
@@ -126,7 +123,8 @@ public class BoxCollider {
     protected void setupFixtures() {
         //setup the main fixture
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.density = 50.0f;
+        fixtureDef.density = 100.0f;
+        fixtureDef.friction = 0.0f;
         fixtureDef.restitution = 0.0f;
         fixtureDef.shape = mainShape;
         fixtureDef.isSensor = false;
@@ -180,6 +178,7 @@ public class BoxCollider {
     public void setVelocity(Vector2 v) {
         body.setLinearVelocity(v.scl(PPM));
     }
+
     public Vector2 getVelocity() { return body.getLinearVelocity().scl(1.0f / PPM); }
 
     public Vector2 getPosition() {

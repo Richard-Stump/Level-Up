@@ -36,7 +36,7 @@ public class Actor {
         this.sprite.setPosition(-this.sprite.getWidth()/2.0F + x, -this.sprite.getHeight()/2.0F + y);
         this.worldSpawn.x = x;
         this.worldSpawn.y = y;
-        this.position.set(x, y);
+        this.position = new Vector2(x, y);
     }
 
     public Vector2 getPosition() {
