@@ -1,5 +1,6 @@
 package com.mygdx.nextlevel.JUnitTests;
 
+import com.badlogic.gdx.utils.Null;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.LevelsDBController;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
@@ -8,6 +9,7 @@ import org.junit.*;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class LevelsDBControllerTest {
     private static List<LevelInfo> priorCreatedList;
@@ -48,18 +50,25 @@ public class LevelsDBControllerTest {
             }
             tablePrior.close();
         }
+        TestOutputHelper.displayResult();
+        TestOutputHelper.clearResult();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testInvalidTableName() {
         //Need in order to test
-        LevelsDBController db;
+        LevelsDBController db = null;
 
         //Conditions:
         String badTableName = "badTableName";
 
         //Should trigger the NullPointerException
-        db = new LevelsDBController(badTableName);
+        try {
+            db = new LevelsDBController(badTableName);
+            TestOutputHelper.setResult("testInvalidTableName", false, true);
+        } catch (NullPointerException e) {
+            TestOutputHelper.setResult("testInvalidTableName", false, false);
+        }
     }
 
     @Test
@@ -77,6 +86,7 @@ public class LevelsDBControllerTest {
         boolean expected = true;
 
         //Verify:
+        TestOutputHelper.setResult("testIsConnected", expected, actual);
         assertEquals(expected, actual);
     }
 
@@ -96,6 +106,7 @@ public class LevelsDBControllerTest {
         boolean expected = false;
 
         //Verify:
+        TestOutputHelper.setResult("testIsConnectedWhenClosed", expected, actual);
         assertEquals(expected, actual);
     }
 
@@ -113,6 +124,7 @@ public class LevelsDBControllerTest {
         int expected = 1;
 
         //verify
+        TestOutputHelper.setResult("testAddLevelInfo", expected, actual);
         assertEquals(expected, actual); //did it return the right value?
         assertEquals(arbitraryID, tableCreated.searchByID(arbitraryID).getId()); //did it actually add it to the table?
     }
@@ -133,6 +145,7 @@ public class LevelsDBControllerTest {
         int expected = -1;
 
         //verify
+        TestOutputHelper.setResult("testAddLevelInfoIdentical", expected, actual);
         assertEquals(expected, actual); //did it return the right value?
         assertEquals(1, tableCreated.sortByTitle().size()); //did it add the second one to the table?
     }
@@ -150,6 +163,7 @@ public class LevelsDBControllerTest {
         int expected = 1;
 
         //verify
+        TestOutputHelper.setResult("testRemoveLevelInfo", expected, actual);
         assertEquals(expected, actual); //did it return correct value?
         assertEquals(0, tableCreated.sortByTitle().size()); //is the list empty?
     }
@@ -166,8 +180,19 @@ public class LevelsDBControllerTest {
         int expected = -1;
 
         //verify
+        TestOutputHelper.setResult("testRemoveLevelInfoFromEmptyTable", expected, actual);
         assertEquals(expected, actual); //did it return correct value?
         assertEquals(0, tableCreated.sortByTitle().size()); //is the list empty?
+    }
+
+    @Test
+    public void testRemoveLevelInfoThatDoesntExist() {
+        CreatedLevelsDB tableCreated = new CreatedLevelsDB();
+        int actual = tableCreated.removeLevelInfo("aaaaaaaaaaaa783aaaaa46523");
+        int expected = -1;
+
+        TestOutputHelper.setResult("testRemoveLevelInfoThatDoesntExist", expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -191,6 +216,7 @@ public class LevelsDBControllerTest {
         int expected = 1;
 
         //verify
+        TestOutputHelper.setResult("testUpdateLevelInfo", expected, actual);
         assertEquals(expected, actual); //did it return correctly?
         assertEquals(newPlayCount, tableCreated.searchByID(arbitraryID).getPlayCount()); //did it change the play count?
     }
@@ -213,6 +239,7 @@ public class LevelsDBControllerTest {
         int expected = -1;
 
         //verify
+        TestOutputHelper.setResult("testUpdateLevelInfoNotInTable", expected, actual);
         assertEquals(expected, actual); //did it return correctly?
         assertEquals(0, tableCreated.sortByTitle().size()); //did it change the table at all?
     }

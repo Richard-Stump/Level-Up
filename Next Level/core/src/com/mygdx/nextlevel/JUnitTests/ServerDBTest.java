@@ -10,6 +10,7 @@ import org.postgresql.util.PSQLException;
 import java.nio.channels.AcceptPendingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -45,8 +46,11 @@ public class ServerDBTest {
     }
 
     @After
-    public void closeConnection() {
+    public void cleanup() {
         db.closeConnection();
+
+        TestOutputHelper.displayResult();
+        TestOutputHelper.clearResult();
     }
 
     @Test
@@ -58,6 +62,7 @@ public class ServerDBTest {
         boolean expected = true;
 
         //test if result is what we expect
+        TestOutputHelper.setResult("testIsActive", expected, actual);
         assertEquals(expected, actual);
     }
 
@@ -66,6 +71,7 @@ public class ServerDBTest {
         boolean actual = db.userExists("john");
         boolean expected = false;
 
+        TestOutputHelper.setResult("testUserExistsFalse", expected, actual);
         assertEquals(expected, actual);
     }
 
@@ -74,6 +80,7 @@ public class ServerDBTest {
         boolean actual = db.userExists("steve");
         boolean expected = true;
 
+        TestOutputHelper.setResult("testUserExistsTrue", expected, actual);
         assertEquals(expected, actual);
     }
 
@@ -88,6 +95,7 @@ public class ServerDBTest {
         db.addUser(testAccount);
 
         boolean actual = db.userExists(username);
+        boolean expected = true;
 
         //cleanup with admin privileges
         ServerDBHandler adminDB = new ServerDBHandler("admin", "CQNK2Ih8H8aikg6M");
@@ -95,7 +103,8 @@ public class ServerDBTest {
         adminDB.closeConnection();
         PostgreSQLConnect.changeAuth("anon", "anonpassword");
 
-        assertTrue(actual);
+        TestOutputHelper.setResult("testAddUser", expected, actual);
+        assertEquals(actual, expected);
     }
 
     /*
@@ -104,12 +113,16 @@ public class ServerDBTest {
     public void testRemoveUsersAnon() {
         db.removeUser("steve");
     }
-     */
+
 
     @Test
-    public void testRemoveUsersAdmin() {
+    public void testRemoveUserUsingAdmin() {
+        test = "testRemoveUserUsingAdmin(WIP)";
+
         ServerDBHandler adminDB = new ServerDBHandler("admin", "CQNK2Ih8H8aikg6M");
 
         adminDB.closeConnection();
     }
+
+     */
 }
