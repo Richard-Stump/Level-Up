@@ -341,7 +341,7 @@ public class LevelsDBController {
     public LevelInfo searchByID(String id) {
         ResultSet resultSet;
         String sqlQuery = "SELECT * FROM " + tableName +
-                " WHERE id LIKE ?";
+                " WHERE id LIKE ?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             //add the argument

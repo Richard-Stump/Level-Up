@@ -6,10 +6,10 @@ import java.sql.*;
 import java.util.Properties;
 
 public class PostgreSQLConnect {
-    private static final String url = "jdbc:postgresql://localhost:5433/postgres";
+    private static final String url = "jdbc:postgresql://localhost:5433/nextlevel";
     //start with the web_anon user
-    private static String user = "testrole";
-    private static String pass = "testpassword";
+    private static String user = "anon";
+    private static String pass = "anonpassword";
 
     /**
      * Connects to the database with the current username and password
@@ -26,10 +26,8 @@ public class PostgreSQLConnect {
         try {
             Class.forName("org.postgresql.Driver");
             Connection conn = DriverManager.getConnection(url, props);
-            if (conn != null) {
-                System.out.println("Connected!");
-            } else {
-                System.out.println("Failed");
+            if (conn == null) {
+                System.out.println("Failed to connect to server database");
             }
             return conn;
         } catch (SQLException | ClassNotFoundException e) {
