@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.Properties;
 
 public class PostgreSQLConnect {
-    private static final String url = "jdbc:postgresql://localhost:5433/nextlevel";
+    private static final String url = "jdbc:postgresql://nextlevelserver.ddns.net:5435/nextlevel";
     //start with the web_anon user
     private static String user = "anon";
     private static String pass = "anonpassword";
