@@ -8,8 +8,8 @@ import java.util.Properties;
 public class PostgreSQLConnect {
     private static final String url = "jdbc:postgresql://localhost:5433/postgres";
     //start with the web_anon user
-    private static String user = "authenticator";
-    private static String pass = "mysecretpassword";
+    private static String user = "testrole";
+    private static String pass = "testpassword";
 
     /**
      * Connects to the database with the current username and password
@@ -20,6 +20,7 @@ public class PostgreSQLConnect {
         Properties props = new Properties();
         props.setProperty("user", user);
         props.setProperty("password", pass);
+        props.setProperty("schema", "api");
         //props.setProperty("ssl", "true");
 
         try {
