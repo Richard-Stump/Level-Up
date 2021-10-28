@@ -157,7 +157,8 @@ public class LevelSelectionScreen implements Screen {
     private Table getSearchSortTable() {
         final Table table = new Table();
         Label searchLabel = new Label("Search:", skin);
-        searchBar = new TextField("Search", skin);
+        searchBar = new TextField("", skin);
+        searchBar.setMessageText("Search");
 
         Label diffLabel = new Label("Difficulty:", skin);
         difficultyDropdown = new SelectBox<>(skin);
