@@ -6,11 +6,11 @@ import java.sql.SQLException;
 
 public class DBConnection {
     //private static final String CONNECTION = ;
-    private static final String CONNECTION = "jdbc:sqlite:" + System.getProperty("user.dir") + "/Next Level/core/src/com" +
+    private static final String url = "jdbc:sqlite:" + System.getProperty("user.dir") + "/Next Level/core/src/com" +
             "/mygdx/nextlevel/data/";
 
     public static Connection getConnection(String databaseName) throws SQLException {
-        String connAll = CONNECTION;
+        String connAll = url;
         connAll = connAll.concat(databaseName);
         connAll = connAll.concat(".sqlite");
 

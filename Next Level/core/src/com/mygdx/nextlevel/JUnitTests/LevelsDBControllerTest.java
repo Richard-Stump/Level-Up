@@ -1,7 +1,7 @@
 package com.mygdx.nextlevel.JUnitTests;
 
 import com.mygdx.nextlevel.LevelInfo;
-import com.mygdx.nextlevel.LevelsDBController;
+import com.mygdx.nextlevel.dbHandlers.LevelsDBController;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import org.junit.*;
 

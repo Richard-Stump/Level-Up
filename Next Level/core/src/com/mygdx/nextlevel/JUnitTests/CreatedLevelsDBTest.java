@@ -61,16 +61,11 @@ public class CreatedLevelsDBTest {
 
     @Test
     public void testIsUniqueIDEmptyDB() throws Throwable {
-        //Need in order to test
-        CreatedLevelsDB db = new CreatedLevelsDB();
-
         //Conditions:
         String id = "eeeeeeeeee";
 
         //Get actual result
         int actual = db.isUniqueID(id);
-
-        db.close();
 
         //Set expected result
         int expected = 1;
@@ -81,9 +76,6 @@ public class CreatedLevelsDBTest {
 
     @Test
     public void testIsUniqueID0() throws Throwable {
-        //Need in order to test
-        CreatedLevelsDB db = new CreatedLevelsDB();
-
         //Conditions:
         String id = "sampleID13";
         LevelInfo sameID = new LevelInfo(id, "Title", "author");
@@ -91,8 +83,6 @@ public class CreatedLevelsDBTest {
 
         //Get actual result
         int actual = db.isUniqueID(id);
-
-        db.close();
 
         //Set expected result
         int expected = 0;

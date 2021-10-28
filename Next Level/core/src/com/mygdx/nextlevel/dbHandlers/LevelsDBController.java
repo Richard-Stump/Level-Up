@@ -1,5 +1,6 @@
-package com.mygdx.nextlevel;
+package com.mygdx.nextlevel.dbHandlers;
 
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.DBConnection;
 import com.mygdx.nextlevel.enums.Tag;
 
@@ -35,6 +36,7 @@ public class LevelsDBController {
     }
 
     /**
+     * Checks if the database is active and can be accessed
      *
      * @return true if not closed, false otherwise
      */
