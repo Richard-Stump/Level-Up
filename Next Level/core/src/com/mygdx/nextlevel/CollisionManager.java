@@ -62,7 +62,8 @@ public class CollisionManager implements ContactListener {
     }
 
     @Override
-        public void endContact(Contact contact) { //called when two fixtures stop contact
+    public void endContact(Contact contact) { //called when two fixtures stop contact
+
     }
 
     @Override

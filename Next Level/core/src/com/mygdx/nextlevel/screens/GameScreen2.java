@@ -20,7 +20,7 @@ public class GameScreen2 implements Screen, InputProcessor {
     private OrthographicCamera camera;
 
     private Vector2 b1Vel;
-    private BoxCollider b1, b2;
+    private BoxCollider b1, b2, b3;
 
     public GameScreen2() {
         CollisionManager.init();
@@ -29,10 +29,14 @@ public class GameScreen2 implements Screen, InputProcessor {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         b1 = new BoxCollider(new Vector2(0, 0), new Vector2(1, 1), true);
-        b1.debugPrint = false;
+        b1.debugPrint = true;
         b2 = new BoxCollider(new Vector2(0, -3), new Vector2(8, 0.5f), false);
-        b2.debugPrint = true;
+        b2.debugPrint = false;
         b1Vel = new Vector2(Vector2.Zero);
+
+
+        b3 = new BoxCollider(new Vector2(-3, 0), new Vector2(1, 1), true);
+        b3.debugPrint = false;
     }
 
     @Override
@@ -62,7 +66,7 @@ public class GameScreen2 implements Screen, InputProcessor {
         b1.setVelocity(b1Vel);
         b1Vel.set(Vector2.Zero);
 
-        CollisionManager.getWorld().step(delta, 9, 3);
+        CollisionManager.getWorld().step(delta, 9, 9);
 
         box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
     }

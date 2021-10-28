@@ -5,6 +5,8 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.mygdx.nextlevel.actors.Actor;
 
+import java.util.ArrayList;
+
 /**
  * A rectangle shapped physics collider to be used by an actor
  */
@@ -13,7 +15,7 @@ public class BoxCollider {
      * The way the box collider works is as follows:
      *  - There one rectangular collider that actually collides with surfaces. This is what prevents the object from
      *    moving into other objects.
-     *  - In addition, there are 4 edge colliders set as sensors which detect which side the collision happened.
+     *  - In addition, there are 4 colliders set as sensors which detect which side the collision happened.
      *    these do not detect other sensors, just the solid part of the box colider.
      */
 
@@ -24,13 +26,20 @@ public class BoxCollider {
     protected Fixture       fixture;
     protected PolygonShape  mainShape;
 
-    protected Fixture[]     edgeFixtures;
-    protected EdgeShape[]   edgeShapes;
+    protected Fixture[]         sensorFixtures;
+    protected PolygonShape[]    sensorShapes;
+
+    protected ArrayList<BoxCollider> collidingWith;
 
     public boolean debugPrint = false;
 
+    public class UserData {
+        public BoxCollider collider;
+    }
+
     public BoxCollider(Actor owner, boolean dynamic) {
         this.owner = owner;
+        this.collidingWith = new ArrayList<>();
 
         //steps to create a box2d collider:
         // 1) setup the body
@@ -43,6 +52,7 @@ public class BoxCollider {
 
     public BoxCollider(Vector2 pos, Vector2 size, boolean dynamic) {
         this.owner = null;
+        this.collidingWith = new ArrayList<>();
 
         setupBodies(dynamic, pos);
         setupShapes(pos, size);
@@ -64,25 +74,47 @@ public class BoxCollider {
 
         //Calculate where the edges for the box collider will be in the world.
         Vector2 halfSize = size.scl(1.0f);
-        float top = (position.y + halfSize.y) * PPM + 0.01f;
-        float bottom = (position.y - halfSize.y) * PPM - 0.01f;
-        float left = (position.x - halfSize.x) * PPM - 0.01f;
-        float right = (position.x + halfSize.x) * PPM + 0.01f;
+        float x = (position.x * PPM);
+        float y = (position.y * PPM);
+        float width = (size.x * PPM);
+        float height = (size.y * PPM);
+        float top = (position.y + halfSize.y) * PPM;
+        float bottom = (position.y - halfSize.y) * PPM;
+        float left = (position.x - halfSize.x) * PPM;
+        float right = (position.x + halfSize.x) * PPM;
 
         // An epsilon value is used to move the vertices of the edges slightly away from the sides
         // they run perpendicular to. This prevents multiple sides from triggering.
-        final float epsilon = 0.001f * PPM;
+        final float epsilon = 0.05f * PPM;
+        final float thickness = 0.01f * PPM;            //How thick to make the sensors
+        final float offset = 0.5f * thickness + 0.01f;  //How much to offset the sensors from being flush with the shape
 
-        edgeShapes = new EdgeShape[4];
-        for(int i = 0; i < 4; i++)
-            edgeShapes[i] = new EdgeShape();
-
-        // I'm not sure if it makes a difference, but here I have wound the vertices
-        // in a counter-clockwise order so that the shapes' normals face outward
-        edgeShapes[0].set(right - epsilon, top, left + epsilon, top);
-        edgeShapes[1].set(left, top - epsilon, left, bottom + epsilon);
-        edgeShapes[2].set(left + epsilon, bottom,right - epsilon, bottom);
-        edgeShapes[3].set(right, bottom + epsilon, right, top - epsilon);
+        // Here the sensor shapes are created in this order: right, top, left, bottom
+        sensorShapes = new PolygonShape[4];
+        sensorShapes[0] = new PolygonShape();
+        sensorShapes[0].setAsBox(
+                thickness, height - epsilon,
+                new Vector2(right - offset, y),
+                0.0f
+        );
+        sensorShapes[1] = new PolygonShape();
+        sensorShapes[1].setAsBox(
+                width - epsilon, thickness,
+                new Vector2(x, top - offset),
+                0.0f
+        );
+        sensorShapes[2] = new PolygonShape();
+        sensorShapes[2].setAsBox(
+                thickness, height - epsilon,
+                new Vector2(left + offset,y),
+                0.0f
+        );
+        sensorShapes[3] = new PolygonShape();
+        sensorShapes[3].setAsBox(
+                width - epsilon, thickness,
+                new Vector2(x, bottom + offset),
+                0.0f
+        );
     }
 
     /**
@@ -100,17 +132,17 @@ public class BoxCollider {
         fixture.setUserData(this);
 
         // Set up the edge fixtures for sensing. They should not provide any mass, density, or restitution.
-        edgeFixtures = new Fixture[4];
+        sensorFixtures = new Fixture[4];
         for(int i = 0; i < 4; i++) {
             FixtureDef edgeFixDef = new FixtureDef();
             edgeFixDef.density = 0;
             edgeFixDef.restitution = 0;
             edgeFixDef.filter.groupIndex = CollisionGroups.BOX_HELPER; //Mark the sensors so they don't trigger each other
             edgeFixDef.isSensor = true;
-            edgeFixDef.shape = edgeShapes[i];
+            edgeFixDef.shape = sensorShapes[i];
 
-            edgeFixtures[i] = body.createFixture(edgeFixDef);
-            edgeFixtures[i].setUserData(this);
+            sensorFixtures[i] = body.createFixture(edgeFixDef);
+            sensorFixtures[i].setUserData(this);
         }
     }
 
@@ -120,17 +152,20 @@ public class BoxCollider {
      * @param otherFixture The fixure that the sensor collided with.
      */
     public void edgeTrigger(Fixture thisFixture, Fixture otherFixture) {
-        if(thisFixture == edgeFixtures[0]) {
+        if(!debugPrint)
+            return;
+
+        if(thisFixture == sensorFixtures[0]) {
+            System.out.println("Right");
+        }
+        else if(thisFixture == sensorFixtures[1]) {
             System.out.println("Top");
         }
-        else if(thisFixture == edgeFixtures[1]) {
+        else if(thisFixture == sensorFixtures[2]) {
             System.out.println("Left");
         }
-        else if(thisFixture == edgeFixtures[2]) {
+        else if(thisFixture == sensorFixtures[3]) {
             System.out.println("Bottom");
-        }
-        else if(thisFixture == edgeFixtures[3]) {
-            System.out.println("Right");
         }
     }
 
