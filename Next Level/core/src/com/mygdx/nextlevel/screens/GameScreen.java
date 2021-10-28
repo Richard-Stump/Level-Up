@@ -26,20 +26,24 @@ public class GameScreen implements Screen, InputProcessor {
     Player player;
     Enemy enemy;
     Checkpoint checkpoint;
-    Block block1, block2, block;
+    Block block1, block2, block3;
     Item item;
     Hud hud;
+
+    //Items
     Item slowItem;
     Item oneUpItem;
     Item star;
     Item fireflower;
+    Item speedItem;
     int itemIndex;
-    boolean shootFire;
-//    Fire fireball;
+
+    //Sprite Directions
+    boolean fireballRight = true;
+
     Texture fireballTexture;
     Sprite fireballSprite;
     ArrayList<Fire> fireballList = new ArrayList();
-    boolean fireballRight = true;
     HashMap<Item, String> itemToName = new HashMap<>();
 
     World world;
@@ -54,13 +58,15 @@ public class GameScreen implements Screen, InputProcessor {
     boolean facingRight = true;
     boolean touchedItemBlock = false;
     boolean touchedPowerUp = false;
+    boolean touchedItemBlock2 = false;
     float time = 0;
+    float speedTime = 0f;
 //    float invTime = 0;
     boolean itemConsumed = false;
     boolean playerKilled = false;
-    boolean itemSpawned = false;
-    boolean killEnemy = false;
-    boolean breakBlock = false;
+//    boolean itemSpawned = false;
+//    boolean killEnemy = false;
+//    boolean breakBlock = false;
     float speedRight = 3f;
     float speedLeft = -3f;
     float slowTime = 0f;
@@ -117,6 +123,11 @@ public class GameScreen implements Screen, InputProcessor {
         Vector2 blockSpawn2 = new Vector2(w * 0.75f, 32 + 2*64);
         this.block2 = new Block(new Texture("item-block.png"), this.world, blockSpawn2, 100f, 0f, (short) (0x1 << (bottom - 1)), true);
 
+        //Block3 Intialization (second item block)
+        Vector2 blockSpawn3 = new Vector2(w * 0.5f, 32 + 2*64);
+        this.block3 = new Block(new Texture("item-block.png"), this.world, blockSpawn3, 100f, 0f, (short) (0x1 << (bottom - 1)), true);
+
+
         //Item Initialization (Item)
         Vector2 itemSpawn = new Vector2(w * 0.75f, 32 + 64*3);
         this.item = new Item(new Texture("mushroom.jpeg"), this.world, itemSpawn, 0f, 0f);
@@ -133,7 +144,7 @@ public class GameScreen implements Screen, InputProcessor {
         itemToName.put(oneUpItem, "1up-mushroom.jpeg");
 
         //star item initialization
-        Vector2 starSpawn = new Vector2(w * 0.75f, -32 + 64*4);
+        Vector2 starSpawn = new Vector2(w * 0.5f, -32 + 64*4);
         this.star = new Item(new Texture("star.jpg"), this.world, starSpawn, 0f, 0f);
         itemToName.put(star, "star.jpg");
 
@@ -145,6 +156,9 @@ public class GameScreen implements Screen, InputProcessor {
         this.fireflower = new Item(new Texture("fireflower.png"), this.world, fireFlowerSpawn, 0f, 0f);
         itemToName.put(fireflower, "fireflower.png");
 
+        Vector2 speedItemSpawn = new Vector2(w * 0.75f, -32 + 64*4);
+        this.speedItem = new Item(new Texture("speeditem.png"), this.world, speedItemSpawn, 0f, 0f);
+        itemToName.put(speedItem, "speeditem.png");
 
         //Update to screen parameters
         w /= PIXELS_TO_METERS;
@@ -196,6 +210,7 @@ public class GameScreen implements Screen, InputProcessor {
         this.checkpoint.getBody().setUserData(this.checkpoint);
         this.block1.getBody().setUserData(this.block1);
         this.block2.getBody().setUserData(this.block2);
+        this.block3.getBody().setUserData(this.block3);
         this.bodyEdgeScreen.setUserData(this.bodyEdgeScreen);
 //        this.item.getBody().setUserData(this.item);
 //        this.slowItem.getBody().setUserData(this.slowItem);
@@ -235,6 +250,12 @@ public class GameScreen implements Screen, InputProcessor {
                             checkpoint.setTexture(new Texture("checkpoint.png"));
                             player.addLife(1);
                         }
+                    } else if (bodyB.getUserData().equals(block3) && !touchedItemBlock) {
+                        if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA()) && ((block2.getCollision() & (short) (0x1 << (bottom - 1))) == (short) (0x1 << (bottom - 1)))) { //Check if Contact on Top Side of player
+                            touchedItemBlock2 = true;
+//                            Random rand = new Random();
+//                            itemIndex = rand.nextInt(itemList.size());
+                        }
                     } else if (bodyB.getUserData().equals(block2) && !touchedItemBlock ) { //Item Block
                         if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA()) && ((block2.getCollision() & (short) (0x1 << (bottom - 1))) == (short) (0x1 << (bottom - 1)))) { //Check if Contact on Top Side of player
                             touchedItemBlock = true;
@@ -249,7 +270,11 @@ public class GameScreen implements Screen, InputProcessor {
                     } else if (bodyB.getUserData().equals(slowItem)) {
                         player.setSlowItem(true);
                         slowItem.setDeleteSprite(true);
-                    } else if (bodyB.getUserData().equals(oneUpItem)) {
+                    } else if (bodyB.getUserData().equals(speedItem)) {
+                        player.setSpeedItem(true);
+                        speedItem.setDeleteSprite(true);
+                    }
+                    else if (bodyB.getUserData().equals(oneUpItem)) {
                         player.addLife(1);
                         oneUpItem.setDeleteSprite(true);
                     } else if (bodyB.getUserData().equals(star)) {
@@ -258,7 +283,9 @@ public class GameScreen implements Screen, InputProcessor {
                     } else if (bodyB.getUserData().equals(fireflower)) {
                         player.setFireflower(true);
                         player.setPowerUp(true);
+                        itemConsumed = true;
                         fireflower.setDeleteSprite(true);
+//                        deleteList.add(bodyB);
                     } else if (bodyB.getUserData().equals(item) && !touchedPowerUp) { //Item
                         touchedPowerUp = true;
                         player.setPowerUp(true);
@@ -312,10 +339,12 @@ public class GameScreen implements Screen, InputProcessor {
                 } else if (bodyB.getUserData().equals(player)) { //If BodyB is player
                     if (bodyA.getUserData().equals(bodyEdgeScreen)) {
                         //Contact with the Sides of the Screen
+                        landed = true;
+                        jumped = false;
                     }
                 }
-                landed = true;
-                jumped = false;
+//                landed = true;
+//                jumped = false;
             }
 
             @Override
@@ -440,7 +469,7 @@ public class GameScreen implements Screen, InputProcessor {
 //        if (touchedItemBlock) {
 //            getItemSprite(oneUpItem);
 //        }
-        if (touchedItemBlock) {
+        if (touchedItemBlock && !itemConsumed) {
 //            Item i = itemList.get(itemIndex);
 //            if (i == item) {
 //                createItem(item);
@@ -454,8 +483,14 @@ public class GameScreen implements Screen, InputProcessor {
 //            getItemSprite(star);
 //            createItem(item);
 //            getItemSprite(item);
-            createItem(fireflower);
-            getItemSprite(fireflower);
+//            createItem(fireflower);
+//            getItemSprite(fireflower);
+              createItem(speedItem);
+              getItemSprite(speedItem);
+        }
+        if (touchedItemBlock2) {
+            createItem(star);
+            getItemSprite(star);
         }
 
         Gdx.gl.glClearColor(1,1,1,1);
@@ -475,7 +510,11 @@ public class GameScreen implements Screen, InputProcessor {
                 if (touchedPowerUp && player.hasPowerUp()) {
                     player.setTexture(new Texture("paragoomba.png"));
                     batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
-                } else if (player.getFireFlower()) {
+                } else if (player.getStar()) {
+                    player.setTexture(new Texture("stargoomba.png"));
+                    batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
+                }
+                else if (player.getFireFlower()) {
                     player.setTexture(new Texture("firegoomba.png"));
                     batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
                 }
@@ -489,7 +528,8 @@ public class GameScreen implements Screen, InputProcessor {
                 batch.draw(block1.getSprite(), block1.getSprite().getX(), block1.getSprite().getY(), block1.getSprite().getOriginX(), block1.getSprite().getOriginY(), block1.getSprite().getWidth(), block1.getSprite().getHeight(), block1.getSprite().getScaleX(), block1.getSprite().getScaleY(), block1.getSprite().getRotation());
             }
             batch.draw(block2.getSprite(), block2.getSprite().getX(), block2.getSprite().getY(), block2.getSprite().getOriginX(), block2.getSprite().getOriginY(), block2.getSprite().getWidth(), block2.getSprite().getHeight(), block2.getSprite().getScaleX(), block2.getSprite().getScaleY(), block2.getSprite().getRotation());
-            if (touchedItemBlock) {
+            batch.draw(block3.getSprite(), block3.getSprite().getX(), block3.getSprite().getY(), block3.getSprite().getOriginX(), block3.getSprite().getOriginY(), block3.getSprite().getWidth(), block3.getSprite().getHeight(), block3.getSprite().getScaleX(), block3.getSprite().getScaleY(), block3.getSprite().getRotation());
+            if (touchedItemBlock && !itemConsumed) {
 //                if (!item.getDeleteSprite()) {
 ////                    this.item.setBody(BodyDef.BodyType.StaticBody);
 ////                    this.item.setShape();
@@ -509,15 +549,24 @@ public class GameScreen implements Screen, InputProcessor {
 //                    drawItemSprite(oneUpItem);
 //                    block2.setSpawned(true);
 //                }
-                if (!itemList.get(itemIndex).getDeleteSprite()) {
+//                if (!itemList.get(itemIndex).getDeleteSprite()) {
 //                    drawItemSprite(itemList.get(itemIndex));
 //                    drawItemSprite(star);
 //                    drawItemSprite(item);
-                    drawItemSprite(fireflower);
-                    block2.setSpawned(true);
+//                    if (!fireflower.getDeleteSprite()) {
+//                        drawItemSprite(fireflower);
+////                    }
+//                        block2.setSpawned(true);
+//                    }
+                if (!speedItem.getDeleteSprite()) {
+                    drawItemSprite(speedItem);
                 }
-
             }
+            if (touchedItemBlock2) {
+                drawItemSprite(star);
+                block3.setSpawned(true);
+            }
+
         }
         int count = 0;
         while (count < fireballList.size()) {
@@ -540,6 +589,13 @@ public class GameScreen implements Screen, InputProcessor {
             }
         }
 
+        if (player.getSpeedItem()) {
+            speedTime += Gdx.graphics.getDeltaTime();
+            if (speedTime > 3f) {
+                player.setSpeedItem(false);
+            }
+        }
+
         if (player.getStar()) {
             starTime += Gdx.graphics.getDeltaTime();
             if (starTime > 5f) {
@@ -552,6 +608,9 @@ public class GameScreen implements Screen, InputProcessor {
             if (player.getSlowItem()) {
                 speedLeft = -1f;
                 speedRight = 1f;
+            } else if (player.getSpeedItem()) {
+                speedLeft = -5f;
+                speedRight = 5f;
             } else {
                 speedLeft = -3f;
                 speedRight = 3f;

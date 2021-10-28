@@ -1,7 +1,10 @@
 sourceCompatibility = 1.7
+apply plugin: 'java'
 dependencies {
-    implementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
+    implementation 'junit:junit:4.13.2'
 }
+
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]

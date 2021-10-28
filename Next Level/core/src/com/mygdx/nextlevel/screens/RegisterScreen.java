@@ -16,11 +16,12 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
 
 import java.util.ArrayList;
 
-public class RegisterScreen extends Account implements Screen{
+public class RegisterScreen extends AccountList implements Screen{
 
     public SpriteBatch batch;
     public Stage stage;
@@ -47,10 +48,7 @@ public class RegisterScreen extends Account implements Screen{
     public static int textBoxBottomPadding = 20;
     public static int buttonWidth = 170;
 
-    public ArrayList<Account> accList = new ArrayList<>();
-
     public boolean isInfoCorrect = true;
-    public Stage errorStage;
 
     public RegisterScreen (NextLevel game) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
@@ -97,8 +95,8 @@ public class RegisterScreen extends Account implements Screen{
         Table textFieldTable = new Table();
 
         //debug lines table, cell, and widgets
-        table.setDebug(true);
-        textFieldTable.setDebug(true);
+        //table.setDebug(true);
+        //textFieldTable.setDebug(true);
 
         table.add(title).colspan(2).padBottom(textBoxBottomPadding);
         table.row();
@@ -125,7 +123,7 @@ public class RegisterScreen extends Account implements Screen{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //TODO: send back to login page
-                //((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
             }
         });
         signUp.addListener(new ClickListener() {
@@ -133,13 +131,21 @@ public class RegisterScreen extends Account implements Screen{
             public void clicked(InputEvent event, float x, float y) {
                 isInfoCorrect = true;
 
-
                 //after clicking sign up code should get all the inputs
                 //getting the inputs
                 username = textUsername.getText();
                 email = textEmail.getText();
                 pass = textPass.getText();
                 verifyPass = textVerifyPass.getText();
+
+                if (verifyPass.length() < 8 || verifyPass.length() > 16) {
+                    System.out.println("Password must be at least 8 characters and no more than 16 characters");
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must be at least 8 characters and no more than 16 characters"));
+                    isInfoCorrect = false;
+
+                }
+                //TODO: check if password contains at least one capital, number, and special character
+                //TODO: fix bug where account is still added to arraylist (temp database) despite it not meeting requirements
 
                 //check if username or email exists already
                 for (Account account : accList) {
@@ -180,7 +186,7 @@ public class RegisterScreen extends Account implements Screen{
                     a.setUsername(username);
                     a.setEmail(email);
                     //TODO: add account into database
-                    accList.add(a);
+                    getAccList().add(a);
                 }
 
                 //System.out.println(isInfoCorrect);
@@ -195,7 +201,8 @@ public class RegisterScreen extends Account implements Screen{
 
                 //TODO: set to next screen
                 if (isInfoCorrect) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
                 }
 
                 //using arraylist for now since database is not setup
@@ -245,4 +252,5 @@ public class RegisterScreen extends Account implements Screen{
         skin.dispose();
         atlas.dispose();
     }
+
 }

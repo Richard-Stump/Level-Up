@@ -15,6 +15,7 @@ public class Player extends Actor {
     boolean star = false;
     boolean fire = false;
     boolean fireflower = false;
+    boolean speedItem = false;
     Item heldItem = null;
 
     public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
@@ -29,11 +30,30 @@ public class Player extends Actor {
         this.star = false;
         this.fire = false;
         this.fireflower = false;
+        this.speedItem = false;
         super.setPosition(position.x, position.y);
         this.spawnpoint = this.worldSpawn;
         super.setBody(BodyDef.BodyType.DynamicBody);
         setShape();
         setFixture(density, restitution);
+    }
+
+
+    //Constructor Used for Test cases
+    public Player(Vector2 position, float density, float resistution) {
+        this.world = null;
+        this.sprite = null;
+        this.lives = 3;
+        this.powerUp = false;
+        this.invulnerable = false;
+        this.takeDamage = false;
+        this.worldSpawn.x = position.x;
+        this.worldSpawn.y = position.y;
+        this.spawnpoint = this.worldSpawn;
+        setSpawnpoint(spawnpoint);
+        this.body = null;
+        this.bodyDef = null;
+        this.shape = null;
     }
 
     private void setShape() {
@@ -143,6 +163,13 @@ public class Player extends Actor {
 
     public void setFireflower(boolean fireflower) { this.fireflower = fireflower;}
 
+    public boolean getSpeedItem() {
+        return this.speedItem;
+    }
+
+    public void setSpeedItem(boolean speedItem) {
+        this.speedItem = speedItem;
+    }
 
     public Item getHeldItem() {
         return this.heldItem;
@@ -158,19 +185,12 @@ public class Player extends Actor {
 
             setSpawnpoint(getWorldSpawn());
             Vector2 spawn = getSpawnpoint();
-//            while (this.world.isLocked());
             this.body.setTransform(spawn.x/PIXELS_TO_METERS, spawn.y/PIXELS_TO_METERS, 0);
-//            this.body.applyLinearImpulse(new Vector2(100,100), spawn, true);
-//            this.body.applyLinearImpulse(new Vector2(-1000f, -10f), spawn, true);
             checkpoint.setTexture(new Texture("checkpoint2.jpg"));
             checkpoint.setTriggered(false);
         } else { //Player has lives
             Vector2 spawn = getSpawnpoint();
-//            while (this.world.isLocked());
             this.body.setTransform(spawn.x/PIXELS_TO_METERS, spawn.y/PIXELS_TO_METERS, 0);
-//            this.body.applyLinearImpulse(spawn.x, spawn.y, true);
-//            this.body.applyLinearImpulse( spawn, true);
-//            this.body.applyLinearImpulse(new Vector2(-1000f, -10f), spawn, true);
         }
         this.body.setLinearVelocity(0, 0);
     }
