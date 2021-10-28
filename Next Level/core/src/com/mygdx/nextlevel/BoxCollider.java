@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.mygdx.nextlevel.actors.Actor;
+import com.mygdx.nextlevel.actors.Actor2;
 
 import java.util.ArrayList;
 
@@ -21,7 +22,23 @@ public class BoxCollider {
 
     public static float PPM = 64.0f;    // How many pixels is a meter in the game world.
 
-    protected Actor         owner;
+    public enum Side {
+        NONE, TOP, LEFT, RIGHT, BOTTOM;
+
+        public static Side fromInt(int val) {
+            switch(val) {
+                case -1: return NONE;
+                case 0: return TOP;
+                case 1: return LEFT;
+                case 2: return BOTTOM;
+                case 3: return RIGHT;
+            }
+
+            throw new IllegalArgumentException("Side for a BoxCollider must be 0-4, or -1 for none");
+        }
+    }
+
+    protected Actor2        owner;
     protected Body          body;
     protected Fixture       fixture;
     protected PolygonShape  mainShape;
@@ -29,34 +46,19 @@ public class BoxCollider {
     protected Fixture[]         sensorFixtures;
     protected PolygonShape[]    sensorShapes;
 
-    protected ArrayList<BoxCollider> collidingWith;
-
     public boolean debugPrint = false;
-
-    public class UserData {
-        public BoxCollider collider;
-    }
-
-    public BoxCollider(Actor owner, boolean dynamic) {
-        this.owner = owner;
-        this.collidingWith = new ArrayList<>();
-
-        //steps to create a box2d collider:
-        // 1) setup the body
-        // 2) setup the shape
-        // 3) setup the fixture
-        setupBodies(dynamic, owner.getPosition());
-        setupShapes(owner.getPosition(), owner.getSize());
-        setupFixtures();
-    }
 
     public BoxCollider(Vector2 pos, Vector2 size, boolean dynamic) {
         this.owner = null;
-        this.collidingWith = new ArrayList<>();
 
         setupBodies(dynamic, pos);
         setupShapes(pos, size);
         setupFixtures();
+    }
+
+    public BoxCollider(Actor2 owner, Vector2 pos, Vector2 size, boolean dynamic) {
+        this(pos, size, dynamic);
+        this.owner = owner;
     }
 
     protected void setupBodies(boolean dynamic, Vector2 position) {
@@ -124,7 +126,7 @@ public class BoxCollider {
     protected void setupFixtures() {
         //setup the main fixture
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.density = 1.0f;
+        fixtureDef.density = 50.0f;
         fixtureDef.restitution = 0.0f;
         fixtureDef.shape = mainShape;
         fixtureDef.isSensor = false;
@@ -152,20 +154,22 @@ public class BoxCollider {
      * @param otherFixture The fixure that the sensor collided with.
      */
     public void edgeTrigger(Fixture thisFixture, Fixture otherFixture) {
-        if(!debugPrint)
+        if(owner == null)
             return;
 
+        Actor2 otherActor = ((BoxCollider)otherFixture.getUserData()).owner;
+
         if(thisFixture == sensorFixtures[0]) {
-            System.out.println("Right");
+            owner.onCollision(otherActor, Side.RIGHT);
         }
         else if(thisFixture == sensorFixtures[1]) {
-            System.out.println("Top");
+            owner.onCollision(otherActor, Side.TOP);
         }
         else if(thisFixture == sensorFixtures[2]) {
-            System.out.println("Left");
+            owner.onCollision(otherActor, Side.LEFT);
         }
         else if(thisFixture == sensorFixtures[3]) {
-            System.out.println("Bottom");
+            owner.onCollision(otherActor, Side.BOTTOM);
         }
     }
 
@@ -175,5 +179,10 @@ public class BoxCollider {
      */
     public void setVelocity(Vector2 v) {
         body.setLinearVelocity(v.scl(PPM));
+    }
+    public Vector2 getVelocity() { return body.getLinearVelocity().scl(1.0f / PPM); }
+
+    public Vector2 getPosition() {
+        return body.getPosition().scl(1.0f / PPM);
     }
 }

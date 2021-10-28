@@ -7,12 +7,18 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionManager;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.actors.Actor;
+import com.mygdx.nextlevel.actors.Player;
+import com.mygdx.nextlevel.actors.*;
+
+import java.util.ArrayList;
 
 public class GameScreen2 implements Screen, InputProcessor {
     private NextLevel game;
@@ -22,21 +28,23 @@ public class GameScreen2 implements Screen, InputProcessor {
     private Vector2 b1Vel;
     private BoxCollider b1, b2, b3;
 
-    public GameScreen2() {
+    ArrayList<Actor2> actors;
+
+    public GameScreen2(NextLevel game) {
+        this.game = game;
+
         CollisionManager.init();
 
         box2dRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        b1 = new BoxCollider(new Vector2(0, 0), new Vector2(1, 1), true);
-        b1.debugPrint = true;
         b2 = new BoxCollider(new Vector2(0, -3), new Vector2(8, 0.5f), false);
         b2.debugPrint = false;
         b1Vel = new Vector2(Vector2.Zero);
 
-
-        b3 = new BoxCollider(new Vector2(-3, 0), new Vector2(1, 1), true);
-        b3.debugPrint = false;
+        actors = new ArrayList<Actor2>();
+        actors.add(new Player2());
+        actors.add(new Enemy2(-4, -2));
     }
 
     @Override
@@ -44,29 +52,29 @@ public class GameScreen2 implements Screen, InputProcessor {
         Gdx.input.setInputProcessor(this);
     }
 
+    private void update(float delta) {
+        CollisionManager.getWorld().step(delta, 9, 3);
+
+        for(Actor2 a : actors) {
+            a.update(delta);
+        }
+    }
+
     @Override
     public void render(float delta) {
+        update(delta);
+
         ScreenUtils.clear(Color.BLACK);
 
-        final float speed = 1.0f;
+        Batch batch = game.batch;
+        batch.begin();
+        batch.setProjectionMatrix(camera.combined);
 
-        if(Gdx.input.isKeyPressed(Keys.LEFT)) {
-            b1Vel.add(-speed, 0.0f);
-        }
-        if(Gdx.input.isKeyPressed(Keys.RIGHT)) {
-            b1Vel.add(speed, 0.0f);
-        }
-        if(Gdx.input.isKeyPressed(Keys.UP)) {
-            b1Vel.add(0.0f, speed);
-        }
-        if(Gdx.input.isKeyPressed(Keys.DOWN)) {
-            b1Vel.add(0.0f, -speed);
+        for(Actor2 a : actors) {
+            a.draw(batch);
         }
 
-        b1.setVelocity(b1Vel);
-        b1Vel.set(Vector2.Zero);
-
-        CollisionManager.getWorld().step(delta, 9, 9);
+        batch.end();
 
         box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
     }

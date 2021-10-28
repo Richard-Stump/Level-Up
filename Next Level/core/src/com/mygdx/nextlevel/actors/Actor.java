@@ -1,5 +1,8 @@
 package com.mygdx.nextlevel.actors;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -84,7 +87,15 @@ public class Actor {
         return this.body;
     }
 
-    public void onCollisionEnter(BoxCollider o) {}
-    public void onCollisionStay(BoxCollider o) {}
-    public void onCollisionExit(BoxCollider o) {}
+    public void onUpdate(float deltaTime) {
+
+    }
+
+    public void onCollision(BoxCollider o, BoxCollider.Side side) {
+
+    }
+
+    public void render(Batch batch) {
+
+    }
 }

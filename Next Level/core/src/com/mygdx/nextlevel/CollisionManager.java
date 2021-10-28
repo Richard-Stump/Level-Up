@@ -17,7 +17,7 @@ public class CollisionManager implements ContactListener {
      * Private constructor which constructs the Box2D world and sets up other collision handling stuff.
      */
     private CollisionManager() {
-        world = new World(new Vector2(0.0f, 0.0f), true);
+        world = new World(new Vector2(0.0f, -9.81f * 10), true);
         world.setContactListener(this);
     }
 
@@ -52,12 +52,13 @@ public class CollisionManager implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        BoxCollider colliderA = (BoxCollider)fixtureA.getUserData();
-        BoxCollider colliderB = (BoxCollider)fixtureB.getUserData();
 
-        if(fixtureA.isSensor() || fixtureB.isSensor()) {
+        if(fixtureA.isSensor()) {
+            BoxCollider colliderA = (BoxCollider)fixtureA.getUserData();
+            //BoxCollider colliderB = (BoxCollider)fixtureB.getUserData();
+
             colliderA.edgeTrigger(fixtureA, fixtureB);
-            colliderB.edgeTrigger(fixtureB, fixtureA);
+            //colliderB.edgeTrigger(fixtureB, fixtureA);
         }
     }
 
