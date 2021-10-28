@@ -18,8 +18,7 @@ public class DBConnection {
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(connAll);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 }
