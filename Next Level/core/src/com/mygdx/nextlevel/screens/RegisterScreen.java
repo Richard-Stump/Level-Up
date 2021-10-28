@@ -52,6 +52,10 @@ public class RegisterScreen extends AccountList implements Screen{
 
     public boolean isInfoCorrect = true;
 
+    public RegisterScreen() {
+
+    }
+
     public RegisterScreen (NextLevel game) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
@@ -265,14 +269,14 @@ public class RegisterScreen extends AccountList implements Screen{
         atlas.dispose();
     }
 
-    public boolean checkPassLength(String pass) {
+    public static boolean checkPassLength(String pass) {
         if (pass.length() < 8 || pass.length() > 16) {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
-    public boolean checkRegex(String pass) {
+    public static boolean checkRegex(String pass) {
         String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(pass);
@@ -281,5 +285,4 @@ public class RegisterScreen extends AccountList implements Screen{
         }
         return false;
     }
-
 }
