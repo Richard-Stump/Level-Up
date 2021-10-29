@@ -226,14 +226,6 @@ public class GameScreen implements Screen, InputProcessor {
         itemList.add(this.star);
         itemList.add(this.fireflower);
 
-        //TODO Causes an Error if item loaded after block hit
-//        if (touchedItemBlock) {
-//            final Texture itemTexture = new Texture("mushroom.jpeg");
-//            Vector2 itemSpawn = new Vector2((w * PIXELS_TO_METERS/2) * 0.5f, -h * PIXELS_TO_METERS/2 + 250f);
-//            this.item = new Item(itemTexture, this.world, itemSpawn, 0f, 0f);
-//            this.item.getBody().setUserData(this.item);
-//        }
-
         //Hud
         hud = new Hud(game.batch, player);
 
@@ -533,10 +525,9 @@ public class GameScreen implements Screen, InputProcessor {
             }
 
             //Draw All Blocks
-            //TODO Updating sprite texture causes lag
             for (Block blockIteration: blockList) {
                 if (blockIteration.isItemSpawned())
-                    blockIteration.setTexture(new Texture("tile1.png"));
+                    blockIteration.setTexture(new Texture("used-item-block.jpg"));
 
                 batch.draw(blockIteration.getSprite(), blockIteration.getSprite().getX(), blockIteration.getSprite().getY(), blockIteration.getSprite().getOriginX(), blockIteration.getSprite().getOriginY(), blockIteration.getSprite().getWidth(), blockIteration.getSprite().getHeight(), blockIteration.getSprite().getScaleX(), blockIteration.getSprite().getScaleY(), blockIteration.getSprite().getRotation());
             }
