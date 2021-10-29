@@ -184,6 +184,12 @@ public class RegisterScreen extends AccountList implements Screen{
                         System.out.println("Username must be at least 4 characters and no more than 16 characters");
                         isInfoCorrect = false;
                     }
+                    for (Account a : accList) {
+                        if (a.getUsername().equals(username)) {
+                            System.out.println("Username already exists");
+                            isInfoCorrect = false;
+                        }
+                    }
                     if (verifyPass.length() < 8 || verifyPass.length() > 16) {
                         System.out.println("Password must be at least 8 characters and no more than 16 characters");
                         ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must be at least 8 characters and no more than 16 characters"));
@@ -308,5 +314,14 @@ public class RegisterScreen extends AccountList implements Screen{
 
     public static void addAccount(Account a) {
         accList.add(a);
+    }
+
+    public static boolean checkUniqueUser(String username) {
+        for (Account a : accList) {
+            if (a.getUsername().equals(username)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

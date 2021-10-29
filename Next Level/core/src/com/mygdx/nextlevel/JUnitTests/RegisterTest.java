@@ -123,6 +123,8 @@ public final class RegisterTest extends RegisterScreen {
         String verify = "testPass#1";
         Account a = new Account();
         if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
+            a.setUsername(user);
+            a.setPassword(pass);
             addAccount(a);
         }
         TestOutputHelper.setResult("checkAccountAdded", 1, accList.size());
@@ -136,9 +138,43 @@ public final class RegisterTest extends RegisterScreen {
         String verify = "testPass1";
         Account a = new Account();
         if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
+            a.setUsername(user);
+            a.setPassword(pass);
             addAccount(a);
         }
-        TestOutputHelper.setResult("checkAccountAdded", 0, accList.size());
+        TestOutputHelper.setResult("checkAccountNotAdded", 0, accList.size());
         Assert.assertEquals(0, accList.size());
+    }
+
+    @Test
+    public void checkUniqueUserTest() {
+        String user = "nextlevel";
+        String pass = "testPass#1";
+        String verify = "testPass#1";
+        Account a = new Account();
+        if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
+            a.setUsername(user);
+            a.setPassword(pass);
+            addAccount(a);
+        }
+        String newUser = "levelup";
+        TestOutputHelper.setResult("checkUniqueUser", true, checkUniqueUser(newUser));
+        Assert.assertTrue(checkUniqueUser(newUser));
+    }
+
+    @Test
+    public void checkSameUserTest() {
+        String user = "nextlevel";
+        String pass = "testPass#1";
+        String verify = "testPass#1";
+        Account a = new Account();
+        if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
+            a.setUsername(user);
+            a.setPassword(pass);
+            addAccount(a);
+        }
+        String newUser = "nextlevel";
+        TestOutputHelper.setResult("checkUniqueUser", false, checkUniqueUser(newUser));
+        Assert.assertFalse(checkUniqueUser(newUser));
     }
 }
