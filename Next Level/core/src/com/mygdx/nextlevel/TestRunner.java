@@ -10,14 +10,20 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 public class TestRunner {
+
+
     public static void main(String[] args) {
+        int totalTests;
+        int totalPassed;
         System.out.println();
         System.out.println("Register tests:");
         Result resultRegister = JUnitCore.runClasses(RegisterTest.class);
         for (Failure failure: resultRegister.getFailures()) {
             System.out.println(failure.toString());
         }
-        System.out.println("RegisterTest - Passed all tests: " + resultRegister.wasSuccessful());
+        totalTests = resultRegister.getRunCount();
+        totalPassed = totalTests -  resultRegister.getFailureCount();
+        System.out.println("RegisterTest - Passed: " + totalPassed + "/" + totalTests);
         System.out.println();
 
 
@@ -26,7 +32,9 @@ public class TestRunner {
         for (Failure failure: resultCheckpoint.getFailures()) {
             System.out.println(failure.toString());
         }
-        System.out.println("CheckpointTest - Passed all tests: " + resultCheckpoint.wasSuccessful());
+        totalTests = resultCheckpoint.getRunCount();
+        totalPassed = totalTests -  resultCheckpoint.getFailureCount();
+        System.out.println("CheckpointTest - Passed: " + totalPassed + "/" + totalTests);
         System.out.println();
 
 
@@ -35,7 +43,9 @@ public class TestRunner {
         for (Failure failure: resultLocalDB.getFailures()) {
             System.out.println(failure.toString());
         }
-        System.out.println("DatabaseTest - Passed all tests: " + resultLocalDB.wasSuccessful());
+        totalTests = resultLocalDB.getRunCount();
+        totalPassed = totalTests -  resultLocalDB.getFailureCount();
+        System.out.println("DatabaseTest - Passed: " + totalPassed + "/" + totalTests);
         System.out.println();
 
 
@@ -44,7 +54,9 @@ public class TestRunner {
         for (Failure failure: resultServerDB.getFailures()) {
             System.out.println(failure.toString());
         }
-        System.out.println("Server Database test - Passed all tests: " + resultServerDB.wasSuccessful());
+        totalTests = resultServerDB.getRunCount();
+        totalPassed = totalTests -  resultServerDB.getFailureCount();
+        System.out.println("Server Database Test - Passed: " + totalPassed + "/" + totalTests);
         System.out.println();
     }
 }

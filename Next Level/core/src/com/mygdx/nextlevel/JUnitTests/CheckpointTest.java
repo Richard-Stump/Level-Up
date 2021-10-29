@@ -5,6 +5,8 @@ import com.mygdx.nextlevel.actors.Player;
 import jdk.jfr.Description;
 import org.junit.*;
 
+import static org.junit.Assert.assertEquals;
+
 public class CheckpointTest {
     private static Player player;
     private static Checkpoint checkpoint;
@@ -19,21 +21,28 @@ public class CheckpointTest {
     public void clear() {
         player = null;
         checkpoint = null;
+
+        TestOutputHelper.displayResult();
+        TestOutputHelper.clearResult();
     }
 
     @Test
     @Description("Test to check the player Spawn")
     public void testPlayerSpawn() {
-        Vector2 spawn = new Vector2(32, 32);
-        Assert.assertEquals("The original Spawnpoint of the Player is not set correctly", spawn, player.getSpawnpoint());
+        Vector2 expected = new Vector2(32, 32);
+        Vector2 actual = player.getSpawnpoint();
+        TestOutputHelper.setResult("testPlayerSpawn", expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     @Description("Test to check if the player Spawn is updated when going over Checkpoint")
     public void testPlayerUpdateSpawn() {
-        checkpoint.changeSpawn(player);
-        Vector2 spawn = new Vector2(200, 32);
-        Assert.assertEquals("The Spawnpoint of the Player is not updated correctly", spawn, player.getSpawnpoint());
+        checkpoint.changeSpawn();
+        Vector2 expected = new Vector2(200, 32);
+        Vector2 actual = player.getSpawnpoint();
+        TestOutputHelper.setResult("testPlayerUpdateSpawn", expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -41,22 +50,28 @@ public class CheckpointTest {
     public void testPlayerResetSpawn() {
         player.setSpawnpoint(new Vector2(400, 400));
         player.setSpawnpoint(player.getWorldSpawn());
-        Vector2 spawn = new Vector2(32, 32);
-        Assert.assertEquals("The Spawnpoint of the Player is not updated Correctly", spawn, player.getSpawnpoint());
+        Vector2 expected = new Vector2(32, 32);
+        Vector2 actual = player.getSpawnpoint();
+        TestOutputHelper.setResult("testPlayerResetSpawn", expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     @Description("Test initial lives of the player")
     public void testPlayerLives() {
-        int lives = 3;
-        Assert.assertEquals("The original lives of the player is not set correctly", lives, player.getLives());
+        int expected = 3;
+        int actual = player.getLives();
+        TestOutputHelper.setResult("testPlayerLives", expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     @Description("Test to check if there is a life added to the Player when going over Checkpoint")
     public void testPlayerUpdateLives() {
-        int lives = 4;
+        int expected = 4;
         player.addLife(1);
-        Assert.assertEquals("The lives of the player is not updated correctly", lives, player.getLives());
+        int actual = player.getLives();
+        TestOutputHelper.setResult("testPlayerUpdateLives", expected, actual);
+        assertEquals(expected, actual);
     }
 }

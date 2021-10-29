@@ -246,7 +246,7 @@ public class GameScreen implements Screen, InputProcessor {
                     if (bodyB.getUserData().equals(checkpoint)) { //Checkpoint
                         if (!checkpoint.isTriggered()) {
                             checkpoint.setTriggered(true);
-                            checkpoint.changeSpawn(player);
+                            checkpoint.changeSpawn();
                             checkpoint.setTexture(new Texture("checkpoint.png"));
                             player.addLife(1);
                         }
