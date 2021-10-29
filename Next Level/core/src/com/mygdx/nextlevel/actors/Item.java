@@ -11,12 +11,13 @@ public class Item extends Actor {
     boolean destroy;
     Vector2 position;
     boolean destroyed;
+
     public Item(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
         this.sprite = new Sprite(texture);
+        this.sprite.setSize(32.0F, 32.0F);
         this.destroy = false;
         this.position = position;
-        this.sprite.setSize(32.0F, 32.0F);
         this.destroyed = false;
 //        super.setPosition(position.x, position.y);
 //        super.setBody(BodyDef.BodyType.StaticBody);
@@ -24,10 +25,13 @@ public class Item extends Actor {
 
 //        setShape();
 //        setFixture(density, restitution);
+//        this.body.setUserData(this.body);
     }
+
     public Vector2 getSpawn() {
         return this.position;
     }
+
     public void setShape() {
         this.shape = new PolygonShape();
         this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);

@@ -27,10 +27,11 @@ public class GameScreen implements Screen, InputProcessor {
     Enemy enemy;
     Checkpoint checkpoint;
     Block block, block1, block2, block3;
-    Item item;
     Hud hud;
 
     //Items
+    Item item;
+    Item mushroom;
     Item slowItem;
     Item oneUpItem;
     Item star;
@@ -56,6 +57,9 @@ public class GameScreen implements Screen, InputProcessor {
     ArrayList<Item> itemList = new ArrayList<>();
     ArrayList<Block> blockList = new ArrayList<>();
     ArrayList<Object> blockListUserData = new ArrayList<>();
+    ArrayList<Item> itemListGame = new ArrayList<>();
+
+
     boolean destroyItem = false;
     boolean facingRight = true;
     boolean touchedItemBlock = false;
@@ -137,23 +141,27 @@ public class GameScreen implements Screen, InputProcessor {
 
         //Item Initialization (Item)
         Vector2 itemSpawn = new Vector2(w * 0.75f, 32 + 64*3);
-        this.item = new Item(new Texture("mushroom.jpeg"), this.world, itemSpawn, 0f, 0f);
-        itemToName.put(item, "mushroom.jpeg");
+        this.mushroom = new Item(new Texture("mushroom.jpeg"), this.world, itemSpawn, 0f, 0f);
+        itemToName.put(mushroom, "mushroom.jpeg");
+        itemList.add(mushroom);
 
         //Slow Item Initialization
         Vector2 slowItemSpawn = new Vector2(w * 0.75f, -32 + 64*4);
         this.slowItem = new Item(new Texture("slow-mushroom.png"), this.world, slowItemSpawn, 0f, 0f);
         itemToName.put(slowItem, "slow-mushroom.png");
+        itemList.add(slowItem);
 
         //1-Up Item Initialization
         Vector2 oneUpSpawn = new Vector2(w * 0.75f, -32 + 64*4);
         this.oneUpItem = new Item(new Texture("1up-mushroom.jpeg"), this.world, oneUpSpawn, 0f, 0f);
         itemToName.put(oneUpItem, "1up-mushroom.jpeg");
+        itemList.add(oneUpItem);
 
         //star item initialization
         Vector2 starSpawn = new Vector2(w * 0.5f, -32 + 64*4);
         this.star = new Item(new Texture("star.jpg"), this.world, starSpawn, 0f, 0f);
         itemToName.put(star, "star.jpg");
+        itemList.add(star);
 
         //fireball initialization
 //        this.fireball = new Fire(playerSpawn, new Texture("fireball.png"), this.world);
@@ -162,10 +170,12 @@ public class GameScreen implements Screen, InputProcessor {
         Vector2 fireFlowerSpawn = new Vector2(w * 0.75f, -32 + 64*4);
         this.fireflower = new Item(new Texture("fireflower.png"), this.world, fireFlowerSpawn, 0f, 0f);
         itemToName.put(fireflower, "fireflower.png");
+        itemList.add(fireflower);
 
         Vector2 speedItemSpawn = new Vector2(w * 0.75f, -32 + 64*4);
         this.speedItem = new Item(new Texture("speeditem.png"), this.world, speedItemSpawn, 0f, 0f);
         itemToName.put(speedItem, "speeditem.png");
+        itemList.add(speedItem);
 
         //Update to screen parameters
         w /= PIXELS_TO_METERS;
@@ -220,12 +230,6 @@ public class GameScreen implements Screen, InputProcessor {
 //        this.slowItem.getBody().setUserData(this.slowItem);
 //        this.oneUpItem.getBody().setUserData(this.oneUpItem);
 
-        itemList.add(this.item);
-        itemList.add(this.slowItem);
-        itemList.add(this.oneUpItem);
-        itemList.add(this.star);
-        itemList.add(this.fireflower);
-
         //Hud
         hud = new Hud(game.batch, player);
 
@@ -260,53 +264,65 @@ public class GameScreen implements Screen, InputProcessor {
                                 if (block.getCollision() == 0b0001 && bodyA.getFixtureList().get(top).equals(contact.getFixtureA())) { //Bottom of the Block
                                     touchedItemBlock = true;
                                     Random rand = new Random();
-                                    itemIndex = rand.nextInt(itemList.size());
+                                    itemIndex = rand.nextInt(itemList.size()); //Get Random Item Block will generate
+                                    block.setItem(itemList.get(itemIndex));
                                 }
                             }
                         }
-//                    } else if (bodyB.getUserData().equals(block3) && !touchedItemBlock2) {
-//                        if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA()) && ((block2.getCollision() & (short) (0x1 << (bottom - 1))) == (short) (0x1 << (bottom - 1)))) { //Check if Contact on Top Side of player
-//                            touchedItemBlock2 = true;
-//                            Random rand = new Random();
-//                            itemIndex = rand.nextInt(itemList.size());
-//                        }
-//                    } else if (bodyB.getUserData().equals(block2) && !touchedItemBlock ) { //Item Block
-//                        if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA()) && ((block2.getCollision() & (short) (0x1 << (bottom - 1))) == (short) (0x1 << (bottom - 1)))) { //Check if Contact on Top Side of player
-//                            touchedItemBlock = true;
-//                            Random rand = new Random();
-//                            itemIndex = rand.nextInt(itemList.size());
-//                            item.setPosition(item.getSpawn().x, item.getSpawn().y);
-//                            item.setBody(BodyDef.BodyType.StaticBody);
-//                            item.setShape();
-//                            item.setFixture(0f, 0f);
-//                            item.getBody().setUserData(item);
-//                        }
-                    } else if (bodyB.getUserData().equals(slowItem)) {
-                        player.setSlowItem(true);
-                        slowItem.setDeleteSprite(true);
-                    } else if (bodyB.getUserData().equals(speedItem)) {
-                        player.setSpeedItem(true);
-                        speedItem.setDeleteSprite(true);
-                    }
-                    else if (bodyB.getUserData().equals(oneUpItem)) {
-                        player.addLife(1);
-                        oneUpItem.setDeleteSprite(true);
-                    } else if (bodyB.getUserData().equals(star)) {
-                        player.setHeldItem(star);
-                        star.setDeleteSprite(true); //Set to delete in rendering
-                        star.setDestroy(true); //Set to destroy in rendering
-                    } else if (bodyB.getUserData().equals(fireflower)) {
-                        player.setFireflower(true);
-                        player.setPowerUp(true);
-                        itemConsumed = true;
-                        fireflower.setDeleteSprite(true);
-//                        deleteList.add(bodyB);
-                    } else if (bodyB.getUserData().equals(item) && !touchedPowerUp) { //Item
-                        touchedPowerUp = true;
-                        player.setPowerUp(true);
+                    } else if (itemList.contains(bodyB.getUserData())) {
+                        item = (Item) bodyB.getUserData();
+                        if (item.equals(slowItem)) {
+                            player.setSlowItem(true);
+                        } else if (item.equals(speedItem)) {
+                            player.setSpeedItem(true);
+                        } else if (item.equals(oneUpItem)) {
+                            player.addLife(1);
+                        } else if (item.equals(star)) {
+                            player.setHeldItem(star);
+                        } else if (item.equals(fireflower)) {
+                            player.setFireflower(true);
+                            player.setPowerUp(true);
+                            itemConsumed = true;
+                        } else if (item.equals(mushroom)) {
+                            touchedPowerUp = true;
+                            player.setPowerUp(true);
+                        }
+                        deleteList.add(bodyB);
                         item.setDeleteSprite(true);
-                        itemConsumed = true;
-                    } else if (bodyB.getUserData().equals(enemy) && !player.getsInvulnerable()) { //Enemy
+                        itemListGame.remove(item);
+                    }
+//                    else if (bodyB.getUserData().equals(slowItem)) {
+//                        player.setSlowItem(true);
+//                        deleteList.add(bodyB);
+//                        slowItem.setDeleteSprite(true);
+//                        itemListGame.remove(slowItem);
+//                        drawItemList.remove(itemList.indexOf(bodyB.getUserData()));
+//                }
+//                    else if (bodyB.getUserData().equals(speedItem)) {
+//                        player.setSpeedItem(true);
+//                        speedItem.setDeleteSprite(true);
+//                    }
+//                    else if (bodyB.getUserData().equals(oneUpItem)) {
+//                        player.addLife(1);
+//                        oneUpItem.setDeleteSprite(true);
+//                    } else if (bodyB.getUserData().equals(star)) {
+//                        player.setHeldItem(star);
+//                        star.setDeleteSprite(true); //Set to delete in rendering
+//                        star.setDestroy(true); //Set to destroy in rendering
+//                    } else if (bodyB.getUserData().equals(fireflower)) {
+//                        player.setFireflower(true);
+//                        player.setPowerUp(true);
+//                        itemConsumed = true;
+//                        fireflower.setDeleteSprite(true);
+////                        deleteList.add(bodyB);
+//                    }
+//                    else if (bodyB.getUserData().equals(mushroom) && !touchedPowerUp) { //Item
+//                        touchedPowerUp = true;
+//                        player.setPowerUp(true);
+//                        mushroom.setDeleteSprite(true);
+//                        itemConsumed = true;
+//                    }
+                    else if (bodyB.getUserData().equals(enemy) && !player.getsInvulnerable()) { //Enemy
                         if (player.getStar()) { //Player has star item
                             deleteList.add(bodyB);
                             enemy.setDeleteSprite(true);
@@ -441,7 +457,6 @@ public class GameScreen implements Screen, InputProcessor {
 //        fireball.update();
 
         //Set position from updated physics
-        //TODO this may change when sprite deleted
         player.getSprite().setPosition((player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (player.getBody().getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
         enemy.getSprite().setPosition((enemy.getBody().getPosition().x * PIXELS_TO_METERS) - enemy.getSprite().getWidth()/2, (enemy.getBody().getPosition().y * PIXELS_TO_METERS) - enemy.getSprite().getHeight()/2);
         checkpoint.getSprite().setPosition((checkpoint.getBody().getPosition().x * PIXELS_TO_METERS) - checkpoint.getSprite().getWidth()/2, (checkpoint.getBody().getPosition().y * PIXELS_TO_METERS) - checkpoint.getSprite().getHeight()/2);
@@ -467,7 +482,7 @@ public class GameScreen implements Screen, InputProcessor {
 //        if (touchedItemBlock) {
 //            getItemSprite(oneUpItem);
 //        }
-        if (touchedItemBlock && !itemConsumed) {
+//        if (touchedItemBlock && !itemConsumed && block.isItemBlock()) {
 //            Item i = itemList.get(itemIndex);
 //            if (i == item) {
 //                createItem(item);
@@ -483,13 +498,22 @@ public class GameScreen implements Screen, InputProcessor {
 //            getItemSprite(item);
 //            createItem(fireflower);
 //            getItemSprite(fireflower);
-              createItem(itemList.get(itemIndex));
-              getItemSprite(itemList.get(itemIndex));
-        }
-        if (touchedItemBlock && !itemConsumed) {
-            createItem(this.star);
-            getItemSprite(this.star);
-        }
+
+//              createItem(itemList.get(itemIndex));
+//              getItemSprite(itemList.get(itemIndex));
+//            createItem(block.getItem());
+//            getItemSprite(block.getItem());
+//            touchedItemBlock = false;
+//        }
+//        if (touchedItemBlock && !itemConsumed) {
+//            createItem(this.star);
+//            getItemSprite(this.star);
+//        }
+//        if (touchedItemBlock) {
+//            createItem(block.getItem());
+//            getItemSprite(block.getItem());
+//            touchedItemBlock = false;
+//        }
 
         Gdx.gl.glClearColor(1,1,1,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -514,25 +538,30 @@ public class GameScreen implements Screen, InputProcessor {
                     player.setTexture(new Texture("paragoomba.png"));
                 } else if (player.getStar()) {
                     player.setTexture(new Texture("stargoomba.png"));
-                }
-                else if (player.getFireFlower()) {
+                } else if (player.getFireFlower()) {
                     player.setTexture(new Texture("firegoomba.png"));
-                }
-                else {
+                } else {
                     player.setTexture(new Texture("goomba.png"));
                 }
                 batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
             }
 
+            //Add Item to the list
+            if (touchedItemBlock && !block.isItemSpawned()) {
+                createItem(block.getItem()); //Create the item
+                block.setSpawned(true);
+                touchedItemBlock = false;
+            }
+
             //Draw All Blocks
-            for (Block blockIteration: blockList) {
+            for (Block blockIteration : blockList) {
                 if (blockIteration.isItemSpawned())
                     blockIteration.setTexture(new Texture("used-item-block.jpg"));
 
                 batch.draw(blockIteration.getSprite(), blockIteration.getSprite().getX(), blockIteration.getSprite().getY(), blockIteration.getSprite().getOriginX(), blockIteration.getSprite().getOriginY(), blockIteration.getSprite().getWidth(), blockIteration.getSprite().getHeight(), blockIteration.getSprite().getScaleX(), blockIteration.getSprite().getScaleY(), blockIteration.getSprite().getRotation());
             }
 
-            if (touchedItemBlock && !itemConsumed) {
+//            if (touchedItemBlock && !itemConsumed) {
 //                if (!item.getDeleteSprite()) {
 //                    this.item.setBody(BodyDef.BodyType.StaticBody);
 //                    this.item.setShape();
@@ -561,29 +590,36 @@ public class GameScreen implements Screen, InputProcessor {
 //                    }
 //                        block2.setSpawned(true);
 //                    }
-                if (!speedItem.getDeleteSprite()) {
-                    drawItemSprite(speedItem);
-                }
-            }
-            if (touchedItemBlock) {
-                if (!this.star.getDeleteSprite()) {
-                    drawItemSprite(star);
-                } else {
-                    System.out.println("Delete sprite");
-                }
-                block.setSpawned(true);
-            }
+//                if (!speedItem.getDeleteSprite()) {
+//                    drawItemSprite(speedItem);
+//                }
 
-        }
-        int count = 0;
-        while (count < fireballList.size()) {
-            Fire curFire = fireballList.get(count);
-            curFire.update();
-//            curFire.getBody().setLinearVelocity(3.0f, 0f);
-//            curFire.getBody().setUserData(curFire);
-//            curFire.getSprite().setSize(20.f,20.f);
-            batch.draw(curFire.getSprite(), curFire.position.x, curFire.position.y);
-            count++;
+//            if (touchedItemBlock) {
+//                if (!this.star.getDeleteSprite()) {
+//                    drawItemSprite(star);
+//                } else {
+//                    System.out.println("Delete sprite");
+//                }
+//                block.setSpawned(true);
+//            }
+
+
+//        int count = 0;
+//        while (count < fireballList.size()) {
+//            Fire curFire = fireballList.get(count);
+//            curFire.update();
+////            curFire.getBody().setLinearVelocity(3.0f, 0f);
+////            curFire.getBody().setUserData(curFire);
+////            curFire.getSprite().setSize(20.f,20.f);
+//            batch.draw(curFire.getSprite(), curFire.position.x, curFire.position.y);
+//            count++;
+//        }
+
+            //Draw all items in the list
+            for (Item itemIteration : itemListGame) {
+                getItemSprite(itemIteration); //Setting the Sprite Position
+                drawItemSprite(itemIteration); //Draw the item
+            }
         }
         batch.end();
 
@@ -648,7 +684,7 @@ public class GameScreen implements Screen, InputProcessor {
             }
         }
 
-        star.update(delta);
+//        star.update(delta);
 
         //Player killed
         if (playerKilled) {
@@ -692,11 +728,13 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public void createItem(Item i) {
-        i.setPosition(i.getSpawn().x, i.getSpawn().y);
+//        i.setPosition(i.getSpawn().x, i.getSpawn().y);
+        i.setPosition(block.getPosition().x, block.getPosition().y + 64f);
         i.setBody(BodyDef.BodyType.StaticBody);
         i.setShape();
         i.setFixture(0f, 0f);
         i.getBody().setUserData(i);
+        itemListGame.add(i);
     }
 
     private void invulnerableTimer() {
