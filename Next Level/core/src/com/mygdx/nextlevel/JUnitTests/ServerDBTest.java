@@ -97,6 +97,7 @@ public class ServerDBTest {
         boolean actual = db.userExists(username);
         boolean expected = true;
 
+        //TODO: for security reasons, we probably want to change how the switch to admin occurs
         //cleanup with admin privileges
         ServerDBHandler adminDB = new ServerDBHandler("admin", "CQNK2Ih8H8aikg6M");
         adminDB.removeUser(username);
