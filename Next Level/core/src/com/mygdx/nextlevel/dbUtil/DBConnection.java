@@ -17,9 +17,9 @@ public class DBConnection {
         try {
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(connAll);
-        } catch (ClassNotFoundException e) {
-            url = "jdbc:sqlite:" + System.getProperty("user.dir") + "/core/src/com" +
-                    "/mygdx/nextlevel/data/";
+        } catch (Exception e) {
+            url = "jdbc:sqlite:" + System.getProperty("user.dir") + "/com/mygdx/nextlevel/data/";
+            connAll = url;
             connAll = connAll.concat(databaseName);
             connAll = connAll.concat(".sqlite");
             try {
