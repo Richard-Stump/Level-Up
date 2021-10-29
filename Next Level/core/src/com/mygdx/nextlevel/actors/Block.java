@@ -26,6 +26,19 @@ public class Block extends Actor {
         setFixture(density, restitution);
     }
 
+    public Block(Vector2 position, short breakableSides, boolean spawnItem) {
+        this.world = null;
+        this.sprite = null;
+        this.spawnItem = spawnItem;
+        this.collision = breakableSides;
+        this.spawned = false;
+        this.worldSpawn.x = position.x;
+        this.worldSpawn.y = position.y;
+        this.body = null;
+        this.bodyDef = null;
+        this.shape = null;
+    }
+
     private void setShape() {
         this.shape = new PolygonShape();
         this.shape.setAsBox(this.sprite.getWidth()/2.0F/PIXELS_TO_METERS, this.sprite.getHeight()/2.0F/PIXELS_TO_METERS);
@@ -42,6 +55,10 @@ public class Block extends Actor {
         this.fixtureDef.shape = this.shape;
         this.body.createFixture(this.fixtureDef);
         this.shape.dispose();
+    }
+
+    public void setCollision(short collision) {
+        this.collision = collision;
     }
 
     public short getCollision() {

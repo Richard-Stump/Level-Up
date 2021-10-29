@@ -532,13 +532,13 @@ public class GameScreen implements Screen, InputProcessor {
             batch.draw(block3.getSprite(), block3.getSprite().getX(), block3.getSprite().getY(), block3.getSprite().getOriginX(), block3.getSprite().getOriginY(), block3.getSprite().getWidth(), block3.getSprite().getHeight(), block3.getSprite().getScaleX(), block3.getSprite().getScaleY(), block3.getSprite().getRotation());
             if (touchedItemBlock && !itemConsumed) {
 //                if (!item.getDeleteSprite()) {
-////                    this.item.setBody(BodyDef.BodyType.StaticBody);
-////                    this.item.setShape();
-////                    this.item.setFixture(0f,0f);
-////                    this.item.getBody().setUserData(this.item);
-////                    if (touchedItemBlock && !itemConsumed) {
-////                        item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
-////                    }
+//                    this.item.setBody(BodyDef.BodyType.StaticBody);
+//                    this.item.setShape();
+//                    this.item.setFixture(0f,0f);
+//                    this.item.getBody().setUserData(this.item);
+//                    if (touchedItemBlock && !itemConsumed) {
+//                        item.getSprite().setPosition((item.getBody().getPosition().x * PIXELS_TO_METERS) - item.getSprite().getWidth() / 2, (item.getBody().getPosition().y * PIXELS_TO_METERS) - item.getSprite().getHeight() / 2);
+//                    }
 //                    batch.draw(item.getSprite(), item.getSprite().getX(), item.getSprite().getY(), item.getSprite().getOriginX(), item.getSprite().getOriginY(), item.getSprite().getWidth(), item.getSprite().getHeight(), item.getSprite().getScaleX(), item.getSprite().getScaleY(), item.getSprite().getRotation());
 //                    block2.setSpawned(true);
 //                }
@@ -556,7 +556,7 @@ public class GameScreen implements Screen, InputProcessor {
 //                    drawItemSprite(item);
 //                    if (!fireflower.getDeleteSprite()) {
 //                        drawItemSprite(fireflower);
-////                    }
+//                    }
 //                        block2.setSpawned(true);
 //                    }
                 if (!speedItem.getDeleteSprite()) {

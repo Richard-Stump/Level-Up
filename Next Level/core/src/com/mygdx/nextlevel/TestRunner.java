@@ -68,6 +68,17 @@ public class TestRunner {
         totalTests += numTests;
         System.out.println();
 
+        System.out.println("Block tests:");
+        Result resultBlock = JUnitCore.runClasses(BlockTest.class);
+        for (Failure failure: resultBlock.getFailures()) {
+            System.out.println(failure.toString());
+        }
+        numTests = resultBlock.getRunCount();
+        numPassed = numTests -  resultBlock.getFailureCount();
+        System.out.println("BlockTest - Passed: " + numPassed + "/" + numTests);
+        totalPassed += numPassed;
+        totalTests += numTests;
+        System.out.println();
 
         System.out.println("Local Database tests:");
         Result resultLocalDB = JUnitCore.runClasses(CreatedLevelsDBTest.class, LevelsDBControllerTest.class);
@@ -97,7 +108,7 @@ public class TestRunner {
         if (totalTests == totalPassed)
             System.out.println("All Tests have passed");
         else
-            System.out.println("All Tests - Passed: " + numPassed + "/" + numTests);
+            System.out.println("All Tests - Passed: " + totalPassed + "/" + totalTests);
         System.out.println();
     }
 }
