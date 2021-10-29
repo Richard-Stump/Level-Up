@@ -19,6 +19,7 @@ import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
+import sun.rmi.runtime.Log;
 
 import java.util.ArrayList;
 
@@ -52,6 +53,8 @@ public class LoginScreen extends AccountList implements Screen {
 
     public boolean loginSuccessful = false;
     public boolean incorrectPass = false;
+
+    public LoginScreen() {}
 
     public LoginScreen(NextLevel game)  {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
@@ -210,5 +213,13 @@ public class LoginScreen extends AccountList implements Screen {
         atlas.dispose();
     }
 
+    public static boolean login(String username, String pass) {
+        for (Account a : getAccList()) {
+            if (a.getUsername().equals(username) && (a.getPassword().equals(pass))) {
+                return true;
+            }
+        }
+        return false;
 
+    }
 }

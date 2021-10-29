@@ -5,6 +5,7 @@ import com.mygdx.nextlevel.JUnitTests.CheckpointTest;
 import com.mygdx.nextlevel.JUnitTests.CreatedLevelsDBTest;
 import com.mygdx.nextlevel.JUnitTests.LevelsDBControllerTest;
 import com.mygdx.nextlevel.JUnitTests.RegisterTest;
+import com.mygdx.nextlevel.screens.LoginScreen;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -24,6 +25,26 @@ public class TestRunner {
         totalTests = resultRegister.getRunCount();
         totalPassed = totalTests -  resultRegister.getFailureCount();
         System.out.println("RegisterTest - Passed: " + totalPassed + "/" + totalTests);
+        System.out.println();
+
+        System.out.println("Login tests:");
+        Result resultLogin = JUnitCore.runClasses(LoginTest.class);
+        for (Failure failure: resultLogin.getFailures()) {
+            System.out.println(failure.toString());
+        }
+        totalTests = resultLogin.getRunCount();
+        totalPassed = totalTests -  resultLogin.getFailureCount();
+        System.out.println("LoginTest - Passed: " + totalPassed + "/" + totalTests);
+        System.out.println();
+
+        System.out.println("ForgetPassword tests:");
+        Result resultFP = JUnitCore.runClasses(ForgetPasswordTest.class);
+        for (Failure failure: resultFP.getFailures()) {
+            System.out.println(failure.toString());
+        }
+        totalTests = resultFP.getRunCount();
+        totalPassed = totalTests -  resultFP.getFailureCount();
+        System.out.println("ForgetPassword - Passed: " + totalPassed + "/" + totalTests);
         System.out.println();
 
 

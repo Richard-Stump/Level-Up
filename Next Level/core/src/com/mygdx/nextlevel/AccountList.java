@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class AccountList {
     public static ArrayList<Account> accList = new ArrayList<>();
 
-    public ArrayList<Account> getAccList() {
+    public static ArrayList<Account> getAccList() {
         return accList;
     }
 }

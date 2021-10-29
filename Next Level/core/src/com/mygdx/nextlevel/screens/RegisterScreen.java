@@ -180,6 +180,10 @@ public class RegisterScreen extends AccountList implements Screen{
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Passwords do not match"));
                     isInfoCorrect = false;
                 } else {
+                    if (username.length() < 4 || username.length() > 16) {
+                        System.out.println("Username must be at least 4 characters and no more than 16 characters");
+                        isInfoCorrect = false;
+                    }
                     if (verifyPass.length() < 8 || verifyPass.length() > 16) {
                         System.out.println("Password must be at least 8 characters and no more than 16 characters");
                         ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must be at least 8 characters and no more than 16 characters"));
@@ -201,6 +205,7 @@ public class RegisterScreen extends AccountList implements Screen{
                         else {
                             System.out.println("Password must have upper, lower, symbol, and digit");
                             ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must have upper, lower, symbol, and digit"));
+                            isInfoCorrect = false;
                         }
                     }
                 }
@@ -269,6 +274,21 @@ public class RegisterScreen extends AccountList implements Screen{
         atlas.dispose();
     }
 
+
+    public static boolean checkPasswords(String pass, String verify) {
+        if (pass.equals(verify)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean checkUsername(String user) {
+        if (user.length() < 4 || user.length() > 16) {
+            return false;
+        }
+        return true;
+    }
+
     public static boolean checkPassLength(String pass) {
         if (pass.length() < 8 || pass.length() > 16) {
             return false;
@@ -284,5 +304,9 @@ public class RegisterScreen extends AccountList implements Screen{
             return true;
         }
         return false;
+    }
+
+    public static void addAccount(Account a) {
+        accList.add(a);
     }
 }

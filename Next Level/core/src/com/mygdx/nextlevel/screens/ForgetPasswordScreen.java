@@ -15,10 +15,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
 import org.w3c.dom.Text;
 
-public class ForgetPasswordScreen implements Screen {
+import java.util.ArrayList;
+
+public class ForgetPasswordScreen extends AccountList implements Screen {
 
     public SpriteBatch batch;
     public Stage stage;
@@ -29,12 +33,15 @@ public class ForgetPasswordScreen implements Screen {
     private NextLevel game;
 
     public String username;
+    public boolean passChanged;
 
     //static vars
     public static int textBoxWidth = 320;
     public static int textBoxBottomPadding = 20;
     public static int buttonWidth = 170;
 
+
+    public ForgetPasswordScreen() {}
     public ForgetPasswordScreen(NextLevel game) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
@@ -64,7 +71,7 @@ public class ForgetPasswordScreen implements Screen {
         Label forgotPassText = new Label("Forgot Password", skin);
 
         //textfield
-        TextField usernameText = new TextField("", skin);
+        final TextField usernameText = new TextField("", skin);
         usernameText.setMessageText("Username");
 
         TextButton enterButton = new TextButton("Request", skin);
@@ -91,6 +98,8 @@ public class ForgetPasswordScreen implements Screen {
         table.add(backButton).width(buttonWidth);
         table.add(enterButton).width(buttonWidth);
 
+        passChanged = false;
+
         //click listeners
         backButton.addListener(new ClickListener() {
             @Override
@@ -102,6 +111,19 @@ public class ForgetPasswordScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //TODO: change password if a valid username else show error message
+                username = usernameText.getText();
+                for (Account a : accList) {
+                    if (a.getUsername().equals(username)) {
+                        a.setPassword("password");
+                        passChanged = true;
+                        System.out.println("Password reset.");
+                        ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+                        break;
+                    }
+                }
+                if (!passChanged) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "No account with that username."));
+                }
             }
         });
 
@@ -144,5 +166,15 @@ public class ForgetPasswordScreen implements Screen {
     public void dispose() {
         skin.dispose();
         atlas.dispose();
+    }
+
+    public boolean changePass(String username) {
+        for (Account a : accList) {
+            if (a.getUsername().equals(username)) {
+                a.setPassword("password");
+                return true;
+            }
+        }
+        return false;
     }
 }
