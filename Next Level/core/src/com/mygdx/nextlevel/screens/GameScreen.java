@@ -280,6 +280,7 @@ public class GameScreen implements Screen, InputProcessor {
                     } else if (bodyB.getUserData().equals(star)) {
                         player.setHeldItem(star);
                         star.setDeleteSprite(true);
+                        star.setDestroy(true);
                     } else if (bodyB.getUserData().equals(fireflower)) {
                         player.setFireflower(true);
                         player.setPowerUp(true);
@@ -489,8 +490,8 @@ public class GameScreen implements Screen, InputProcessor {
               getItemSprite(speedItem);
         }
         if (touchedItemBlock2) {
-            createItem(star);
-            getItemSprite(star);
+            createItem(this.star);
+            getItemSprite(this.star);
         }
 
         Gdx.gl.glClearColor(1,1,1,1);
@@ -563,7 +564,11 @@ public class GameScreen implements Screen, InputProcessor {
                 }
             }
             if (touchedItemBlock2) {
-                drawItemSprite(star);
+                if (!this.star.getDeleteSprite()) {
+                    drawItemSprite(star);
+                } else {
+                    System.out.println("Delete sprite");
+                }
                 block3.setSpawned(true);
             }
 
@@ -642,6 +647,8 @@ public class GameScreen implements Screen, InputProcessor {
                 deleteList.remove(i);
             }
         }
+
+        star.update(delta);
 
         //Player killed
         if (playerKilled) {
@@ -781,6 +788,10 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public boolean scrolled(float amountX, float amountY) {
         return false;
+    }
+
+    public World getWorld() {
+        return this.world;
     }
 }
 

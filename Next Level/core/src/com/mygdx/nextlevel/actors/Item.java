@@ -1,22 +1,23 @@
 package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.nextlevel.screens.GameScreen;
 
 public class Item extends Actor {
     boolean destroy;
     Vector2 position;
+    boolean destroyed;
     public Item(Texture texture, World world, Vector2 position, float density, float restitution) {
         this.world = world;
         this.sprite = new Sprite(texture);
         this.destroy = false;
         this.position = position;
         this.sprite.setSize(32.0F, 32.0F);
+        this.destroyed = false;
 //        super.setPosition(position.x, position.y);
 //        super.setBody(BodyDef.BodyType.StaticBody);
 //        super.setBody(BodyDef.BodyType.DynamicBody);
@@ -63,7 +64,59 @@ public class Item extends Actor {
         this.destroy = destroy;
     }
 
-    private boolean getDestroy() {
+    public boolean getDestroy() {
         return this.destroy;
     }
+
+    public void setDestroyed(boolean destroyed) {
+        this.destroyed = destroyed;
+    }
+
+    public boolean getDestroyed() {
+        return this.destroyed;
+    }
+
+    public void update(float delta) {
+        if (!destroyed && destroy) {
+            world.destroyBody(this.body);
+            destroyed = true;
+        }
+    }
 }
+
+//public abstract class Item extends Sprite {
+//    GameScreen gameScreen;
+//    World world;
+//    boolean destroy;
+//    boolean destroyed;
+//    Body body;
+//    public Item(GameScreen gameScreen, float x, float y) {
+//        this.gameScreen = gameScreen;
+//        this.world = gameScreen.getWorld();
+//        setPosition(x, y);
+//        setBounds(getX(), getY(), 32.0F, 32.0F);
+//        defineItem();
+//        destroy = false;
+//        destroyed = false;
+//    }
+//
+//    public abstract void defineItem();
+//    public abstract void use();
+//
+//    public void update(float delta) {
+//        if (destroy && !destroyed) {
+//            world.destroyBody(body);
+//            destroyed = true;
+//        }
+//    }
+//
+//    public void draw(Batch batch) {
+//        if (!destroyed) {
+//            super.draw(batch);
+//        }
+//    }
+//
+//    public void destroy() {
+//        destroy = true;
+//    }
+//}
