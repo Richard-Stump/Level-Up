@@ -55,8 +55,6 @@ public class Player2 extends Actor2 {
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
-        System.out.println("On Player Collision, side = " + side.toString());
-
         if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT)) {
             System.out.println("Player die");
         }

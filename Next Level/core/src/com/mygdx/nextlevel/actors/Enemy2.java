@@ -47,8 +47,6 @@ public class Enemy2 extends Actor2 {
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
-        System.out.println("On Enemy Collision, side = " + side.toString());
-
         if(other instanceof Player2 && side == BoxCollider.Side.TOP) {
             System.out.println("Enemy die");
         }

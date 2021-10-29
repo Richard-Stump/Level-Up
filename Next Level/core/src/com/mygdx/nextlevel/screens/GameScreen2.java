@@ -20,6 +20,14 @@ import com.mygdx.nextlevel.actors.*;
 
 import java.util.ArrayList;
 
+/**
+ * Temporary game screen to use while refactoring code.
+ *
+ * One big change to note with this part of the code: Box2D calculations now use 1 pixel per meter, and the camera
+ * is instead zoomed so that each unit is a tile. This was done to fix Box2D's velocity cap, which kept bodies
+ * from moving too fast. This makes the math for placing enemies and everything easier though because a change of
+ * 1.0f in position moves exactly one time. No more PixelsPerMeter calculations.
+ */
 public class GameScreen2 implements Screen, InputProcessor {
     private NextLevel game;
     private Box2DDebugRenderer box2dRenderer;
@@ -40,7 +48,7 @@ public class GameScreen2 implements Screen, InputProcessor {
         float aspect = (float)Gdx.graphics.getWidth() / (float)Gdx.graphics.getHeight();
         float numTilesVisibleY = 15.0f;
         camera = new OrthographicCamera(numTilesVisibleY * aspect, numTilesVisibleY);
-        camera.translate(camera.viewportWidth * 0.5f - 0.5f, camera.viewportHeight * 0.5f - 0.5f);
+        camera.translate(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f);
         camera.update();
 
         b2 = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false);
@@ -60,7 +68,7 @@ public class GameScreen2 implements Screen, InputProcessor {
 
     private void update(float delta) {
         //I think higher iteration constants decreases the chances for side detection failure.
-        CollisionManager.getWorld().step(delta, 100, 100);
+        CollisionManager.getWorld().step(delta, 18, 9);
 
         for(Actor2 a : actors) {
             a.update(delta);

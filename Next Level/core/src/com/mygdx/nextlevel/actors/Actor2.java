@@ -21,21 +21,13 @@ public class Actor2 extends Sprite  {
     @Override
     public void setPosition(float x, float y) {
         super.setPosition(
-                x * BoxCollider.PPM - 0.5f * getWidth(),
-                y * BoxCollider.PPM - 0.5f * getHeight()
+                x - 0.5f * getWidth(),
+                y - 0.5f * getHeight()
         );
     }
 
     public void setPosition(Vector2 pos) {
         setPosition(pos.x, pos.y);
-    }
-
-    @Override
-    public void setSize(float width, float height) {
-        super.setSize(
-            width * BoxCollider.PPM,
-            height * BoxCollider.PPM
-        );
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {

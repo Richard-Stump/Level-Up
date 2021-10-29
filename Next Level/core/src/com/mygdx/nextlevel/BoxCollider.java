@@ -18,9 +18,9 @@ public class BoxCollider {
      *    moving into other objects.
      *  - In addition, there are 4 colliders set as sensors which detect which side the collision happened.
      *    these do not detect other sensors, just the solid part of the box colider.
+     *
+     *    One thing to note,
      */
-
-    public static float PPM = 1.0f;    // How many pixels is a meter in the game world.
 
     public enum Side {
         NONE, TOP, LEFT, RIGHT, BOTTOM;
@@ -64,7 +64,7 @@ public class BoxCollider {
     protected void setupBodies(boolean dynamic, Vector2 position) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = dynamic ? BodyType.DynamicBody : BodyType.StaticBody;
-        bodyDef.position.set(position.scl(PPM));
+        bodyDef.position.set(position);
         body = CollisionManager.getWorld().createBody(bodyDef);
         body.setFixedRotation(true);
     }
@@ -72,21 +72,18 @@ public class BoxCollider {
     protected void setupShapes(Vector2 position, Vector2 size) {
         Vector2 halfSize = size.scl(0.5f);
         mainShape = new PolygonShape();
-        mainShape.setAsBox(halfSize.x * PPM, halfSize.y * PPM);
+        mainShape.setAsBox(halfSize.x, halfSize.y);
 
-        //Calculate where the edges for the box collider will be in the world.
-        float x = (position.x * PPM);
-        float y = (position.y * PPM);
-        float width = (size.x * PPM);
-        float height = (size.y * PPM);
+        float width = size.x;
+        float height = size.y;
 
         // An epsilon value is used to move the vertices of the edges slightly away from the sides
         // they run perpendicular to. This prevents multiple sides from triggering.
-        final float epsilon = 0.05f * PPM;
-        final float thickness = 0.01f * PPM;             //How thick to make the sensors. Thicker decreases the chances
+        final float epsilon = 0.12f;
+        final float thickness = 0.05f;                  //How thick to make the sensors. Thicker decreases the chances
                                                         //for the side detection to fail
-        final float xOffset = width - thickness + 0.05f;
-        final float yOffset = height - thickness + 0.05f;
+        final float xOffset = width - thickness + 0.01f;
+        final float yOffset = height - thickness + 0.01f;
 
         // Here the sensor shapes are created in this order: right, top, left, bottom
         sensorShapes = new PolygonShape[4];
@@ -176,12 +173,12 @@ public class BoxCollider {
      * @param v The new velocity.
      */
     public void setVelocity(Vector2 v) {
-        body.setLinearVelocity(v.scl(PPM));
+        body.setLinearVelocity(v);
     }
 
-    public Vector2 getVelocity() { return body.getLinearVelocity().scl(1.0f / PPM); }
+    public Vector2 getVelocity() { return body.getLinearVelocity().scl(1.0f); }
 
     public Vector2 getPosition() {
-        return body.getPosition().scl(1.0f / PPM);
+        return body.getPosition().scl(1.0f);
     }
 }
