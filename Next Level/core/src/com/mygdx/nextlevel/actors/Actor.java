@@ -65,6 +65,7 @@ public class Actor {
     public boolean getDeleteSprite() {
         return this.deleteSprite;
     }
+
     public void setDeleteSprite(boolean set) {
         this.deleteSprite = set;
     }
