@@ -11,9 +11,22 @@ import com.mygdx.nextlevel.screens.GameScreen2;
 import javax.swing.*;
 
 /**
- * Base class for all the actors in the game. None of the methods provided are required, but some should be
- * overridden to provide the actor with functionality.
+ * Base class for all the actors in GameScreen2. All actors should derive from this class, and then implement
+ * their functionality by overriding the various methods provided:
  *
+ *  - update(...):      Called each fame after new actors are spawned, after physics, and before rendering.
+ *                      Useful for updating actor velocities and properties.
+ *  - onCollision(...): Called when the actor collides with a solid collider.
+ *                      Useful for handling interactions between actors colliding, such as the player jumping on the
+ *                      enemy's head
+ *  - onTrigger(...):   Called when the actor collides with a non-solid actor.
+ *                      Used similarly to onCollision(), but with actors that have non-solid boxes like the checkpoint
+ *
+ * One important thing to note for actors, they need to set the texture region of the sprite super class
+ * with setRegion(Texture tex) so they can be displayed. If they don't, the game crashes. Using setRegion() also
+ * displays the entire image in the space of the actor. If setTexture() is used, then only a single color shows up
+ * for the texture.
+ * Todo: Fix this so that there can be invisible actors
  */
 public class Actor2 extends Sprite implements Disposable {
     protected GameScreen2 screen;
@@ -45,6 +58,10 @@ public class Actor2 extends Sprite implements Disposable {
         this.screen = screen;
         setSize(width, height);
         setPosition(x, y);
+
+        //One important thing to note for actors, they need to set the texture region of the sprite super class
+        // with setRegion(Texture tex) so they can be displayed. If they don't, the game crashes.
+        //Todo: Fix this so that there can be invisible actors
     }
 
     /**
@@ -54,7 +71,6 @@ public class Actor2 extends Sprite implements Disposable {
      * @param deltaTime How much time has passed since the previous frame
      */
     public void update(float deltaTime) {
-
     }
 
     /**

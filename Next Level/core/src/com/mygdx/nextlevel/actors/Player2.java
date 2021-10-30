@@ -9,9 +9,7 @@ import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class Player2 extends Actor2 {
-    protected Vector2 position;
-    protected Vector2 respawnPosition;
-    protected Vector2 velocity;
+    protected Vector2 respawnPosition;  //Position that the player respawns in
     protected BoxCollider boxCollider;
 
     protected int lifeCount;
@@ -28,11 +26,11 @@ public class Player2 extends Actor2 {
                 new Vector2(1, 1),
                 true);
 
-        position = boxCollider.getPosition();
-        respawnPosition = new Vector2(position);
+        respawnPosition = new Vector2(boxCollider.getPosition());
 
         lifeCount = 3;
 
+        //The texture region needs to be set for rendering.
         setRegion(new Texture("goomba.png"));
     }
 
@@ -93,11 +91,9 @@ public class Player2 extends Actor2 {
 
     public int getLives() { return lifeCount; }
     public Item2 getHeldItem() { return heldItem; }
-
     public void setRespawnLocation(Vector2 pos) {
         respawnPosition = new Vector2(pos.x, pos.y);
     }
-
     public void dispose() {
         boxCollider.dispose();
     }

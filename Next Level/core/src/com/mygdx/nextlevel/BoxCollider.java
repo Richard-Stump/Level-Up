@@ -130,9 +130,9 @@ public class BoxCollider {
     protected void setupFixtures(boolean isTrigger) {
         //setup the main fixture
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.density = 100.0f;
-        fixtureDef.friction = 0.0f;
-        fixtureDef.restitution = 0.0f;
+        fixtureDef.density = 100.0f;    //How much mass is there per unit of volume
+        fixtureDef.friction = 0.0f;     //How much friction does this object have
+        fixtureDef.restitution = 0.0f;  //How bouncy is this object. None because we don't want our objects to bounce.
         fixtureDef.shape = mainShape;
         fixtureDef.isSensor = isTrigger;
         fixture = body.createFixture(fixtureDef);
@@ -144,7 +144,7 @@ public class BoxCollider {
         sensorFixtures = new Fixture[4];
         for(int i = 0; i < 4; i++) {
             FixtureDef edgeFixDef = new FixtureDef();
-            edgeFixDef.density = 0;
+            edgeFixDef.density = 0;         //The edge sensors have no density because we don't want them to contribute to the mass
             edgeFixDef.restitution = 0;
             edgeFixDef.filter.groupIndex = CollisionGroups.BOX_HELPER; //Mark the sensors so they don't trigger each other
             edgeFixDef.isSensor = true;
@@ -162,6 +162,8 @@ public class BoxCollider {
      * @param otherFixture The fixure that the sensor collided with.
      */
     public void edgeTrigger(Fixture thisFixture, Fixture otherFixture) {
+        //Ignore this method if there is no owner. This is so that we can have colliders without having to
+        //attach them to actors, such as the game screen's floor
         if(owner == null)
             return;
 
@@ -170,6 +172,7 @@ public class BoxCollider {
         BoxCollider otherCollider = (BoxCollider)otherFixture.getUserData();
         Actor2 otherActor = otherCollider.owner;
 
+        //Detect which side the collision occurred.
         if(thisFixture == sensorFixtures[0])
             side = Side.RIGHT;
         else if(thisFixture == sensorFixtures[1])
@@ -179,6 +182,7 @@ public class BoxCollider {
         else if(thisFixture == sensorFixtures[3])
             side = Side.BOTTOM;
 
+        //Call the appropriate method depending on whether this collider is a trigger or not.
         if(otherCollider.isTrigger)
             owner.onTrigger(otherActor, side);
         else
@@ -203,6 +207,11 @@ public class BoxCollider {
         body.setTransform(vec, 0.0f);
     }
 
+
+    /**
+     * This should never get called in the middle of an Actor's onCollision() or onTrigger() methods.
+     * Box2d crashes when you add/remove/move bodies/fixtures around during it.
+     */
     public void dispose() {
         body.getWorld().destroyBody(body);
         body.setUserData(null);
