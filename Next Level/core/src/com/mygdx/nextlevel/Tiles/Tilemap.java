@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
+import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.utils.Array;
@@ -30,9 +27,9 @@ public class Tilemap{
 
 
     public Tilemap() {
-        initMap();
+        //initMap();
     }
-
+/*
     public TiledMap createMap(final FileHandle tmFile){
         parseTileMapFile(tmFile);
         for (int row = 0; row < mapHeight; row++) {
@@ -45,12 +42,12 @@ public class Tilemap{
         }
 
         return map;
-    }
+    }*/
 
     public void load(FileHandle tmFile){
-        this.tmFile = tmFile;
-        Tilemap tm = new Tilemap();
-        map = tm.createMap(tmFile);
+        //this.tmFile = tmFile;
+        //Tilemap tm = new Tilemap();
+        map = new TmxMapLoader().load("next-level_test.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(map);
 
         Gdx.gl.glClearColor(1, 0, 0, 1);
@@ -62,6 +59,7 @@ public class Tilemap{
         tiledMapRenderer.render();
     }
 
+    /*
     public void parseTileMapFile(final FileHandle tmFile){
         //Create tile array
         String input = tmFile.readString();
@@ -100,5 +98,5 @@ public class Tilemap{
         map.getLayers().add(mapLayer);
         final Array<Texture> texts = Array.with(tilesTexture);
         map.setOwnedResources(texts);
-    }
+    }*/
 }

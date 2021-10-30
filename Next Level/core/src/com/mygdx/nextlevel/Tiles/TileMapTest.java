@@ -13,7 +13,7 @@ public class TileMapTest {
     }
 
     public void run(){
-        FileHandle handle = Gdx.files.absolute("next-level_test.tmx");
+        FileHandle handle = new FileHandle("Next Level/core/assets/Tiled/next-level_test.tmx");
         Tilemap test = new Tilemap();
         test.load(handle);
     }
