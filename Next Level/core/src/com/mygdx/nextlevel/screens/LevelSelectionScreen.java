@@ -97,6 +97,8 @@ public class LevelSelectionScreen implements Screen {
         stage.addActor(mainTable);
         mainTable.setDebug(true);
 
+        //TODO: put button somewhere that takes the user to a download page to download more levels ("Manage Levels" button)
+
         //row 1: back button, screen title, current user overview
         //back button
         TextButton backButton = new TextButton("Back", skin);
@@ -155,7 +157,8 @@ public class LevelSelectionScreen implements Screen {
     private Table getSearchSortTable() {
         final Table table = new Table();
         Label searchLabel = new Label("Search:", skin);
-        searchBar = new TextField("Search", skin);
+        searchBar = new TextField("", skin);
+        searchBar.setMessageText("Search");
 
         Label diffLabel = new Label("Difficulty:", skin);
         difficultyDropdown = new SelectBox<>(skin);

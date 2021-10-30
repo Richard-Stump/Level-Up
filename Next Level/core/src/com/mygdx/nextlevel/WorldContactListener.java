@@ -8,7 +8,6 @@ import com.mygdx.nextlevel.screens.GameScreen;
 import java.util.ArrayList;
 
 public class WorldContactListener implements ContactListener {
-
     public Player player;
     public Enemy enemy;
     public Checkpoint checkpoint;
@@ -21,8 +20,6 @@ public class WorldContactListener implements ContactListener {
     public boolean touchedPowerUp;
     public boolean landed;
     public boolean jumped;
-
-
     public WorldContactListener (GameScreen gameScreen) {
         this.player = gameScreen.getPlayer();
         this.enemy = gameScreen.getEnemy();
@@ -44,7 +41,7 @@ public class WorldContactListener implements ContactListener {
 //					System.out.println("Touching object");
             if (contact.getFixtureB().getBody().getUserData().equals(checkpoint) && !checkpoint.isTriggered()) {
                 checkpoint.setTriggered(true);
-                checkpoint.changeSpawn(player);
+                checkpoint.changeSpawn();
                 checkpoint.setTexture(new Texture("checkpoint.png"));
                 player.addLife(1);
                 System.out.println(player.getLives());

@@ -1,14 +1,11 @@
 package com.mygdx.nextlevel.dbHandlers;
 
-import com.mygdx.nextlevel.LevelsDBController;
-
 import java.util.Random;
 
 public class CreatedLevelsDB extends LevelsDBController {
 
     /**
-     * There's no "created" database yet, just fyi
-     * Don't use this class
+     * Constructor
      */
     public CreatedLevelsDB() {
         super("created");

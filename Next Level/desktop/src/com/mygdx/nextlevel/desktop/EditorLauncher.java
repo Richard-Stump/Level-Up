@@ -22,7 +22,6 @@ public class EditorLauncher {
     }
 }
 
-
 class EditorGame extends NextLevel {
     @Override
     public void create () {
@@ -46,4 +45,5 @@ class EditorGame extends NextLevel {
     public void dispose () {
         font.dispose();
     }
+
 }

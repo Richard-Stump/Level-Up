@@ -5,20 +5,30 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-    private static final String CONNECTION = "jdbc:sqlite:Next Level/core/src/com" +
+    //private static final String CONNECTION = ;
+    private static String url = "jdbc:sqlite:" + System.getProperty("user.dir") + "/Next Level/core/src/com" +
             "/mygdx/nextlevel/data/";
 
     public static Connection getConnection(String databaseName) throws SQLException {
-        String connAll = CONNECTION;
+        String connAll = url;
         connAll = connAll.concat(databaseName);
         connAll = connAll.concat(".sqlite");
 
         try {
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(connAll);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            url = "jdbc:sqlite:" + System.getProperty("user.dir") + "/com/mygdx/nextlevel/data/";
+            connAll = url;
+            connAll = connAll.concat(databaseName);
+            connAll = connAll.concat(".sqlite");
+            try {
+                Class.forName("org.sqlite.JDBC");
+                return DriverManager.getConnection(connAll);
+            } catch (ClassNotFoundException r) {
+                r.printStackTrace();
+            }
+            return null;
         }
-        return null;
     }
 }

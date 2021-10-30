@@ -1,5 +1,6 @@
-package com.mygdx.nextlevel;
+package com.mygdx.nextlevel.dbHandlers;
 
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.DBConnection;
 import com.mygdx.nextlevel.enums.Tag;
 
@@ -35,6 +36,7 @@ public class LevelsDBController {
     }
 
     /**
+     * Checks if the database is active and can be accessed
      *
      * @return true if not closed, false otherwise
      */
@@ -339,7 +341,7 @@ public class LevelsDBController {
     public LevelInfo searchByID(String id) {
         ResultSet resultSet;
         String sqlQuery = "SELECT * FROM " + tableName +
-                " WHERE id LIKE ?";
+                " WHERE id LIKE ?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             //add the argument

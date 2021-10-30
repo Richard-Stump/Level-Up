@@ -20,6 +20,8 @@ import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegisterScreen extends AccountList implements Screen{
 
@@ -49,6 +51,10 @@ public class RegisterScreen extends AccountList implements Screen{
     public static int buttonWidth = 170;
 
     public boolean isInfoCorrect = true;
+
+    public RegisterScreen() {
+
+    }
 
     public RegisterScreen (NextLevel game) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
@@ -138,13 +144,7 @@ public class RegisterScreen extends AccountList implements Screen{
                 pass = textPass.getText();
                 verifyPass = textVerifyPass.getText();
 
-                if (verifyPass.length() < 8 || verifyPass.length() > 16) {
-                    System.out.println("Password must be at least 8 characters and no more than 16 characters");
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must be at least 8 characters and no more than 16 characters"));
-                    isInfoCorrect = false;
-
-                }
-                //TODO: check if password contains at least one capital, number, and special character
+                //TODO: check if password contains at least one capital, number, lowercase, and special character
                 //TODO: fix bug where account is still added to arraylist (temp database) despite it not meeting requirements
 
                 //check if username or email exists already
@@ -178,15 +178,42 @@ public class RegisterScreen extends AccountList implements Screen{
 //                            }
 //                        });
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Passwords do not match"));
-
                     isInfoCorrect = false;
                 } else {
-                    Account a = new Account();
-                    a.setPassword(pass);
-                    a.setUsername(username);
-                    a.setEmail(email);
-                    //TODO: add account into database
-                    getAccList().add(a);
+                    if (username.length() < 4 || username.length() > 16) {
+                        System.out.println("Username must be at least 4 characters and no more than 16 characters");
+                        isInfoCorrect = false;
+                    }
+                    for (Account a : accList) {
+                        if (a.getUsername().equals(username)) {
+                            System.out.println("Username already exists");
+                            isInfoCorrect = false;
+                        }
+                    }
+                    if (verifyPass.length() < 8 || verifyPass.length() > 16) {
+                        System.out.println("Password must be at least 8 characters and no more than 16 characters");
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must be at least 8 characters and no more than 16 characters"));
+                        isInfoCorrect = false;
+                    }
+                    else {
+                        String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
+                        Pattern p = Pattern.compile(regex);
+                        Matcher m = p.matcher(verifyPass);
+                        if (m.matches()) {
+                            System.out.println("Password meets requirements. Account Created.");
+                            Account a = new Account();
+                            a.setPassword(pass);
+                            a.setUsername(username);
+                            a.setEmail(email);
+                            //TODO: add account into database
+                            getAccList().add(a);
+                        }
+                        else {
+                            System.out.println("Password must have upper, lower, symbol, and digit");
+                            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must have upper, lower, symbol, and digit"));
+                            isInfoCorrect = false;
+                        }
+                    }
                 }
 
                 //System.out.println(isInfoCorrect);
@@ -253,4 +280,48 @@ public class RegisterScreen extends AccountList implements Screen{
         atlas.dispose();
     }
 
+
+    public static boolean checkPasswords(String pass, String verify) {
+        if (pass.equals(verify)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean checkUsername(String user) {
+        if (user.length() < 4 || user.length() > 16) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean checkPassLength(String pass) {
+        if (pass.length() < 8 || pass.length() > 16) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean checkRegex(String pass) {
+        String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(pass);
+        if (m.matches()) {
+            return true;
+        }
+        return false;
+    }
+
+    public static void addAccount(Account a) {
+        accList.add(a);
+    }
+
+    public static boolean checkUniqueUser(String username) {
+        for (Account a : accList) {
+            if (a.getUsername().equals(username)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
