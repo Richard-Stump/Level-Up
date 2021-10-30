@@ -16,6 +16,7 @@ import com.mygdx.nextlevel.Tiles.TileMapTest;
 import com.mygdx.nextlevel.WorldContactListener;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.hud.Hud;
+import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,9 +36,10 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
     //Sprite Directions
     boolean fireballRight = true;
 
+    float shootTimer = 0f;
     Texture fireballTexture;
     Sprite fireballSprite;
-    ArrayList<Fire> fireballList = new ArrayList();
+    ArrayList<Fire> fireballList;
     HashMap<Item, String> itemToName = new HashMap<>();
 
     World world;
@@ -191,6 +193,8 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
         starBlock.setItem(star);
         fireflowerBlock.setItem(fireflower);
         oneUpItemBlock.setItem(oneUpItem);
+
+        fireballList = new ArrayList<>();
 
         //Update to screen parameters
         w /= PIXELS_TO_METERS;
@@ -431,6 +435,15 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
         batch.setProjectionMatrix(camera.combined);
         debugMatrix = batch.getProjectionMatrix().cpy().scale(PIXELS_TO_METERS, PIXELS_TO_METERS, 0);
 
+        ArrayList<Fire> fireToRemove = new ArrayList<>();
+        for (Fire f : fireballList) {
+            f.update();
+            if (f.remove) {
+                fireToRemove.add(f);
+            }
+        }
+        fireballList.removeAll(fireToRemove);
+
         batch.begin();
         batch.draw(new Texture("tempBack.png"),0, 0);
         if (drawSprite) {
@@ -470,16 +483,20 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
             }
 
 
-        int count = 0;
-        while (count < fireballList.size()) {
-            Fire curFire = fireballList.get(count);
-            curFire.update();
-//            curFire.getBody().setLinearVelocity(3.0f, 0f);
-//            curFire.getBody().setUserData(curFire);
-//            curFire.getSprite().setSize(20.f,20.f);
-            batch.draw(curFire.getSprite(), curFire.position.x, curFire.position.y);
-            count++;
-        }
+            for (Fire f : fireballList) {
+                f.render(batch);
+            }
+
+//        int count = 0;
+//        while (count < fireballList.size()) {
+//            Fire curFire = fireballList.get(count);
+//            curFire.update(delta);
+////            curFire.getBody().setLinearVelocity(3.0f, 0f);
+////            curFire.getBody().setUserData(curFire);
+////            curFire.getSprite().setSize(20.f,20.f);
+//            batch.draw(curFire.getSprite(), curFire.position.x, curFire.position.y);
+//            count++;
+//        }
 
             //Draw all items in the list
             for (Item itemIteration : itemListGame) {
@@ -623,11 +640,13 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
             drawSprite = !drawSprite;
         }
 
-        if (keycode == Input.Keys.Z) {
+        shootTimer += Gdx.graphics.getDeltaTime();
+        if (keycode == Input.Keys.Z && shootTimer >= 0.05f) {
+            shootTimer = 0f;
             if (player.getFireFlower()) {
                 if (facingRight) {
                     Fire fireball = new Fire(getPlayerLocation(), new Texture("fireball.png"), this.world, 4f);
-                    fireball.getBody().setUserData(fireball);
+//                    fireball.getBody().setUserData(fireball);
                     fireballList.add(fireball);
                     if (!fireballRight) {
                         fireball.getSprite().flip(true, false);
@@ -635,7 +654,7 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
                 } else {
                     Fire fireball = new Fire(getPlayerLocation(), new Texture("fireball.png"), this.world, -4f);
                     fireballList.add(fireball);
-                    fireball.getBody().setUserData(fireball);
+//                    fireball.getBody().setUserData(fireball);
                     if (fireballRight) {
                         fireball.getSprite().flip(true, false);
                     }

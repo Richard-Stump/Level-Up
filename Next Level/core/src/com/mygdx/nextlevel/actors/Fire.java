@@ -1,7 +1,10 @@
 package com.mygdx.nextlevel.actors;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -9,20 +12,21 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 
-public class Fire extends Actor{
+public class Fire extends Actor {
     public Vector2 position;
     public float v;
+    public boolean remove = false;
 
-    public Fire(Vector2 playerLocation, Texture texture, World world, float velocity) {
+    public Fire(Vector2 playerLocation, Texture texture, World world, float v) {
         this.world = world;
         this.sprite = new Sprite(texture);
         this.position = playerLocation;
         this.sprite.setSize(20.0F, 20.0F);
-        super.setPosition(position.x, position.y);
-        super.setBody(BodyDef.BodyType.StaticBody);
-        setShape();
-        setFixture();
-        v = velocity;
+        this.v = v;
+//        super.setPosition(position.x, position.y);
+//        super.setBody(BodyDef.BodyType.DynamicBody);
+//        setShape();
+//        setFixture();
     }
 
     public void setShape() {
@@ -43,7 +47,14 @@ public class Fire extends Actor{
     }
 
     public void update() {
-        this.position.x += v;
+        position.x += v;
+        if (position.x > Gdx.graphics.getWidth()) {
+            remove = true;
+        }
 
+    }
+
+    public void render(SpriteBatch batch) {
+        batch.draw(this.getSprite(),position.x, position.y);
     }
 }
