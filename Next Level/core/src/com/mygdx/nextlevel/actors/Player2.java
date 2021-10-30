@@ -3,22 +3,25 @@ package com.mygdx.nextlevel.actors;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
+import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class Player2 extends Actor2 {
     protected Vector2 position;
+    protected Vector2 respawnPosition;
     protected Vector2 velocity;
     protected BoxCollider boxCollider;
 
-    private boolean canJump = false;
+    protected int lifeCount;
+    protected Item2 heldItem;
 
-    public Player2(float x, float y) {
-        super(x, y, 1.0f, 1.0f);
+    private boolean canJump = false;
+    private boolean respawn = false;
+
+    public Player2(GameScreen2 screen, float x, float y) {
+        super(screen, x, y, 1.0f, 1.0f);
 
         boxCollider = new BoxCollider(this,
                 new Vector2(x, x),
@@ -26,11 +29,19 @@ public class Player2 extends Actor2 {
                 true);
 
         position = boxCollider.getPosition();
+        respawnPosition = new Vector2(position);
+
+        lifeCount = 3;
 
         setRegion(new Texture("goomba.png"));
     }
 
     public void update(float delta) {
+        if(respawn) {
+            boxCollider.setPosition(respawnPosition);
+            respawn = false;
+        }
+
         Vector2 dir = new Vector2();
         dir.y = boxCollider.getVelocity().y;
 
@@ -56,11 +67,38 @@ public class Player2 extends Actor2 {
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT)) {
-            System.out.println("Player die");
+            lifeCount--;
+            respawn = true;
+
+            if(lifeCount < 0)
+                screen.setShouldReset(true);
         }
 
         if(side == Side.BOTTOM) {
             canJump = true;
         }
+
+        if(other instanceof Item2) {
+            lifeCount++;
+            heldItem = (Item2)other;
+        }
+
+    }
+
+    public void onTrigger(Actor2 other, Side side) {
+        if(other instanceof CheckPoint2) {
+            respawnPosition = ((CheckPoint2)other).collider.getPosition();
+        }
+    }
+
+    public int getLives() { return lifeCount; }
+    public Item2 getHeldItem() { return heldItem; }
+
+    public void setRespawnLocation(Vector2 pos) {
+        respawnPosition = new Vector2(pos.x, pos.y);
+    }
+
+    public void dispose() {
+        boxCollider.dispose();
     }
 }

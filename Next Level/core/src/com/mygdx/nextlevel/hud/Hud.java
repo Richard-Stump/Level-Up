@@ -104,6 +104,7 @@ public class Hud {
 
         stage.addActor(table);
     }
+
     public void update(float delta, Player player, HashMap<Item, String> map) {
         numLivesLabel.setText(String.format("%d", player.getLives()));
         if (player.getHeldItem() != null) {

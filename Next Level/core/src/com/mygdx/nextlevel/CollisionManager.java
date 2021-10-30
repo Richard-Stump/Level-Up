@@ -3,6 +3,8 @@ package com.mygdx.nextlevel;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
+import java.util.LinkedList;
+
 /**
  * This class is a singleton which manages the collision detection system. It handles the Box2D world.
  *

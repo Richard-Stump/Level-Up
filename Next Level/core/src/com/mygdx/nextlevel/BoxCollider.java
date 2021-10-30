@@ -46,19 +46,29 @@ public class BoxCollider {
     protected Fixture[]         sensorFixtures;
     protected PolygonShape[]    sensorShapes;
 
+    public boolean isTrigger;
     public boolean debugPrint = false;
 
-    public BoxCollider(Vector2 pos, Vector2 size, boolean dynamic) {
+    public BoxCollider(Vector2 pos, Vector2 size, boolean dynamic, boolean isTrigger) {
         this.owner = null;
+        this.isTrigger = isTrigger;
 
         setupBodies(dynamic, pos);
         setupShapes(pos, size);
-        setupFixtures();
+        setupFixtures(isTrigger);
+    }
+
+    public BoxCollider(Vector2 pos, Vector2 size, boolean dynamic) {
+        this(pos, size, dynamic, false);
+    }
+
+    public BoxCollider(Actor2 owner, Vector2 pos, Vector2 size, boolean dynamic, boolean isTrigger) {
+        this(pos, size, dynamic,  isTrigger);
+        this.owner = owner;
     }
 
     public BoxCollider(Actor2 owner, Vector2 pos, Vector2 size, boolean dynamic) {
-        this(pos, size, dynamic);
-        this.owner = owner;
+        this(owner, pos, size, dynamic, false);
     }
 
     protected void setupBodies(boolean dynamic, Vector2 position) {
@@ -117,16 +127,18 @@ public class BoxCollider {
      * Sets up the fixtures for the collider. The main one is used for actual collision, and the edges are
      * sensors that detect which side the collision occured
      */
-    protected void setupFixtures() {
+    protected void setupFixtures(boolean isTrigger) {
         //setup the main fixture
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.density = 100.0f;
         fixtureDef.friction = 0.0f;
         fixtureDef.restitution = 0.0f;
         fixtureDef.shape = mainShape;
-        fixtureDef.isSensor = false;
+        fixtureDef.isSensor = isTrigger;
         fixture = body.createFixture(fixtureDef);
         fixture.setUserData(this);
+
+        mainShape.dispose();
 
         // Set up the edge fixtures for sensing. They should not provide any mass, density, or restitution.
         sensorFixtures = new Fixture[4];
@@ -140,6 +152,7 @@ public class BoxCollider {
 
             sensorFixtures[i] = body.createFixture(edgeFixDef);
             sensorFixtures[i].setUserData(this);
+            sensorShapes[i].dispose();
         }
     }
 
@@ -152,20 +165,24 @@ public class BoxCollider {
         if(owner == null)
             return;
 
-        Actor2 otherActor = ((BoxCollider)otherFixture.getUserData()).owner;
+        Side side = Side.NONE;
 
-        if(thisFixture == sensorFixtures[0]) {
-            owner.onCollision(otherActor, Side.RIGHT);
-        }
-        else if(thisFixture == sensorFixtures[1]) {
-            owner.onCollision(otherActor, Side.TOP);
-        }
-        else if(thisFixture == sensorFixtures[2]) {
-            owner.onCollision(otherActor, Side.LEFT);
-        }
-        else if(thisFixture == sensorFixtures[3]) {
-            owner.onCollision(otherActor, Side.BOTTOM);
-        }
+        BoxCollider otherCollider = (BoxCollider)otherFixture.getUserData();
+        Actor2 otherActor = otherCollider.owner;
+
+        if(thisFixture == sensorFixtures[0])
+            side = Side.RIGHT;
+        else if(thisFixture == sensorFixtures[1])
+            side = Side.TOP;
+        else if(thisFixture == sensorFixtures[2])
+            side = Side.LEFT;
+        else if(thisFixture == sensorFixtures[3])
+            side = Side.BOTTOM;
+
+        if(otherCollider.isTrigger)
+            owner.onTrigger(otherActor, side);
+        else
+            owner.onCollision(otherActor, side);
     }
 
     /**
@@ -176,9 +193,18 @@ public class BoxCollider {
         body.setLinearVelocity(v);
     }
 
-    public Vector2 getVelocity() { return body.getLinearVelocity().scl(1.0f); }
+    public Vector2 getVelocity() { return body.getLinearVelocity(); }
 
     public Vector2 getPosition() {
         return body.getPosition().scl(1.0f);
+    }
+
+    public void setPosition(Vector2 vec) {
+        body.setTransform(vec, 0.0f);
+    }
+
+    public void dispose() {
+        body.getWorld().destroyBody(body);
+        body.setUserData(null);
     }
 }
