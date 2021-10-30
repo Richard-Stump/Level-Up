@@ -28,9 +28,6 @@ public class Tilemap{
     public TiledMapRenderer     tiledMapRenderer;
     public OrthographicCamera   orthographicCamera;
 
-    /*public Tilemap(final FileHandle tsConfigFile) {
-        init(tsConfigFile);
-    }*/
 
     public Tilemap() {
         initMap();
@@ -56,7 +53,6 @@ public class Tilemap{
         map = tm.createMap(tmFile);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(map);
 
-
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -72,7 +68,7 @@ public class Tilemap{
         String[] info = input.split("\\r?\\n");
         mapHeight = Integer.parseInt(info[0]);
         mapWidth = Integer.parseInt(info[1]);
-        final int[][] tiles = new int[mapHeight][mapWidth];
+        tiles = new int[mapHeight][mapWidth];
         for (int i = 2; i < info.length; i++) {
             String[] buff = info[i].split(" ");
             for (int j = 0; j < mapWidth; j++) {
@@ -81,38 +77,10 @@ public class Tilemap{
         }
     }
 
-    /*
-    private void init(FileHandle tsConfigFile){
-        //load config file
-        final Json json = new Json();
-        final TileSetConfig config = json.fromJson(TileSetConfig.class, tsConfigFile);
-
-        final FileHandle tilesTexHandle = Gdx.files.internal(config.getTexPath());
-        if(!tilesTexHandle.exists() || tilesTexHandle.isDirectory()){
-            throw new IllegalArgumentException("Tileset Texture Path Invalid");
-        }
-
-        tileSize = config.getTileSize();
-        if(tileSize != 64){
-            throw new IllegalArgumentException("Tile Size Invalid");
-        }
-
-        tilesTexture = new Texture(config.getTexPath());
-
-        try {
-            initMap();
-        } catch (Exception e){
-            tilesTexture.dispose();
-            throw e;
-        }
-    }
-*/
 
     private void initMap(){
         final TextureRegion[][] tileSplit = TextureRegion.split(tilesTexture, tileSize, tileSize);
         final int rows = tileSplit.length;
-
-
 
         //Create a tileset
         tileSet = new TiledMapTileSet();
