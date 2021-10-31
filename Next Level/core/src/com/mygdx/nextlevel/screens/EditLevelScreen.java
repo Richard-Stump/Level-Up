@@ -102,6 +102,7 @@ public class EditLevelScreen implements Screen {
     public void show() {
         //Stage should control input:
         Gdx.input.setInputProcessor(stage);
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
 
         //back button
         TextButton backButton = new TextButton("Back", VisUI.getSkin());

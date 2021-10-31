@@ -226,7 +226,7 @@ public class RegisterScreen extends AccountList implements Screen{
                             }
 
                             //successful add to database, user is automatically set to main menu
-                            ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+                            ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
                         }
                         else {
                             System.out.println("Password must have upper, lower, symbol, and digit");

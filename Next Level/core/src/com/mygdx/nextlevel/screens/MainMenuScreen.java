@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.HoverListener;
 import org.w3c.dom.Text;
 
 public class MainMenuScreen implements Screen {
@@ -69,24 +70,24 @@ public class MainMenuScreen implements Screen {
         //mainTable.top();
 
         //debug lines
-        mainTable.setDebug(true);
-        buttonTable.setDebug(true);
+        //mainTable.setDebug(true);
+        //buttonTable.setDebug(true);
 
         //Create buttons
         TextButton playButton = new TextButton("Play", skin);
         TextButton createLevelButton = new TextButton("Create Level", skin);
         TextButton selectLevelButton = new TextButton("Select Level", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
+        TextButton logoutButton = new TextButton("Logout", skin);
         TextButton exitButton = new TextButton("Exit", skin);
 
         buttonTable.add(playButton).width(buttonWidth);
-        buttonTable.row();
         buttonTable.add(createLevelButton).width(buttonWidth);
         buttonTable.row();
         buttonTable.add(selectLevelButton).width(buttonWidth);
-        buttonTable.row();
         buttonTable.add(tutorialButton).width(buttonWidth);
         buttonTable.row();
+        buttonTable.add(logoutButton).width(buttonWidth);
         buttonTable.add(exitButton).width(buttonWidth);
 
         //Add buttons to table
@@ -120,30 +121,42 @@ public class MainMenuScreen implements Screen {
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen(game));
             }
         });
+        playButton.addListener(new HoverListener());
         createLevelButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new CreateLevelMenuScreen(game));
             }
         });
+        createLevelButton.addListener(new HoverListener());
         selectLevelButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new LevelSelectionScreen(game));
             }
         });
+        selectLevelButton.addListener(new HoverListener());
         tutorialButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new TutorialScreen(game));
             }
         });
+        tutorialButton.addListener(new HoverListener());
+        logoutButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+            }
+        });
+        logoutButton.addListener(new HoverListener());
         exitButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
             }
         });
+        exitButton.addListener(new HoverListener());
 
         //Set table to fill stage
         mainTable.setFillParent(true);
