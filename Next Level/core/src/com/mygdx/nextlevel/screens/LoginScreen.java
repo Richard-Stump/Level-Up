@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Account;
@@ -55,6 +56,9 @@ public class LoginScreen extends AccountList implements Screen {
     public boolean loginSuccessful = false;
     public boolean incorrectPass = false;
     public ServerDBHandler db;
+    public Dialog errorDialog;
+
+    public float countdown;
 
     public LoginScreen() {}
 
@@ -95,6 +99,8 @@ public class LoginScreen extends AccountList implements Screen {
         //initial information
         textUsername.setMessageText("Username");
         textPass.setMessageText("Password");
+        textPass.setPasswordMode(true);
+        textPass.setPasswordCharacter('*');
 
         //buttons
         loginButton = new TextButton("Login", skin);
@@ -180,16 +186,51 @@ public class LoginScreen extends AccountList implements Screen {
                         ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
 
                     } else if (ret.equals("")) {
+                        errorDialog = new Dialog("Warning", skin);
+                        errorDialog.text("Incorrect Password. Please try again");
+                        errorDialog.show(stage);
+
                         textPass.setMessageText("Password");
                         System.out.println("Password is incorrect");
                     }
                 } else {
                     System.out.println("No account linked to this username");
+//                    errorDialog = new Dialog("Warning", skin) {
+//                        protected void result(Object object)
+//                        {
+//                            System.out.println("Option: " + object);
+//                            Timer.schedule(new Timer.Task()
+//                            {
+//
+//                                @Override
+//                                public void run()
+//                                {
+//                                    errorDialog.show(stage);
+//                                }
+//                            }, 1);
+//                        }
+//                    };
+//
+//                    Timer.schedule(new Timer.Task()
+//                    {
+//                        @Override
+//                        public void run()
+//                        {
+//                            errorDialog.show(stage);
+//                            //errorDialog.cancel();
+//
+//                            errorDialog.hide();
+//                        }
+//                    }, 1);
+//
+//                    errorDialog.text("No account linked to this username");
+                    //errorDialog.show(stage);
                 }
 
 
             }
         });
+        loginButton.addListener(new HoverListener());
 
         table.setFillParent(true);
         stage.addActor(table);
@@ -201,6 +242,7 @@ public class LoginScreen extends AccountList implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stage.act();
+        //errorDialog.act(delta);
         stage.draw();
     }
 

@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 
 import java.util.ArrayList;
@@ -95,6 +96,12 @@ public class RegisterScreen extends AccountList implements Screen{
         textPass.setMessageText("Password");
         textVerifyPass.setMessageText("Renter Password");
 
+        //password mode
+        textPass.setPasswordMode(true);
+        textVerifyPass.setPasswordMode(true);
+        textPass.setPasswordCharacter('*');
+        textVerifyPass.setPasswordCharacter('*');
+
         //buttons
         TextButton back = new TextButton("I have an account!", skin);
         TextButton signUp = new TextButton("Sign Up", skin);
@@ -134,6 +141,8 @@ public class RegisterScreen extends AccountList implements Screen{
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
             }
         });
+        back.addListener(new HoverListener());
+        signUp.addListener(new HoverListener());
         signUp.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
