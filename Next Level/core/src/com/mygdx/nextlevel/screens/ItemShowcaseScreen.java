@@ -26,11 +26,11 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
     SpriteBatch batch;
     Player player;
     Enemy enemy;
-    Block block, mushroomBlock, slowItemBlock, speedItemBlock, starBlock, fireflowerBlock, oneUpItemBlock;
+    Block block, mushroomBlock, slowItemBlock, speedItemBlock, starBlock, fireflowerBlock, oneUpItemBlock, lifeStealBlock;
     Hud hud;
 
     //Items
-    Item item, mushroom, slowItem, speedItem, star, fireflower, oneUpItem;
+    Item item, mushroom, slowItem, speedItem, star, fireflower, oneUpItem, lifeStealItem;
     int itemIndex;
 
     //Sprite Directions
@@ -72,6 +72,7 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
     float speedLeft = -3f;
     float slowTime = 0f;
     float starTime = 0f;
+    float lifeStealTime = 0f;
 
     float torque = 0.0f;
     boolean drawSprite = true;
@@ -138,10 +139,15 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
         blockListUserData.add(starBlock.getBody().getUserData());
 
         //Fireflower Block
-        Vector2 fireflowerBlockSpawn = new Vector2(w * 0.62f, 32 + 2*64);
-        this.fireflowerBlock = new Block(new Texture("item-block.png"), this.world, fireflowerBlockSpawn, 10f, 0f, (short) (0x1 << (bottom - 1)), true);
-        blockList.add(fireflowerBlock);
-        blockListUserData.add(fireflowerBlock.getBody().getUserData());
+//        Vector2 fireflowerBlockSpawn = new Vector2(w * 0.62f, 32 + 2*64);
+//        this.fireflowerBlock = new Block(new Texture("item-block.png"), this.world, fireflowerBlockSpawn, 10f, 0f, (short) (0x1 << (bottom - 1)), true);
+//        blockList.add(fireflowerBlock);
+//        blockListUserData.add(fireflowerBlock.getBody().getUserData());
+
+        Vector2 lifeStealBlockSpawn = new Vector2(w * 0.62f, 32 + 2*64);
+        this.lifeStealBlock = new Block(new Texture("item-block.png"), this.world, lifeStealBlockSpawn, 10f, 0f, (short) (0x1 << (bottom - 1)), true);
+        blockList.add(lifeStealBlock);
+        blockListUserData.add(lifeStealBlock.getBody().getUserData());
 
         //One-Up Block
         Vector2 oneUpItemBlockSpawn = new Vector2(w * 0.75f, 32 + 2*64);
@@ -176,10 +182,15 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
 
 
         //Fireflower Intiialization
-        Vector2 fireFlowerSpawn = new Vector2(w * 0.62f, -32 + 64*4);
-        this.fireflower = new Item(new Texture("fireflower.png"), this.world, fireFlowerSpawn, 0f, 0f);
-        itemToName.put(fireflower, "fireflower.png");
-        itemList.add(fireflower);
+//        Vector2 fireFlowerSpawn = new Vector2(w * 0.62f, -32 + 64*4);
+//        this.fireflower = new Item(new Texture("fireflower.png"), this.world, fireFlowerSpawn, 0f, 0f);
+//        itemToName.put(fireflower, "fireflower.png");
+//        itemList.add(fireflower);
+
+        Vector2 lifeStealSpawn = new Vector2(w * 0.62f, -32 + 64*4);
+        this.lifeStealItem = new Item(new Texture("lifesteal-mushroom.png"), this.world, lifeStealSpawn, 0f, 0f);
+        itemToName.put(lifeStealItem, "lifesteal-mushroom.png");
+        itemList.add(lifeStealItem);
 
         //One Up Initialization
         Vector2 oneUpSpawn = new Vector2(w * 0.75f, -32 + 64*4);
@@ -191,7 +202,8 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
         slowItemBlock.setItem(slowItem);
         speedItemBlock.setItem(speedItem);
         starBlock.setItem(star);
-        fireflowerBlock.setItem(fireflower);
+//        fireflowerBlock.setItem(fireflower);
+        lifeStealBlock.setItem(lifeStealItem);
         oneUpItemBlock.setItem(oneUpItem);
 
         fireballList = new ArrayList<>();
@@ -284,13 +296,17 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
                         } else if (item.equals(speedItem)) {
                             player.setSpeedItem(true);
                         } else if (item.equals(oneUpItem)) {
-                            player.addLife(1);
+                            player.setOneUpItem(true);
                         } else if (item.equals(star)) {
                             player.setHeldItem(star);
-                        } else if (item.equals(fireflower)) {
-                            player.setFireflower(true);
-                            player.setPowerUp(true);
-                            itemConsumed = true;
+                        }
+//                        else if (item.equals(fireflower)) {
+//                            player.setFireflower(true);
+//                            player.setPowerUp(true);
+//                            itemConsumed = true;
+//                        }
+                        else if (item.equals(lifeStealItem)) {
+                            player.setHeldItem(lifeStealItem);
                         } else if (item.equals(mushroom)) {
                             touchedPowerUp = true;
                             player.setPowerUp(true);
@@ -427,7 +443,8 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
         slowItemBlock.getSprite().setPosition((slowItemBlock.getBody().getPosition().x * PIXELS_TO_METERS) - slowItemBlock.getSprite().getWidth()/2, (slowItemBlock.getBody().getPosition().y * PIXELS_TO_METERS) - slowItemBlock.getSprite().getHeight()/2);
         speedItemBlock.getSprite().setPosition((speedItemBlock.getBody().getPosition().x * PIXELS_TO_METERS) - speedItemBlock.getSprite().getWidth()/2, (speedItemBlock.getBody().getPosition().y * PIXELS_TO_METERS) - speedItemBlock.getSprite().getHeight()/2);
         starBlock.getSprite().setPosition((starBlock.getBody().getPosition().x * PIXELS_TO_METERS) - starBlock.getSprite().getWidth()/2, (starBlock.getBody().getPosition().y * PIXELS_TO_METERS) - starBlock.getSprite().getHeight()/2);
-        fireflowerBlock.getSprite().setPosition((fireflowerBlock.getBody().getPosition().x * PIXELS_TO_METERS) - fireflowerBlock.getSprite().getWidth()/2, (fireflowerBlock.getBody().getPosition().y * PIXELS_TO_METERS) - fireflowerBlock.getSprite().getHeight()/2);
+//        fireflowerBlock.getSprite().setPosition((fireflowerBlock.getBody().getPosition().x * PIXELS_TO_METERS) - fireflowerBlock.getSprite().getWidth()/2, (fireflowerBlock.getBody().getPosition().y * PIXELS_TO_METERS) - fireflowerBlock.getSprite().getHeight()/2);
+        lifeStealBlock.getSprite().setPosition((lifeStealBlock.getBody().getPosition().x * PIXELS_TO_METERS) - lifeStealBlock.getSprite().getWidth()/2, (lifeStealBlock.getBody().getPosition().y * PIXELS_TO_METERS) - lifeStealBlock.getSprite().getHeight()/2);
         oneUpItemBlock.getSprite().setPosition((oneUpItemBlock.getBody().getPosition().x * PIXELS_TO_METERS) - oneUpItemBlock.getSprite().getWidth()/2, (oneUpItemBlock.getBody().getPosition().y * PIXELS_TO_METERS) - oneUpItemBlock.getSprite().getHeight()/2);
 
         Gdx.gl.glClearColor(1,1,1,1);
@@ -459,9 +476,13 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
                     player.setTexture(new Texture("paragoomba.png"));
                 } else if (player.getStar()) {
                     player.setTexture(new Texture("stargoomba.png"));
-                } else if (player.getFireFlower()) {
-                    player.setTexture(new Texture("firegoomba.png"));
-                } else {
+                }
+//                else if (player.getFireFlower()) {
+//                    player.setTexture(new Texture("firegoomba.png"));
+                else if (player.getLifeStealItem()) {
+                    player.setTexture(new Texture("lifesteal-goomba.png"));
+                }
+                else {
                     player.setTexture(new Texture("goomba.png"));
                 }
                 batch.draw(player.getSprite(), player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getOriginX(), player.getSprite().getOriginY(), player.getSprite().getWidth(), player.getSprite().getHeight(), player.getSprite().getScaleX(), player.getSprite().getScaleY(), player.getSprite().getRotation());
@@ -527,6 +548,14 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
             }
         }
 
+        if (player.getLifeStealItem()) {
+            lifeStealTime += Gdx.graphics.getDeltaTime();
+            if (lifeStealTime > 5f) {
+                player.setLifeStealItem(false);
+            }
+
+        }
+
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             if (player.getSlowItem()) {
@@ -562,6 +591,12 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
         debugRenderer.render(world, debugMatrix);
         if (deleteList.size() > 0) {
             for (int i = 0; i < deleteList.size(); i++) {
+                if (deleteList.get(i) == oneUpItem.getBody() && player.getOneUpItem()) {
+                    player.addLife(1);
+                    player.setOneUpItem(false);
+                } else if (deleteList.get(i) == enemy.getBody() && player.getLifeStealItem()) {
+                    player.addLife(1);
+                }
                 world.destroyBody(deleteList.get(i));
                 deleteList.remove(i);
             }
@@ -663,11 +698,14 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
         }
 
         if (keycode == Input.Keys.X) {
-            System.out.println(star);
-            System.out.println(player.getHeldItem());
+//            System.out.println(star);
+//            System.out.println(player.getHeldItem());
             if (player.getHeldItem() == star) {
                 player.setHeldItem(null);
                 player.setStar(true);
+            } else if (player.getHeldItem() == lifeStealItem) {
+                player.setHeldItem(null);
+                player.setLifeStealItem(true);
             }
         }
 
