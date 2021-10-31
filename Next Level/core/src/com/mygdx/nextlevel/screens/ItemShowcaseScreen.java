@@ -16,7 +16,7 @@ import com.mygdx.nextlevel.Tiles.TileMapTest;
 import com.mygdx.nextlevel.WorldContactListener;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.hud.Hud;
-import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
+//import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
 
 import java.util.ArrayList;
 import java.util.HashMap;

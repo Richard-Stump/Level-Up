@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.kotcrab.vis.ui.widget.tabbedpane.Tab;
 import com.mygdx.nextlevel.Level;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
@@ -61,6 +62,8 @@ public class LevelSelectionScreen implements Screen {
     private Table mainTable;
     private VerticalGroup levelVerticalGroup;
 
+    public TextButton searchButton;
+
     //search parameters:
     private TextField searchBar;
     private SelectBox<Difficulty> difficultyDropdown;
@@ -84,7 +87,7 @@ public class LevelSelectionScreen implements Screen {
         stage = new Stage(viewport, batch);
 
         dbDownloaded = new DownloadedLevelsDB();
-        selectedLevel = new Label("Select a level", skin);
+        selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";
     }
 
@@ -95,7 +98,7 @@ public class LevelSelectionScreen implements Screen {
         mainTable = new Table();
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
-        mainTable.setDebug(true);
+        //mainTable.setDebug(true);
 
         //TODO: put button somewhere that takes the user to a download page to download more levels ("Manage Levels" button)
 
@@ -117,17 +120,25 @@ public class LevelSelectionScreen implements Screen {
         //add stuff here for user info
 
         mainTable.add(backButton);
-        mainTable.add(levelSelectLabel);
-        mainTable.add(userInfo);
+        mainTable.add(levelSelectLabel).expandX();
+        mainTable.add(userInfo).width(200);
+        mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
 
 
         //row 2: empty placeholder, scrollable table with levels, sorting box
 
         //populate a table full of information
+        Table infoTable = new Table();
         levelVerticalGroup = getLevelVerticalGroup(new ArrayList<>(dbDownloaded.sortByTitle()));
-        levelVerticalGroup.top();
-        levelVerticalGroup.padRight(20);
+        System.out.println(levelVerticalGroup.getPrefWidth());
+        levelVerticalGroup.expand();
+
+        //levelVerticalGroup.setWidth(500);
+        //levelVerticalGroup.top();
+        //levelVerticalGroup.padRight(20);
+        //infoTable.setDebug(true);
+        //infoTable.add(levelVerticalGroup).expandX();
 
         scrollPane = new ScrollPane(levelVerticalGroup, skin);
         scrollPane.setForceScroll(true, true);
@@ -146,11 +157,11 @@ public class LevelSelectionScreen implements Screen {
         playButton.addListener(playLevel());
 
         mainTable.add();
-        mainTable.add(selectedLevel).left();
-        mainTable.add(playButton);
+        mainTable.add(selectedLevel).left().padBottom(20);
+        mainTable.add(playButton).width(150).padBottom(20);
 
         //end
-
+        mainTable.setFillParent(true);
         stage.addActor(mainTable);
     }
 
@@ -158,7 +169,7 @@ public class LevelSelectionScreen implements Screen {
         final Table table = new Table();
         Label searchLabel = new Label("Search:", skin);
         searchBar = new TextField("", skin);
-        searchBar.setMessageText("Search");
+        searchBar.setMessageText("By Level Name, Author");
 
         Label diffLabel = new Label("Difficulty:", skin);
         difficultyDropdown = new SelectBox<>(skin);
@@ -174,16 +185,16 @@ public class LevelSelectionScreen implements Screen {
 
         //TODO: add search by (star) rating
 
-        TextButton searchButton = new TextButton("Search", skin);
+        searchButton = new TextButton("Search", skin);
         searchButton.addListener(searchButton());
 
-        table.add(searchLabel);
+        table.add(searchLabel).padBottom(10);
         table.row();
-        table.add(searchBar);
+        table.add(searchBar).padBottom(20).width(200);
         table.row();
         table.add(diffLabel);
         table.row();
-        table.add(difficultyDropdown);
+        table.add(difficultyDropdown).padBottom(10).width(150);
         table.row();
         table.add(tagLabel);
         table.row();
@@ -193,17 +204,19 @@ public class LevelSelectionScreen implements Screen {
             table.row();
         }
 
-        table.add(searchButton);
+        table.add(searchButton).padTop(20).width(150);
         table.row();
         return table;
     }
 
     private VerticalGroup getLevelVerticalGroup(ArrayList<LevelInfo> levels) {
         VerticalGroup vGroup = new VerticalGroup();
+        //vGroup.setWidth(500);
         //columns: {image}, {title, author, difficulty, tags}, empty space, {rating, play count}
         for (LevelInfo levelInfo: levels) {
             String id = levelInfo.getId();
             HorizontalGroup levelGroup = new HorizontalGroup();
+            //levelGroup.setWidth(400);
 
             levelGroup.addListener(selectLevel(levelGroup, id));
 
