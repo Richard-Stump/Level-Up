@@ -125,7 +125,7 @@ public class LoginScreen extends AccountList implements Screen {
         //table.row();
         //table.add(new Label("", skin)).width(300);
         table.row();
-        table.add(welcomeLabel).padBottom(textBoxBottomPadding);
+        table.add(welcomeLabel).padBottom(textBoxBottomPadding + 25);
         table.row();
         table.add(textFieldTable);
         table.row();
@@ -186,9 +186,9 @@ public class LoginScreen extends AccountList implements Screen {
                         ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
 
                     } else if (ret.equals("")) {
-                        errorDialog = new Dialog("Warning", skin);
-                        errorDialog.text("Incorrect Password. Please try again");
-                        errorDialog.show(stage);
+//                        errorDialog = new Dialog("Warning", skin);
+//                        errorDialog.text("Incorrect Password. Please try again");
+//                        errorDialog.show(stage);
 
                         textPass.setMessageText("Password");
                         System.out.println("Password is incorrect");

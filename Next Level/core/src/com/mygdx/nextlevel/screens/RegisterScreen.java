@@ -115,7 +115,7 @@ public class RegisterScreen extends AccountList implements Screen{
 
         table.add(title).colspan(2).padBottom(textBoxBottomPadding);
         table.row();
-        table.add(welcome).colspan(2).padBottom(textBoxBottomPadding);
+        table.add(welcome).colspan(2).padBottom(textBoxBottomPadding + 20);
         table.row();
         textFieldTable.add(textUsername).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
         textFieldTable.row();
@@ -142,7 +142,6 @@ public class RegisterScreen extends AccountList implements Screen{
             }
         });
         back.addListener(new HoverListener());
-        signUp.addListener(new HoverListener());
         signUp.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -214,6 +213,7 @@ public class RegisterScreen extends AccountList implements Screen{
                         Matcher m = p.matcher(verifyPass);
                         if (m.matches()) {
                             System.out.println("Password meets requirements. Account Created.");
+
                             if (isInfoCorrect) {
                                 Account a = new Account(username, pass, email);
 //                                a.setPassword(pass);
@@ -224,6 +224,9 @@ public class RegisterScreen extends AccountList implements Screen{
                                 db.addUser(a);
 
                             }
+
+                            //successful add to database, user is automatically set to main menu
+                            ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
                         }
                         else {
                             System.out.println("Password must have upper, lower, symbol, and digit");
@@ -258,6 +261,7 @@ public class RegisterScreen extends AccountList implements Screen{
                 db.closeConnection();
             }
         });
+        signUp.addListener(new HoverListener());
 
     }
 

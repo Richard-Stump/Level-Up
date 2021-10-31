@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.HoverListener;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -76,6 +78,7 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
 
         TextButton enterButton = new TextButton("Request", skin);
         TextButton backButton = new TextButton("Back", skin);
+        Label regButton = new Label("No account? Register for free", skin);
 
         //stacking widgets for layout
         Stack mainStack = new Stack();
@@ -87,7 +90,9 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
         overlay.row();
         overlay.add(new Label("", skin)).width(350).height(25);
         overlay.row();
-        overlay.add(usernameText).width(textBoxWidth).left().padLeft(13).padBottom(16);
+        overlay.add(usernameText).width(textBoxWidth).left().padLeft(13).padBottom(5);
+        overlay.row();
+        overlay.add(regButton).right().padRight(17);
         mainStack.add(overlay);
 
         table.add(title).padBottom(textBoxBottomPadding).colspan(2);
@@ -101,12 +106,21 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
         passChanged = false;
 
         //click listeners
+        regButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new RegisterScreen(game));
+            }
+        });
+        regButton.addListener(new HoverListener());
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
             }
         });
+        backButton.addListener(new HoverListener());
         enterButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -126,6 +140,7 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
                 }
             }
         });
+        enterButton.addListener(new HoverListener());
 
         table.setFillParent(true);
         stage.addActor(table);
