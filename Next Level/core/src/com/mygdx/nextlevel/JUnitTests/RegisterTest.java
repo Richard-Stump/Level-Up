@@ -121,10 +121,8 @@ public final class RegisterTest extends RegisterScreen {
         String user = "nextlevel";
         String pass = "testPass#1";
         String verify = "testPass#1";
-        Account a = new Account();
         if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
-            a.setUsername(user);
-            a.setPassword(pass);
+            Account a = new Account(user, pass, "");
             addAccount(a);
         }
         TestOutputHelper.setResult("checkAccountAdded", 1, accList.size());
@@ -136,10 +134,8 @@ public final class RegisterTest extends RegisterScreen {
         String user = "nextlevel";
         String pass = "testPass#1";
         String verify = "testPass1";
-        Account a = new Account();
         if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
-            a.setUsername(user);
-            a.setPassword(pass);
+            Account a = new Account(user, pass, "");
             addAccount(a);
         }
         TestOutputHelper.setResult("checkAccountNotAdded", 0, accList.size());
@@ -151,10 +147,9 @@ public final class RegisterTest extends RegisterScreen {
         String user = "nextlevel";
         String pass = "testPass#1";
         String verify = "testPass#1";
-        Account a = new Account();
+
         if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
-            a.setUsername(user);
-            a.setPassword(pass);
+            Account a = new Account(user, pass, "");
             addAccount(a);
         }
         String newUser = "levelup";
@@ -167,10 +162,9 @@ public final class RegisterTest extends RegisterScreen {
         String user = "nextlevel";
         String pass = "testPass#1";
         String verify = "testPass#1";
-        Account a = new Account();
+
         if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
-            a.setUsername(user);
-            a.setPassword(pass);
+            Account a = new Account(user, pass, "");
             addAccount(a);
         }
         String newUser = "nextlevel";

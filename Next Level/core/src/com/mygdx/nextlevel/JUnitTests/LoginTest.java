@@ -9,12 +9,8 @@ public class LoginTest extends LoginScreen {
     @Before
     public void init() {
         accList.clear();
-        Account a = new Account();
-        Account b = new Account();
-        a.setUsername("nextlevel1");
-        a.setPassword("testPass#1");
-        b.setUsername("nextlevel2");
-        b.setPassword("testPass#2");
+        Account a = new Account("nextlevel1", "testPass#1", "");
+        Account b = new Account("nextlevel2", "testPass#2", "");
         accList.add(a);
         accList.add(b);
     }

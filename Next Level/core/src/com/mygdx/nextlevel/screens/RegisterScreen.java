@@ -194,19 +194,20 @@ public class RegisterScreen extends AccountList implements Screen{
                         System.out.println("Password must be at least 8 characters and no more than 16 characters");
                         ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must be at least 8 characters and no more than 16 characters"));
                         isInfoCorrect = false;
-                    }
-                    else {
+                    } else {
                         String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
                         Pattern p = Pattern.compile(regex);
                         Matcher m = p.matcher(verifyPass);
                         if (m.matches()) {
                             System.out.println("Password meets requirements. Account Created.");
-                            Account a = new Account();
-                            a.setPassword(pass);
-                            a.setUsername(username);
-                            a.setEmail(email);
-                            //TODO: add account into database
-                            getAccList().add(a);
+                            if (isInfoCorrect) {
+                                Account a = new Account(username, pass, email);
+//                                a.setPassword(pass);
+//                                a.setUsername(username);
+//                                a.setEmail(email);
+                                //TODO: add account into database
+                                getAccList().add(a);
+                            }
                         }
                         else {
                             System.out.println("Password must have upper, lower, symbol, and digit");

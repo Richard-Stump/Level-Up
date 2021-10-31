@@ -5,15 +5,11 @@ import com.mygdx.nextlevel.screens.ForgetPasswordScreen;
 import org.junit.*;
 
 public class ForgetPasswordTest extends ForgetPasswordScreen {
-    Account a = new Account();
-    Account b = new Account();
+    Account a = new Account("nextlevel1", "testPass#1", "");
+    Account b = new Account("nextlevel2", "testPass#2", "");
     @Before
     public void init() {
         accList.clear();
-        a.setUsername("nextlevel1");
-        a.setPassword("testPass#1");
-        b.setUsername("nextlevel2");
-        b.setPassword("testPass#2");
         accList.add(a);
         accList.add(b);
     }

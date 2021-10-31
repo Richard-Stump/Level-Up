@@ -24,10 +24,10 @@ public class ServerDBTest {
         //also probably not a good idea to run when application is in production...
 
         //put in temporary account
-        Account steveAccount = new Account();
-        steveAccount.setUsername("steve");
-        steveAccount.setEmail("steve@example.com");
-        steveAccount.setPassword("abcd1234!");
+        Account steveAccount = new Account("steve", "abcd1234!", "steve@example.com");
+//        steveAccount.setUsername("steve");
+//        steveAccount.setEmail("steve@example.com");
+//        steveAccount.setPassword("abcd1234!");
         db = new ServerDBHandler();
         db.addUser(steveAccount);
         db.closeConnection();
@@ -86,11 +86,11 @@ public class ServerDBTest {
 
     @Test
     public void testAddUser() {
-        Account testAccount = new Account();
+        Account testAccount = new Account("erwin", "puppyDogs5000", "erwin@example.com");
         String username = "erwin";
-        testAccount.setUsername(username);
-        testAccount.setPassword("puppyDogs5000");
-        testAccount.setEmail("erwin@example.com");
+//        testAccount.setUsername(username);
+//        testAccount.setPassword("puppyDogs5000");
+//        testAccount.setEmail("erwin@example.com");
 
         db.addUser(testAccount);
 

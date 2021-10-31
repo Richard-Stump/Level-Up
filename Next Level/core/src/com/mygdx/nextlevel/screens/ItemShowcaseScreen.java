@@ -92,6 +92,7 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
     boolean jumped = false;
 
     //public TileMapTest groundT;
+    public ItemShowcaseScreen() {}
 
     public ItemShowcaseScreen(NextLevel game){
         this.batch = game.batch;
