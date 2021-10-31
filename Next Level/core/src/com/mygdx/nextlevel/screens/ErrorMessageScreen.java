@@ -26,8 +26,9 @@ public class ErrorMessageScreen implements Screen {
 
     public String message;
     public float countdown;
+    public String nextScreen;
 
-    public ErrorMessageScreen (NextLevel game, String message) {
+    public ErrorMessageScreen (NextLevel game, String message, String nextScreen) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
 
@@ -42,6 +43,7 @@ public class ErrorMessageScreen implements Screen {
         stage = new Stage(viewport, batch);
         this.game = game;
         this.message = message;
+        this.nextScreen = nextScreen;
 
         Table table = new Table();
         table.setFillParent(true);
@@ -68,7 +70,19 @@ public class ErrorMessageScreen implements Screen {
         countdown -= delta;
 
         if (countdown < 0.0f) {
-            game.setScreen(new RegisterScreen(game));
+            switch (nextScreen) {
+                case("RegisterScreen"):
+                    game.setScreen(new RegisterScreen(game));
+                    break;
+                case("LoginScreen"):
+                    game.setScreen(new LoginScreen(game));
+                    break;
+                case("ForgetPasswordScreen"):
+                    game.setScreen(new ForgetPasswordScreen(game));
+                    break;
+                default:
+                    break;
+            }
             dispose();
         }
     }

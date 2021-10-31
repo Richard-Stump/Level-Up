@@ -122,7 +122,7 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
                     }
                 }
                 if (!passChanged) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "No account with that username."));
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "No account with that username.", "ForgetPasswordScreen"));
                 }
             }
         });
