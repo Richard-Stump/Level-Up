@@ -7,40 +7,24 @@ package com.mygdx.nextlevel.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.kotcrab.vis.ui.widget.tabbedpane.Tab;
-import com.mygdx.nextlevel.Level;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
-import com.sun.java.accessibility.util.internal.ButtonTranslator;
-import com.sun.tools.javac.comp.Check;
-import jdk.internal.org.jline.utils.DiffHelper;
-import org.w3c.dom.Text;
 
-import java.sql.Date;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class LevelSelectionScreen implements Screen {
     private NextLevel game;
@@ -69,6 +53,20 @@ public class LevelSelectionScreen implements Screen {
     private SelectBox<Difficulty> difficultyDropdown;
     private ArrayList<CheckBox> tagCheckBoxes;
     private ScrollPane scrollPane;
+
+    //left column
+    public Label levelName;
+    public Label author;
+    public Label difficulty;
+
+    //right column
+    public Label rating;
+    public Label playCount;
+
+    //static vars
+    public static int rightColumnWidth = 250;
+    public static int topBottomPad = 30;
+    public static int leftColumnWidth = 400;
 
     public LevelSelectionScreen(NextLevel game) {
         this.game = game;
@@ -120,19 +118,15 @@ public class LevelSelectionScreen implements Screen {
         //add stuff here for user info
 
         mainTable.add(backButton);
-        mainTable.add(levelSelectLabel).expandX();
+        mainTable.add(levelSelectLabel).expandX().left();
         mainTable.add(userInfo).width(200);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
 
-
-        //row 2: empty placeholder, scrollable table with levels, sorting box
-
-        //populate a table full of information
-        //Table infoTable = new Table();
-        levelVerticalGroup = getLevelVerticalGroup(new ArrayList<>(dbDownloaded.sortByTitle()));
-        System.out.println(levelVerticalGroup.getPrefWidth());
-        levelVerticalGroup.expand();
+        //set up level information section
+        Table infoTable = getLevelTable(new ArrayList<>(dbDownloaded.sortByTitle()));
+        levelVerticalGroup = new VerticalGroup();
+        levelVerticalGroup.addActor(infoTable);
 
         scrollPane = new ScrollPane(levelVerticalGroup, skin);
         scrollPane.setForceScroll(true, true);
@@ -203,26 +197,18 @@ public class LevelSelectionScreen implements Screen {
         return table;
     }
 
-    private VerticalGroup getLevelVerticalGroup(ArrayList<LevelInfo> levels) {
-        VerticalGroup vGroup = new VerticalGroup();
-        //vGroup.setWidth(500);
-        //columns: {image}, {title, author, difficulty, tags}, empty space, {rating, play count}
+    private Table getLevelTable(ArrayList<LevelInfo> levels) {
+        Table infoTable = new Table();
+        //infoTable.setDebug(true);
+
         for (LevelInfo levelInfo: levels) {
             String id = levelInfo.getId();
-            HorizontalGroup levelGroup = new HorizontalGroup();
-            //levelGroup.setWidth(400);
-
-            levelGroup.addListener(selectLevel(levelGroup, id));
-
-            //Image levelPreview = new Image();
-
-            //levelGroup.addActor(levelPreview);
-            levelGroup.addActor(getTitleGroup(id));
-            levelGroup.addActor(getRatingGroup(id));
-            levelGroup.padBottom(20);
-            vGroup.addActor(levelGroup);
+            infoTable.add(getLeftColumn(id)).padTop(topBottomPad);
+            infoTable.add(getRightColumn(id)).padTop(10);
+            infoTable.row();
         }
-        return vGroup;
+
+        return infoTable;
     }
 
     /**
@@ -230,8 +216,10 @@ public class LevelSelectionScreen implements Screen {
      * @param id id of level
      * @return VerticalGroup
      */
-    private VerticalGroup getTitleGroup(String id) {
+    private Table getLeftColumn(String id) {
+        Table leftTable = new Table();
         LevelInfo levelInfo;
+        //leftTable.setDebug(true);
 
         //verify database is connected
         if (!dbDownloaded.isDBActive()) {
@@ -241,24 +229,34 @@ public class LevelSelectionScreen implements Screen {
             levelInfo = dbDownloaded.searchByID(id);
         }
 
-        VerticalGroup titleGroup = new VerticalGroup();
+        //adding left column labels
+        levelName = new Label(levelInfo.getTitle(), skin);
+        author = new Label(levelInfo.getAuthor(), skin);
 
-        //definitely not the best way to do click listeners
-
-        Label levelName = new Label(levelInfo.getTitle(), skin);
-        Label author = new Label(levelInfo.getAuthor(), skin);
         String difficultyString = Difficulty.values()[levelInfo.getDifficulty()].getDisplayName();
-        Label difficultyAndTags = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
+        difficulty = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
 
-        titleGroup.addActor(levelName);
-        titleGroup.addActor(author);
-        titleGroup.addActor(difficultyAndTags);
-        titleGroup.left();
-        return titleGroup;
+        difficulty.addListener(selectLevelListener(id));
+        difficulty.addListener(new HoverListener());
+        levelName.addListener(selectLevelListener(id));
+        levelName.addListener(new HoverListener());
+        author.addListener(selectLevelListener(id));
+        author.addListener(new HoverListener());
+
+        //adding to left table
+        leftTable.add(levelName).width(leftColumnWidth).left();
+        leftTable.row();
+        leftTable.add(author).width(leftColumnWidth).left();
+        leftTable.row();
+        leftTable.add(difficulty).width(leftColumnWidth).left();
+
+        return leftTable;
     }
 
-    private VerticalGroup getRatingGroup(String id) {
+    private Table getRightColumn(String id) {
+        Table rightTable = new Table();
         LevelInfo levelInfo;
+        //rightTable.setDebug(true);
 
         //verify database is connected
         if (!dbDownloaded.isDBActive()) {
@@ -268,20 +266,24 @@ public class LevelSelectionScreen implements Screen {
             levelInfo = dbDownloaded.searchByID(id);
         }
 
-        VerticalGroup ratingGroup = new VerticalGroup();
+        //right column labels
+        rating = new Label("" + levelInfo.getRating() + "/5", skin);
+        playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
-        Label rating = new Label("" + levelInfo.getRating(), skin);
-        Label playCount = new Label("" + levelInfo.getPlayCount(), skin);
-        ratingGroup.addActor(rating);
-        ratingGroup.addActor(playCount);
+        rating.addListener(selectLevelListener(id));
+        rating.addListener(new HoverListener());
+        playCount.addListener(selectLevelListener(id));
+        playCount.addListener(new HoverListener());
 
-        //make it go to the right side of the parent
-        ratingGroup.right();
+        //add to right table
+        rightTable.add(rating).width(rightColumnWidth).left();
+        rightTable.row();
+        rightTable.add(playCount).width(rightColumnWidth).left();
 
-        return ratingGroup;
+        return rightTable;
     }
 
-    private ClickListener selectLevel(final HorizontalGroup level, final String id) {
+    private ClickListener selectLevelListener(final String id) {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -372,17 +374,13 @@ public class LevelSelectionScreen implements Screen {
                 System.out.println("after filtering difficulty: " + finalList.size());
 
                 //redo the table
-                levelVerticalGroup.clear();
-                levelVerticalGroup = getLevelVerticalGroup(finalList);
-                levelVerticalGroup.top();
-                levelVerticalGroup.padRight(20);
-                scrollPane.setActor(levelVerticalGroup);
-                scrollPane.setForceScroll(true, true);
+                levelVerticalGroup.clear();;
+                Table refreshTable = new Table();
+                refreshTable = getLevelTable(finalList);
+                levelVerticalGroup.addActor(refreshTable);
             }
         };
     }
-
-
 
 
     public void render(float delta) {
