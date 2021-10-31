@@ -18,6 +18,7 @@ public class Player extends Actor {
     boolean speedItem = false;
     boolean oneUpItem = false;
     boolean lifeStealItem = false;
+    boolean mushroom = false;
     Item heldItem = null;
 
     public Player(Texture texture, World world, Vector2 position, float density, float restitution) {
@@ -30,6 +31,7 @@ public class Player extends Actor {
         this.takeDamage = false;
         this.slowItem = false;
         this.star = false;
+        this.mushroom = false;
         this.fire = false;
         this.fireflower = false;
         this.speedItem = false;
@@ -120,7 +122,7 @@ public class Player extends Actor {
     }
 
     public boolean hasPowerUp() {
-        return powerUp;
+        return this.powerUp;
     }
 
     public void setPowerUp(boolean set) {
@@ -197,6 +199,14 @@ public class Player extends Actor {
 
     public void setHeldItem(Item heldItem) {
         this.heldItem = heldItem;
+    }
+
+    public boolean getMushroom() {
+        return this.mushroom;
+    }
+
+    public void setMushroom(boolean set) {
+        this.mushroom = set;
     }
 
     public void death(Checkpoint checkpoint) {

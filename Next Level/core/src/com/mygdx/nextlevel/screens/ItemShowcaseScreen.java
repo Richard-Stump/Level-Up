@@ -310,6 +310,7 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
                         } else if (item.equals(mushroom)) {
                             touchedPowerUp = true;
                             player.setPowerUp(true);
+                            player.setMushroom(true);
                         }
                         deleteList.add(bodyB);
                         item.setDeleteSprite(true);
@@ -325,7 +326,9 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
                             } else if (bodyA.getFixtureList().get(left).equals(contact.getFixtureA())) { //Check if Contact on Left of player
                                 if (player.hasPowerUp()) {
                                     player.setPowerUp(false);
-                                    player.setFireflower(false);
+//                                    player.setFireflower(false);
+                                    player.setLifeStealItem(false);
+                                    player.setMushroom(false);
                                     invulnerableTimer();
                                 } else {
                                     player.subLife();
@@ -334,7 +337,9 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
                             } else if (bodyA.getFixtureList().get(top).equals(contact.getFixtureA())) { //Check if Contact on Top of player
                                 if (player.hasPowerUp()) {
                                     player.setPowerUp(false);
-                                    player.setFireflower(false);
+//                                    player.setFireflower(false);
+                                    player.setLifeStealItem(false);
+                                    player.setMushroom(false);
                                     invulnerableTimer();
                                 } else {
                                     player.subLife();
@@ -343,7 +348,9 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
                             } else if (bodyA.getFixtureList().get(right).equals(contact.getFixtureA())) { //Check if Contact on Right of Player
                                 if (player.hasPowerUp()) {
                                     player.setPowerUp(false);
-                                    player.setFireflower(false);
+//                                    player.setFireflower(false);
+                                    player.setLifeStealItem(false);
+                                    player.setMushroom(false);
                                     invulnerableTimer();
                                 } else {
                                     player.subLife();
@@ -472,7 +479,7 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
             //Draw Player
             if (!player.getDeleteSprite()) {
                 //If statements to change sprite Texture
-                if (touchedPowerUp && player.hasPowerUp()) {
+                if (touchedPowerUp && player.getMushroom()) {
                     player.setTexture(new Texture("paragoomba.png"));
                 } else if (player.getStar()) {
                     player.setTexture(new Texture("stargoomba.png"));
@@ -597,6 +604,10 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
                 } else if (deleteList.get(i) == enemy.getBody() && player.getLifeStealItem()) {
                     player.addLife(1);
                 }
+                if (deleteList.get(i) == enemy.getBody()) {
+                    System.out.println("Has Powerup: " + player.hasPowerUp());
+                    System.out.println("Has lifesteal: " + player.getLifeStealItem());
+                }
                 world.destroyBody(deleteList.get(i));
                 deleteList.remove(i);
             }
@@ -704,8 +715,13 @@ public class ItemShowcaseScreen implements Screen, InputProcessor {
                 player.setHeldItem(null);
                 player.setStar(true);
             } else if (player.getHeldItem() == lifeStealItem) {
-                player.setHeldItem(null);
-                player.setLifeStealItem(true);
+                if (!player.hasPowerUp()) {
+                    player.setHeldItem(null);
+                    player.setLifeStealItem(true);
+                    player.setPowerUp(true);
+                    System.out.println("Has Powerup: " + player.hasPowerUp());
+                    System.out.println("Has lifesteal: " + player.getLifeStealItem());
+                }
             }
         }
 
