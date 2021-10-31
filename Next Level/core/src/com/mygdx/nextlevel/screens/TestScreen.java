@@ -18,6 +18,9 @@ import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
+import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
+import com.mygdx.nextlevel.enums.Difficulty;
 
 import java.util.ArrayList;
 
@@ -30,6 +33,10 @@ public class TestScreen extends AccountList implements Screen {
     private TextureAtlas atlas;
     protected Skin skin;
     private NextLevel game;
+    private DownloadedLevelsDB dbDownloaded;
+    private CreatedLevelsDB dbCreated;
+    private String selectedId;
+    private Label selectedLevel;
 
     //left column
     public Label levelName;
@@ -40,10 +47,13 @@ public class TestScreen extends AccountList implements Screen {
     public Label rating;
     public Label playCount;
 
+    private ScrollPane scrollPane;
+
     //static vars
-    public static int rightColumnWidth = 300;
+    public static int rightColumnWidth = 100;
     public static int topBottomPad = 30;
-    public static int leftColumnWidth = 100;
+    public static int leftColumnWidth = 200;
+    public static int textPad = 10;
 
 
     public TestScreen() {}
@@ -59,6 +69,9 @@ public class TestScreen extends AccountList implements Screen {
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
         camera.update();
 
+        dbDownloaded = new DownloadedLevelsDB();
+        selectedLevel = new Label("Level Selected: none", skin);
+        selectedId = "";
         stage = new Stage(viewport, batch);
         this.game = game;
     }
@@ -72,19 +85,129 @@ public class TestScreen extends AccountList implements Screen {
 
         table.setDebug(true);
 
+        VerticalGroup infoVertical;
 
+        Table infoTable = getLevelTable(new ArrayList<>(dbDownloaded.sortByTitle()));
+        infoVertical = new VerticalGroup();
+        infoVertical.addActor(infoTable);
+
+        scrollPane = new ScrollPane(infoVertical, skin);
+        scrollPane.setForceScroll(true, true);
+        table.add(new Label("title", skin));
+        table.row();
+        table.add(scrollPane).setActorHeight(300);
+        table.row();
+        table.add(selectedLevel).left();
 
         table.setFillParent(true);
         stage.addActor(table);
     }
 
     private Table getLevelTable(ArrayList<LevelInfo> levels) {
-        Table table = new Table();
+        Table infoTable = new Table();
+        infoTable.setDebug(true);
 
         for (LevelInfo levelInfo: levels) {
+            String id = levelInfo.getId();
+            infoTable.add(getLeftColumn(id)).padTop(topBottomPad);
+            infoTable.add(getRightColumn(id)).padTop(10);
+            infoTable.row();
 
+            //getDiffTags(id);
+            //infoTable.add(difficulty);
         }
-        return table;
+
+        return infoTable;
+    }
+
+/*    public void getDiffTags(String id) {
+        LevelInfo levelInfo;
+
+        //verify database is connected
+        if (!dbDownloaded.isDBActive()) {
+            System.out.println("db is not active");
+            return;
+        } else {
+            levelInfo = dbDownloaded.searchByID(id);
+        }
+
+        String difficultyString = Difficulty.values()[levelInfo.getDifficulty()].getDisplayName();
+        difficulty = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
+
+        difficulty.addListener(selectLevelListener(id));
+    }*/
+
+    private Table getLeftColumn(String id) {
+        Table leftTable = new Table();
+        LevelInfo levelInfo;
+        leftTable.setDebug(true);
+
+        //verify database is connected
+        if (!dbDownloaded.isDBActive()) {
+            System.out.println("db is not active");
+            return null;
+        } else {
+            levelInfo = dbDownloaded.searchByID(id);
+        }
+
+        //adding left column labels
+        levelName = new Label(levelInfo.getTitle(), skin);
+        author = new Label(levelInfo.getAuthor(), skin);
+
+        String difficultyString = Difficulty.values()[levelInfo.getDifficulty()].getDisplayName();
+        difficulty = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
+
+        difficulty.addListener(selectLevelListener(id));
+        levelName.addListener(selectLevelListener(id));
+        author.addListener(selectLevelListener(id));
+
+        //adding to left table
+        leftTable.add(levelName).width(leftColumnWidth).left();
+        leftTable.row();
+        leftTable.add(author).width(leftColumnWidth).left();
+        leftTable.row();
+        leftTable.add(difficulty).width(leftColumnWidth).left();
+
+        return leftTable;
+    }
+
+    private Table getRightColumn(String id) {
+        Table rightTable = new Table();
+        LevelInfo levelInfo;
+        rightTable.setDebug(true);
+
+        //verify database is connected
+        if (!dbDownloaded.isDBActive()) {
+            System.out.println("db is not active");
+            return null;
+        } else {
+            levelInfo = dbDownloaded.searchByID(id);
+        }
+
+        //right column labels
+        rating = new Label("" + levelInfo.getRating() + "/5", skin);
+        playCount = new Label("" + levelInfo.getPlayCount(), skin);
+
+        rating.addListener(selectLevelListener(id));
+        playCount.addListener(selectLevelListener(id));
+
+        //add to right table
+        rightTable.add(rating).width(rightColumnWidth).left();
+        rightTable.row();
+        rightTable.add(playCount).width(rightColumnWidth).left();
+
+        return rightTable;
+    }
+
+    private ClickListener selectLevelListener(final String id) {
+        return new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //outline the selected level
+                selectedLevel.setText("Level Selected: " + dbDownloaded.searchByID(id).getTitle());
+                selectedId = id;
+            }
+        };
     }
 
     @Override

@@ -7,42 +7,25 @@ package com.mygdx.nextlevel.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.kotcrab.vis.ui.widget.tabbedpane.Tab;
-import com.mygdx.nextlevel.Level;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
-import com.sun.java.accessibility.util.internal.ButtonTranslator;
-import com.sun.tools.javac.comp.Check;
-import jdk.internal.org.jline.utils.DiffHelper;
-import org.w3c.dom.Text;
 
-import java.sql.Date;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Objects;
 
-public class LevelSelectionScreen implements Screen {
+public class LevelSelectionScreenTest implements Screen {
     private NextLevel game;
     private Skin skin;
     private TextureAtlas atlas;
@@ -70,7 +53,7 @@ public class LevelSelectionScreen implements Screen {
     private ArrayList<CheckBox> tagCheckBoxes;
     private ScrollPane scrollPane;
 
-    public LevelSelectionScreen(NextLevel game) {
+    public LevelSelectionScreenTest(NextLevel game) {
         this.game = game;
         atlas = new TextureAtlas(Gdx.files.internal("skin/neon-ui.atlas"));
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
