@@ -131,19 +131,22 @@ public class ServerDBHandler {
 //        }
 //        return "";
 //    }
-public String getPassword(String user) {
-    ResultSet resultSet;
-    String result = "";
-    String sqlQuery = "SELECT password FROM api.users WHERE username = user;";
-    try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-        resultSet = statement.executeQuery();
-        if (resultSet.next()) {
-            result = resultSet.getString("password");
+    public String getPassword(String user) {
+        ResultSet resultSet;
+        String result = "";
+        String sqlQuery = "SELECT password FROM api.users WHERE username = user;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                //code does not enter this conditional for some reason
+                result = new String(resultSet.getString("password"));
+                System.out.println("pass");
+            }
             return result;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "";
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
-    return result;
-}
 }

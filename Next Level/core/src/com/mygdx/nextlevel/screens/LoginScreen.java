@@ -180,7 +180,7 @@ public class LoginScreen extends AccountList implements Screen {
                 System.out.println(db.userExists(username));
                 if (db.userExists(username)) {
                     String ret = db.getPassword(username);
-                    System.out.println(ret);
+//                    System.out.println(ret);
                     if (pass.equals(ret)) {
                         loginSuccessful = true;
                         ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
