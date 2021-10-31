@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import org.w3c.dom.Text;
 
 public class MainMenuScreen implements Screen {
@@ -30,8 +31,11 @@ public class MainMenuScreen implements Screen {
     private NextLevel game;
 
     //player information
-    public String username;
+    public static String username;
     public Image profilePic;
+
+    //database information
+    public ServerDBHandler db = new ServerDBHandler();
 
     //static vars
     public static int textBoxBottomPadding = 20;
@@ -39,7 +43,7 @@ public class MainMenuScreen implements Screen {
     public static int rightMargin = 870;
     public static int topMargin = 450;
 
-    public MainMenuScreen (NextLevel game) {
+    public MainMenuScreen (NextLevel game, String username) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
 
@@ -53,6 +57,7 @@ public class MainMenuScreen implements Screen {
 
         stage = new Stage(viewport, batch);
         this.game = game;
+        this.username = username;
     }
 
 
@@ -95,7 +100,7 @@ public class MainMenuScreen implements Screen {
         Label welcomeLabel = new Label("Welcome back!", skin);
 
         //use player username
-        Label usernameLabel = new Label("Username", skin);
+        Label usernameLabel = new Label(username, skin);
         //use player profile pic
         Image playerPic = new Image(new Texture(Gdx.files.internal("userIcon.png")));
 

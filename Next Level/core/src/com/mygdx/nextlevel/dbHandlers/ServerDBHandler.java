@@ -99,6 +99,23 @@ public class ServerDBHandler {
         }
     }
 
+    public boolean changePassword(String user) {
+        ResultSet resultSet;
+        String result = "";
+        //String sqlQuery = "ALTER username username WITH PASSWORD 'password'";
+        String sqlQuery = "SET password = 'password' WHERE username = user";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            //statement.setString(1, username);
+            resultSet = statement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        result = getPassword(user);
+        return result.compareTo("password") == 0;
+    }
+
     public boolean userExists(String username) {
         ResultSet resultSet;
         String sqlQuery = "SELECT * FROM api.users WHERE username LIKE ?;";
@@ -146,4 +163,39 @@ public String getPassword(String user) {
     }
     return result;
 }
+
+public String getUser(String username) {
+    ResultSet resultSet;
+    String result = "";
+    String sqlQuery = "SELECT username FROM api.users WHERE username = user";
+    try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+        resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            result = resultSet.getString("username");
+            return result;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return result;
+}
+
+    public boolean emailExists(String email) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM api.users WHERE email LIKE ?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, email);
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                if (!resultSet.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

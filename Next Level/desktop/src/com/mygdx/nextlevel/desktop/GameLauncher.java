@@ -30,7 +30,7 @@ class Game extends NextLevel {
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(960, 500, camera);
 
-        MainMenuScreen screen = new MainMenuScreen(this);
+        MainMenuScreen screen = new MainMenuScreen(this, MainMenuScreen.username);
 
         this.setScreen(screen);
     }

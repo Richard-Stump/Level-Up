@@ -183,7 +183,7 @@ public class LoginScreen extends AccountList implements Screen {
                     System.out.println(ret);
                     if (pass.equals(ret)) {
                         loginSuccessful = true;
-                        ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+                        ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game, username));
 
                     } else if (ret.equals("")) {
 //                        errorDialog = new Dialog("Warning", skin);

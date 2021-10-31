@@ -165,7 +165,7 @@ public class EditLevelInfoMenuScreen implements Screen {
 
                 //TODO: maybe display a popup, or bring the user to the level information page
 
-                game.setScreen(new MainMenuScreen(game));
+                //game.setScreen(new MainMenuScreen(game));
             }
         };
     }

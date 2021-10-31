@@ -75,7 +75,7 @@ public class TutorialScreen implements Screen {
         backButton.addListener(new ClickListener() {
            @Override
            public void clicked(InputEvent event, float x, float y) {
-               ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+               ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game, MainMenuScreen.username));
            }
         });
 

@@ -56,7 +56,7 @@ public class CreateLevelMenuScreen implements Screen {
         TextButton backButton = new TextButton("Back", skin);
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new MainMenuScreen(game, MainMenuScreen.username));
             }
         });
 
