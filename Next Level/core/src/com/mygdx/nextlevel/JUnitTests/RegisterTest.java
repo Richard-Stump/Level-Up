@@ -1,19 +1,24 @@
 package com.mygdx.nextlevel.JUnitTests;
 import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.RegisterScreen;
 import org.junit.*;
 
 public final class RegisterTest extends RegisterScreen {
+    ServerDBHandler sb;
     @Before
     public void init() {
-        accList.clear();
+//        accList.clear();
+        sb = new ServerDBHandler();
+
     }
 
     @After
     public void clear() {
         TestOutputHelper.displayResult();
         TestOutputHelper.clearResult();
+        sb.closeConnection();
     }
 
     @Test
@@ -123,52 +128,27 @@ public final class RegisterTest extends RegisterScreen {
         String verify = "testPass#1";
         if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
             Account a = new Account(user, pass, "");
-            addAccount(a);
+//            accList.add(a);
+            db.addUser(a);
         }
-        TestOutputHelper.setResult("checkAccountAdded", 1, accList.size());
-        Assert.assertEquals(1, accList.size());
+//        TestOutputHelper.setResult("checkAccountAdded", 1, accList.size());
+        TestOutputHelper.setResult("checkAccountAdded", true, db.userExists(user));
+//        Assert.assertEquals(1, accList.size());
+        Assert.assertTrue(db.userExists(user));
     }
 
     @Test
     public void checkAccountNotAdded() {
-        String user = "nextlevel";
+        String user = "nextlevel2";
         String pass = "testPass#1";
         String verify = "testPass1";
         if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
             Account a = new Account(user, pass, "");
-            addAccount(a);
+            db.addUser(a);
         }
-        TestOutputHelper.setResult("checkAccountNotAdded", 0, accList.size());
-        Assert.assertEquals(0, accList.size());
-    }
-
-    @Test
-    public void checkUniqueUserTest() {
-        String user = "nextlevel";
-        String pass = "testPass#1";
-        String verify = "testPass#1";
-
-        if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
-            Account a = new Account(user, pass, "");
-            addAccount(a);
-        }
-        String newUser = "levelup";
-        TestOutputHelper.setResult("checkUniqueUser", true, checkUniqueUser(newUser));
-        Assert.assertTrue(checkUniqueUser(newUser));
-    }
-
-    @Test
-    public void checkSameUserTest() {
-        String user = "nextlevel";
-        String pass = "testPass#1";
-        String verify = "testPass#1";
-
-        if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
-            Account a = new Account(user, pass, "");
-            addAccount(a);
-        }
-        String newUser = "nextlevel";
-        TestOutputHelper.setResult("checkUniqueUser", false, checkUniqueUser(newUser));
-        Assert.assertFalse(checkUniqueUser(newUser));
+//        TestOutputHelper.setResult("checkAccountNotAdded", 0, accList.size());
+//        Assert.assertEquals(0, accList.size());
+        TestOutputHelper.setResult("checkAccountNotAdded", false, db.userExists(user));
+        Assert.assertFalse(db.userExists(user));
     }
 }
