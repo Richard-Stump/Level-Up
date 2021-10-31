@@ -90,6 +90,15 @@ public class ServerDBHandler {
         }
     }
 
+    public void clearDatabase() {
+        String sqlQuery = "DELETE FROM api.users;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public boolean userExists(String username) {
         ResultSet resultSet;
         String sqlQuery = "SELECT * FROM api.users WHERE username LIKE ?;";
@@ -108,4 +117,33 @@ public class ServerDBHandler {
         }
         return false;
     }
+
+//    public String getPassword(String user) {
+//        ResultSet resultSet;
+//        String sqlQuery = "SELECT password FROM api.users WHERE username = user;";
+//        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+//            resultSet = statement.executeQuery();
+//            if (resultSet.next()) {
+//                return resultSet.getString("password");
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return "";
+//    }
+public String getPassword(String user) {
+    ResultSet resultSet;
+    String result = "";
+    String sqlQuery = "SELECT password FROM api.users WHERE username = user;";
+    try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+        resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            result = resultSet.getString("password");
+            return result;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return result;
+}
 }

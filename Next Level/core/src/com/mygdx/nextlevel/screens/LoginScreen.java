@@ -19,6 +19,7 @@ import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import sun.rmi.runtime.Log;
 
 import java.util.ArrayList;
@@ -53,10 +54,12 @@ public class LoginScreen extends AccountList implements Screen {
 
     public boolean loginSuccessful = false;
     public boolean incorrectPass = false;
+    public ServerDBHandler db;
 
     public LoginScreen() {}
 
     public LoginScreen(NextLevel game)  {
+        db = new ServerDBHandler();
         atlas = new TextureAtlas("skin/neon-ui.atlas");
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
 
@@ -152,22 +155,38 @@ public class LoginScreen extends AccountList implements Screen {
                 pass = textPass.getText();
 
                 //TODO: verification
-                for (Account a : getAccList()) {
-                    if (a.getUsername().equals(username) && (a.getPassword().equals(pass))) {
+//                for (Account a : getAccList()) {
+//                    if (a.getUsername().equals(username) && (a.getPassword().equals(pass))) {
+//                        loginSuccessful = true;
+//                        ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+//                        break;
+//                    } else if (a.getUsername().equals(username) && !a.getPassword().equals(pass)) {
+//                        System.out.println("Incorrect password.");
+//                        incorrectPass = true;
+//                        textPass.setMessageText("Password");
+//                        break;
+//                    }
+//                }
+//                if (!loginSuccessful && !incorrectPass) {
+//                    System.out.println("There is no account associated with this username.");
+//                }
+//                incorrectPass = false;
+                System.out.println(db.userExists(username));
+                if (db.userExists(username)) {
+                    String ret = db.getPassword(username);
+                    System.out.println(ret);
+                    if (pass.equals(ret)) {
                         loginSuccessful = true;
                         ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
-                        break;
-                    } else if (a.getUsername().equals(username) && !a.getPassword().equals(pass)) {
-                        System.out.println("Incorrect password.");
-                        incorrectPass = true;
+
+                    } else if (ret.equals("")) {
                         textPass.setMessageText("Password");
-                        break;
+                        System.out.println("Password is incorrect");
                     }
+                } else {
+                    System.out.println("No account linked to this username");
                 }
-                if (!loginSuccessful && !incorrectPass) {
-                    System.out.println("There is no account associated with this username.");
-                }
-                incorrectPass = false;
+
 
             }
         });

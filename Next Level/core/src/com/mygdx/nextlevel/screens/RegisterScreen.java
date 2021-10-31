@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -51,6 +52,7 @@ public class RegisterScreen extends AccountList implements Screen{
     public static int buttonWidth = 170;
 
     public boolean isInfoCorrect = true;
+    public ServerDBHandler db = new ServerDBHandler();
 
     public RegisterScreen() {
 
@@ -184,11 +186,14 @@ public class RegisterScreen extends AccountList implements Screen{
                         System.out.println("Username must be at least 4 characters and no more than 16 characters");
                         isInfoCorrect = false;
                     }
-                    for (Account a : accList) {
-                        if (a.getUsername().equals(username)) {
-                            System.out.println("Username already exists");
-                            isInfoCorrect = false;
-                        }
+//                    for (Account a : accList) {
+//                        if (a.getUsername().equals(username)) {
+//                            System.out.println("Username already exists");
+//                            isInfoCorrect = false;
+//                        }
+//                    }
+                    if (db.userExists(username)) {
+                        isInfoCorrect = false;
                     }
                     if (verifyPass.length() < 8 || verifyPass.length() > 16) {
                         System.out.println("Password must be at least 8 characters and no more than 16 characters");
@@ -206,7 +211,9 @@ public class RegisterScreen extends AccountList implements Screen{
 //                                a.setUsername(username);
 //                                a.setEmail(email);
                                 //TODO: add account into database
-                                getAccList().add(a);
+//                                getAccList().add(a);
+                                db.addUser(a);
+
                             }
                         }
                         else {
@@ -239,6 +246,7 @@ public class RegisterScreen extends AccountList implements Screen{
                     System.out.println(String.format("User: %s, Pass: %s, Email: %s", ac.getUsername(), ac.getPassword(), ac.getEmail()));
                 }
                 System.out.println();
+                db.closeConnection();
             }
         });
 
