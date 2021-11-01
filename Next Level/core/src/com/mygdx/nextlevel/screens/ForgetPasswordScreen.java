@@ -20,6 +20,7 @@ import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -41,10 +42,12 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
     public static int textBoxWidth = 320;
     public static int textBoxBottomPadding = 20;
     public static int buttonWidth = 170;
+    public ServerDBHandler db;
 
 
     public ForgetPasswordScreen() {}
     public ForgetPasswordScreen(NextLevel game) {
+        db = new ServerDBHandler();
         atlas = new TextureAtlas("skin/neon-ui.atlas");
         skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
 
@@ -126,24 +129,30 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 //TODO: change password if a valid username else show error message
                 username = usernameText.getText();
-                for (Account a : accList) {
-                    if (a.getUsername().equals(username)) {
-                        a.setPassword("password");
-                        passChanged = true;
-                        System.out.println("Password reset.");
-                        ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
-                        break;
-                    }
+                if (db.userExists(username)) {
+                    db.updatePassword(username);
+                }  else  {
+                    System.out.println("No account associated.");
                 }
-                if (!passChanged) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "No account with that username.", "ForgetPasswordScreen"));
-                }
+//                for (Account a : accList) {
+//                    if (a.getUsername().equals(username)) {
+//                        a.setPassword("password");
+//                        passChanged = true;
+//                        System.out.println("Password reset.");
+//                        ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+//                        break;
+//                    }
+//                }
+//                if (!passChanged) {
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "No account with that username.", "ForgetPasswordScreen"));
+//                }
             }
         });
         enterButton.addListener(new HoverListener());
 
         table.setFillParent(true);
         stage.addActor(table);
+        db.closeConnection();
     }
 
     @Override

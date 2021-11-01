@@ -158,15 +158,15 @@ public class RegisterScreen extends AccountList implements Screen{
                 //TODO: fix bug where account is still added to arraylist (temp database) despite it not meeting requirements
 
                 //check if username or email exists already
-                for (Account account : accList) {
-                    if (account.getUsername().equals(username)) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Username already exists", "RegisterScreen"));
-                        isInfoCorrect = false;
-                    } else if (account.getEmail().equals(email)) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Email is already connected to an account", "RegisterScreen"));
-                        isInfoCorrect = false;
-                    }
-                }
+//                for (Account account : accList) {
+//                    if (account.getUsername().equals(username)) {
+//                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Username already exists", "RegisterScreen"));
+//                        isInfoCorrect = false;
+//                    } else if (account.getEmail().equals(email)) {
+//                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Email is already connected to an account", "RegisterScreen"));
+//                        isInfoCorrect = false;
+//                    }
+//                }
                 //TODO: if there is no input
                 if ((username.isEmpty()) & (email.isEmpty()) & (pass.isEmpty())) {
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Not enough information", "RegisterScreen"));
