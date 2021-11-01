@@ -7,10 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,34 +115,25 @@ public class ServerDBHandler {
         return false;
     }
 
-//    public String getPassword(String user) {
-//        ResultSet resultSet;
-//        String sqlQuery = "SELECT password FROM api.users WHERE username = user;";
-//        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-//            resultSet = statement.executeQuery();
-//            if (resultSet.next()) {
-//                return resultSet.getString("password");
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return "";
-//    }
     public String getPassword(String user) {
         ResultSet resultSet;
         String result = "";
-        String sqlQuery = "SELECT password FROM api.users WHERE username = user;";
+        String sqlQuery = "SELECT password FROM api.users WHERE username LIKE ?;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            System.out.println("Here");
+            statement.setString(1, user);
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
+//                System.out.println("Enter");
                 //code does not enter this conditional for some reason
-                result = new String(resultSet.getString("password"));
-                System.out.println("pass");
+                result = resultSet.getString("password");
+//                System.out.println(result);
             }
             return result;
 
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Exception");
             return "";
         }
     }
