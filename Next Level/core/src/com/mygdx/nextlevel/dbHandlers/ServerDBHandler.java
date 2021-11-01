@@ -175,4 +175,14 @@ public class ServerDBHandler {
             return "";
         }
     }
+
+    public void updatePassword(String user) {
+        String sqlQuery = "UPDATE api.users SET password = 'password' WHERE username LIKE ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, user);
+            statement.executeQuery();
+        }   catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

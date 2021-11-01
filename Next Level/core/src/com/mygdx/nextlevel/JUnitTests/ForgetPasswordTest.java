@@ -1,37 +1,41 @@
 package com.mygdx.nextlevel.JUnitTests;
 
 import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.ForgetPasswordScreen;
 import org.junit.*;
 
 public class ForgetPasswordTest extends ForgetPasswordScreen {
-    Account a = new Account("nextlevel1", "testPass#1", "");
-    Account b = new Account("nextlevel2", "testPass#2", "");
+    ServerDBHandler db;
     @Before
     public void init() {
-        accList.clear();
-        accList.add(a);
-        accList.add(b);
+        db = new ServerDBHandler();
     }
 
     @After
     public void clear() {
         TestOutputHelper.displayResult();
         TestOutputHelper.clearResult();
+        db.closeConnection();
     }
 
     @Test
     public void resetPasswordSuccessful() {
-        String username = "nextlevel2";
-        changePass(username);
-        TestOutputHelper.setResult("resetPasswordSuccessful", "password", b.getPassword());
-        Assert.assertEquals("password", b.getPassword());
+        String username = "jchen";
+        if (db.userExists(username)) {
+            db.updatePassword(username);
+        }
+        TestOutputHelper.setResult("resetPasswordSuccessful", "password", db.getPassword(username));
+        Assert.assertEquals("password", db.getPassword(username));
     }
 
     @Test
     public void resetPasswordUnsuccessful() {
-        String username = "nextlevel3";
-        TestOutputHelper.setResult("resetPasswordUnsuccessful", false, changePass(username));
-        Assert.assertEquals(false, changePass(username));
+        String username = "jchen2";
+        if (db.userExists(username)) {
+            db.updatePassword(username);
+        }
+        TestOutputHelper.setResult("resetPasswordUnsuccessful", "password", db.getPassword(username));
+        Assert.assertNotEquals("password", db.getPassword(username));
     }
 }

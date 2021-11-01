@@ -1,39 +1,46 @@
 package com.mygdx.nextlevel.JUnitTests;
 import com.mygdx.nextlevel.Account;
 
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.LoginScreen;
 import org.junit.*;
 
 public class LoginTest extends LoginScreen {
+    static ServerDBHandler db;
 
-    @Before
-    public void init() {
-        accList.clear();
-        Account a = new Account("nextlevel1", "testPass#1", "");
-        Account b = new Account("nextlevel2", "testPass#2", "");
-        accList.add(a);
-        accList.add(b);
+    @BeforeClass
+    public static void init() {
+        db = new ServerDBHandler();
     }
 
-    @After
-    public void clear() {
+    @AfterClass
+    public static void clear() {
         TestOutputHelper.displayResult();
         TestOutputHelper.clearResult();
+        db.closeConnection();
     }
 
     @Test
     public void loginSuccessful() {
-        String username = "nextlevel2";
-        String pass = "testPass#2";
-        TestOutputHelper.setResult("loginSuccessful", true, login(username, pass));
-        Assert.assertTrue(login(username, pass));
+        String username = "jchen";
+        String pass = "passW0rd#1";
+        TestOutputHelper.setResult("loginSuccessful", pass, db.getPassword(username));
+        Assert.assertEquals(pass, db.getPassword(username));
     }
 
     @Test
-    public void loginUnsuccessful() {
-        String username = "nextlevel2";
+    public void loginUnsuccessful1() {
+        String username = "jchen";
         String pass = "testPass#1";
-        TestOutputHelper.setResult("loginUnsuccessful", false, login(username, pass));
-        Assert.assertFalse(login(username, pass));
+        TestOutputHelper.setResult("loginUnsuccessful1", pass, db.getPassword(username));
+        Assert.assertNotEquals(pass, db.getPassword(username));
+    }
+
+    @Test
+    public void loginUnsuccessful2() {
+        String username = "jchen2";
+        String pass = "passW0rd#1";
+        TestOutputHelper.setResult("loginUnsuccessful1", pass, db.getPassword(username));
+        Assert.assertNotEquals(pass, db.getPassword(username));
     }
 }
