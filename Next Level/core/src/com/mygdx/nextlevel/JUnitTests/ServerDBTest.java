@@ -85,6 +85,21 @@ public class ServerDBTest {
     }
 
     @Test
+    public void testGetTable() {
+        //TODO: make this into an actual test
+        System.out.println("get table: ");
+        String[][] table = db.getTable();
+
+        for (String[] strings : table) {
+            for (int j = 0; j < table[0].length; j++) {
+                System.out.print(strings[j] + ", ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    @Test
     public void testAddUser() {
         Account testAccount = new Account("erwin", "puppyDogs5000", "erwin@example.com");
         String username = "erwin";
@@ -107,6 +122,8 @@ public class ServerDBTest {
         TestOutputHelper.setResult("testAddUser", expected, actual);
         assertEquals(actual, expected);
     }
+
+
 
     /*
     //Not working as expected:

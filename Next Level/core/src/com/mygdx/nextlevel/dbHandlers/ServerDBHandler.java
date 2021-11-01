@@ -104,8 +104,8 @@ public class ServerDBHandler {
             statement.setString(1, username);
             resultSet = statement.executeQuery();
 
-            if (resultSet.next()) {
-                if (!resultSet.next()) {
+            if (resultSet.next()) { //if there is at least one user found
+                if (!resultSet.next()) { //if there is only one user found
                     return true;
                 }
             }
@@ -113,6 +113,44 @@ public class ServerDBHandler {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public String[][] getTable() {
+        String[][] table;
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM api.users;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            resultSet = statement.executeQuery();
+            int numResults = 0;
+
+            while (resultSet.next()) {
+                numResults++;
+            }
+            resultSet.close();
+
+            resultSet = statement.executeQuery();
+            table = new String[numResults][8];
+
+            int j = 0;
+            while (resultSet.next()) {
+                table[j][0] = resultSet.getString("username");
+                table[j][1] = resultSet.getString("password");
+                table[j][2] = resultSet.getString("email");
+                //table[j][3] = resultSet.getString("levelsuploaded");
+                //table[j][4] = resultSet.getString("assetsuploaded");
+                //table[j][5] = resultSet.getString("profilepicture");
+                //table[j][6] = resultSet.getString("levelscompleted");
+                table[j][7] = ((Boolean) resultSet.getBoolean("active")).toString();
+                j++;
+            }
+
+            resultSet.close();
+            return table;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String getPassword(String user) {
