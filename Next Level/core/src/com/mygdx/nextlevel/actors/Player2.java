@@ -17,6 +17,12 @@ public class Player2 extends Actor2 {
 
     private boolean canJump = false;
     private boolean respawn = false;
+    protected boolean facingRight = true;
+    private boolean slowItem = false;
+    private boolean speedItem = false;
+
+    private float slowTime = 0;
+    private float speedTime = 0;
 
     public Player2(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 1.0f, 1.0f);
@@ -40,14 +46,52 @@ public class Player2 extends Actor2 {
             respawn = false;
         }
 
+        if (slowItem) {
+            slowTime+= delta;
+            if (slowTime > 3f) {
+                slowItem = false;
+                slowTime = 0;
+            }
+        }
+
+        if (speedItem) {
+            speedTime += delta;
+            if (speedTime > 3f) {
+                speedItem = false;
+                speedTime = 0;
+            }
+        }
+
         Vector2 dir = new Vector2();
         dir.y = boxCollider.getVelocity().y;
 
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            dir.add(-5.0f, 0);
+            float xSpeed;
+            if (slowItem)
+                xSpeed = -1f;
+            else if (speedItem)
+                xSpeed = -9f;
+            else
+                xSpeed = -5f;
+            dir.add(xSpeed, 0);
+            if (facingRight) {
+                facingRight = false;
+                flip(true, false);
+            }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            dir.add(5.0f, 0);
+            float xSpeed;
+            if (slowItem)
+                xSpeed = 1f;
+            else if (speedItem)
+                xSpeed = 9f;
+            else
+                xSpeed = 5f;
+            dir.add(xSpeed, 0);
+            if (!facingRight) {
+                facingRight = true;
+                flip(true, false);
+            }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             if(canJump) {
@@ -76,7 +120,11 @@ public class Player2 extends Actor2 {
             canJump = true;
         }
 
-        if(other instanceof Item2) {
+        if(other instanceof SlowItem2) {
+            slowItem = true;
+        } else if (other instanceof SpeedItem2) {
+            speedItem = true;
+        } else if (other instanceof Item2) {
             lifeCount++;
             heldItem = (Item2)other;
         }

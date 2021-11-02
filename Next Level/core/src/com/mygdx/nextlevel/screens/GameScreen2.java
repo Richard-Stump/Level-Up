@@ -42,7 +42,7 @@ public class GameScreen2 implements Screen {
     private Player2 player;
     private boolean shouldReset = false;    //Should the world be reset next frame?
 
-    HashMap<Item, String> itemToName = new HashMap<>(); //Todo: update for the hud to work
+//    HashMap<Item, String> itemToName = new HashMap<>(); //Todo: update for the hud to work
 
     /**
      * Used to queue actor spawns because colliders cannot be created in the collision handlers.
@@ -118,12 +118,12 @@ public class GameScreen2 implements Screen {
 
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
         player = new Player2(this, 7, 2);
-        actors.add(player);
         actors.add(new Enemy2(this,5, 2));
         actors.add(new Block2(this, 7, 4, true));
-        actors.add(new Item2(this, 9, 4));
         actors.add(new CheckPoint2(this, 10, 1.0f));
+        actors.add(player);
         actors.add(new DeathBlock(this, player, player.getPosition().x));
+
         hud = new Hud2(game.batch, player);
 
         shouldReset = false;
@@ -273,4 +273,7 @@ public class GameScreen2 implements Screen {
     public void dispose() {
 
     }
+
+    //TODO Test
+    public Player2 getPlayer() {return this.player;}
 }

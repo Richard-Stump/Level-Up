@@ -7,17 +7,25 @@ import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class Item2 extends Actor2 {
     BoxCollider collider;
+    private boolean inital;
 
     public Item2(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 0.5f, 0.5f);
 
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true);
+        inital = true;
 
         setRegion(new Texture("1up-mushroom.jpeg"));
     }
 
     public void update(float delta) {
-        collider.setVelocity(new Vector2(2.0f, collider.getVelocity().y));
+        if (inital) {
+            if (screen.getPlayer().facingRight)
+                collider.setVelocity(new Vector2(2.0f, collider.getVelocity().y));
+            else
+                collider.setVelocity(new Vector2(-2.0f, collider.getVelocity().y));
+            inital = false;
+        }
 
         setPosition(collider.getPosition());
     }

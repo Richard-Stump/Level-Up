@@ -6,10 +6,15 @@ import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Block2 extends Actor2 {
     protected boolean spawnItem;
     protected boolean spawned;
     protected BoxCollider collider;
+
+    ArrayList<Class> items;
 
     public Block2(GameScreen2 screen, float x, float y, boolean spawnItem) {
         super(screen, x, y, 1, 1);
@@ -24,6 +29,12 @@ public class Block2 extends Actor2 {
                 false
         );
 
+        //Setup all items
+        items = new ArrayList<>();
+        items.add(SlowItem2.class);
+        items.add(SpeedItem2.class);
+        items.add(Item2.class);
+
         setRegion(new Texture("Block.png"));
     }
 
@@ -35,8 +46,11 @@ public class Block2 extends Actor2 {
         if(other instanceof Player2 && side == Side.BOTTOM) {
             if(spawnItem) {
                 Vector2 pos = collider.getPosition();
-                screen.queueActorSpawn(pos.x, pos.y + 1.0f, Item2.class);
+                Random rand = new Random();
+                Class itemClass = items.get(rand.nextInt(items.size()));
+                screen.queueActorSpawn(pos.x, pos.y + 1.0f, itemClass);
                 spawnItem = false;
+                setRegion(new Texture("used-item-block.jpg"));
             }
 
         }
