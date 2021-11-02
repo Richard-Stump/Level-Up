@@ -55,6 +55,7 @@ public class LoginScreen extends AccountList implements Screen {
 
     public boolean loginSuccessful = false;
     public boolean incorrectPass = false;
+    public boolean noAccount = false;
     public ServerDBHandler db;
     public Dialog errorDialog;
 
@@ -192,16 +193,18 @@ public class LoginScreen extends AccountList implements Screen {
                         loginSuccessful = true;
                         ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
 
-                    } else if (ret.equals("")) {
+                    } else if (!pass.equals(ret)) {
 //                        errorDialog = new Dialog("Warning", skin);
 //                        errorDialog.text("Incorrect Password. Please try again");
 //                        errorDialog.show(stage);
 
                         textPass.setMessageText("Password");
                         System.out.println("Password is incorrect");
+                        incorrectPass = true;
                     }
                 } else {
                     System.out.println("No account linked to this username");
+                    noAccount = true;
 //                    errorDialog = new Dialog("Warning", skin) {
 //                        protected void result(Object object)
 //                        {
@@ -232,6 +235,11 @@ public class LoginScreen extends AccountList implements Screen {
 //
 //                    errorDialog.text("No account linked to this username");
                     //errorDialog.show(stage);
+                }
+                if (incorrectPass) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Incorrect password", "LoginScreen"));
+                } else if (noAccount) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "No account associated with this username", "LoginScreen"));
                 }
 
 
