@@ -53,6 +53,12 @@ public class RegisterScreen extends AccountList implements Screen{
     public static int buttonWidth = 170;
 
     public boolean isInfoCorrect = true;
+    boolean usernameError = false;
+    boolean passLengthError = false;
+    boolean passMatchError = false;
+    boolean noInfoError = false;
+    boolean passRegexError = false;
+    boolean userExistsError = false;
     public ServerDBHandler db = new ServerDBHandler();
 
     public RegisterScreen() {
@@ -169,9 +175,9 @@ public class RegisterScreen extends AccountList implements Screen{
 //                }
                 //TODO: if there is no input
                 if ((username.isEmpty()) & (email.isEmpty()) & (pass.isEmpty())) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Not enough information", "RegisterScreen"));
-
+                    noInfoError = true;
                     isInfoCorrect = false;
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Not enough information", "RegisterScreen"));
                 }
 
                 //TODO: error message if pass and verify pass do not match
@@ -187,12 +193,15 @@ public class RegisterScreen extends AccountList implements Screen{
 //                                dispose();
 //                            }
 //                        });
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Passwords do not match", "RegisterScreen"));
                     isInfoCorrect = false;
+                    passMatchError = true;
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Passwords do not match", "RegisterScreen"));
                 } else {
                     if (username.length() < 4 || username.length() > 16) {
                         System.out.println("Username must be at least 4 characters and no more than 16 characters");
                         isInfoCorrect = false;
+                        usernameError = true;
+//                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Username must be at least 4 characters and no more than 16 characters", "RegisterScreen"));
                     }
 //                    for (Account a : accList) {
 //                        if (a.getUsername().equals(username)) {
@@ -202,18 +211,18 @@ public class RegisterScreen extends AccountList implements Screen{
 //                    }
                     if (db.userExists(username)) {
                         isInfoCorrect = false;
+                        userExistsError = true;
                     }
                     if (verifyPass.length() < 8 || verifyPass.length() > 16) {
                         System.out.println("Password must be at least 8 characters and no more than 16 characters");
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must be at least 8 characters and no more than 16 characters", "RegisterScreen"));
                         isInfoCorrect = false;
+                        passLengthError = true;
+//                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must be at least 8 characters and no more than 16 characters", "RegisterScreen"));
                     } else {
                         String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
                         Pattern p = Pattern.compile(regex);
                         Matcher m = p.matcher(verifyPass);
                         if (m.matches()) {
-                            System.out.println("Password meets requirements. Account Created.");
-
                             if (isInfoCorrect) {
                                 Account a = new Account(username, pass, email);
 //                                a.setPassword(pass);
@@ -222,16 +231,16 @@ public class RegisterScreen extends AccountList implements Screen{
                                 //TODO: add account into database
 //                                getAccList().add(a);
                                 db.addUser(a);
-
+//                                ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
                             }
 
                             //successful add to database, user is automatically set to main menu
-                            ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
                         }
                         else {
                             System.out.println("Password must have upper, lower, symbol, and digit");
-                            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must have upper, lower, symbol, and digit", "RegisterScreen"));
                             isInfoCorrect = false;
+                            passRegexError = true;
+                            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must have upper, lower, symbol, and digit", "RegisterScreen"));
                         }
                     }
                 }
@@ -249,7 +258,23 @@ public class RegisterScreen extends AccountList implements Screen{
                 //TODO: set to next screen
                 if (isInfoCorrect) {
 //                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Account successfully created", "LoginScreen"));
+                } else if (noInfoError) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Not enough information", "RegisterScreen"));
+                }
+                else if (passMatchError) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Passwords do not match", "RegisterScreen"));
+                }
+                else if (usernameError) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Username must be at least 4 characters and no more than 16 characters", "RegisterScreen"));
+                }
+                else if (passLengthError) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must be at least 8 characters and no more than 16 characters", "RegisterScreen"));
+                } else if (passRegexError) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must have upper, lower, symbol, and digit", "RegisterScreen"));
+                } else if (userExistsError) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Account with this username already exists.", "RegisterScreen"));
                 }
 
                 //using arraylist for now since database is not setup

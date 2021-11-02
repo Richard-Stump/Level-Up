@@ -48,7 +48,7 @@ public class ErrorMessageScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
 
-        Label errorLabel = new Label(message, skin);
+        Label errorLabel = new Label(this.message, skin);
         Label disposeLabel = new Label("This screen will automatically close", skin);
 
         table.center();
