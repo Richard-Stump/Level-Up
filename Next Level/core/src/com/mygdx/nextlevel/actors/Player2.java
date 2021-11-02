@@ -64,11 +64,11 @@ public class Player2 extends Actor2 {
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
-        if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT)) {
+        if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) || other instanceof DeathBlock) {
             lifeCount--;
             respawn = true;
 
-            if(lifeCount < 0)
+            if(lifeCount < 1)
                 screen.setShouldReset(true);
         }
 
@@ -80,7 +80,6 @@ public class Player2 extends Actor2 {
             lifeCount++;
             heldItem = (Item2)other;
         }
-
     }
 
     public void onTrigger(Actor2 other, Side side) {

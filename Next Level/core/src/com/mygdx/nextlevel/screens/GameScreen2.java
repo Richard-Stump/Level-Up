@@ -123,6 +123,7 @@ public class GameScreen2 implements Screen {
         actors.add(new Block2(this, 7, 4, true));
         actors.add(new Item2(this, 9, 4));
         actors.add(new CheckPoint2(this, 10, 1.0f));
+        actors.add(new DeathBlock(this, player, player.getPosition().x));
         hud = new Hud2(game.batch, player);
 
         shouldReset = false;
