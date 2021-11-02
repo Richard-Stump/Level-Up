@@ -85,7 +85,7 @@ public class ChangePasswordScreen implements Screen {
         table.add(backButton).left().expandX();
         //table.add(new Label("", skin)).width(labelWidth).expandX();
         table.row();
-        table.add(title).padBottom(labelBottomPadding + 20).expandY();
+        table.add(title).padBottom(labelBottomPadding + 20).expandY().bottom();
         table.row();
         table.add(oldPasswordLabel).width(labelWidth).padBottom(labelBottomPadding - 5);
         table.row();
