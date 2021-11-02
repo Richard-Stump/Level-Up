@@ -33,7 +33,10 @@ public class Block2 extends Actor2 {
         items = new ArrayList<>();
         items.add(SlowItem2.class);
         items.add(SpeedItem2.class);
-        items.add(Item2.class);
+        items.add(LifeItem2.class);
+        items.add(MushroomItem2.class);
+        items.add(StarItem2.class);
+        items.add(FireFlowerItem2.class);
 
         setRegion(new Texture("Block.png"));
     }

@@ -124,8 +124,14 @@ public class Player2 extends Actor2 {
             slowItem = true;
         } else if (other instanceof SpeedItem2) {
             speedItem = true;
-        } else if (other instanceof Item2) {
+        } else if (other instanceof LifeItem2) {
             lifeCount++;
+            heldItem = (Item2)other;
+        } else if (other instanceof MushroomItem2) {
+
+        } else if (other instanceof FireFlowerItem2) {
+            heldItem = (Item2)other;
+        } else if (other instanceof StarItem2) {
             heldItem = (Item2)other;
         }
     }

@@ -14,8 +14,6 @@ public class Item2 extends Actor2 {
 
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true);
         inital = true;
-
-        setRegion(new Texture("1up-mushroom.jpeg"));
     }
 
     public void update(float delta) {

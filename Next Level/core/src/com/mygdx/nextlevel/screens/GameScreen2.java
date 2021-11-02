@@ -120,6 +120,10 @@ public class GameScreen2 implements Screen {
         player = new Player2(this, 7, 2);
         actors.add(new Enemy2(this,5, 2));
         actors.add(new Block2(this, 7, 4, true));
+        actors.add(new Block2(this, 10, 4, true));
+        actors.add(new Block2(this, 13, 4, true));
+        actors.add(new Block2(this, 16, 4, true));
+        actors.add(new Block2(this, 19, 4, true));
         actors.add(new CheckPoint2(this, 10, 1.0f));
         actors.add(player);
         actors.add(new DeathBlock(this, player, player.getPosition().x));
