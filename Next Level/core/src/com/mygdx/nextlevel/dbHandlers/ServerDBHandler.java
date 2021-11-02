@@ -158,7 +158,7 @@ public class ServerDBHandler {
         String result = "";
         String sqlQuery = "SELECT password FROM api.users WHERE username LIKE ?;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            System.out.println("Here");
+//            System.out.println("Here");
             statement.setString(1, user);
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -179,9 +179,14 @@ public class ServerDBHandler {
     public void updatePassword(String user) {
         String sqlQuery = "UPDATE api.users SET password = 'password' WHERE username LIKE ?;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            System.out.println("Here");
             statement.setString(1, user);
-            statement.executeQuery();
+            System.out.println("Here2");
+            statement.executeUpdate();
+            System.out.println("Here3");
+
         }   catch (SQLException e) {
+            System.out.println("Here4");
             e.printStackTrace();
         }
     }

@@ -258,7 +258,7 @@ public class RegisterScreen extends AccountList implements Screen{
                     System.out.println(String.format("User: %s, Pass: %s, Email: %s", ac.getUsername(), ac.getPassword(), ac.getEmail()));
                 }
                 System.out.println();
-                db.closeConnection();
+//                db.closeConnection();
             }
         });
         signUp.addListener(new HoverListener());

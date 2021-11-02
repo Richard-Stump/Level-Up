@@ -81,6 +81,14 @@ public class LoginScreen extends AccountList implements Screen {
 
     @Override
     public void show() {
+        System.out.println(db.userExists(username));
+        String[][] tab = db.getTable();
+        for (int i = 0; i < tab.length; i++) {
+            for (int j = 0; j < tab[0].length; j++) {
+                System.out.print(tab[i][j] + " ");
+            }
+            System.out.println();
+        }
         //Stage should control input:
         Gdx.input.setInputProcessor(stage);
 
@@ -177,7 +185,6 @@ public class LoginScreen extends AccountList implements Screen {
 //                    System.out.println("There is no account associated with this username.");
 //                }
 //                incorrectPass = false;
-                System.out.println(db.userExists(username));
                 if (db.userExists(username)) {
                     String ret = db.getPassword(username);
 //                    System.out.println(ret);

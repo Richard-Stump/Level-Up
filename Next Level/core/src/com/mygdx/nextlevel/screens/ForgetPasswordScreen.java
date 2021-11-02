@@ -129,8 +129,12 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 //TODO: change password if a valid username else show error message
                 username = usernameText.getText();
+                System.out.println(username);
+                System.out.println(db.isDBActive());
+                System.out.println(db.userExists(username));
                 if (db.userExists(username)) {
                     db.updatePassword(username);
+                    ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
                 }  else  {
                     System.out.println("No account associated.");
                 }
@@ -152,7 +156,7 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
 
         table.setFillParent(true);
         stage.addActor(table);
-        db.closeConnection();
+//        db.closeConnection();
     }
 
     @Override
