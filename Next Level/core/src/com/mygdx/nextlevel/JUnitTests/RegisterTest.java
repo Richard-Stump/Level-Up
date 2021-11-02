@@ -7,13 +7,14 @@ import org.junit.*;
 
 public final class RegisterTest extends RegisterScreen {
     ServerDBHandler sb;
-    @BeforeClass
+    @Before
     public void init() {
 //        accList.clear();
         sb = new ServerDBHandler();
+        sb.removeUser("nextlevel");
     }
 
-    @AfterClass
+    @After
     public void clear() {
         TestOutputHelper.displayResult();
         TestOutputHelper.clearResult();

@@ -6,15 +6,17 @@ import com.mygdx.nextlevel.screens.LoginScreen;
 import org.junit.*;
 
 public class LoginTest extends LoginScreen {
-    static ServerDBHandler db;
+    ServerDBHandler db;
 
-    @BeforeClass
-    public static void init() {
+    @Before
+    public void init() {
         db = new ServerDBHandler();
+        db.removeUser("jchen");
+        db.addUser(new Account("jchen", "Password#1", "example@gmail.com"));
     }
 
-    @AfterClass
-    public static void clear() {
+    @After
+    public void clear() {
         TestOutputHelper.displayResult();
         TestOutputHelper.clearResult();
         db.closeConnection();
@@ -23,24 +25,16 @@ public class LoginTest extends LoginScreen {
     @Test
     public void loginSuccessful() {
         String username = "jchen";
-        String pass = "passW0rd#1";
+        String pass = "Password#1";
         TestOutputHelper.setResult("loginSuccessful", pass, db.getPassword(username));
         Assert.assertEquals(pass, db.getPassword(username));
     }
 
     @Test
-    public void loginUnsuccessful1() {
-        String username = "jchen";
-        String pass = "testPass#1";
-        TestOutputHelper.setResult("loginUnsuccessful1", pass, db.getPassword(username));
-        Assert.assertNotEquals(pass, db.getPassword(username));
-    }
-
-    @Test
-    public void loginUnsuccessful2() {
+    public void loginUnsuccessful() {
         String username = "jchen2";
-        String pass = "passW0rd#1";
-        TestOutputHelper.setResult("loginUnsuccessful1", pass, db.getPassword(username));
+        String pass = "Password#1";
+        TestOutputHelper.setResult("loginUnsuccessful", pass, db.getPassword(username));
         Assert.assertNotEquals(pass, db.getPassword(username));
     }
 }

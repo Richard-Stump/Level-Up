@@ -136,6 +136,7 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
                     db.updatePassword(username);
                     ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
                 }  else  {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "No account associated with this username", "ForgetPasswordScreen"));
                     System.out.println("No account associated.");
                 }
 //                for (Account a : accList) {

@@ -10,6 +10,8 @@ public class ForgetPasswordTest extends ForgetPasswordScreen {
     @Before
     public void init() {
         db = new ServerDBHandler();
+        db.removeUser("jchen");
+        db.addUser(new Account("jchen", "Password#1", "example@gmail.com"));
     }
 
     @After
@@ -31,7 +33,7 @@ public class ForgetPasswordTest extends ForgetPasswordScreen {
 
     @Test
     public void resetPasswordUnsuccessful() {
-        String username = "jchen2";
+        String username = "jchen24";
         if (db.userExists(username)) {
             db.updatePassword(username);
         }
