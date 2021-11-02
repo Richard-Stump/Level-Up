@@ -38,6 +38,7 @@ public class ForgetPasswordTest extends ForgetPasswordScreen {
             db.updatePassword(username);
         }
         TestOutputHelper.setResult("resetPasswordUnsuccessful", "password", db.getPassword(username));
+        TestOutputHelper.setReverse(true);
         Assert.assertNotEquals("password", db.getPassword(username));
     }
 }

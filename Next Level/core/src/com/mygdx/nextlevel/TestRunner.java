@@ -55,6 +55,18 @@ public class TestRunner {
         totalTests += numTests;
         System.out.println();
 
+        System.out.println("ChangePassword tests:");
+        Result resultCP = JUnitCore.runClasses(ChangePasswordTest.class);
+        for (Failure failure: resultCP.getFailures()) {
+            System.out.println(failure.toString());
+        }
+        numTests = resultCP.getRunCount();
+        numPassed = numTests -  resultCP.getFailureCount();
+        System.out.println("ChangePassword - Passed: " + numPassed + "/" + numTests);
+        totalPassed += numPassed;
+        totalTests += numTests;
+        System.out.println();
+
 
         System.out.println("Checkpoint tests:");
         Result resultCheckpoint = JUnitCore.runClasses(CheckpointTest.class);

@@ -56,6 +56,7 @@ public class LoginScreen extends AccountList implements Screen {
     public boolean loginSuccessful = false;
     public boolean incorrectPass = false;
     public boolean noAccount = false;
+    public static String curAcc = "";
     public ServerDBHandler db;
     public Dialog errorDialog;
 
@@ -191,6 +192,7 @@ public class LoginScreen extends AccountList implements Screen {
 //                    System.out.println(ret);
                     if (pass.equals(ret)) {
                         loginSuccessful = true;
+                        curAcc = username;
                         ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
 
                     } else if (!pass.equals(ret)) {
@@ -297,5 +299,9 @@ public class LoginScreen extends AccountList implements Screen {
         }
         return false;
 
+    }
+
+    public static String getCurAcc() {
+        return curAcc;
     }
 }

@@ -80,6 +80,9 @@ public class ErrorMessageScreen implements Screen {
                 case("ForgetPasswordScreen"):
                     game.setScreen(new ForgetPasswordScreen(game));
                     break;
+                case("ChangePasswordScreen"):
+                    game.setScreen(new ChangePasswordScreen(game));
+                    break;
                 default:
                     break;
             }

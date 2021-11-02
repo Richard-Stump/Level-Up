@@ -35,6 +35,7 @@ public class LoginTest extends LoginScreen {
         String username = "jchen2";
         String pass = "Password#1";
         TestOutputHelper.setResult("loginUnsuccessful", pass, db.getPassword(username));
+        TestOutputHelper.setReverse(true);
         Assert.assertNotEquals(pass, db.getPassword(username));
     }
 }

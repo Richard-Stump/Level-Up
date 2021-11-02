@@ -176,17 +176,28 @@ public class ServerDBHandler {
         }
     }
 
+    public void changePassword(String user, String pass) {
+        String sqlQuery = "UPDATE api.users SET password = ? WHERE username LIKE ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, pass);
+            statement.setString(2, user);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void updatePassword(String user) {
         String sqlQuery = "UPDATE api.users SET password = 'password' WHERE username LIKE ?;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            System.out.println("Here");
+//            System.out.println("Here");
             statement.setString(1, user);
-            System.out.println("Here2");
+//            System.out.println("Here2");
             statement.executeUpdate();
-            System.out.println("Here3");
+//            System.out.println("Here3");
 
         }   catch (SQLException e) {
-            System.out.println("Here4");
+//            System.out.println("Here4");
             e.printStackTrace();
         }
     }

@@ -1,5 +1,6 @@
 package com.mygdx.nextlevel.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Cursor;
@@ -13,11 +14,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 
-public class ChangePasswordScreen implements Screen {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class ChangePasswordScreen extends LoginScreen implements Screen {
 
     public SpriteBatch batch;
     public Stage stage;
@@ -37,6 +42,12 @@ public class ChangePasswordScreen implements Screen {
     public static int labelWidth = 320;
     public static int labelBottomPadding = 10;
     public static int buttonWidth = 320;
+    boolean passLengthError = false;
+    boolean passMatchError = false;
+    boolean passRegexError = false;
+    boolean oldPassError = false;
+    boolean isInfoCorrect = true;
+    ServerDBHandler db = new ServerDBHandler();
 
     public ChangePasswordScreen(NextLevel game) {
         atlas = new TextureAtlas("skin/neon-ui.atlas");
@@ -67,9 +78,9 @@ public class ChangePasswordScreen implements Screen {
         Label newPasswordLabel = new Label("New Password", skin);
         Label verifyNewPasswordLabel = new Label("Re-enter Your New Password", skin);
 
-        TextField oldPasswordField = new TextField("", skin);
-        TextField newPasswordField = new TextField("", skin);
-        TextField verifyNewPasswordField = new TextField("", skin);
+        final TextField oldPasswordField = new TextField("", skin);
+        final TextField newPasswordField = new TextField("", skin);
+        final TextField verifyNewPasswordField = new TextField("", skin);
 
         oldPasswordField.setPasswordMode(true);
         newPasswordField.setPasswordMode(true);
@@ -80,7 +91,7 @@ public class ChangePasswordScreen implements Screen {
         verifyNewPasswordField.setPasswordCharacter('*');
 
         TextButton backButton = new TextButton("Back", skin);
-        TextButton changePasswordButton = new TextButton("Change Password", skin);
+        final TextButton changePasswordButton = new TextButton("Change Password", skin);
 
         table.add(backButton).left().expandX();
         //table.add(new Label("", skin)).width(labelWidth).expandX();
@@ -114,6 +125,58 @@ public class ChangePasswordScreen implements Screen {
                 //TODO: update database and if error send message if successful send message
                 // send back to main screen or ?
                 //game.setScreen(new MainMenuScreen(game));
+                oldPassword = oldPasswordField.getText();
+                newPassword = newPasswordField.getText();
+                verifyNewPassword = verifyNewPasswordField.getText();
+                if (!newPassword.equals(verifyNewPassword)) {
+                    isInfoCorrect = false;
+                    passMatchError = true;
+                } else {
+                    if (verifyNewPassword.length() < 8 || verifyNewPassword.length() > 16) {
+                        System.out.println("Password must be at least 8 characters and no more than 16 characters");
+                        isInfoCorrect = false;
+                        passLengthError = true;
+                    } else {
+                        String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
+                        Pattern p = Pattern.compile(regex);
+                        Matcher m = p.matcher(verifyNewPassword);
+                        if (m.matches()) {
+                            if (isInfoCorrect) {
+                                System.out.println(getCurAcc());
+                                if (db.getPassword(getCurAcc()).equals(oldPassword)) {
+                                    db.changePassword(getCurAcc(), newPassword);
+                                } else {
+                                    isInfoCorrect = false;
+                                    oldPassError = true;
+                                }
+
+                            }
+
+                            //successful add to database, user is automatically set to main menu
+                        } else {
+                            System.out.println("Password must have upper, lower, symbol, and digit");
+                            isInfoCorrect = false;
+                            passRegexError = true;
+                        }
+                    }
+                }
+                oldPasswordField.setText("");
+                newPasswordField.setText("");
+                verifyNewPasswordField.setText("");
+
+                if (isInfoCorrect) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Passwords successfully changed. Please login again.", "LoginScreen"));
+                } else if (passMatchError) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New passwords do not match", "ChangePasswordScreen"));
+                } else if (oldPassError) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Old password does not match your existing password", "ChangePasswordScreen"));
+                }
+                else if (passLengthError) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must be at least 8 characters and no more than 16 characters", "ChangePasswordScreen"));
+                } else if (passRegexError) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must have upper, lower, symbol, and digit", "ChangePasswordScreen"));
+                }
+
             }
         });
 

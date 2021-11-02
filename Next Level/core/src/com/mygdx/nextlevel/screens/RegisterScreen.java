@@ -240,7 +240,7 @@ public class RegisterScreen extends AccountList implements Screen{
                             System.out.println("Password must have upper, lower, symbol, and digit");
                             isInfoCorrect = false;
                             passRegexError = true;
-                            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must have upper, lower, symbol, and digit", "RegisterScreen"));
+//                            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password must have upper, lower, symbol, and digit", "RegisterScreen"));
                         }
                     }
                 }
