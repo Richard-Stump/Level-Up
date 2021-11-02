@@ -80,12 +80,15 @@ public class MainMenuScreen implements Screen {
         TextButton tutorialButton = new TextButton("Tutorial", skin);
         TextButton logoutButton = new TextButton("Logout", skin);
         TextButton exitButton = new TextButton("Exit", skin);
+        TextButton changePassButton = new TextButton("Change Password", skin);
 
-        buttonTable.add(playButton).width(buttonWidth);
-        buttonTable.add(createLevelButton).width(buttonWidth);
+        buttonTable.add(playButton).colspan(2).width(buttonWidth * 2);
         buttonTable.row();
+        buttonTable.add(createLevelButton).width(buttonWidth);
         buttonTable.add(selectLevelButton).width(buttonWidth);
+        buttonTable.row();
         buttonTable.add(tutorialButton).width(buttonWidth);
+        buttonTable.add(changePassButton).width(buttonWidth);
         buttonTable.row();
         buttonTable.add(logoutButton).width(buttonWidth);
         buttonTable.add(exitButton).width(buttonWidth);
@@ -143,6 +146,13 @@ public class MainMenuScreen implements Screen {
             }
         });
         tutorialButton.addListener(new HoverListener());
+        changePassButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new ChangePasswordScreen(game));
+            }
+        });
+        changePassButton.addListener(new HoverListener());
         logoutButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
