@@ -19,7 +19,7 @@ import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
 import org.w3c.dom.Text;
 
-public class MainMenuScreen implements Screen {
+public class MainMenuScreen extends LoginScreen implements Screen {
 
     public SpriteBatch batch;
     public Stage stage;
@@ -53,6 +53,7 @@ public class MainMenuScreen implements Screen {
 
         stage = new Stage(viewport, batch);
         this.game = game;
+        this.username = MainMenuScreen.curAcc;
     }
 
 
@@ -98,12 +99,12 @@ public class MainMenuScreen implements Screen {
         Label welcomeLabel = new Label("Welcome back!", skin);
 
         //use player username
-        Label usernameLabel = new Label("Username", skin);
+        Label usernameLabel = new Label(username, skin);
         //use player profile pic
         Image playerPic = new Image(new Texture(Gdx.files.internal("userIcon.png")));
 
         playerPic.setPosition(rightMargin, topMargin);
-        usernameLabel.setPosition(rightMargin - 80, topMargin);
+        usernameLabel.setPosition(rightMargin - 70, topMargin);
         stage.addActor(playerPic);
         stage.addActor(usernameLabel);
 
