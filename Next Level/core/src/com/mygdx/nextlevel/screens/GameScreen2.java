@@ -42,7 +42,7 @@ public class GameScreen2 implements Screen {
     private Player2 player;
     private boolean shouldReset = false;    //Should the world be reset next frame?
 
-    public HashMap<Item2, String> itemToName = new HashMap<>(); //Todo: update for the hud to work
+    public HashMap<Item2, String> itemToName = new HashMap<>();
 
     /**
      * Used to queue actor spawns because colliders cannot be created in the collision handlers.
@@ -187,7 +187,6 @@ public class GameScreen2 implements Screen {
         camera.update();
 
         hud.update(delta, player, itemToName);
-//        hud.update(delta, player, null);
     }
 
     /**
@@ -279,6 +278,5 @@ public class GameScreen2 implements Screen {
 
     }
 
-    //TODO Test
     public Player2 getPlayer() {return this.player;}
 }

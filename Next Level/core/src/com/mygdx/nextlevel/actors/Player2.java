@@ -18,11 +18,22 @@ public class Player2 extends Actor2 {
     private boolean canJump = false;
     private boolean respawn = false;
     protected boolean facingRight = true;
+    protected boolean drawTexture = false;
+
+    //Item Booleans
+    private boolean powerUp = false;
     private boolean slowItem = false;
     private boolean speedItem = false;
+    private boolean lifeStealItem = false;
+    private boolean starItem = false;
+    private boolean fireFlowerItem = false;
 
-    private float slowTime = 0;
-    private float speedTime = 0;
+    //Item Timers
+    private float slowTime = 0f;
+    private float speedTime = 0f;
+    private float lifeStealTime = 0f;
+    private float starTime = 0f;
+    private float fireFlowerTime = 0f;
 
     public Player2(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 1.0f, 1.0f);
@@ -46,11 +57,26 @@ public class Player2 extends Actor2 {
             respawn = false;
         }
 
+        if (drawTexture) {
+            if (starItem)
+                setRegion(new Texture("stargoomba.png"));
+            else if (fireFlowerItem)
+                setRegion(new Texture("firegoomba.png"));
+            else if (lifeStealItem)
+                setRegion(new Texture("lifesteal-goomba.png"));
+            else if (powerUp)
+                setRegion(new Texture("paragoomba.png"));
+            else
+                setRegion(new Texture("goomba.png"));
+
+            drawTexture = false;
+        }
+
         if (slowItem) {
             slowTime+= delta;
             if (slowTime > 3f) {
                 slowItem = false;
-                slowTime = 0;
+                slowTime = 0f;
             }
         }
 
@@ -58,7 +84,37 @@ public class Player2 extends Actor2 {
             speedTime += delta;
             if (speedTime > 3f) {
                 speedItem = false;
-                speedTime = 0;
+                speedTime = 0f;
+            }
+        }
+
+        if (starItem) {
+            starTime += delta;
+            //TODO Add Star Functionality
+            if (starTime > 3f) {
+                drawTexture = true;
+                starItem = false;
+                starTime = 0f;
+            }
+        }
+
+        if (lifeStealItem) {
+            lifeStealTime += delta;
+            //TODO Add LifeSteal Functionality
+            if (lifeStealTime > 3f) {
+                drawTexture = true;
+                lifeStealItem = false;
+                lifeStealTime = 0f;
+            }
+        }
+
+        if (fireFlowerItem) {
+            fireFlowerTime += delta;
+            //TODO Add FireFlower Functionality
+            if (fireFlowerTime > 3f) {
+                drawTexture = true;
+                fireFlowerItem = false;
+                fireFlowerTime = 0f;
             }
         }
 
@@ -69,7 +125,7 @@ public class Player2 extends Actor2 {
             float xSpeed;
             if (slowItem)
                 xSpeed = -1f;
-            else if (speedItem)
+            else if (speedItem || starItem)
                 xSpeed = -9f;
             else
                 xSpeed = -5f;
@@ -83,7 +139,7 @@ public class Player2 extends Actor2 {
             float xSpeed;
             if (slowItem)
                 xSpeed = 1f;
-            else if (speedItem)
+            else if (speedItem || starItem)
                 xSpeed = 9f;
             else
                 xSpeed = 5f;
@@ -93,14 +149,32 @@ public class Player2 extends Actor2 {
                 flip(true, false);
             }
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             if(canJump) {
                 dir.add(0.0f, 13.0f);
                 canJump = false;
             }
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+            if (heldItem != null) {
+                drawTexture = true;
+            }
+
+            //Do action based off held item
+            if (heldItem instanceof StarItem2) {
+                starItem = true;
+            } else if (heldItem instanceof FireFlowerItem2) {
+                fireFlowerItem = true;
+            } else if (heldItem instanceof LifeStealItem2) {
+                lifeStealItem = true;
+            }
+            heldItem = null;
         }
 
         boxCollider.setVelocity(dir);
@@ -109,8 +183,12 @@ public class Player2 extends Actor2 {
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) || other instanceof DeathBlock) {
-            lifeCount--;
-            respawn = true;
+            if (!powerUp || (other instanceof DeathBlock)) {
+                lifeCount--;
+                respawn = true;
+            }
+            drawTexture = true;
+            powerUp = false;
 
             if(lifeCount < 1)
                 screen.setShouldReset(true);
@@ -128,13 +206,18 @@ public class Player2 extends Actor2 {
             slowItem = false;
         } else if (other instanceof LifeItem2) {
             lifeCount++;
-            heldItem = (Item2) other;
         } else if (other instanceof MushroomItem2) {
-            heldItem = (Item2) other;
+            powerUp = true;
+            drawTexture = true;
         } else if (other instanceof FireFlowerItem2) {
-            heldItem = (Item2) other;
+            if (heldItem == null)
+                heldItem = (Item2) other;
         } else if (other instanceof StarItem2) {
-            heldItem = (Item2) other;
+            if (heldItem == null)
+                heldItem = (Item2) other;
+        } else if (other instanceof LifeStealItem2) {
+            if (heldItem == null)
+                heldItem = (Item2) other;
         }
     }
 
@@ -146,10 +229,6 @@ public class Player2 extends Actor2 {
 
     public int getLives() { return lifeCount; }
     public Item2 getHeldItem() { return heldItem; }
-    public void setRespawnLocation(Vector2 pos) {
-        respawnPosition = new Vector2(pos.x, pos.y);
-    }
-    public void dispose() {
-        boxCollider.dispose();
-    }
+    public void setRespawnLocation(Vector2 pos) { respawnPosition = new Vector2(pos.x, pos.y); }
+    public void dispose() { boxCollider.dispose(); }
 }

@@ -37,8 +37,13 @@ public class Block2 extends Actor2 {
         items.add(MushroomItem2.class);
         items.add(StarItem2.class);
         items.add(FireFlowerItem2.class);
+        items.add(LifeStealItem2.class);
 
-        setRegion(new Texture("Block.png"));
+        if (spawnItem) {
+            setRegion(new Texture("item-block.png"));
+        } else {
+            setRegion(new Texture("Block.png"));
+        }
     }
 
     public void update(float delta) {
