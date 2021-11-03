@@ -55,7 +55,6 @@ public class Block2 extends Actor2 {
                 spawnItem = false;
                 setRegion(new Texture("used-item-block.jpg"));
             }
-
         }
     }
 

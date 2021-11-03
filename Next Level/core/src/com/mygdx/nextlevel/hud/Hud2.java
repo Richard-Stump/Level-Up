@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.actors.Item;
+import com.mygdx.nextlevel.actors.Item2;
 import com.mygdx.nextlevel.actors.Player;
 import com.mygdx.nextlevel.actors.Player2;
 
@@ -92,10 +93,10 @@ public class Hud2 {
         batch.begin();
     }
 
-    public void update(float delta, Player2 player, HashMap<Item, String> map) {
+    public void update(float delta, Player2 player, HashMap<Item2, String> map) {
         numLivesLabel.setText(String.format("%d", player.getLives()));
         if (player.getHeldItem() != null) {
-            //itemImg.setDrawable(new TextureRegionDrawable(new Texture(map.get(player.getHeldItem()))));
+            itemImg.setDrawable(new TextureRegionDrawable(new Texture(map.get(player.getHeldItem()))));
         } else {
             itemImg.setDrawable(new TextureRegionDrawable(new Texture("x.png")));
         }
