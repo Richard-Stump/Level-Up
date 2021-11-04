@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -37,11 +38,12 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
     private String verifyNewPassword;
 
     //static vars
-    public static int textBoxWidth = 320;
-    public static int textBoxBottomPadding = 20;
-    public static int labelWidth = 320;
-    public static int labelBottomPadding = 10;
-    public static int buttonWidth = 320;
+    public static int textBoxWidth = 350;
+    public static int textBoxBottomPadding = 10;
+    public static int labelWidth = 350;
+    public static int labelBottomPadding = 5;
+    public static int buttonWidth = 350;
+
     boolean passLengthError = false;
     boolean passMatchError = false;
     boolean passRegexError = false;
@@ -78,9 +80,40 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
         Label newPasswordLabel = new Label("New Password", skin);
         Label verifyNewPasswordLabel = new Label("Re-enter Your New Password", skin);
 
+        Label passReqText = new Label("In order to protect your account, make sure your password:", skin);
+        Label lenText = new Label(" - has 8-16 characters", skin);
+        Label upperText = new Label(" - at least one uppercase letter (A-Z)", skin);
+        Label lowerText = new Label(" - at least one lowercase letter (a-z)", skin);
+        Label numText = new Label(" - at least one number (0-9)", skin);
+        Label spCharText = new Label(" - at least one special character ($%#@!%^&*)", skin);
+
+        passReqText.setWrap(true);
+        passReqText.setWidth(220);
+
+        Table reqTable = new Table();
+        reqTable.add(passReqText).left().width(380f).padLeft(5);
+        reqTable.row();
+        reqTable.add(lenText).left().padLeft(5);
+        reqTable.row();
+        reqTable.add(upperText).left().padLeft(5);
+        reqTable.row();
+        reqTable.add(lowerText).left().padLeft(5);
+        reqTable.row();
+        reqTable.add(numText).left().padLeft(5);
+        reqTable.row();
+        reqTable.add(spCharText).left().padLeft(5);
+
+        Stack mainStack = new Stack();
+        mainStack.add(new Image(new Texture(Gdx.files.internal("rect.png"))));
+        mainStack.add(reqTable);
+
         final TextField oldPasswordField = new TextField("", skin);
         final TextField newPasswordField = new TextField("", skin);
         final TextField verifyNewPasswordField = new TextField("", skin);
+
+        oldPasswordField.setMessageText("Password");
+        newPasswordField.setMessageText("********");
+        verifyNewPasswordField.setMessageText("********");
 
         oldPasswordField.setPasswordMode(true);
         newPasswordField.setPasswordMode(true);
@@ -93,24 +126,26 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
         TextButton backButton = new TextButton("Back", skin);
         final TextButton changePasswordButton = new TextButton("Change Password", skin);
 
-        table.add(backButton).left().expandX();
+        table.add(backButton).left().expandX().padLeft(10).padTop(10);
         //table.add(new Label("", skin)).width(labelWidth).expandX();
         table.row();
-        table.add(title).padBottom(labelBottomPadding + 20).expandY().bottom();
+        table.add(title).padBottom(labelBottomPadding + 10);
         table.row();
-        table.add(oldPasswordLabel).width(labelWidth).padBottom(labelBottomPadding - 5);
+        table.add(mainStack).padBottom(labelBottomPadding);
         table.row();
-        table.add(oldPasswordField).width(textBoxWidth).padBottom(textBoxBottomPadding);
+        table.add(oldPasswordLabel).width(labelWidth).padTop(textBoxBottomPadding);
         table.row();
-        table.add(newPasswordLabel).width(labelWidth).padBottom(labelBottomPadding - 5);
+        table.add(oldPasswordField).width(textBoxWidth + 4);
         table.row();
-        table.add(newPasswordField).width(textBoxWidth).padBottom(textBoxBottomPadding);
+        table.add(newPasswordLabel).width(labelWidth);
         table.row();
-        table.add(verifyNewPasswordLabel).width(labelWidth).padBottom(labelBottomPadding - 5);
+        table.add(newPasswordField).width(textBoxWidth + 4);
         table.row();
-        table.add(verifyNewPasswordField).width(textBoxWidth).padBottom(textBoxBottomPadding);
+        table.add(verifyNewPasswordLabel).width(labelWidth);
         table.row();
-        table.add(changePasswordButton).width(buttonWidth + 18).expandY().top();
+        table.add(verifyNewPasswordField).width(textBoxWidth + 4).padBottom(textBoxBottomPadding);
+        table.row();
+        table.add(changePasswordButton).width(buttonWidth + 18).expandY().top().padBottom(10);
 
         //event listeners
         backButton.addListener(new ClickListener() {
