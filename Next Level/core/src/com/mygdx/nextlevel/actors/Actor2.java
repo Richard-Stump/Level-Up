@@ -31,6 +31,10 @@ import javax.swing.*;
 public class Actor2 extends Sprite implements Disposable {
     protected GameScreen2 screen;
 
+    public Actor2() {
+
+    }
+
     /**
      * Construct the actor with a given position.
      * @param screen    The screen that this object belongs to

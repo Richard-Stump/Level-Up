@@ -21,6 +21,7 @@ public class Player2 extends Actor2 {
     protected boolean drawTexture = false;
 
     //Item Booleans
+    private boolean mushroom = false;
     private boolean powerUp = false;
     private boolean slowItem = false;
     private boolean speedItem = false;
@@ -34,6 +35,17 @@ public class Player2 extends Actor2 {
     private float lifeStealTime = 0f;
     private float starTime = 0f;
     private float fireFlowerTime = 0f;
+
+    public Player2() {
+        lifeCount = 3;
+        mushroom = false;
+        powerUp = false;
+        slowItem = false;
+        speedItem = false;
+        lifeStealItem = false;
+        starItem = false;
+        fireFlowerItem = false;
+    }
 
     public Player2(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 1.0f, 1.0f);
@@ -49,6 +61,13 @@ public class Player2 extends Actor2 {
 
         //The texture region needs to be set for rendering.
         setRegion(new Texture("goomba.png"));
+        mushroom = false;
+        powerUp = false;
+        slowItem = false;
+        speedItem = false;
+        lifeStealItem = false;
+        starItem = false;
+        fireFlowerItem = false;
     }
 
     public void update(float delta) {
@@ -173,6 +192,7 @@ public class Player2 extends Actor2 {
                 fireFlowerItem = true;
             } else if (heldItem instanceof LifeStealItem2) {
                 lifeStealItem = true;
+                powerUp = true;
             }
             heldItem = null;
         }
@@ -205,9 +225,12 @@ public class Player2 extends Actor2 {
             speedItem = true;
             slowItem = false;
         } else if (other instanceof LifeItem2) {
+//            System.out.println(lifeCount);
             lifeCount++;
+//            System.out.println(lifeCount);
         } else if (other instanceof MushroomItem2) {
             powerUp = true;
+            mushroom = true;
             drawTexture = true;
         } else if (other instanceof FireFlowerItem2) {
             if (heldItem == null)
@@ -219,6 +242,34 @@ public class Player2 extends Actor2 {
             if (heldItem == null)
                 heldItem = (Item2) other;
         }
+    }
+
+    public boolean hasPowerUp() {
+        return powerUp;
+    }
+
+
+    public boolean getSlowItem() {
+        return this.slowItem;
+    }
+
+
+    public boolean getStar() {
+        return starItem;
+    }
+
+    public boolean getSpeedItem() {
+        return speedItem;
+    }
+
+
+    public boolean getLifeStealItem() {
+        return this.lifeStealItem;
+    }
+
+
+    public boolean getMushroom() {
+        return mushroom;
     }
 
     public void onTrigger(Actor2 other, Side side) {

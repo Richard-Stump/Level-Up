@@ -9,6 +9,8 @@ public class Item2 extends Actor2 {
     BoxCollider collider;
     private boolean inital;
 
+    public Item2() {}
+
     public Item2(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 0.5f, 0.5f);
 

@@ -59,6 +59,13 @@ public class GameScreen2 implements Screen {
         }
     }
 
+    /**
+     * Default constructor
+     */
+    public GameScreen2() {
+
+    }
+
     ArrayList<Actor2> actors;               //The list of actors currently in play
     LinkedList<ActorSpawnInfo> spawnQueue;  //List of actors to spawn in the next frame
     LinkedList<Actor2> despawnQueue;        //List of actors to destroy in the next frame

@@ -67,6 +67,20 @@ public class TestRunner {
         totalTests += numTests;
         System.out.println();
 
+        System.out.println("Item tests:");
+        Result resultItem = JUnitCore.runClasses(ItemTest.class);
+//        System.out.println("Initialized resultItem");
+        for (Failure failure: resultItem.getFailures()) {
+            System.out.println(failure.toString());
+        }
+        numTests = resultItem.getRunCount();
+        numPassed = numTests -  resultItem.getFailureCount();
+        System.out.println("ItemTest - Passed: " + numPassed + "/" + numTests);
+        totalPassed += numPassed;
+        totalTests += numTests;
+//        totalPassed = numPassed;
+//        totalTests = numTests;
+        System.out.println();
 
         System.out.println("Checkpoint tests:");
         Result resultCheckpoint = JUnitCore.runClasses(CheckpointTest.class);
