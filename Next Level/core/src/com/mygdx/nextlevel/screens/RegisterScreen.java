@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -48,7 +49,7 @@ public class RegisterScreen extends AccountList implements Screen{
     public String verifyPass;
 
     //static vars
-    public static int textBoxWidth = 200;
+    public static int textBoxWidth = 400;
     public static int textBoxBottomPadding = 20;
     public static int buttonWidth = 170;
 
@@ -90,6 +91,18 @@ public class RegisterScreen extends AccountList implements Screen{
         Label title = new Label("Next Level", skin);
         Label welcome = new Label("Welcome", skin);
 
+        Label userReqText = new Label("Make sure your username is more than 4 characters and less than 16 characters.", skin);
+        Label passReqText = new Label("Make sure your password has 8-16 characters and contains:", skin);
+        Label upperText = new Label(" - at least one uppercase letter (A-Z)", skin);
+        Label lowerText = new Label(" - at least one lowercase letter (a-z)", skin);
+        Label numText = new Label(" - at least one number (0-9)", skin);
+        Label spCharText = new Label(" - at least one special character ($%#@!%^&*)", skin);
+
+        userReqText.setWrap(true);
+        userReqText.setWidth(300);
+        passReqText.setWrap(true);
+        passReqText.setWidth(300);
+
         //creating text boxes
         textUsername = new TextField("", skin);
         textEmail = new TextField("", skin);
@@ -114,14 +127,34 @@ public class RegisterScreen extends AccountList implements Screen{
 
         final Table table = new Table();
         Table textFieldTable = new Table();
+        Table reqTable = new Table();
+
+        reqTable.add(userReqText).left().width(400f).padBottom(5).padLeft(5);
+        reqTable.row();
+        reqTable.add(passReqText).left().width(400f).padLeft(5);
+        reqTable.row();
+        reqTable.add(upperText).left().padLeft(5);
+        reqTable.row();
+        reqTable.add(lowerText).left().padLeft(5);
+        reqTable.row();
+        reqTable.add(numText).left().padLeft(5);
+        reqTable.row();
+        reqTable.add(spCharText).left().padLeft(5);
+
+        Stack mainStack = new Stack();
+        mainStack.add(new Image(new Texture(Gdx.files.internal("rect.png"))));
+        mainStack.add(reqTable);
 
         //debug lines table, cell, and widgets
         //table.setDebug(true);
+        //reqTable.setDebug(true);
         //textFieldTable.setDebug(true);
 
-        table.add(title).colspan(2).padBottom(textBoxBottomPadding);
+        table.add(title).colspan(2).padBottom(textBoxBottomPadding).padTop(5);
+        table.row().height(1);
+        table.add(welcome).colspan(2).padBottom(textBoxBottomPadding);
         table.row();
-        table.add(welcome).colspan(2).padBottom(textBoxBottomPadding + 20);
+        table.add(mainStack).colspan(2).padBottom(textBoxBottomPadding + 5);
         table.row();
         textFieldTable.add(textUsername).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
         textFieldTable.row();
@@ -133,11 +166,24 @@ public class RegisterScreen extends AccountList implements Screen{
         textFieldTable.row();
         table.add(textFieldTable).colspan(2);
         table.row();
-        table.add(back).width(buttonWidth).colspan(1);
-        table.add(signUp).width(buttonWidth).colspan(1);
+        table.add(back).width(buttonWidth).colspan(1).expandY();
+        table.add(signUp).width(buttonWidth).colspan(1).expandY();
+        table.row();
+        table.add(new Label("", skin)).colspan(2).expandX();
 
-        table.setFillParent(true);
-        stage.addActor(table);
+        Table mainTable = new Table();
+
+        VerticalGroup mainVerticalGroup = new VerticalGroup();
+        mainVerticalGroup.addActor(mainTable);
+
+        //ScrollPane scrollPane = new ScrollPane(mainVerticalGroup, skin);
+        //scrollPane.setForceScroll(true, false);
+
+        //mainTable.add(scrollPane);
+        mainTable.add(table);
+
+        mainTable.setFillParent(true);
+        stage.addActor(mainTable);
 
         //button event listeners
         back.addListener(new ClickListener() {
