@@ -51,6 +51,13 @@ public class Enemy2 extends Actor2 {
         if(other instanceof Player2 && side == BoxCollider.Side.TOP) {
             screen.queueActorDespawn(this);
         }
+        if (other instanceof Player2 && ((Player2) other).getStar()) {
+            screen.queueActorDespawn(this);
+        }
+        if (other instanceof Player2 && ((Player2) other).getLifeStealItem()) {
+            ((Player2) other).addLife();
+            screen.queueActorDespawn(this);
+        }
     }
 
     public void dispose() {
