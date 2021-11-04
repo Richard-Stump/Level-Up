@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.screens.editor.EditorLevel;
 
 public class CreateLevelMenuScreen implements Screen {
     private NextLevel           game;
@@ -74,6 +75,7 @@ public class CreateLevelMenuScreen implements Screen {
         mainTable.add(title).center().expandX();
 
         // Create the fields to set the window width and height
+        final TextField nameField = new TextField("", skin);
         final TextField widthField = new TextField("32", skin);
         widthField.setTextFieldFilter(new TextField.TextFieldFilter.DigitsOnlyFilter());
         final TextField heightField = new TextField("32", skin);
@@ -83,6 +85,13 @@ public class CreateLevelMenuScreen implements Screen {
         // but it's what I found simple.
         Table settingsTable = new Table();
         settingsTable.top();
+        settingsTable.add(new Label("Level Setings (These can be changed later)", skin)).colspan(2);
+        settingsTable.row();
+        settingsTable.add(new Label("", skin));
+        settingsTable.row();
+        settingsTable.add(new Label("Level Name:  ", skin));
+        settingsTable.add(nameField);
+        settingsTable.row();
         settingsTable.add(new Label("Width:  ", skin));
         settingsTable.add(widthField);
         settingsTable.row();
@@ -96,10 +105,13 @@ public class CreateLevelMenuScreen implements Screen {
         TextButton createButton = new TextButton("Create", skin);
         createButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                String name = nameField.getText();
                 int width = Integer.parseInt(widthField.getText());
                 int height = Integer.parseInt(heightField.getText());
 
-                game.setScreen(new EditLevelScreen(game, width, height));
+                EditorLevel level = new EditorLevel(name, width, height);
+
+                game.setScreen(new EditLevelScreen(game, level));
             }
         });
 
