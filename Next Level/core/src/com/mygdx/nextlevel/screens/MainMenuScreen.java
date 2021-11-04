@@ -103,10 +103,17 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         //use player profile pic
         Image playerPic = new Image(new Texture(Gdx.files.internal("userIcon.png")));
 
-        playerPic.setPosition(rightMargin, topMargin);
-        usernameLabel.setPosition(rightMargin - 70, topMargin);
-        stage.addActor(playerPic);
-        stage.addActor(usernameLabel);
+        HorizontalGroup userGroup = new HorizontalGroup();
+        userGroup.addActor(usernameLabel);
+        userGroup.addActor(playerPic);
+        userGroup.setPosition(rightMargin - 70, topMargin);
+        stage.addActor(userGroup);
+
+        //using a horizontal group instead to simplify, don't need this
+        //playerPic.setPosition(rightMargin, topMargin);
+        //usernameLabel.setPosition(rightMargin - 70, topMargin);
+        //stage.addActor(playerPic);
+        //stage.addActor(usernameLabel);
 
         //mainTable.add(usernameLabel).right();
         //mainTable.row();
@@ -168,6 +175,12 @@ public class MainMenuScreen extends LoginScreen implements Screen {
             }
         });
         exitButton.addListener(new HoverListener());
+        userGroup.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new UserAccountScreen(game));
+            }
+        });
 
         //Set table to fill stage
         mainTable.setFillParent(true);

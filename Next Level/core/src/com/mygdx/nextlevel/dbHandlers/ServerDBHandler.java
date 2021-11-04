@@ -137,6 +137,7 @@ public class ServerDBHandler {
                 table[j][0] = resultSet.getString("username");
                 table[j][1] = resultSet.getString("password");
                 table[j][2] = resultSet.getString("email");
+                //these aren't strings
                 //table[j][3] = resultSet.getString("levelsuploaded");
                 //table[j][4] = resultSet.getString("assetsuploaded");
                 //table[j][5] = resultSet.getString("profilepicture");
