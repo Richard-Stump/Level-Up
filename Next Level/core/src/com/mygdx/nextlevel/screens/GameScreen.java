@@ -9,11 +9,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
-import com.mygdx.nextlevel.Tiles.TileMapTest;
-import com.mygdx.nextlevel.WorldContactListener;
+import com.mygdx.nextlevel.TileMap;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.hud.Hud;
 
@@ -28,6 +25,7 @@ public class GameScreen implements Screen, InputProcessor {
     Checkpoint checkpoint;
     Block block, block1, block2, block3;
     Hud hud;
+    TileMap tm;
 
     //Items
     Item item;
@@ -456,6 +454,10 @@ public class GameScreen implements Screen, InputProcessor {
         camera.update();
 //        fireball.update();
 
+        //tilemap loading
+        tm = new TileMap();
+        tm.create();
+
         //Set position from updated physics
         player.getSprite().setPosition((player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (player.getBody().getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);
         enemy.getSprite().setPosition((enemy.getBody().getPosition().x * PIXELS_TO_METERS) - enemy.getSprite().getWidth()/2, (enemy.getBody().getPosition().y * PIXELS_TO_METERS) - enemy.getSprite().getHeight()/2);
@@ -521,7 +523,9 @@ public class GameScreen implements Screen, InputProcessor {
         debugMatrix = batch.getProjectionMatrix().cpy().scale(PIXELS_TO_METERS, PIXELS_TO_METERS, 0);
 
         batch.begin();
-        batch.draw(new Texture("tempBack.png"),0, 0);
+        //batch.draw(new Texture("tempBack.png"),0, 0);
+        tm.render(camera);
+
         if (drawSprite) {
             //Draw Checkpoint
             batch.draw(checkpoint.getSprite(), checkpoint.getSprite().getX(), checkpoint.getSprite().getY(), checkpoint.getSprite().getOriginX(), checkpoint.getSprite().getOriginY(), checkpoint.getSprite().getWidth(), checkpoint.getSprite().getHeight(), checkpoint.getSprite().getScaleX(), checkpoint.getSprite().getScaleY(), checkpoint.getSprite().getRotation());

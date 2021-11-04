@@ -9,18 +9,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
-import com.mygdx.nextlevel.Tiles.TileMapTest;
-import com.mygdx.nextlevel.WorldContactListener;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.hud.Hud;
 //import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 public class ItemShowcaseScreen implements Screen, InputProcessor {
     SpriteBatch batch;
