@@ -19,15 +19,16 @@ public class Player2 extends Actor2 {
     private boolean respawn = false;
     protected boolean facingRight = true;
     protected boolean drawTexture = false;
+    protected boolean checkpointTrigger = false;
+    private boolean powerUp; //Check if player has powerup
 
     //Item Booleans
-    private boolean mushroom = false;
-    private boolean powerUp = false;
-    private boolean slowItem = false;
-    private boolean speedItem = false;
-    private boolean lifeStealItem = false;
-    private boolean starItem = false;
-    private boolean fireFlowerItem = false;
+    private boolean mushroomItem;
+    private boolean slowItem;
+    private boolean speedItem;
+    private boolean lifeStealItem;
+    private boolean starItem;
+    private boolean fireFlowerItem;
 
     //Item Timers
     private float slowTime = 0f;
@@ -38,7 +39,7 @@ public class Player2 extends Actor2 {
 
     public Player2() {
         lifeCount = 3;
-        mushroom = false;
+        mushroomItem = false;
         powerUp = false;
         slowItem = false;
         speedItem = false;
@@ -61,8 +62,8 @@ public class Player2 extends Actor2 {
 
         //The texture region needs to be set for rendering.
         setRegion(new Texture("goomba.png"));
-        mushroom = false;
         powerUp = false;
+        mushroomItem = false;
         slowItem = false;
         speedItem = false;
         lifeStealItem = false;
@@ -73,6 +74,15 @@ public class Player2 extends Actor2 {
     public void update(float delta) {
         if(respawn) {
             boxCollider.setPosition(respawnPosition);
+            setRegion(new Texture("goomba.png"));
+            powerUp = false;
+            mushroomItem = false;
+            slowItem = false;
+            speedItem = false;
+            lifeStealItem = false;
+            starItem = false;
+            fireFlowerItem = false;
+            heldItem = null;
             respawn = false;
         }
 
@@ -154,6 +164,7 @@ public class Player2 extends Actor2 {
                 flip(true, false);
             }
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             float xSpeed;
             if (slowItem)
@@ -202,13 +213,25 @@ public class Player2 extends Actor2 {
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
-        if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) || other instanceof DeathBlock) {
-            if (!powerUp || (other instanceof DeathBlock)) {
+        //Check if player collides with enemy
+        if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) && !starItem) {
+            if (!powerUp) {
                 lifeCount--;
                 respawn = true;
             }
+
             drawTexture = true;
             powerUp = false;
+
+            if(lifeCount < 1) {
+                screen.setShouldReset(true);
+            }
+        }
+
+        //Check if player falls off edge
+        if (other instanceof DeathBlock) {
+            lifeCount--;
+            respawn = true;
 
             if(lifeCount < 1)
                 screen.setShouldReset(true);
@@ -225,12 +248,10 @@ public class Player2 extends Actor2 {
             speedItem = true;
             slowItem = false;
         } else if (other instanceof LifeItem2) {
-//            System.out.println(lifeCount);
             lifeCount++;
-//            System.out.println(lifeCount);
         } else if (other instanceof MushroomItem2) {
             powerUp = true;
-            mushroom = true;
+            mushroomItem = true;
             drawTexture = true;
         } else if (other instanceof FireFlowerItem2) {
             if (heldItem == null)
@@ -269,16 +290,19 @@ public class Player2 extends Actor2 {
 
 
     public boolean getMushroom() {
-        return mushroom;
+        return mushroomItem;
     }
 
     public void onTrigger(Actor2 other, Side side) {
-        if(other instanceof CheckPoint2) {
+        if(other instanceof CheckPoint2 && !checkpointTrigger) {
+            addLife();
             respawnPosition = ((CheckPoint2)other).collider.getPosition();
+            checkpointTrigger = true;
         }
     }
 
     public int getLives() { return lifeCount; }
+    public void addLife() { lifeCount++; }
     public Item2 getHeldItem() { return heldItem; }
     public void setRespawnLocation(Vector2 pos) { respawnPosition = new Vector2(pos.x, pos.y); }
     public void dispose() { boxCollider.dispose(); }
