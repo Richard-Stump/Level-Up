@@ -11,10 +11,10 @@ import com.badlogic.gdx.utils.viewport.*;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.screens.editor.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /* TODO: Make it so that the object TabbedPane always aligns to the left.
  */
@@ -33,6 +33,7 @@ public class EditLevelScreen implements Screen {
     private Stage stage;
     private Viewport viewport;
     private int screenWidth, screenHeight;
+    private EditorLevel level;
 
     private LevelView levelView;
     private AssetSelectorWindow win;
@@ -59,11 +60,11 @@ public class EditLevelScreen implements Screen {
      * Initializes the level editor with an empty level of the given size
      *
      * @param game A reference to the NextLevel class in use
-     * @param mapWidth How many tiles wide the new level should be
-     * @param mapHeight How many tiles tall the new level should be
+     * @param level The EditorLevel to edit.
      */
-    public EditLevelScreen(NextLevel game, int mapWidth, int mapHeight) {
+    public EditLevelScreen(NextLevel game, EditorLevel level) {
         this.game = game;
+        this.level = level;
         this.screenWidth = Gdx.graphics.getWidth();
         this.screenHeight = Gdx.graphics.getHeight();
         this.camera = new OrthographicCamera(screenWidth, screenHeight);
@@ -87,12 +88,16 @@ public class EditLevelScreen implements Screen {
 
         loadTiles();
         loadActors();
-        levelView = new LevelView(this, new EditorLevel(mapWidth, mapHeight), STAGE_WIDTH, STAGE_HEIGHT);
+        levelView = new LevelView(this, level, STAGE_WIDTH, STAGE_HEIGHT);
 
         // For some reason the tabbed pane won't work with the other skin.
         // TODO: Figure out how to use the same skin as the main menu
         if(!VisUI.isLoaded())
             VisUI.load(VisUI.SkinScale.X2);
+    }
+
+    public EditLevelScreen(NextLevel game, int mapWidth, int mapHeight) {
+       this(game, new EditorLevel(mapWidth, mapHeight));
     }
 
     /**
@@ -129,6 +134,15 @@ public class EditLevelScreen implements Screen {
 
         backButton.setPosition(0.0f, STAGE_HEIGHT - backButton.getHeight());
         stage.addActor(backButton);
+
+        final EditLevelScreen editLevelScreen = this;
+
+        win2.addLevelSettingsListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                stage.addActor(new LevelSettingsWindow(editLevelScreen, level));
+            }
+        });
     }
 
     /**
@@ -222,18 +236,19 @@ public class EditLevelScreen implements Screen {
     public AssetSelectorWindow getSelectorWindow() {
         return win;
     }
+
+    public void setScrollFocus(Actor actor) {
+        stage.setScrollFocus(actor);
+    }
+
+    public Stage getStage() { return stage; }
 }
 
 /**
  * The window that handles load/save etc...
  */
 class MenuWindow extends VisWindow {
-    Button addAssetButton;
-    Button addFinishFlagButton;
     Button levelSettingsButton;
-    Button levelInfoButton;
-    Button testLevelButton;
-    Button saveAndExitButton;
 
     final float BUTTON_WIDTH = 160.0f;
     final float BUTTON_PADDING = 10.0f;
@@ -243,12 +258,12 @@ class MenuWindow extends VisWindow {
 
         VisTable table = new VisTable();
 
-        constructButtons(table);
+        levelSettingsButton = new TextButton("Level\nSettings", VisUI.getSkin());
+        table.add(levelSettingsButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING);
 
         add(table).fill();
 
-        int numButtons = getButtonList().size();
-
+        int numButtons = 1;
         float width = 50 + BUTTON_WIDTH * numButtons + BUTTON_PADDING * numButtons;
         float x = EditLevelScreen.STAGE_WIDTH - width;
         float y = EditLevelScreen.STAGE_HEIGHT;
@@ -264,37 +279,100 @@ class MenuWindow extends VisWindow {
         setPosition(x, y);
     }
 
-    private void constructButtons(Table table) {
-        ArrayList<Button> buttons = getButtonList();
+    void addLevelSettingsListener(ClickListener listener) {
+        levelSettingsButton.addListener(listener);
+    }
+}
 
-        // List of titles for the buttons. There should be one here for each button
-        String[] buttonTitles = {
-            "Add\nAssets",
-            "Add Finish\nFlag",
-            "Level\nSettings",
-            "Edit Level\nInfo",
-            "Test\nLevel",
-            "Save and\nExit",
-        };
+class LevelSettingsWindow extends VisWindow{
+    protected EditorLevel level;
+    protected VisTextField nameField;
+    protected VisTextField widthField;
+    protected VisTextField heightField;
+    protected SelectBox<Difficulty> difficultySelectBox;
+    protected VisTextButton applyButton;
+    protected VisTextButton cancelButton;
 
-        for(int i = 0; i < buttons.size(); i++) {
-            Button b = buttons.get(i);
+    protected Actor previousScrollFocus;
 
-            b = new TextButton(buttonTitles[i], VisUI.getSkin());
-            table.add(b).expand().fill().pad(BUTTON_PADDING).width(BUTTON_WIDTH);
-        }
+    public LevelSettingsWindow(EditLevelScreen screen, final EditorLevel level) {
+        super("Level Settings");
+
+        screen.setScrollFocus(this);
+
+        this.level = level;
+
+        setSize(500, 500);
+        this.centerWindow();
+        this.setModal(true);
+        setMovable(false);
+
+        nameField = new VisTextField(level.name);
+        widthField = new VisTextField(Integer.toString(level.width));
+        widthField.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
+        heightField = new VisTextField(Integer.toString(level.height));
+        heightField.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
+        difficultySelectBox = new SelectBox<Difficulty>(VisUI.getSkin());
+        difficultySelectBox.setItems(Difficulty.values());
+        difficultySelectBox.setSelected(level.difficulty);
+
+        final Stage stage = screen.getStage();
+        previousScrollFocus = stage.getScrollFocus();
+
+        applyButton = new VisTextButton("Apply");
+        applyButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                int width = Integer.parseInt(widthField.getText());
+                int height = Integer.parseInt(heightField.getText());
+                String name = nameField.getText();
+
+                level.name = name;
+                level.difficulty = difficultySelectBox.getSelected();
+                level.resize(width, height);
+
+                close();
+                stage.setScrollFocus(previousScrollFocus);
+            }
+        });
+
+        cancelButton = new VisTextButton("Cancel");
+        cancelButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y){
+                close();
+                stage.setScrollFocus(previousScrollFocus);
+            }
+        });
+
+        setupTable();
     }
 
-    private ArrayList<Button> getButtonList() {
-        ArrayList<Button> l = new ArrayList<Button>();
+    protected void setupTable() {
+        VisTable contentTable = new VisTable();
 
-        l.add(addAssetButton);
-        l.add(addFinishFlagButton);
-        l.add(levelSettingsButton);
-        l.add(levelInfoButton);
-        l.add(saveAndExitButton);
-        l.add(testLevelButton);
+        contentTable.pad(2.0f);
+        contentTable.top();
+        contentTable.add("Level Properties: ").colspan(2);
 
-        return l;
+        contentTable.row();
+        contentTable.add(new VisLabel("Name:    ")).left();
+        contentTable.add(nameField).expandX().fillX();
+
+        contentTable.row();
+        contentTable.add(new VisLabel("Width:    ")).left();
+        contentTable.add(widthField).expandX().fillX();
+
+        contentTable.row();
+        contentTable.add(new VisLabel("Height:    ")).left();
+        contentTable.add(heightField).expandX().fillX();
+
+        contentTable.row();
+        contentTable.add(new VisLabel("Difficulty: ")).left();
+        contentTable.add(difficultySelectBox).expandX().fillX();
+
+        this.add(contentTable).expand().fill().colspan(2);
+        this.row();
+        this.add(applyButton);
+        this.add(cancelButton);
     }
+
 }

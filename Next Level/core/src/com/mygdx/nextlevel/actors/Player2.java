@@ -37,6 +37,10 @@ public class Player2 extends Actor2 {
     private float starTime = 0f;
     private float fireFlowerTime = 0f;
 
+    //Fire Timer
+    private float fireTime = 0f;
+    private boolean fireSpawn = false;
+
     public Player2() {
         lifeCount = 3;
         mushroomItem = false;
@@ -119,7 +123,6 @@ public class Player2 extends Actor2 {
 
         if (starItem) {
             starTime += delta;
-            //TODO Add Star Functionality
             if (starTime > 3f) {
                 drawTexture = true;
                 starItem = false;
@@ -129,7 +132,6 @@ public class Player2 extends Actor2 {
 
         if (lifeStealItem) {
             lifeStealTime += delta;
-            //TODO Add LifeSteal Functionality
             if (lifeStealTime > 3f) {
                 drawTexture = true;
                 lifeStealItem = false;
@@ -208,6 +210,21 @@ public class Player2 extends Actor2 {
             heldItem = null;
         }
 
+        if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
+            if (fireFlowerItem) {
+                if (!fireSpawn) {
+                    //If fireflower item active spawn fire
+                    if (facingRight) { //Send fire to the right direction
+                        screen.queueActorSpawn(getX() + 1, getY(), Fire2.class);
+                    } else { //Send fire to the left side
+                        screen.queueActorSpawn(getX() - 1, getY(), Fire2.class);
+                    }
+                    fireSpawn = true;
+                }
+                fireTime++;
+            }
+        }
+
         boxCollider.setVelocity(dir);
         setPosition(boxCollider.getPosition().x, boxCollider.getPosition().y);
     }
@@ -265,34 +282,6 @@ public class Player2 extends Actor2 {
         }
     }
 
-    public boolean hasPowerUp() {
-        return powerUp;
-    }
-
-
-    public boolean getSlowItem() {
-        return this.slowItem;
-    }
-
-
-    public boolean getStar() {
-        return starItem;
-    }
-
-    public boolean getSpeedItem() {
-        return speedItem;
-    }
-
-
-    public boolean getLifeStealItem() {
-        return this.lifeStealItem;
-    }
-
-
-    public boolean getMushroom() {
-        return mushroomItem;
-    }
-
     public void onTrigger(Actor2 other, Side side) {
         if(other instanceof CheckPoint2 && !checkpointTrigger) {
             addLife();
@@ -301,9 +290,28 @@ public class Player2 extends Actor2 {
         }
     }
 
-    public int getLives() { return lifeCount; }
+    public void setfireSpawn(boolean b) { fireSpawn = b; }
     public void addLife() { lifeCount++; }
+    public int getLives() { return lifeCount; }
     public Item2 getHeldItem() { return heldItem; }
+    public boolean hasPowerUp() {
+        return powerUp;
+    }
+    public boolean getMushroom() {
+        return mushroomItem;
+    }
+    public boolean getLifeStealItem() {
+        return this.lifeStealItem;
+    }
+    public boolean getStar() {
+        return starItem;
+    }
+    public boolean getSpeedItem() {
+        return speedItem;
+    }
+    public boolean getSlowItem() {
+        return this.slowItem;
+    }
     public void setRespawnLocation(Vector2 pos) { respawnPosition = new Vector2(pos.x, pos.y); }
     public void dispose() { boxCollider.dispose(); }
 }

@@ -22,7 +22,6 @@ public class CheckPoint2 extends Actor2 {
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         if(other instanceof Player2 && !activated) {
             activated = true;
-            ((Player2) other).setRespawnLocation(collider.getPosition());
             setRegion(new Texture("checkpoint2.jpg"));
         }
     }
