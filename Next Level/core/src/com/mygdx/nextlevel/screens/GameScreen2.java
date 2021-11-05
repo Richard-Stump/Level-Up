@@ -32,7 +32,7 @@ import java.util.LinkedList;
  * No modifications can be made to the Box2d world in the collision handler functions. Deleting, adding, etc.
  * actors/colliders in the collision handling methods will cause crashes.
  */
-public class GameScreen2 implements Screen {
+public class GameScreen2 implements GameScreenBase {
     private NextLevel game;
     private Box2DDebugRenderer box2dRenderer;
     private OrthographicCamera camera;
@@ -43,6 +43,7 @@ public class GameScreen2 implements Screen {
     private boolean shouldReset = false;    //Should the world be reset next frame?
 
     public HashMap<Item2, String> itemToName = new HashMap<>();
+    ArrayList<Class> items;
 
     /**
      * Used to queue actor spawns because colliders cannot be created in the collision handlers.
@@ -76,6 +77,14 @@ public class GameScreen2 implements Screen {
      */
     public GameScreen2(NextLevel game) {
         this.game = game;
+        items = new ArrayList<>();
+        items.add(SlowItem2.class);
+        items.add(SpeedItem2.class);
+        items.add(LifeItem2.class);
+        items.add(MushroomItem2.class);
+        items.add(StarItem2.class);
+        items.add(FireFlowerItem2.class);
+        items.add(LifeStealItem2.class);
 
         //Used to display where the colliders are on the screen
         box2dRenderer = new Box2DDebugRenderer();
@@ -126,11 +135,11 @@ public class GameScreen2 implements Screen {
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
         player = new Player2(this, 7, 2);
         actors.add(new Enemy2(this,5, 2));
-        actors.add(new Block2(this, 7, 4, true));
-        actors.add(new Block2(this, 10, 4, true));
-        actors.add(new Block2(this, 13, 4, true));
-        actors.add(new Block2(this, 16, 4, true));
-        actors.add(new Block2(this, 19, 4, true));
+        actors.add(new Block2(this, 7, 4, true, items));
+        actors.add(new Block2(this, 10, 4, true, items));
+        actors.add(new Block2(this, 13, 4, true, items));
+        actors.add(new Block2(this, 16, 4, true, items));
+        actors.add(new Block2(this, 19, 4, true, items));
         actors.add(new CheckPoint2(this, 10, 1.0f));
         actors.add(player);
         actors.add(new DeathBlock(this, player, player.getPosition().x));
@@ -229,7 +238,7 @@ public class GameScreen2 implements Screen {
             //Use fancy reflection stuff to fetch the constructor and spawn the actor type specified.
             try {
                 ActorSpawnInfo i =  spawnQueue.remove();
-                Constructor<?> c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
+                Constructor<?> c = i.type.getDeclaredConstructor(GameScreenBase.class, float.class, float.class);
                 actors.add((Actor2) c.newInstance(this, i.x, i.y));
             }
             catch (InvocationTargetException e) {
