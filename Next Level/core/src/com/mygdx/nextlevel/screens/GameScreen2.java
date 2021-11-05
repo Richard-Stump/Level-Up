@@ -154,6 +154,7 @@ public class GameScreen2 implements Screen {
         actors.add(new Block2(this, 25, 4, true, ItemIndex.FIREFLOWER.value));
         actors.add(new Block2(this, 28, 4, true, ItemIndex.LIFESTEAL.value));
         actors.add(new Block2(this, 29, 4, false, true));
+        actors.add(new Block2(this, 30, 4, false, false));
         actors.add(new CheckPoint2(this, 10, 1.0f));
         actors.add(player);
         actors.add(new DeathBlock(this, player, player.getPosition().x));
