@@ -108,7 +108,7 @@ public class UserAccountScreen implements Screen {
         mainTable = new Table();
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
-        mainTable.setDebug(true);
+        //mainTable.setDebug(true);
 
         //TODO: put button somewhere that takes the user to a download page to download more levels ("Manage Levels" button)
 
