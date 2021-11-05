@@ -14,6 +14,7 @@ import java.util.Random;
 public class Block2 extends Actor2 {
     protected boolean spawnItem;
     protected boolean spawned;
+    protected boolean breakable;
     protected BoxCollider collider;
     protected int itemIndex = 0;
 
@@ -24,6 +25,7 @@ public class Block2 extends Actor2 {
 
         this.spawnItem = spawnItem;
         this.spawned = false;
+        this.breakable = false;
 
         collider = new BoxCollider(
                 this,
@@ -55,6 +57,29 @@ public class Block2 extends Actor2 {
 
         this.spawnItem = spawnItem;
         this.spawned = false;
+        this.breakable = false;
+
+
+        collider = new BoxCollider(
+                this,
+                new Vector2(x, y),
+                new Vector2(1, 1),
+                false
+        );
+
+        if (spawnItem) {
+            setRegion(new Texture("item-block.png"));
+        } else {
+            setRegion(new Texture("Block.png"));
+        }
+    }
+
+    public Block2(GameScreen2 screen, float x, float y, boolean spawnItem, boolean breakable) {
+        super(screen, x, y, 1, 1);
+
+        this.spawnItem = spawnItem;
+        this.spawned = false;
+        this.breakable = breakable;
 
         collider = new BoxCollider(
                 this,
@@ -88,6 +113,9 @@ public class Block2 extends Actor2 {
                 screen.queueActorSpawn(pos.x, pos.y + 1.0f, itemClass);
                 spawnItem = false;
                 setRegion(new Texture("used-item-block.jpg"));
+            }
+            if (breakable) {
+                screen.queueActorDespawn(this);
             }
         }
     }

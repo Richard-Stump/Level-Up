@@ -35,6 +35,18 @@ import java.util.LinkedList;
  * actors/colliders in the collision handling methods will cause crashes.
  */
 public class GameScreen2 implements Screen {
+    /**
+     * Enums to the screen in which specify what item goes into the block
+     */
+    public enum ItemIndex {
+        SLOW(0), SPEED(1), LIFE(2), MUSHROOM(3), STAR(4), FIREFLOWER(5), LIFESTEAL(6), ALL(7);
+        private final int value;
+
+        ItemIndex(final int newValue) {
+            value = newValue;
+        }
+    }
+
     private NextLevel game;
     private Box2DDebugRenderer box2dRenderer;
     private OrthographicCamera camera;
@@ -131,13 +143,17 @@ public class GameScreen2 implements Screen {
         despawnQueue.clear();
 
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
-        player = new Player2(this, 7, 2);
-        actors.add(new Enemy2(this,5, 2));
-        actors.add(new Block2(this, 7, 4, true, 1));
-        actors.add(new Block2(this, 10, 4, true, 2));
-        actors.add(new Block2(this, 13, 4, true, 3));
-        actors.add(new Block2(this, 16, 4, true, 4));
-        actors.add(new Block2(this, 19, 4, true, 7));
+        player = new Player2(this, 1.0f, 1.0f);
+        actors.add(new Enemy2(this,2, 2));
+        actors.add(new Block2(this, 7, 4, true, ItemIndex.ALL.value));
+        actors.add(new Block2(this, 10, 4, true, ItemIndex.SLOW.value));
+        actors.add(new Block2(this, 13, 4, true, ItemIndex.SPEED.value));
+        actors.add(new Block2(this, 16, 4, true, ItemIndex.LIFE.value));
+        actors.add(new Block2(this, 19, 4, true, ItemIndex.MUSHROOM.value));
+        actors.add(new Block2(this, 22, 4, true, ItemIndex.STAR.value));
+        actors.add(new Block2(this, 25, 4, true, ItemIndex.FIREFLOWER.value));
+        actors.add(new Block2(this, 28, 4, true, ItemIndex.LIFESTEAL.value));
+        actors.add(new Block2(this, 29, 4, false, true));
         actors.add(new CheckPoint2(this, 10, 1.0f));
         actors.add(player);
         actors.add(new DeathBlock(this, player, player.getPosition().x));
