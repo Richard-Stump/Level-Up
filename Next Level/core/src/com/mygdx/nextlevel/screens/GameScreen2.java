@@ -225,7 +225,7 @@ public class GameScreen2 implements GameScreenBase {
 
         ScreenUtils.clear(Color.WHITE);
 
-        tm.render(camera);
+        tm.render(camera, player);
 
 
         SpriteBatch batch = game.batch;
