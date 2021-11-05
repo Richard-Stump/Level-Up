@@ -106,8 +106,8 @@ public class LoginScreen extends AccountList implements Screen {
         //initial information
         textUsername.setMessageText("Username");
         textPass.setMessageText("Password");
-        textPass.setPasswordMode(true);
-        textPass.setPasswordCharacter('*');
+//        textPass.setPasswordMode(true);
+//        textPass.setPasswordCharacter('*');
 
         //buttons
         loginButton = new TextButton("Login", skin);
