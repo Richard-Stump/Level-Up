@@ -99,3 +99,5 @@ public class Block2 extends Actor2 {
         collider.dispose();
     }
 }
+
+

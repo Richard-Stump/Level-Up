@@ -6,6 +6,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -68,7 +70,7 @@ public class GameScreen2 implements Screen {
 
     }
 
-    ArrayList<Actor2> actors;               //The list of actors currently in play
+    public ArrayList<Actor2> actors;               //The list of actors currently in play
     LinkedList<ActorSpawnInfo> spawnQueue;  //List of actors to spawn in the next frame
     LinkedList<Actor2> despawnQueue;        //List of actors to destroy in the next frame
 
@@ -214,14 +216,15 @@ public class GameScreen2 implements Screen {
 
         ScreenUtils.clear(Color.WHITE);
 
-        tm.render(camera, player);
+        tm.render(camera);
 
 
-        Batch batch = game.batch;
+        SpriteBatch batch = game.batch;
+
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
 
-        //tm.loadObjects();
+        tm.loadObjects(this, actors);
 
         for(Actor2 a : actors) {
             a.draw(batch);
@@ -230,6 +233,7 @@ public class GameScreen2 implements Screen {
         hud.render(batch);
 
         batch.end();
+
 
         box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
     }
