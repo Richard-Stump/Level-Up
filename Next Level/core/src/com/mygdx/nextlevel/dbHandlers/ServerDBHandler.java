@@ -1,8 +1,10 @@
 package com.mygdx.nextlevel.dbHandlers;
 
 import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -59,6 +61,9 @@ public class ServerDBHandler {
         }
     }
 
+    //--------------------- User table functions ---------------------//
+
+
     public void addUser(Account account) {
         String sqlQuery = "INSERT INTO api.users (username, password, email) " +
                 "VALUES (?, ?, ?);";
@@ -87,7 +92,7 @@ public class ServerDBHandler {
         }
     }
 
-    public void clearDatabase() {
+    public void clearUserTable() {
         String sqlQuery = "DELETE FROM api.users;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.executeUpdate();
@@ -202,4 +207,41 @@ public class ServerDBHandler {
             e.printStackTrace();
         }
     }
+
+
+
+
+
+    //--------------------- Level table functions ---------------------//
+
+    /**
+     * Add a level in the server database
+     *
+     * @param levelInfo LevelInfo of the item to add
+     * @return 1 on success, 0 of failure
+     */
+    public int addLevel(LevelInfo levelInfo) {
+        String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated, tmx, tsx, png) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, levelInfo.getId());
+            statement.setString(2, levelInfo.getTitle());
+            statement.setString(3, levelInfo.getAuthor());
+            statement.setArray(4, connection.createArrayOf("text", levelInfo.getTags().toArray()));
+            statement.setFloat(5, levelInfo.getBestTime());
+            statement.setString(6, levelInfo.getAuthor());
+            statement.setDate(7, levelInfo.getDateCreated());
+            //need to get
+            statement.setBinaryStream(8, new FileInputStream(levelInfo.getTmx()), (int) levelInfo.getTmx().length());
+            statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
+            statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
+
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 }

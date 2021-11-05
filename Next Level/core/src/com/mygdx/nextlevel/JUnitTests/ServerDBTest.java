@@ -1,6 +1,7 @@
 package com.mygdx.nextlevel.JUnitTests;
 
 import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
@@ -87,16 +88,17 @@ public class ServerDBTest {
     @Test
     public void testGetTable() {
         //TODO: make this into an actual test
-        System.out.println("get table: ");
+        //System.out.println("get table: ");
         String[][] table = db.getTable();
 
         for (String[] strings : table) {
             for (int j = 0; j < table[0].length; j++) {
-                System.out.print(strings[j] + ", ");
+                //System.out.print(strings[j] + ", ");
             }
-            System.out.println();
+            //System.out.println();
         }
-        System.out.println();
+        //System.out.println();
+        assertTrue(true);
     }
 
     @Test
@@ -123,23 +125,10 @@ public class ServerDBTest {
         assertEquals(actual, expected);
     }
 
-
-
     /*
-    //Not working as expected:
-    @Test(expected = PSQLException.class)
-    public void testRemoveUsersAnon() {
-        db.removeUser("steve");
-    }
-
-
     @Test
-    public void testRemoveUserUsingAdmin() {
-        test = "testRemoveUserUsingAdmin(WIP)";
-
-        ServerDBHandler adminDB = new ServerDBHandler("admin", "CQNK2Ih8H8aikg6M");
-
-        adminDB.closeConnection();
+    public void testAddLevel() {
+        //LevelInfo
     }
 
      */
