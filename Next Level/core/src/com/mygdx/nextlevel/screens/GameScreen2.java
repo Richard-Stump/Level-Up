@@ -6,12 +6,15 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionManager;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.TileMap;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.hud.Hud2;
 
@@ -32,17 +35,19 @@ import java.util.LinkedList;
  * No modifications can be made to the Box2d world in the collision handler functions. Deleting, adding, etc.
  * actors/colliders in the collision handling methods will cause crashes.
  */
-public class GameScreen2 implements Screen {
+public class GameScreen2 implements GameScreenBase {
     private NextLevel game;
     private Box2DDebugRenderer box2dRenderer;
     private OrthographicCamera camera;
     private Hud2 hud;
+    TileMap tm;
 
     private BoxCollider floor;
     private Player2 player;
     private boolean shouldReset = false;    //Should the world be reset next frame?
 
     public HashMap<Item2, String> itemToName = new HashMap<>();
+    ArrayList<Class> items;
 
     /**
      * Used to queue actor spawns because colliders cannot be created in the collision handlers.
@@ -66,7 +71,7 @@ public class GameScreen2 implements Screen {
 
     }
 
-    ArrayList<Actor2> actors;               //The list of actors currently in play
+    public ArrayList<Actor2> actors;               //The list of actors currently in play
     LinkedList<ActorSpawnInfo> spawnQueue;  //List of actors to spawn in the next frame
     LinkedList<Actor2> despawnQueue;        //List of actors to destroy in the next frame
 
@@ -76,6 +81,14 @@ public class GameScreen2 implements Screen {
      */
     public GameScreen2(NextLevel game) {
         this.game = game;
+        items = new ArrayList<>();
+        items.add(SlowItem2.class);
+        items.add(SpeedItem2.class);
+        items.add(LifeItem2.class);
+        items.add(MushroomItem2.class);
+        items.add(StarItem2.class);
+        items.add(FireFlowerItem2.class);
+        items.add(LifeStealItem2.class);
 
         //Used to display where the colliders are on the screen
         box2dRenderer = new Box2DDebugRenderer();
@@ -94,6 +107,10 @@ public class GameScreen2 implements Screen {
         actors = new ArrayList<>();
         spawnQueue = new LinkedList<>();
         despawnQueue = new LinkedList<>();
+
+        //create tilemap
+        tm = new TileMap();
+        tm.create();
 
         //setup the initial map
         reset();
@@ -126,11 +143,11 @@ public class GameScreen2 implements Screen {
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
         player = new Player2(this, 7, 2);
         actors.add(new Enemy2(this,5, 2));
-        actors.add(new Block2(this, 7, 4, true));
-        actors.add(new Block2(this, 10, 4, true));
-        actors.add(new Block2(this, 13, 4, true));
-        actors.add(new Block2(this, 16, 4, true));
-        actors.add(new Block2(this, 19, 4, true));
+        actors.add(new Block2(this, 7, 4, true, items));
+        actors.add(new Block2(this, 10, 4, true, items));
+        actors.add(new Block2(this, 13, 4, true, items));
+        actors.add(new Block2(this, 16, 4, true, items));
+        actors.add(new Block2(this, 19, 4, true, items));
         actors.add(new CheckPoint2(this, 10, 1.0f));
         actors.add(player);
         actors.add(new DeathBlock(this, player, player.getPosition().x));
@@ -204,11 +221,19 @@ public class GameScreen2 implements Screen {
     public void render(float delta) {
         update(delta);
 
+
+
         ScreenUtils.clear(Color.WHITE);
 
-        Batch batch = game.batch;
+        tm.render(camera, player);
+
+
+        SpriteBatch batch = game.batch;
+
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
+
+        tm.loadObjects(this, actors);
 
         for(Actor2 a : actors) {
             a.draw(batch);
@@ -217,6 +242,7 @@ public class GameScreen2 implements Screen {
         hud.render(batch);
 
         batch.end();
+
 
         box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
     }
@@ -229,7 +255,7 @@ public class GameScreen2 implements Screen {
             //Use fancy reflection stuff to fetch the constructor and spawn the actor type specified.
             try {
                 ActorSpawnInfo i =  spawnQueue.remove();
-                Constructor<?> c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
+                Constructor<?> c = i.type.getDeclaredConstructor(GameScreenBase.class, float.class, float.class);
                 actors.add((Actor2) c.newInstance(this, i.x, i.y));
             }
             catch (InvocationTargetException e) {
