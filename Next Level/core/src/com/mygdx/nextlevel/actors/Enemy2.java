@@ -58,6 +58,9 @@ public class Enemy2 extends Actor2 {
             ((Player2) other).addLife();
             screen.queueActorDespawn(this);
         }
+        if (other instanceof Fire2) {
+            screen.queueActorDespawn(this);
+        }
     }
 
     public void dispose() {
