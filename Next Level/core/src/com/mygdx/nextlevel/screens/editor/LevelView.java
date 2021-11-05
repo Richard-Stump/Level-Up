@@ -12,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.mygdx.nextlevel.screens.EditLevelScreen;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 /**
  * Widget to display a preview of the level

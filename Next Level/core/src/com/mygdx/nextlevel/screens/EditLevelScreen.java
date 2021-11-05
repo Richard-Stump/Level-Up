@@ -13,7 +13,9 @@ import com.kotcrab.vis.ui.widget.*;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.screens.editor.*;
+import jdk.internal.org.jline.reader.Editor;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 /* TODO: Make it so that the object TabbedPane always aligns to the left.
@@ -129,7 +131,7 @@ public class EditLevelScreen implements Screen {
 
         win = new AssetSelectorWindow(tiles, actorTextures);
         stage.addActor(win);
-        MenuWindow win2 = new MenuWindow();
+        MenuWindow win2 = new MenuWindow(level);
         stage.addActor(win2);
 
         backButton.setPosition(0.0f, STAGE_HEIGHT - backButton.getHeight());
@@ -249,21 +251,51 @@ public class EditLevelScreen implements Screen {
  */
 class MenuWindow extends VisWindow {
     Button levelSettingsButton;
+    Button saveButton;
+    Button loadButton;
+
+    EditorLevel level;
 
     final float BUTTON_WIDTH = 160.0f;
     final float BUTTON_PADDING = 10.0f;
 
-    public MenuWindow() {
+    public MenuWindow(EditorLevel level) {
         super("Menu:");
+
+        this.level = level;
 
         VisTable table = new VisTable();
 
+        saveButton = new TextButton("Save", VisUI.getSkin());
+        table.add(saveButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING).fillY();
+        loadButton = new TextButton("Load", VisUI.getSkin());
+        table.add(loadButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING).fillY();
         levelSettingsButton = new TextButton("Level\nSettings", VisUI.getSkin());
         table.add(levelSettingsButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING);
 
+        final EditorLevel lev = level;
+
+        saveButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                try {
+                    lev.exportTo(lev.name + ".tmx");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        loadButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                lev.importFrom(lev.name + ".tmx");
+            }
+        });
+
         add(table).fill();
 
-        int numButtons = 1;
+        int numButtons = 3;
         float width = 50 + BUTTON_WIDTH * numButtons + BUTTON_PADDING * numButtons;
         float x = EditLevelScreen.STAGE_WIDTH - width;
         float y = EditLevelScreen.STAGE_HEIGHT;
