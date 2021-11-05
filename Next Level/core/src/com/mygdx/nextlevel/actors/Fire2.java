@@ -20,8 +20,10 @@ public class Fire2 extends Actor2 {
         if (inital) {
             if (screen.getPlayer().facingRight)
                 collider.setVelocity(new Vector2(5.0f, collider.getVelocity().y));
-            else
+            else {
                 collider.setVelocity(new Vector2(-5.0f, collider.getVelocity().y));
+                flip(true, false);
+            }
             inital = false;
         }
 
