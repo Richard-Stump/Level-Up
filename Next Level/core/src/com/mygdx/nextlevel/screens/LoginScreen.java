@@ -8,22 +8,19 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.AccountList;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
+import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
-import sun.rmi.runtime.Log;
-
-import java.util.ArrayList;
 
 public class LoginScreen extends AccountList implements Screen {
 
@@ -193,6 +190,9 @@ public class LoginScreen extends AccountList implements Screen {
                     if (pass.equals(ret)) {
                         loginSuccessful = true;
                         curAcc = username;
+
+                        loadDB();
+
                         ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
 
                     } else if (!pass.equals(ret)) {
@@ -251,6 +251,28 @@ public class LoginScreen extends AccountList implements Screen {
 
         table.setFillParent(true);
         stage.addActor(table);
+    }
+
+
+    private void loadDB() {
+        ServerDBHandler serverDB = new ServerDBHandler();
+        CreatedLevelsDB createdDB = new CreatedLevelsDB();
+
+        for (LevelInfo licreated: createdDB.sortByTitle()) {
+            createdDB.removeLevelInfo(licreated.getId());
+        }
+
+        String id = createdDB.generateUniqueID(username);
+        //LevelInfo levelInfo = new LevelInfo(id, "Level Test " + id, username);
+
+        //serverDB.addLevel(levelInfo);
+
+        for (LevelInfo li: serverDB.sortByTitle()) {
+            if (li.getAuthor().equals(username)) {
+                createdDB.addLevelInfo(li);
+            }
+        }
+        serverDB.closeConnection();
     }
 
     @Override

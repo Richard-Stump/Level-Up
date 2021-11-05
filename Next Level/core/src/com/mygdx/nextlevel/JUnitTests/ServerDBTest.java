@@ -31,13 +31,18 @@ public class ServerDBTest {
 //        steveAccount.setPassword("abcd1234!");
         db = new ServerDBHandler();
         db.addUser(steveAccount);
+
+        LevelInfo levelInfo = new LevelInfo("id123456789", "Test Level 1", "reeves34");
+        db.addLevel(levelInfo);
+
         db.closeConnection();
     }
 
     @AfterClass
     public static void restoreDatabase() {
-        ServerDBHandler adminDB = new ServerDBHandler("admin", "CQNK2Ih8H8aikg6M");
+        ServerDBHandler adminDB = new ServerDBHandler();
         adminDB.removeUser("steve");
+        adminDB.removeLevel("id12adsfg");
         adminDB.closeConnection();
     }
 
@@ -85,6 +90,7 @@ public class ServerDBTest {
         assertEquals(expected, actual);
     }
 
+    /*
     @Test
     public void testGetTable() {
         //TODO: make this into an actual test
@@ -100,6 +106,8 @@ public class ServerDBTest {
         //System.out.println();
         assertTrue(true);
     }
+
+     */
 
     @Test
     public void testAddUser() {
@@ -125,11 +133,22 @@ public class ServerDBTest {
         assertEquals(actual, expected);
     }
 
-    /*
+
     @Test
     public void testAddLevel() {
-        //LevelInfo
+        LevelInfo levelInfo = new LevelInfo("id12adsfg", "reevesLevel", "reeves34");
+        int ret = db.addLevel(levelInfo);
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("testAddLevel", 1, ret);
+        assertEquals(1, ret);
     }
 
-     */
+    @Test
+    public void testRemoveLevel() {
+        int ret = db.removeLevel("id123456789");
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("testRemoveLevel", 1, ret);
+        assertEquals(1, ret);
+    }
+
 }

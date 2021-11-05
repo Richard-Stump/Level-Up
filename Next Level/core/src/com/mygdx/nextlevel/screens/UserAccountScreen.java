@@ -24,6 +24,7 @@ import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 import org.w3c.dom.Text;
@@ -408,10 +409,12 @@ public class UserAccountScreen implements Screen {
                         if ((Boolean) object) {
                             if (activeDB.equals("created")) {
                                 dbCreated.removeLevelInfo(id);
+                                ServerDBHandler serverDB = new ServerDBHandler();
+                                serverDB.removeLevel(id);
+                                serverDB.closeConnection();
                             } else if (activeDB.equals("downloaded")) {
                                 dbDownloaded.removeLevelInfo(id);
                             }
-
                             levelVerticalGroup.clear();
                             levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
                         }

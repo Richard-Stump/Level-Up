@@ -17,8 +17,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.screens.editor.EditorLevel;
+import jdk.internal.net.http.common.Log;
 
 public class CreateLevelMenuScreen implements Screen {
     private NextLevel           game;

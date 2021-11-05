@@ -3,6 +3,7 @@ package com.mygdx.nextlevel.dbHandlers;
 import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
+import com.mygdx.nextlevel.enums.Tag;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ServerDBHandler {
@@ -221,8 +223,8 @@ public class ServerDBHandler {
      * @return 1 on success, 0 of failure
      */
     public int addLevel(LevelInfo levelInfo) {
-        String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated, tmx, tsx, png) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setString(1, levelInfo.getId());
@@ -233,9 +235,9 @@ public class ServerDBHandler {
             statement.setString(6, levelInfo.getAuthor());
             statement.setDate(7, levelInfo.getDateCreated());
             //need to get
-            statement.setBinaryStream(8, new FileInputStream(levelInfo.getTmx()), (int) levelInfo.getTmx().length());
-            statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
-            statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
+            //statement.setBinaryStream(8, new FileInputStream(levelInfo.getTmx()), (int) levelInfo.getTmx().length());
+            //statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
+            //statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
 
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -244,4 +246,83 @@ public class ServerDBHandler {
         }
     }
 
+    /**
+     * This function should be used when the user deletes a level from their local machine
+     *
+     * @param id the id to remove from the table
+     * @return 1 on success, -1 on failure
+     */
+    public int removeLevel(String id) {
+        int rowsChanged;
+
+        String sqlQuery = "DELETE FROM api.levels WHERE levelid = ?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, id);
+
+            rowsChanged = statement.executeUpdate();
+            if (rowsChanged == 1) {
+                return 1;
+            }
+            return -1;
+        } catch (SQLException e) {
+            return -1;
+        }
+    }
+
+    /**
+     *  This function sorts the table alphabetically
+     *
+     * @return a list of LevelInfo objects that are sorted alphabetically by title
+     */
+    public List<LevelInfo> sortByTitle() {
+        ResultSet resultSet;
+
+        String sqlQuery = "SELECT * FROM api.levels ORDER BY title ASC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Takes a ResultSet and makes a List of LevelInfo's out of it
+     *
+     * @param resultSet raw resultset
+     * @return a list of LevelInfo objects that match the search
+     * @throws SQLException if there's an SQL exception
+     */
+    private List<LevelInfo> resultAsList(ResultSet resultSet) throws SQLException {
+        List<LevelInfo> list = new ArrayList<>();
+
+        //cycle through results and add it to the list
+        while (resultSet.next()) {
+            LevelInfo levelInfo = new LevelInfo(resultSet.getString("levelid"));
+            levelInfo.setTitle(resultSet.getString("title"));
+            levelInfo.setAuthor(resultSet.getString("author"));
+            levelInfo.setPlayCount(resultSet.getInt("playcount"));
+            levelInfo.setDifficulty(resultSet.getInt("difficulty"));
+            levelInfo.setRating(resultSet.getFloat("rating"));
+            levelInfo.setBestTime(resultSet.getFloat("besttime"));
+            levelInfo.setDateDownloaded(resultSet.getDate("datecreated"));
+            levelInfo.setDateCreated(resultSet.getDate("datecreated"));
+
+            ArrayList<Tag> tags = new ArrayList<>();
+            Array a = resultSet.getArray("tags");
+            String[] tagStrings = (String[]) a.getArray();
+
+            for (String tagStr: tagStrings) {
+                tags.add(Tag.valueOf(tagStr));
+            }
+            levelInfo.setTags(tags);
+
+            list.add(levelInfo);
+        }
+        return list;
+    }
 }
