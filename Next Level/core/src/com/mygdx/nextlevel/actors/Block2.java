@@ -1,6 +1,7 @@
 package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
@@ -42,6 +43,37 @@ public class Block2 extends Actor2 {
         } else {
             setRegion(new Texture("Block.png"));
         }
+    }
+
+    public Block2(GameScreen2 screen, TextureRegion texture, float x, float y, boolean spawnItem) {
+        super(screen, x, y, 1, 1);
+
+        this.spawnItem = spawnItem;
+        this.spawned = false;
+
+        collider = new BoxCollider(
+                this,
+                new Vector2(x, y),
+                new Vector2(1, 1),
+                false
+        );
+
+        //Setup all items
+        items = new ArrayList<>();
+        items.add(SlowItem2.class);
+        items.add(SpeedItem2.class);
+        items.add(LifeItem2.class);
+        items.add(MushroomItem2.class);
+        items.add(StarItem2.class);
+        items.add(FireFlowerItem2.class);
+        items.add(LifeStealItem2.class);
+
+        if (spawnItem) {
+            setRegion(new Texture("item-block.png"));
+        } else {
+            setRegion(new Texture("Block.png"));
+        }
+
     }
 
     public void update(float delta) {

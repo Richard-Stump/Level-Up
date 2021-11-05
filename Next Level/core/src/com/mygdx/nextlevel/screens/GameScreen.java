@@ -166,8 +166,8 @@ public class GameScreen implements Screen, InputProcessor {
 
         //fire flower intiialization
         Vector2 fireFlowerSpawn = new Vector2(w * 0.75f, -32 + 64*4);
-        this.fireflower = new Item(new Texture("fireflower.png"), this.world, fireFlowerSpawn, 0f, 0f);
-        itemToName.put(fireflower, "fireflower.png");
+        this.fireflower = new Item(new Texture("Fire_flower.jpg"), this.world, fireFlowerSpawn, 0f, 0f);
+        itemToName.put(fireflower, "Fire_flower.jpg");
         itemList.add(fireflower);
 
         Vector2 speedItemSpawn = new Vector2(w * 0.75f, -32 + 64*4);
@@ -524,7 +524,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         batch.begin();
         //batch.draw(new Texture("tempBack.png"),0, 0);
-        tm.render(camera);
+        //tm.render(camera);
 
         if (drawSprite) {
             //Draw Checkpoint
@@ -557,6 +557,9 @@ public class GameScreen implements Screen, InputProcessor {
                 touchedItemBlock = false;
             }
 
+            //loading blocks from tilemap
+            //tm.loadObjects(batch, world, blockList, blockListUserData);
+
             //Draw All Blocks
             for (Block blockIteration : blockList) {
                 if (blockIteration.isItemSpawned())
@@ -564,6 +567,7 @@ public class GameScreen implements Screen, InputProcessor {
 
                 batch.draw(blockIteration.getSprite(), blockIteration.getSprite().getX(), blockIteration.getSprite().getY(), blockIteration.getSprite().getOriginX(), blockIteration.getSprite().getOriginY(), blockIteration.getSprite().getWidth(), blockIteration.getSprite().getHeight(), blockIteration.getSprite().getScaleX(), blockIteration.getSprite().getScaleY(), blockIteration.getSprite().getRotation());
             }
+
 
 //            if (touchedItemBlock && !itemConsumed) {
 //                if (!item.getDeleteSprite()) {

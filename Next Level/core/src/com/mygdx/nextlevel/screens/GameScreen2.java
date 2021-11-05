@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionManager;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.TileMap;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.hud.Hud2;
 
@@ -37,6 +38,7 @@ public class GameScreen2 implements GameScreenBase {
     private Box2DDebugRenderer box2dRenderer;
     private OrthographicCamera camera;
     private Hud2 hud;
+    TileMap tm;
 
     private BoxCollider floor;
     private Player2 player;
@@ -103,6 +105,10 @@ public class GameScreen2 implements GameScreenBase {
         actors = new ArrayList<>();
         spawnQueue = new LinkedList<>();
         despawnQueue = new LinkedList<>();
+
+        //create tilemap
+        tm = new TileMap();
+        tm.create();
 
         //setup the initial map
         reset();
@@ -213,11 +219,18 @@ public class GameScreen2 implements GameScreenBase {
     public void render(float delta) {
         update(delta);
 
+
+
         ScreenUtils.clear(Color.WHITE);
+
+        tm.render(camera, player);
+
 
         Batch batch = game.batch;
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
+
+        //tm.loadObjects();
 
         for(Actor2 a : actors) {
             a.draw(batch);
