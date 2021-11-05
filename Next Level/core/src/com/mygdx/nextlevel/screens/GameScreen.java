@@ -524,7 +524,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         batch.begin();
         //batch.draw(new Texture("tempBack.png"),0, 0);
-        tm.render(camera);
+//        tm.render(camera);
 
         if (drawSprite) {
             //Draw Checkpoint

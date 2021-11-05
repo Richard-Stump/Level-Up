@@ -102,6 +102,10 @@ public class Player2 extends Actor2 {
             else
                 setRegion(new Texture("goomba.png"));
 
+            if (!facingRight) {
+                flip(true, false);
+            }
+
             drawTexture = false;
         }
 
@@ -141,7 +145,6 @@ public class Player2 extends Actor2 {
 
         if (fireFlowerItem) {
             fireFlowerTime += delta;
-            //TODO Add FireFlower Functionality
             if (fireFlowerTime > 3f) {
                 drawTexture = true;
                 fireFlowerItem = false;

@@ -6,12 +6,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionManager;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.TileMap;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.hud.Hud2;
 
@@ -37,6 +39,7 @@ public class GameScreen2 implements Screen {
     private Box2DDebugRenderer box2dRenderer;
     private OrthographicCamera camera;
     private Hud2 hud;
+    TileMap tm;
 
     private BoxCollider floor;
     private Player2 player;
@@ -95,6 +98,10 @@ public class GameScreen2 implements Screen {
         spawnQueue = new LinkedList<>();
         despawnQueue = new LinkedList<>();
 
+        //create tilemap
+        tm = new TileMap();
+        tm.create();
+
         //setup the initial map
         reset();
     }
@@ -126,11 +133,11 @@ public class GameScreen2 implements Screen {
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
         player = new Player2(this, 7, 2);
         actors.add(new Enemy2(this,5, 2));
-        actors.add(new Block2(this, 7, 4, true));
-        actors.add(new Block2(this, 10, 4, true));
-        actors.add(new Block2(this, 13, 4, true));
-        actors.add(new Block2(this, 16, 4, true));
-        actors.add(new Block2(this, 19, 4, true));
+        actors.add(new Block2(this, 7, 4, true, 1));
+        actors.add(new Block2(this, 10, 4, true, 2));
+        actors.add(new Block2(this, 13, 4, true, 3));
+        actors.add(new Block2(this, 16, 4, true, 4));
+        actors.add(new Block2(this, 19, 4, true, 7));
         actors.add(new CheckPoint2(this, 10, 1.0f));
         actors.add(player);
         actors.add(new DeathBlock(this, player, player.getPosition().x));
@@ -203,10 +210,10 @@ public class GameScreen2 implements Screen {
     @Override
     public void render(float delta) {
         update(delta);
-
         ScreenUtils.clear(Color.WHITE);
+        tm.render(camera, player);
 
-        Batch batch = game.batch;
+        SpriteBatch batch = game.batch;
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
 
