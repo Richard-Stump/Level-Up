@@ -52,18 +52,6 @@ public class TileMap extends ApplicationAdapter{
         mapPixelWidth = mapWidth * tilePixelWidth;
         mapPixelHeight = mapHeight * tilePixelHeight;
 
-        System.out.println("Testing");
-        System.out.println(mapWidth);
-        System.out.println(mapHeight);
-        System.out.println(tilePixelWidth);
-        System.out.println(tilePixelHeight);
-
-        System.out.println(Gdx.graphics.getWidth()/2f);
-        System.out.println(Gdx.graphics.getWidth()/32f);
-        System.out.println(mapPixelWidth);
-        System.out.println(mapPixelHeight);
-        System.out.println("Testing");
-
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1.0f/32.0f);
     }
 
