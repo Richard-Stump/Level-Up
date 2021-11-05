@@ -21,6 +21,8 @@ import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
+import com.mygdx.nextlevel.enums.Difficulty;
+import com.mygdx.nextlevel.enums.Tag;
 
 public class LoginScreen extends AccountList implements Screen {
 
@@ -262,10 +264,22 @@ public class LoginScreen extends AccountList implements Screen {
             createdDB.removeLevelInfo(licreated.getId());
         }
 
+        /*
         String id = createdDB.generateUniqueID(username);
-        //LevelInfo levelInfo = new LevelInfo(id, "Level Test " + id, username);
+        LevelInfo levelInfo = new LevelInfo(id, "Level Test " + id, username);
+        levelInfo.addTag(Tag.ART);
+        levelInfo.setDifficulty(Difficulty.HARD.ordinal());
 
-        //serverDB.addLevel(levelInfo);
+        String id2 = createdDB.generateUniqueID(username);
+        LevelInfo levelInfo2 = new LevelInfo(id2, "Level Test " + id2, username);
+        levelInfo2.addTag(Tag.BOSSBATTLE);
+        levelInfo2.addTag(Tag.ART);
+        levelInfo2.setDifficulty(Difficulty.EASY.ordinal());
+
+        serverDB.addLevel(levelInfo);
+        serverDB.addLevel(levelInfo2);
+
+         */
 
         for (LevelInfo li: serverDB.sortByTitle()) {
             if (li.getAuthor().equals(username)) {
