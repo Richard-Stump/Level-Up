@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.screens.GameScreen2;
+import com.mygdx.nextlevel.screens.GameScreenBase;
+import com.mygdx.nextlevel.screens.ItemShowcaseScreen2;
 
 public class Player2 extends Actor2 {
     protected Vector2 respawnPosition;  //Position that the player respawns in
@@ -52,7 +54,33 @@ public class Player2 extends Actor2 {
         fireFlowerItem = false;
     }
 
-    public Player2(GameScreen2 screen, float x, float y) {
+//    /**
+//     * TEMPORARY
+//     */
+//    public Player2(ItemShowcaseScreen2 screen, float x, float y) {
+//        super(screen, x, y, 1.0f, 1.0f);
+//
+//        boxCollider = new BoxCollider(this,
+//                new Vector2(x, x),
+//                new Vector2(1, 1),
+//                true);
+//
+//        respawnPosition = new Vector2(boxCollider.getPosition());
+//
+//        lifeCount = 3;
+//
+//        //The texture region needs to be set for rendering.
+//        setRegion(new Texture("goomba.png"));
+//        powerUp = false;
+//        mushroomItem = false;
+//        slowItem = false;
+//        speedItem = false;
+//        lifeStealItem = false;
+//        starItem = false;
+//        fireFlowerItem = false;
+//    }
+
+    public Player2(GameScreenBase screen, float x, float y) {
         super(screen, x, y, 1.0f, 1.0f);
 
         boxCollider = new BoxCollider(this,
@@ -102,6 +130,10 @@ public class Player2 extends Actor2 {
             else
                 setRegion(new Texture("goomba.png"));
 
+            if (!facingRight) {
+                flip(true, false);
+            }
+
             drawTexture = false;
         }
 
@@ -141,7 +173,6 @@ public class Player2 extends Actor2 {
 
         if (fireFlowerItem) {
             fireFlowerTime += delta;
-            //TODO Add FireFlower Functionality
             if (fireFlowerTime > 3f) {
                 drawTexture = true;
                 fireFlowerItem = false;

@@ -1,14 +1,11 @@
 package com.mygdx.nextlevel.actors;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.screens.GameScreen2;
-
-import javax.swing.*;
+import com.mygdx.nextlevel.screens.GameScreenBase;
 
 /**
  * Base class for all the actors in GameScreen2. All actors should derive from this class, and then implement
@@ -29,7 +26,7 @@ import javax.swing.*;
  * Todo: Fix this so that there can be invisible actors
  */
 public class Actor2 extends Sprite implements Disposable {
-    protected GameScreen2 screen;
+    protected GameScreenBase screen;
 
     public Actor2() {
 
@@ -41,7 +38,7 @@ public class Actor2 extends Sprite implements Disposable {
      * @param x         The X coordinate to spawn at, specified in world coordinates
      * @param y         The Y Coordinate to spawn at, specified in world coordinates
      */
-    public Actor2(GameScreen2 screen, float x, float y) {
+    public Actor2(GameScreenBase screen, float x, float y) {
         this(screen, x, y, 1.0f, 1.0f);
     }
 
@@ -55,7 +52,7 @@ public class Actor2 extends Sprite implements Disposable {
      * @param width     The width of the actor, specified in world coordinates
      * @param height    The height of the actor, specified in world coordinates.
      */
-    public Actor2(GameScreen2 screen, float x, float y, float width, float height) {
+    public Actor2(GameScreenBase screen, float x, float y, float width, float height) {
         if(screen == null)
             throw new NullPointerException("Argument \'screen\' cannot be null");
 

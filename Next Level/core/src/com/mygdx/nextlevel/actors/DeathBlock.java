@@ -3,8 +3,7 @@ package com.mygdx.nextlevel.actors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
-import com.mygdx.nextlevel.BoxCollider.Side;
-import com.mygdx.nextlevel.screens.GameScreen2;
+import com.mygdx.nextlevel.screens.GameScreenBase;
 
 public class DeathBlock extends Actor2 {
     protected BoxCollider collider;
@@ -12,7 +11,7 @@ public class DeathBlock extends Actor2 {
     protected Player2 player;
 
 
-    public DeathBlock(GameScreen2 screen, Player2 player, float x) {
+    public DeathBlock(GameScreenBase screen, Player2 player, float x) {
         super(screen, x, y, 1, 1);
         this.player = player;
 

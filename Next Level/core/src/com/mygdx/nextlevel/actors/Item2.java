@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.screens.GameScreen2;
+import com.mygdx.nextlevel.screens.GameScreenBase;
 
 public class Item2 extends Actor2 {
     BoxCollider collider;
@@ -11,7 +12,7 @@ public class Item2 extends Actor2 {
 
     public Item2() {}
 
-    public Item2(GameScreen2 screen, float x, float y) {
+    public Item2(GameScreenBase screen, float x, float y) {
         super(screen, x, y, 0.5f, 0.5f);
 
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true);

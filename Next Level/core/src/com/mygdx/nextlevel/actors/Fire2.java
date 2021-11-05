@@ -4,12 +4,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.screens.GameScreen2;
+import com.mygdx.nextlevel.screens.GameScreenBase;
 
 public class Fire2 extends Actor2 {
     BoxCollider collider;
     Boolean inital;
 
-    public Fire2(GameScreen2 screen, float x, float y) {
+    public Fire2(GameScreenBase screen, float x, float y) {
         super(screen, x, y, 1, 1);
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true);
         setRegion(new Texture("fireball.png"));
@@ -20,8 +21,10 @@ public class Fire2 extends Actor2 {
         if (inital) {
             if (screen.getPlayer().facingRight)
                 collider.setVelocity(new Vector2(5.0f, collider.getVelocity().y));
-            else
+            else {
                 collider.setVelocity(new Vector2(-5.0f, collider.getVelocity().y));
+                flip(true, false);
+            }
             inital = false;
         }
 
