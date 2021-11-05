@@ -1,5 +1,6 @@
 package com.mygdx.nextlevel.screens.editor;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -46,9 +47,6 @@ public class LevelView extends Widget {
         this.actorTextures = screen.getActorTextures();
 
         this.editorLevel = editorLevel;
-
-        editorLevel.map[0][0] = 0;
-        editorLevel.map[editorLevel.width - 1][editorLevel.height - 1] = 0;
 
         panStart = new Vector2(0.0f,0.0f);
 
@@ -195,7 +193,7 @@ public class LevelView extends Widget {
     }
 
     protected float clamp(float val, float low, float high) {
-        return Math.max(Math.min(val, low), high);
+        return Math.max(Math.min(val, high), low);
     }
 
     protected void drawGrid() {
@@ -233,8 +231,8 @@ public class LevelView extends Widget {
         //If the two positions are outside the level's tile map, clamp them
         bottomLeft.x = clamp(bottomLeft.x, 0, editorLevel.width);
         bottomLeft.y = clamp(bottomLeft.y, 0, editorLevel.height);
-        topRight.x = clamp(topRight.x, 0, editorLevel.width);
-        topRight.y = clamp(topRight.y, 0, editorLevel.height);
+        topRight.x = clamp(topRight.x + 1, 0, editorLevel.width);
+        topRight.y = clamp(topRight.y + 1, 0, editorLevel.height);
 
         for(int yi = (int)bottomLeft.y; yi < (int)topRight.y; yi++) {
             for(int xi = (int)bottomLeft.x; xi < (int)topRight.x; xi++) {
@@ -274,11 +272,13 @@ public class LevelView extends Widget {
 
         AssetSelectorWindow selWin = screen.getSelectorWindow();
 
+        boolean shift = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
+
         //Placement rules are different depending on whether the object being placed
         //is an actor or a tile
         if (selWin.getCurrentTabTitle().equals("Tiles")) {
             int index = selWin.getSelectionIndex();
-            editorLevel.map[(int)x][(int)y] = index;
+            editorLevel.setTile((int)x, (int)y, shift ? EditorLevel.NONE : index);
         }
         else if (selWin.getCurrentTabTitle().equals("Actors")) {
             int index = selWin.getSelectionIndex();
