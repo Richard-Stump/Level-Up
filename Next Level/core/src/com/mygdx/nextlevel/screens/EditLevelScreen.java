@@ -13,7 +13,7 @@ import com.kotcrab.vis.ui.widget.*;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.screens.editor.*;
-import jdk.internal.org.jline.reader.Editor;
+//import jdk.internal.org.jline.reader.Editor;
 
 import java.io.File;
 import java.io.FileNotFoundException;

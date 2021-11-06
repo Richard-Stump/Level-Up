@@ -35,12 +35,12 @@ public class LoginScreen extends AccountList implements Screen {
     private NextLevel game;
 
     //textFields
-    public TextField textUsername;
-    public TextField textPass;
+    public TextField textUsername, textPass;
+//    public TextField textPass;
 
     //inputted strings
-    public String username;
-    public String pass;
+    public String username, pass;
+//    public String pass;
 
     //buttons
     public TextButton loginButton;
@@ -52,9 +52,7 @@ public class LoginScreen extends AccountList implements Screen {
     public static int textBoxBottomPadding = 20;
     public static int buttonWidth = 170;
 
-    public boolean loginSuccessful = false;
-    public boolean incorrectPass = false;
-    public boolean noAccount = false;
+    private String error = "";
     public static String curAcc = "";
     public ServerDBHandler db;
     public Dialog errorDialog;
@@ -82,7 +80,7 @@ public class LoginScreen extends AccountList implements Screen {
 
     @Override
     public void show() {
-        System.out.println(db.userExists(username));
+        System.out.println();
         String[][] tab = db.getTable();
         for (int i = 0; i < tab.length; i++) {
             for (int j = 0; j < tab[0].length; j++) {
@@ -90,6 +88,7 @@ public class LoginScreen extends AccountList implements Screen {
             }
             System.out.println();
         }
+
         //Stage should control input:
         Gdx.input.setInputProcessor(stage);
 
@@ -156,7 +155,6 @@ public class LoginScreen extends AccountList implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
-                //TODO: send back to forget password page
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new ForgetPasswordScreen(game));
             }
         });
@@ -169,46 +167,26 @@ public class LoginScreen extends AccountList implements Screen {
                 username = textUsername.getText();
                 pass = textPass.getText();
 
-                //TODO: verification
-//                for (Account a : getAccList()) {
-//                    if (a.getUsername().equals(username) && (a.getPassword().equals(pass))) {
-//                        loginSuccessful = true;
-//                        ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
-//                        break;
-//                    } else if (a.getUsername().equals(username) && !a.getPassword().equals(pass)) {
-//                        System.out.println("Incorrect password.");
-//                        incorrectPass = true;
-//                        textPass.setMessageText("Password");
-//                        break;
-//                    }
-//                }
-//                if (!loginSuccessful && !incorrectPass) {
-//                    System.out.println("There is no account associated with this username.");
-//                }
-//                incorrectPass = false;
-                if (db.userExists(username)) {
-                    String ret = db.getPassword(username);
-//                    System.out.println(ret);
-                    if (pass.equals(ret)) {
-                        loginSuccessful = true;
-                        curAcc = username;
-
-                        loadDB();
-
-                        ((Game)Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
-
-                    } else if (!pass.equals(ret)) {
+                //check if user exists
+                while (true) {
+                    if (db.userExists(username)) {
+                        String ret = db.getPassword(username);
+                        //check password is correct
+                        if (pass.equals(ret)) {
+                            curAcc = username;
+                            break;
+//                            loadDB();
+                        } else if (!pass.equals(ret)) {
 //                        errorDialog = new Dialog("Warning", skin);
 //                        errorDialog.text("Incorrect Password. Please try again");
 //                        errorDialog.show(stage);
-
-                        textPass.setMessageText("Password");
-                        System.out.println("Password is incorrect");
-                        incorrectPass = true;
-                    }
-                } else {
-                    System.out.println("No account linked to this username");
-                    noAccount = true;
+                            textPass.setMessageText("Password");
+                            error = "IncorrectPass";
+                            break;
+                        }
+                    } else {
+                        error = "NoAccount";
+                        break;
 //                    errorDialog = new Dialog("Warning", skin) {
 //                        protected void result(Object object)
 //                        {
@@ -238,12 +216,14 @@ public class LoginScreen extends AccountList implements Screen {
 //                    }, 1);
 //
 //                    errorDialog.text("No account linked to this username");
-                    //errorDialog.show(stage);
+                        //errorDialog.show(stage);
+                    }
                 }
-                if (incorrectPass) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Incorrect password", "LoginScreen"));
-                } else if (noAccount) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "No account associated with this username", "LoginScreen"));
+                String[] retVal = errorDisplay(error);
+                if (retVal[0].equals("")) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+                } else {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, retVal[0], retVal[1]));
                 }
 
 
@@ -327,16 +307,16 @@ public class LoginScreen extends AccountList implements Screen {
         atlas.dispose();
     }
 
-    public static boolean login(String username, String pass) {
-        for (Account a : getAccList()) {
-            if (a.getUsername().equals(username) && (a.getPassword().equals(pass))) {
-                return true;
-            }
+    private String[] errorDisplay(String error) {
+        switch (error) {
+            case "IncorrectPass" :
+                return new String[] {"Password is incorrect", "LoginScreen"};
+            case "NoAccount" :
+                return new String[] {"No account associated with this username", "LoginScreen"};
+            default :
+                return new String[] {"", ""};
         }
-        return false;
-
     }
-
     public static String getCurAcc() {
         return curAcc;
     }
