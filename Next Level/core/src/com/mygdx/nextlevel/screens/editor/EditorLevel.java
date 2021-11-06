@@ -22,6 +22,7 @@ public class EditorLevel {
     public ArrayList<EditorActor> actors;
 
     public String           name;
+    public String           saveName;
     public Difficulty       difficulty = Difficulty.NONE;
     public ArrayList<Tag>   tags;
 
@@ -134,7 +135,9 @@ public class EditorLevel {
         height = tiledMapProperties.get("height", Integer.class);
         name = filename.substring(0, filename.lastIndexOf(".tmx"));
 
-        resize(width, height);
+        map = new int[width][height];
+        this.width = width;
+        this.height = height;
 
         for(int y = height - 1; y >= 0; y--) {
             for(int x = 0; x < width; x++) {

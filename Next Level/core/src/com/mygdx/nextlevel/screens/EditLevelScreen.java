@@ -15,7 +15,9 @@ import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.screens.editor.*;
 import jdk.internal.org.jline.reader.Editor;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 /* TODO: Make it so that the object TabbedPane always aligns to the left.
@@ -131,7 +133,7 @@ public class EditLevelScreen implements Screen {
 
         win = new AssetSelectorWindow(tiles, actorTextures);
         stage.addActor(win);
-        MenuWindow win2 = new MenuWindow(level);
+        MenuWindow win2 = new MenuWindow(level, stage);
         stage.addActor(win2);
 
         backButton.setPosition(0.0f, STAGE_HEIGHT - backButton.getHeight());
@@ -259,7 +261,7 @@ class MenuWindow extends VisWindow {
     final float BUTTON_WIDTH = 160.0f;
     final float BUTTON_PADDING = 10.0f;
 
-    public MenuWindow(EditorLevel level) {
+    public MenuWindow(final EditorLevel level, final Stage stage) {
         super("Menu:");
 
         this.level = level;
@@ -275,13 +277,20 @@ class MenuWindow extends VisWindow {
 
         final EditorLevel lev = level;
 
+        final Stage finalStage = stage;
+
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                try {
-                    lev.exportTo(lev.name + ".tmx");
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                if(lev.saveName == null)
+                    finalStage.addActor(new SaveAsDialog(level, stage));
+                else {
+                    try {
+                        lev.exportTo(lev.saveName);
+                    }
+                    catch (FileNotFoundException e) {
+                        stage.addActor(new MessageDialog("Could not open + \"" + lev.saveName + "\"to save the level"));
+                    }
                 }
             }
         });
@@ -289,7 +298,7 @@ class MenuWindow extends VisWindow {
         loadButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                lev.importFrom(lev.name + ".tmx");
+                stage.addActor(new LoadDialog(level, stage));
             }
         });
 
@@ -409,5 +418,146 @@ class LevelSettingsWindow extends VisWindow{
         this.add(applyButton);
         this.add(cancelButton);
     }
+}
 
+class SaveAsDialog extends VisWindow {
+    protected VisTextField nameField;
+    protected VisTextButton confirmButton;
+    protected VisTextButton cancelButton;
+
+    public SaveAsDialog(EditorLevel level, final Stage stage) {
+        super("Save Map As:");
+
+        setModal(true);
+        setMovable(false);
+        centerWindow();
+
+        top();
+        nameField = new VisTextField("");
+        add(nameField).colspan(2).expandX().fillX().pad(4.0f);
+        row();
+        confirmButton = new VisTextButton("Confirm");
+        cancelButton = new VisTextButton("Cancel");
+        add(confirmButton).pad(4.0f);
+        add(cancelButton).pad(4.0f);
+        pack();
+
+        final EditorLevel finalLevel = level;
+
+        confirmButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                String name = nameField.getText();
+
+                if(!name.endsWith(".tmx"))
+                    name = name + ".tmx";
+
+                try {
+                    finalLevel.exportTo(name);
+                    finalLevel.saveName = name;
+                } catch (FileNotFoundException e) {
+                    stage.addActor(new MessageDialog("Could not open \"" + name + "\" to save file"));
+                }
+
+                close();
+            }
+        });
+
+        cancelButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                close();
+            }
+        });
+    }
+}
+
+class LoadDialog extends VisWindow {
+    protected VisSelectBox<String> fileSelection;
+    protected VisTextButton confirmButton;
+    protected VisTextButton cancelButton;
+
+    public LoadDialog(final EditorLevel level, final Stage stage) {
+        super("Load From:");
+
+        String[] names = getLevelList(stage);
+        if(names != null) {
+            fileSelection = new VisSelectBox<>();
+            fileSelection.setItems(names);
+            confirmButton = new VisTextButton("Confirm");
+            cancelButton = new VisTextButton("Cancel");
+
+            top();
+            add(fileSelection).expandX().fillX().colspan(2).pad(4.0f);
+            row();
+            add(confirmButton).pad(4.0f);
+            add(cancelButton).pad(4.0f);
+
+            confirmButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    String fileName = fileSelection.getSelected();
+
+                    try {
+                        level.importFrom(fileName);
+                        level.saveName = fileName;
+                    } catch (Exception e) {
+                        stage.addActor(new MessageDialog("Could not open \"" + fileName + "\" for loading"));
+                    }
+
+                    close();
+                }
+            });
+
+            cancelButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    close();
+                }
+            });
+
+            pack();
+            centerWindow();
+        }
+    }
+
+    protected String[] getLevelList(final Stage stage) {
+        ArrayList<String> mapList = new ArrayList<>();
+
+        try {
+            File dir = new File("./");
+
+            FilenameFilter filter = new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".tmx");
+                }
+            };
+
+            return dir.list(filter);
+        } catch (Exception e) {
+            stage.addActor(new MessageDialog("Could not open "));
+            close();
+            return null;
+        }
+    }
+}
+
+class MessageDialog extends VisWindow {
+    public MessageDialog(String str) {
+        super("Warning:");
+
+        VisTextButton button = new VisTextButton("Okay");
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                close();
+            }
+        });
+
+        top();
+        add(str).expandX().fillX().pad(4.0f);
+        row();
+        add(button).pad(4.0f);
+    }
 }
