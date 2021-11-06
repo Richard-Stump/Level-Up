@@ -17,8 +17,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.editor.EditorLevel;
+import jdk.internal.net.http.common.Log;
+
+import java.nio.channels.AcceptPendingException;
 
 public class CreateLevelMenuScreen implements Screen {
     private NextLevel           game;
@@ -115,8 +122,44 @@ public class CreateLevelMenuScreen implements Screen {
             }
         });
 
+        TextButton createEmptyButton = new TextButton("Create Empty", skin);
+        createEmptyButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                String name = nameField.getText();
+                int width = Integer.parseInt(widthField.getText());
+                int height = Integer.parseInt(heightField.getText());
+
+                CreatedLevelsDB createdDB = new CreatedLevelsDB();
+                ServerDBHandler serverDB = new ServerDBHandler();
+
+                String username = LoginScreen.getCurAcc();
+                String id = createdDB.generateUniqueID(username);
+
+                LevelInfo levelInfo = new LevelInfo(id, name, username);
+
+                serverDB.addLevel(levelInfo);
+
+                //remove all previous
+                for (LevelInfo licreated: createdDB.sortByTitle()) {
+                    createdDB.removeLevelInfo(licreated.getId());
+                }
+
+                //refresh created table
+                for (LevelInfo li: serverDB.sortByTitle()) {
+                    if (li.getAuthor().equals(username)) {
+                        createdDB.addLevelInfo(li);
+                    }
+                }
+                serverDB.closeConnection();
+
+                game.setScreen(new MainMenuScreen(game));
+            }
+        });
+
         mainTable.row();
         mainTable.add(createButton).colspan(2).center().expandX();
+        mainTable.row();
+        mainTable.add(createEmptyButton).colspan(2).center().expandX();
 
         // Add the ui to the scene
         stage.addActor(mainTable);

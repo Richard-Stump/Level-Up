@@ -3,6 +3,7 @@ package com.mygdx.nextlevel;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 
+import java.io.File;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,9 @@ public class LevelInfo {
     private int playCount;
     private Date dateDownloaded;
     private Date dateCreated;
+    private File tmx;
+    private File tsx;
+    private File png;
 
     /**
      * Constructor
@@ -33,6 +37,9 @@ public class LevelInfo {
         this.rating = 0;
         this.difficulty = Difficulty.NONE.ordinal();
         this.playCount = 0;
+        this.tmx = new File(id + ".tmx");
+        this.tsx = new File(id + ".tsx");
+        this.png = new File(id + ".png");
     }
 
     /**
@@ -149,6 +156,18 @@ public class LevelInfo {
         return id;
     }
 
+    public File getTmx() {
+        return tmx;
+    }
+
+    public File getTsx() {
+        return tsx;
+    }
+
+    public File getPng() {
+        return png;
+    }
+
     /*
     Setters:
      */
@@ -187,5 +206,17 @@ public class LevelInfo {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public void setTmx(File tmx) {
+        this.tmx = tmx;
+    }
+
+    public void setTsx(File tsx) {
+        this.tsx = tsx;
+    }
+
+    public void setPng(File png) {
+        this.png = png;
     }
 }

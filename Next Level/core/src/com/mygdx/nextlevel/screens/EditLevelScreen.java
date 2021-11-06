@@ -300,6 +300,16 @@ class MenuWindow extends VisWindow {
         float x = EditLevelScreen.STAGE_WIDTH - width;
         float y = EditLevelScreen.STAGE_HEIGHT;
 
+        /*
+        levelInfoButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //((Game)Gdx.app.getApplicationListener()).setScreen(new EditLevelInfoMenuScreen(game));
+            }
+        });
+
+
+         */
         setSize(width, 150);
         setPosition(x, y);
     }

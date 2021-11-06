@@ -162,7 +162,7 @@ public class LevelsDBController {
         int rowsChanged;
 
         String sqlQuery = "DELETE FROM " + tableName +
-                " WHERE id = ?";
+                " WHERE id = ?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setString(1, id);

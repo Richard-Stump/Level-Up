@@ -1,6 +1,7 @@
 package com.mygdx.nextlevel.JUnitTests;
 
 import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
@@ -30,13 +31,18 @@ public class ServerDBTest {
 //        steveAccount.setPassword("abcd1234!");
         db = new ServerDBHandler();
         db.addUser(steveAccount);
+
+        LevelInfo levelInfo = new LevelInfo("id123456789", "Test Level 1", "reeves34");
+        db.addLevel(levelInfo);
+
         db.closeConnection();
     }
 
     @AfterClass
     public static void restoreDatabase() {
-        ServerDBHandler adminDB = new ServerDBHandler("admin", "CQNK2Ih8H8aikg6M");
+        ServerDBHandler adminDB = new ServerDBHandler();
         adminDB.removeUser("steve");
+        adminDB.removeLevel("id12adsfg");
         adminDB.closeConnection();
     }
 
@@ -84,20 +90,24 @@ public class ServerDBTest {
         assertEquals(expected, actual);
     }
 
+    /*
     @Test
     public void testGetTable() {
         //TODO: make this into an actual test
-        System.out.println("get table: ");
+        //System.out.println("get table: ");
         String[][] table = db.getTable();
 
         for (String[] strings : table) {
             for (int j = 0; j < table[0].length; j++) {
-                System.out.print(strings[j] + ", ");
+                //System.out.print(strings[j] + ", ");
             }
-            System.out.println();
+            //System.out.println();
         }
-        System.out.println();
+        //System.out.println();
+        assertTrue(true);
     }
+
+     */
 
     @Test
     public void testAddUser() {
@@ -124,23 +134,21 @@ public class ServerDBTest {
     }
 
 
-
-    /*
-    //Not working as expected:
-    @Test(expected = PSQLException.class)
-    public void testRemoveUsersAnon() {
-        db.removeUser("steve");
+    @Test
+    public void testAddLevel() {
+        LevelInfo levelInfo = new LevelInfo("id12adsfg", "reevesLevel", "reeves34");
+        int ret = db.addLevel(levelInfo);
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("testAddLevel", 1, ret);
+        assertEquals(1, ret);
     }
-
 
     @Test
-    public void testRemoveUserUsingAdmin() {
-        test = "testRemoveUserUsingAdmin(WIP)";
-
-        ServerDBHandler adminDB = new ServerDBHandler("admin", "CQNK2Ih8H8aikg6M");
-
-        adminDB.closeConnection();
+    public void testRemoveLevel() {
+        int ret = db.removeLevel("id123456789");
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("testRemoveLevel", 1, ret);
+        assertEquals(1, ret);
     }
 
-     */
 }

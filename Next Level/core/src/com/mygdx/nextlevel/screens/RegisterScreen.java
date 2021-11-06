@@ -116,10 +116,10 @@ public class RegisterScreen extends AccountList implements Screen{
         textVerifyPass.setMessageText("Renter Password");
 
         //password mode
-        textPass.setPasswordMode(true);
-        textVerifyPass.setPasswordMode(true);
-        textPass.setPasswordCharacter('*');
-        textVerifyPass.setPasswordCharacter('*');
+//        textPass.setPasswordMode(true);
+//        textVerifyPass.setPasswordMode(true);
+//        textPass.setPasswordCharacter('*');
+//        textVerifyPass.setPasswordCharacter('*');
 
         //buttons
         TextButton back = new TextButton("I have an account!", skin);
