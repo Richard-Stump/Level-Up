@@ -45,8 +45,8 @@ public class Hud2 {
     Image itemImg;
 
     public Hud2(SpriteBatch spriteBatch, Player2 player) {
-        atlas = new TextureAtlas("skin/neon-ui.atlas");
-        skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
+        atlas = new TextureAtlas("skin/uiskin.atlas");
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
         worldTimer = 300;
         time = 0;
