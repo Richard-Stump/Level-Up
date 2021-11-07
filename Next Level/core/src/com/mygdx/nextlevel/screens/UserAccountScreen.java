@@ -73,14 +73,15 @@ public class UserAccountScreen implements Screen {
     public Label playCount;
 
     //static vars
-    public static int rightColumnWidth = 70;
+    public static int rightColumnWidth = 150;
     public static int topBottomPad = 30;
-    public static int leftColumnWidth = 330;
+    public static int leftColumnWidth = 350;
+    public static int labelHeight = 20;
 
     public UserAccountScreen(NextLevel game) {
         this.game = game;
-        atlas = new TextureAtlas(Gdx.files.internal("skin/neon-ui.atlas"));
-        skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
+        atlas = new TextureAtlas(Gdx.files.internal("skin/uiskin.atlas"));
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
         batch = game.batch;
 
@@ -169,8 +170,8 @@ public class UserAccountScreen implements Screen {
         hgButtons.addActor(createdLevelsButton);
         hgButtons.addActor(downloadedLevelsButton);
 
-        mainTable.add(backButton);
-        mainTable.add(activeDBLabel).expandX().left();
+        mainTable.add(backButton).height(labelHeight +10);
+        mainTable.add(activeDBLabel).expandX().left().padLeft(5);
         mainTable.add(hgButtons).width(200);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
@@ -185,14 +186,14 @@ public class UserAccountScreen implements Screen {
         levelVerticalGroup.top();
 
         scrollPane = new ScrollPane(levelVerticalGroup, skin);
-        scrollPane.setForceScroll(true, true);
+        scrollPane.setForceScroll(false, true);
 
         //make the sorting and search thing on right side
         Table searchSortGroup = getSearchSortTable();
 
         mainTable.add();
-        mainTable.add(scrollPane);
-        mainTable.add(searchSortGroup).top();
+        mainTable.add(scrollPane).expandY();
+        mainTable.add(searchSortGroup).top().padLeft(5);
         mainTable.row();
 
         //row 3: empty placeholder, currently selected level, play button
@@ -201,8 +202,8 @@ public class UserAccountScreen implements Screen {
         playButton.addListener(playLevel());
 
         mainTable.add();
-        mainTable.add(selectedLevel).left().padBottom(20);
-        mainTable.add(playButton).width(150).padBottom(20);
+        mainTable.add(selectedLevel).left().padBottom(20).padLeft(5);
+        mainTable.add(playButton).width(150).padBottom(20).padLeft(5);
 
         //end
         mainTable.setFillParent(true);
@@ -232,7 +233,7 @@ public class UserAccountScreen implements Screen {
         searchButton = new TextButton("Search", skin);
         searchButton.addListener(searchButton());
 
-        table.add(searchLabel).padBottom(10);
+        table.add(searchLabel).padBottom(10).height(labelHeight +10);
         table.row();
         table.add(searchBar).padBottom(20).width(200);
         table.row();
@@ -255,16 +256,16 @@ public class UserAccountScreen implements Screen {
 
     private Table getLevelTable(ArrayList<LevelInfo> levels) {
         Table infoTable = new Table();
-        //infoTable.setDebug(true);
+        infoTable.setDebug(true);
 
         for (LevelInfo levelInfo: levels) {
             String id = levelInfo.getId();
-            infoTable.add(getLeftColumn(id)).padTop(topBottomPad);
-            infoTable.add(getRightColumn(id)).padTop(10);
+            infoTable.add(getLeftColumn(id)).padLeft(2).padBottom(15);
+            infoTable.add(getRightColumn(id)).padBottom(15);
 
             TextButton deleteButton = new TextButton("Delete", skin);
             deleteButton.addListener(deleteLevelListener(id));
-            infoTable.add(deleteButton);
+            infoTable.add(deleteButton).width(80).padBottom(15);
 
             infoTable.row();
         }
@@ -316,9 +317,9 @@ public class UserAccountScreen implements Screen {
         author.addListener(new HoverListener());
 
         //adding to left table
-        leftTable.add(levelName).width(leftColumnWidth).left();
+        leftTable.add(levelName).width(leftColumnWidth).left().height(labelHeight);
         leftTable.row();
-        leftTable.add(difficulty).width(leftColumnWidth).left();
+        leftTable.add(difficulty).width(leftColumnWidth).left().height(labelHeight);
 
         return leftTable;
     }
@@ -357,9 +358,9 @@ public class UserAccountScreen implements Screen {
         playCount.addListener(new HoverListener());
 
         //add to right table
-        rightTable.add(rating).width(rightColumnWidth).left();
+        rightTable.add(rating).width(rightColumnWidth).left().height(labelHeight);
         rightTable.row();
-        rightTable.add(playCount).width(rightColumnWidth).left();
+        rightTable.add(playCount).width(rightColumnWidth).left().height(labelHeight);
 
         return rightTable;
     }

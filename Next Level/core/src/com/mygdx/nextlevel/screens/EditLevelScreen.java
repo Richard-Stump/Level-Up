@@ -73,8 +73,8 @@ public class EditLevelScreen implements Screen {
         this.screenHeight = Gdx.graphics.getHeight();
         this.camera = new OrthographicCamera(screenWidth, screenHeight);
 
-        this.atlas = new TextureAtlas(Gdx.files.internal("skin/neon-ui.atlas"));
-        this.skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
+        this.atlas = new TextureAtlas(Gdx.files.internal("skin/uiskin.atlas"));
+        this.skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
         this.tiles = new ArrayList<Texture>();
 

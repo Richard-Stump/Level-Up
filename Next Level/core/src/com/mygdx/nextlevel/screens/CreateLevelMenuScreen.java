@@ -40,8 +40,8 @@ public class CreateLevelMenuScreen implements Screen {
 
     public CreateLevelMenuScreen(NextLevel game) {
         this.game = game;
-        this.atlas = new TextureAtlas(Gdx.files.internal("skin/neon-ui.atlas"));
-        this.skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
+        this.atlas = new TextureAtlas(Gdx.files.internal("skin/uiskin.atlas"));
+        this.skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
         this.batch = game.batch;
 
         // Create a new orthographic camera and set it to view the center of the screen.
