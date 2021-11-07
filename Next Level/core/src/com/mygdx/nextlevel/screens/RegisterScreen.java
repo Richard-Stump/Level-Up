@@ -252,7 +252,6 @@ public class RegisterScreen extends AccountList implements Screen{
                                 error = "EmailRegexError";
                                 break;
                             }
-                            System.out.println(db.emailExists(email));
                             if (db.emailExists(email) > 0) {
                                 error = "EmailExistsError";
                                 isInfoCorrect = false;
@@ -367,6 +366,17 @@ public class RegisterScreen extends AccountList implements Screen{
         String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(pass);
+        if (m.matches()) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean checkEmailRegex(String email) {
+        String emailRegex = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+                + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+        Pattern p = Pattern.compile(emailRegex);
+        Matcher m = p.matcher(email);
         if (m.matches()) {
             return true;
         }

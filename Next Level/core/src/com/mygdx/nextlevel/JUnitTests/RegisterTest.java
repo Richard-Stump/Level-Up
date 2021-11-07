@@ -6,19 +6,22 @@ import com.mygdx.nextlevel.screens.RegisterScreen;
 import org.junit.*;
 
 public final class RegisterTest extends RegisterScreen {
-    ServerDBHandler sb;
+    ServerDBHandler db;
     @Before
     public void init() {
-//        accList.clear();
-        sb = new ServerDBHandler();
-        sb.removeUser("nextlevel");
+        db = new ServerDBHandler();
+        db.addUser(new Account("nextlevel", "Password#1", "example@gmail.com"));
+        if (db.userExists("nextlevel2")) {
+            db.removeUser("nextlevel2");
+        }
     }
 
     @After
     public void clear() {
         TestOutputHelper.displayResult();
         TestOutputHelper.clearResult();
-        sb.closeConnection();
+        db.removeUser("nextlevel");
+        db.closeConnection();
     }
 
     @Test
@@ -123,17 +126,15 @@ public final class RegisterTest extends RegisterScreen {
 
     @Test
     public void checkAccountAdded() {
-        String user = "nextlevel";
+        String user = "nextlevel2";
         String pass = "testPass#1";
+        String email = "example2@gmail.com";
         String verify = "testPass#1";
-        if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass)) {
+        if (checkUsername(user) && checkPasswords(pass, verify) && checkPassLength(pass) && checkRegex(pass) && checkEmailRegex(email)) {
             Account a = new Account(user, pass, "");
-//            accList.add(a);
             db.addUser(a);
         }
-//        TestOutputHelper.setResult("checkAccountAdded", 1, accList.size());
         TestOutputHelper.setResult("checkAccountAdded", true, db.userExists(user));
-//        Assert.assertEquals(1, accList.size());
         Assert.assertTrue(db.userExists(user));
     }
 
@@ -146,9 +147,21 @@ public final class RegisterTest extends RegisterScreen {
             Account a = new Account(user, pass, "");
             db.addUser(a);
         }
-//        TestOutputHelper.setResult("checkAccountNotAdded", 0, accList.size());
-//        Assert.assertEquals(0, accList.size());
         TestOutputHelper.setResult("checkAccountNotAdded", false, db.userExists(user));
         Assert.assertFalse(db.userExists(user));
+    }
+
+    @Test
+    public void checkCorrectEmail() {
+        String email = "example@gmail.com";
+        TestOutputHelper.setResult("testCorrectEmail", true, checkEmailRegex(email));
+        Assert.assertTrue(checkEmailRegex(email));
+    }
+
+    @Test
+    public void checkIncorrectEmail() {
+        String email = "@gmail.com";
+        TestOutputHelper.setResult("testIncorrectEmail", false, checkEmailRegex(email));
+        Assert.assertFalse(checkEmailRegex(email));
     }
 }

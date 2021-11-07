@@ -166,20 +166,32 @@ public class ServerDBHandler {
         String result = "";
         String sqlQuery = "SELECT password FROM api.users WHERE username LIKE ?;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-//            System.out.println("Here");
             statement.setString(1, user);
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
-//                System.out.println("Enter");
-                //code does not enter this conditional for some reason
                 result = resultSet.getString("password");
-//                System.out.println(result);
             }
             return result;
 
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("Exception");
+            return "";
+        }
+    }
+
+    public String getEmail(String user) {
+        ResultSet resultSet;
+        String result = "";
+        String sqlQuery = "SELECT email FROM api.users WHERE username LIKE ?;";
+        try(PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, user);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                result = resultSet.getString("email");
+            }
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
             return "";
         }
     }
@@ -189,7 +201,6 @@ public class ServerDBHandler {
         String sqlQuery = "SELECT * FROM api.users WHERE email LIKE ?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            System.out.println(mail);
             statement.setString(1, mail);
             resultSet = statement.executeQuery();
 
@@ -218,14 +229,9 @@ public class ServerDBHandler {
     public void updatePassword(String user) {
         String sqlQuery = "UPDATE api.users SET password = 'password' WHERE username LIKE ?;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-//            System.out.println("Here");
             statement.setString(1, user);
-//            System.out.println("Here2");
             statement.executeUpdate();
-//            System.out.println("Here3");
-
         }   catch (SQLException e) {
-//            System.out.println("Here4");
             e.printStackTrace();
         }
     }

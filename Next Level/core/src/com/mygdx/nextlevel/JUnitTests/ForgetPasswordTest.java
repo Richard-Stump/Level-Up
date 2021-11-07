@@ -10,21 +10,22 @@ public class ForgetPasswordTest extends ForgetPasswordScreen {
     @Before
     public void init() {
         db = new ServerDBHandler();
-        db.removeUser("jchen");
-        db.addUser(new Account("jchen", "Password#1", "example@gmail.com"));
+        db.addUser(new Account("nextlevel", "Password#1", "example@gmail.com"));
     }
 
     @After
     public void clear() {
         TestOutputHelper.displayResult();
         TestOutputHelper.clearResult();
+        db.removeUser("nextlevel");
         db.closeConnection();
     }
 
     @Test
     public void resetPasswordSuccessful() {
-        String username = "jchen";
-        if (db.userExists(username)) {
+        String username = "nextlevel";
+        String email = "example@gmail.com";
+        if (db.userExists(username) && db.getEmail(username).equals(email)) {
             db.updatePassword(username);
         }
         TestOutputHelper.setResult("resetPasswordSuccessful", "password", db.getPassword(username));
@@ -32,12 +33,25 @@ public class ForgetPasswordTest extends ForgetPasswordScreen {
     }
 
     @Test
-    public void resetPasswordUnsuccessful() {
+    public void resetPasswordUnsuccessful1() {
         String username = "jchen24";
-        if (db.userExists(username)) {
+        String email = "example@gmail.com";
+        if (db.userExists(username) && db.getEmail(username).equals(email)) {
             db.updatePassword(username);
         }
-        TestOutputHelper.setResult("resetPasswordUnsuccessful", "password", db.getPassword(username));
+        TestOutputHelper.setResult("resetPasswordUnsuccessful1", "password", db.getPassword(username));
+        TestOutputHelper.setReverse(true);
+        Assert.assertNotEquals("password", db.getPassword(username));
+    }
+
+    @Test
+    public void resetPasswordUnsuccessful2() {
+        String username = "nextlevel";
+        String email = "haha@gmail.com";
+        if (db.userExists(username) && db.getEmail(username).equals(email)) {
+            db.updatePassword(username);
+        }
+        TestOutputHelper.setResult("resetPasswordUnsuccessful2", "password", db.getPassword(username));
         TestOutputHelper.setReverse(true);
         Assert.assertNotEquals("password", db.getPassword(username));
     }
