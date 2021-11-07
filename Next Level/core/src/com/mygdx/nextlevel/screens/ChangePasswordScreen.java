@@ -115,13 +115,13 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
         newPasswordField.setMessageText("********");
         verifyNewPasswordField.setMessageText("********");
 
-//        oldPasswordField.setPasswordMode(true);
-//        newPasswordField.setPasswordMode(true);
-//        verifyNewPasswordField.setPasswordMode(true);
-//
-//        oldPasswordField.setPasswordCharacter('*');
-//        newPasswordField.setPasswordCharacter('*');
-//        verifyNewPasswordField.setPasswordCharacter('*');
+        oldPasswordField.setPasswordMode(true);
+        newPasswordField.setPasswordMode(true);
+        verifyNewPasswordField.setPasswordMode(true);
+
+        oldPasswordField.setPasswordCharacter('*');
+        newPasswordField.setPasswordCharacter('*');
+        verifyNewPasswordField.setPasswordCharacter('*');
 
         TextButton backButton = new TextButton("Back", skin);
         final TextButton changePasswordButton = new TextButton("Change Password", skin);
