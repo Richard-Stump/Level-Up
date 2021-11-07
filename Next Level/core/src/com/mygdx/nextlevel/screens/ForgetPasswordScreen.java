@@ -150,7 +150,6 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
 
         table.setFillParent(true);
         stage.addActor(table);
-//        db.closeConnection();
     }
 
     @Override
