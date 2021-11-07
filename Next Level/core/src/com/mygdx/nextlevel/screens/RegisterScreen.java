@@ -226,7 +226,6 @@ public class RegisterScreen extends AccountList implements Screen{
 //                            }
 //                        });
                         isInfoCorrect = false;
-//                    passMatchError = true;
                         error = "PassMatchError";
                         break;
                     } else {
@@ -243,6 +242,23 @@ public class RegisterScreen extends AccountList implements Screen{
                             break;
                         }
                         //check password length
+                        if (!email.equals("")) {
+                            String emailRegex = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+                                    + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+                            Pattern p = Pattern.compile(emailRegex);
+                            Matcher m = p.matcher(email);
+                            if (!m.matches()) {
+                                isInfoCorrect = false;
+                                error = "EmailRegexError";
+                                break;
+                            }
+                            System.out.println(db.emailExists(email));
+                            if (db.emailExists(email) > 0) {
+                                error = "EmailExistsError";
+                                isInfoCorrect = false;
+                                break;
+                            }
+                        }
                         if (verifyPass.length() < 8 || verifyPass.length() > 16) {
                             isInfoCorrect = false;
                             error = "PassLengthError";
@@ -365,6 +381,10 @@ public class RegisterScreen extends AccountList implements Screen{
                 return new String[] {"Passwords do not match", "RegisterScreen"};
             case "UsernameError":
                 return new String[] {"Username must be at least 4 characters and no more than 16 characters", "RegisterScreen"};
+            case "EmailRegexError":
+                return new String[] {"Invalid email format", "RegisterScreen"};
+            case "EmailExistsError":
+                return new String[] {"Email already associated with an account", "RegisterScreen"};
             case "PassLengthError" :
                 return new String[] {"Password must be at least 4 characters and no more than 16 characters", "RegisterScreen"};
             case "PassRegexError" :

@@ -184,6 +184,26 @@ public class ServerDBHandler {
         }
     }
 
+    public int emailExists(String mail) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM api.users WHERE email LIKE ?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            System.out.println(mail);
+            statement.setString(1, mail);
+            resultSet = statement.executeQuery();
+
+            int count = 0;
+            while (resultSet.next()) {
+                count++;
+            }
+            return count;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public void changePassword(String user, String pass) {
         String sqlQuery = "UPDATE api.users SET password = ? WHERE username LIKE ?;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
