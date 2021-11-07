@@ -138,7 +138,7 @@ public class LevelSelectionScreen implements Screen {
         Table searchSortGroup = getSearchSortTable();
 
         mainTable.add();
-        mainTable.add(scrollPane);
+        mainTable.add(scrollPane).expandY();
         mainTable.add(searchSortGroup).top().padLeft(5);
         mainTable.row();
 

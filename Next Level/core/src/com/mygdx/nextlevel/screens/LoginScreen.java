@@ -2,15 +2,22 @@ package com.mygdx.nextlevel.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -107,13 +114,29 @@ public class LoginScreen extends AccountList implements Screen {
         //initial information
         textUsername.setMessageText("Username");
         textPass.setMessageText("Password");
-//        textPass.setPasswordMode(true);
-//        textPass.setPasswordCharacter('*');
+        textPass.setPasswordMode(true);
+        textPass.setPasswordCharacter('*');
 
         //buttons
         loginButton = new TextButton("Login", skin);
         regButton = new Label("No account? Register for free", skin);
         forgotPassButton = new Label("Forgot Password?", skin);
+
+        final CheckBox passwordBox = new CheckBox(null, skin);
+
+        passwordBox.addListener(new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                //Gdx.graphics.setContinuousRendering(passwordBox.isChecked());
+                if (passwordBox.isChecked()) {
+                    textPass.setPasswordMode(false);
+                }
+
+                if (!passwordBox.isChecked()) {
+                    textPass.setPasswordMode(true);
+                }
+            }
+        });
 
         //Debug lines
         //table.setDebug(true);
@@ -122,7 +145,21 @@ public class LoginScreen extends AccountList implements Screen {
 
         textFieldTable.add(textUsername).width(textBoxWidth).padBottom(textBoxBottomPadding);
         textFieldTable.row();
-        textFieldTable.add(textPass).width(textBoxWidth).padBottom(textBoxBottomPadding);
+        //make stack for password for checkbox and textfield
+        Table passFieldTable = new Table();
+        passFieldTable.add(textPass).width(textBoxWidth).padBottom(textBoxBottomPadding);
+
+        Table checkboxTable = new Table();
+        //checkboxTable.setDebug(true);
+        checkboxTable.add(passwordBox).padLeft(textBoxWidth - 20).padBottom(20);
+
+        Stack passStack = new Stack();
+        passStack.add(passFieldTable);
+        passStack.add(checkboxTable);
+
+        textFieldTable.add(passStack);
+
+        //textFieldTable.add(textPass).width(textBoxWidth).padBottom(textBoxBottomPadding);
 
         rightButtonTable.add(regButton).padBottom(textBoxBottomPadding / 2f).right();
         rightButtonTable.row();
@@ -230,6 +267,79 @@ public class LoginScreen extends AccountList implements Screen {
             }
         });
         loginButton.addListener(new HoverListener());
+
+        passFieldTable.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ENTER) {
+                    System.out.println("Enter key pressed");
+
+                    //get information from text fields
+                    username = textUsername.getText();
+                    pass = textPass.getText();
+
+                    //check if user exists
+                    while (true) {
+                        if (db.userExists(username)) {
+                            String ret = db.getPassword(username);
+                            //check password is correct
+                            if (pass.equals(ret)) {
+                                curAcc = username;
+                                break;
+//                            loadDB();
+                            } else if (!pass.equals(ret)) {
+//                        errorDialog = new Dialog("Warning", skin);
+//                        errorDialog.text("Incorrect Password. Please try again");
+//                        errorDialog.show(stage);
+                                textPass.setMessageText("Password");
+                                error = "IncorrectPass";
+                                break;
+                            }
+                        } else {
+                            error = "NoAccount";
+                            break;
+//                    errorDialog = new Dialog("Warning", skin) {
+//                        protected void result(Object object)
+//                        {
+//                            System.out.println("Option: " + object);
+//                            Timer.schedule(new Timer.Task()
+//                            {
+//
+//                                @Override
+//                                public void run()
+//                                {
+//                                    errorDialog.show(stage);
+//                                }
+//                            }, 1);
+//                        }
+//                    };
+//
+//                    Timer.schedule(new Timer.Task()
+//                    {
+//                        @Override
+//                        public void run()
+//                        {
+//                            errorDialog.show(stage);
+//                            //errorDialog.cancel();
+//
+//                            errorDialog.hide();
+//                        }
+//                    }, 1);
+//
+//                    errorDialog.text("No account linked to this username");
+                            //errorDialog.show(stage);
+                        }
+                    }
+                    String[] retVal = errorDisplay(error);
+                    if (retVal[0].equals("")) {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+                    } else {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, retVal[0], retVal[1]));
+                    }
+                }
+                return false;
+            }
+        });
 
         table.setFillParent(true);
         stage.addActor(table);
