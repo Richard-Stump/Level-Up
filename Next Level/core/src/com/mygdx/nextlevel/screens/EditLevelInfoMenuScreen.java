@@ -47,8 +47,8 @@ public class EditLevelInfoMenuScreen implements Screen {
 
     public EditLevelInfoMenuScreen(NextLevel game) {
         this.game = game;
-        atlas = new TextureAtlas(Gdx.files.internal("skin/neon-ui.atlas"));
-        skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
+        atlas = new TextureAtlas(Gdx.files.internal("skin/uiskin.atlas"));
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
         batch = game.batch;
         camera = new OrthographicCamera();

@@ -29,8 +29,8 @@ public class ErrorMessageScreen implements Screen {
     public String nextScreen;
 
     public ErrorMessageScreen (NextLevel game, String message, String nextScreen) {
-        atlas = new TextureAtlas("skin/neon-ui.atlas");
-        skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
+        atlas = new TextureAtlas("skin/uiskin.atlas");
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
         batch = game.batch;
         camera = new OrthographicCamera();
