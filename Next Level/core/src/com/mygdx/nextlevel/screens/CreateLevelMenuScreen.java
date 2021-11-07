@@ -1,31 +1,23 @@
 package com.mygdx.nextlevel.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.editor.EditorLevel;
-import jdk.internal.net.http.common.Log;
-
-import java.nio.channels.AcceptPendingException;
 
 public class CreateLevelMenuScreen implements Screen {
     private NextLevel           game;
@@ -145,7 +137,7 @@ public class CreateLevelMenuScreen implements Screen {
                 }
 
                 //refresh created table
-                for (LevelInfo li: serverDB.sortByTitle()) {
+                for (LevelInfo li: serverDB.sortAllByTitle()) {
                     if (li.getAuthor().equals(username)) {
                         createdDB.addLevelInfo(li);
                     }

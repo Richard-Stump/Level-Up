@@ -79,7 +79,7 @@ public class LevelDownloadScreen implements Screen {
     public LevelDownloadScreen(NextLevel game) {
         this.game = game;
         atlas = new TextureAtlas(Gdx.files.internal("skin/neon-ui.atlas"));
-        skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
         batch = game.batch;
 

@@ -1,15 +1,11 @@
 package com.mygdx.nextlevel.dbHandlers;
 
 import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.Level;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
 import com.mygdx.nextlevel.enums.Tag;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -251,8 +247,11 @@ public class ServerDBHandler {
     public int addLevel(LevelInfo levelInfo) {
         String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?);";
+        String sqlQuery2 = "UPDATE api.users SET levelsuploaded=? WHERE username=?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            PreparedStatement statement2 = connection.prepareStatement(sqlQuery2);
+
             statement.setString(1, levelInfo.getId());
             statement.setString(2, levelInfo.getTitle());
             statement.setString(3, levelInfo.getAuthor());
@@ -265,11 +264,59 @@ public class ServerDBHandler {
             //statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
             //statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
 
-            return statement.executeUpdate();
+            String[] userOld = getUsersCreatedLevelsIDs(levelInfo.getAuthor());
+            ArrayList<String> strArr = new ArrayList<>(Arrays.asList(userOld));
+
+            strArr.add(levelInfo.getId());
+            statement2.setArray(1, connection.createArrayOf("text", strArr.toArray()));
+            statement2.setString(2, levelInfo.getAuthor());
+            if (statement.executeUpdate() == 0) {
+                return 0;
+            }
+
+            return statement2.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    public String[] getUsersCreatedLevelsIDs(String username) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT levelsuploaded FROM api.users WHERE username LIKE ?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, username);
+            resultSet = statement.executeQuery();
+            resultSet.next();
+
+
+            /*
+            if (!resultSet.next()) {
+                resultSet.close();
+                return new String[]{};
+            }
+            resultSet.close();
+            resultSet = statement.executeQuery();
+            resultSet.next();
+             */
+
+            String[] toRet = (String[]) resultSet.getArray("levelsuploaded").getArray();
+
+            resultSet.close();
+            return toRet;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public ArrayList<LevelInfo> getUsersCreatedLevels(String username) {
+        ArrayList<LevelInfo> list = new ArrayList<>();
+        for (String levelID: getUsersCreatedLevelsIDs(username)) {
+            list.add(getLevelByID(levelID));
+        }
+        return list;
     }
 
     /**
@@ -281,13 +328,40 @@ public class ServerDBHandler {
     public int removeLevel(String id) {
         int rowsChanged;
 
+        //get information about the level we will delete
+        LevelInfo levelInfo = getLevelByID(id);
+
+        //get current user levels
+        ArrayList<LevelInfo> userLevels = getUsersCreatedLevels(levelInfo.getAuthor());
+
+        //cycle through and remove the one that matches
+        for (LevelInfo level: userLevels) {
+            if (level.getId().equals(id)) {
+                userLevels.remove(level);
+                break;
+            }
+        }
+
+        String[] newUserLevelIDs = new String[userLevels.size()];
+
+        //add all the level ids into a string array to be sent to the server
+        for (int i = 0; i < userLevels.size(); i++) {
+            newUserLevelIDs[i] = userLevels.get(i).getId();
+        }
+
         String sqlQuery = "DELETE FROM api.levels WHERE levelid = ?;";
+        String sqlQuery2 = "UPDATE api.users SET levelsuploaded=? WHERE username=?;";
+
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            PreparedStatement statement2 = connection.prepareStatement(sqlQuery2);
             statement.setString(1, id);
+            statement2.setArray(1, connection.createArrayOf("text", newUserLevelIDs));
+            statement2.setString(2, levelInfo.getAuthor());
 
             rowsChanged = statement.executeUpdate();
             if (rowsChanged == 1) {
+                statement2.executeUpdate();
                 return 1;
             }
             return -1;
@@ -301,7 +375,7 @@ public class ServerDBHandler {
      *
      * @return a list of LevelInfo objects that are sorted alphabetically by title
      */
-    public List<LevelInfo> sortByTitle() {
+    public List<LevelInfo> sortAllByTitle() {
         ResultSet resultSet;
 
         String sqlQuery = "SELECT * FROM api.levels ORDER BY title ASC;";
@@ -316,6 +390,23 @@ public class ServerDBHandler {
         }
     }
 
+    public LevelInfo getLevelByID(String id) {
+        ResultSet resultSet;
+
+        String sqlQuery = "SELECT * FROM api.levels WHERE levelid=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, id);
+            resultSet = statement.executeQuery();
+
+            List<LevelInfo> list = resultAsList(resultSet);
+            return list.get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Takes a ResultSet and makes a List of LevelInfo's out of it
      *
@@ -323,7 +414,7 @@ public class ServerDBHandler {
      * @return a list of LevelInfo objects that match the search
      * @throws SQLException if there's an SQL exception
      */
-    private List<LevelInfo> resultAsList(ResultSet resultSet) throws SQLException {
+    public List<LevelInfo> resultAsList(ResultSet resultSet) throws SQLException {
         List<LevelInfo> list = new ArrayList<>();
 
         //cycle through results and add it to the list

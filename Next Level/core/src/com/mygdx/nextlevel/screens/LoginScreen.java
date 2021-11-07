@@ -21,15 +21,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
-import com.mygdx.nextlevel.enums.Difficulty;
-import com.mygdx.nextlevel.enums.Tag;
+
+import java.util.ArrayList;
 
 public class LoginScreen extends AccountList implements Screen {
 
@@ -371,10 +370,9 @@ public class LoginScreen extends AccountList implements Screen {
 
          */
 
-        for (LevelInfo li: serverDB.sortByTitle()) {
-            if (li.getAuthor().equals(username)) {
-                createdDB.addLevelInfo(li);
-            }
+        ArrayList<LevelInfo> list = serverDB.getUsersCreatedLevels(username);
+        for (LevelInfo li: list) {
+            createdDB.addLevelInfo(li);
         }
         serverDB.closeConnection();
     }
