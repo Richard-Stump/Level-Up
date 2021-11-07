@@ -58,10 +58,12 @@ project(":core") {
 
     dependencies {
         implementation "org.postgresql:postgresql:42.3.0"
+        compile "org.mapeditor:libtiled:1.2.3"
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         compile "com.kotcrab.vis:vis-ui:$visuiVersion"
         compile group:'org.xerial', name:'sqlite-jdbc', version:'3.36.0.3'
+
     }
 }
