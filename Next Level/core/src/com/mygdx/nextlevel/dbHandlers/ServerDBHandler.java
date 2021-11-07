@@ -236,6 +236,34 @@ public class ServerDBHandler {
         }
     }
 
+    public String getProfilePic(String user) {
+        ResultSet resultSet;
+        String result = "";
+        String sqlQuery = "SELECT profilepicture from api.users WHERE user LIKE ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, user);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                result = resultSet.getString("profilepicture");
+            }
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return result;
+        }
+    }
+
+    public void setProfilePic(String user, String picture) {
+        String sqlQuery = "UPDATE api.users SET profilepicture = ? WHERE username LIKE ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, picture);
+            statement.setString(2, user);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
