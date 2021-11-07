@@ -149,6 +149,55 @@ public class RegisterScreen extends AccountList implements Screen{
         mainStack.add(new Image(new Texture(Gdx.files.internal("rect.png"))));
         mainStack.add(reqTable);
 
+        final CheckBox passwordBox = new CheckBox(null, skin);
+        final CheckBox verifyPasswordBox = new CheckBox(null, skin);
+
+        passwordBox.addListener(new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                //Gdx.graphics.setContinuousRendering(passwordBox.isChecked());
+                if (passwordBox.isChecked()) {
+                    textPass.setPasswordMode(false);
+                }
+
+                if (!passwordBox.isChecked()) {
+                    textPass.setPasswordMode(true);
+                }
+            }
+        });
+        verifyPasswordBox.addListener(new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                //Gdx.graphics.setContinuousRendering(passwordBox.isChecked());
+                if (verifyPasswordBox.isChecked()) {
+                    textVerifyPass.setPasswordMode(false);
+                }
+
+                if (!verifyPasswordBox.isChecked()) {
+                    textVerifyPass.setPasswordMode(true);
+                }
+            }
+        });
+
+        Table passFieldTable = new Table();
+        passFieldTable.add(textPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
+        Table checkboxPassTable = new Table();
+        //checkboxPassTable.setDebug(true);
+        checkboxPassTable.add(passwordBox).padLeft(textBoxWidth - 20).padBottom(20);
+
+        Table verifyPassTable = new Table();
+        verifyPassTable.add(textVerifyPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
+        Table checkboxVPassTable = new Table();
+        checkboxVPassTable.add(verifyPasswordBox).padLeft(textBoxWidth - 20).padBottom(20);
+
+        Stack passStack = new Stack();
+        passStack.add(passFieldTable);
+        passStack.add(checkboxPassTable);
+
+        Stack passVerifyStack = new Stack();
+        passVerifyStack.add(verifyPassTable);
+        passVerifyStack.add(checkboxVPassTable);
+
         //debug lines table, cell, and widgets
         //table.setDebug(true);
         //reqTable.setDebug(true);
@@ -164,62 +213,9 @@ public class RegisterScreen extends AccountList implements Screen{
         textFieldTable.row();
         textFieldTable.add(textEmail).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
         textFieldTable.row();
-
-        final CheckBox passwordBox = new CheckBox(null, skin);
-        passwordBox.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                //Gdx.graphics.setContinuousRendering(passwordBox.isChecked());
-                if (passwordBox.isChecked()) {
-                    textPass.setPasswordMode(false);
-                }
-
-                if (!passwordBox.isChecked()) {
-                    textPass.setPasswordMode(true);
-                }
-            }
-        });
-
-        Table passFieldTable = new Table();
-        passFieldTable.add(textPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
-
-        Table checkboxPassTable = new Table();
-        //checkboxPassTable.setDebug(true);
-        checkboxPassTable.add(passwordBox).padLeft(textBoxWidth - 20).padBottom(20);
-
-        Stack passStack = new Stack();
-        passStack.add(passFieldTable);
-        passStack.add(checkboxPassTable);
-
         textFieldTable.add(passStack);
         //textFieldTable.add(textPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
         textFieldTable.row();
-
-        final CheckBox verifyPasswordBox = new CheckBox(null, skin);
-        verifyPasswordBox.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                //Gdx.graphics.setContinuousRendering(passwordBox.isChecked());
-                if (verifyPasswordBox.isChecked()) {
-                    textVerifyPass.setPasswordMode(false);
-                }
-
-                if (!verifyPasswordBox.isChecked()) {
-                    textVerifyPass.setPasswordMode(true);
-                }
-            }
-        });
-
-        Table verifyPassTable = new Table();
-        verifyPassTable.add(textVerifyPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
-
-        Table checkboxVPassTable = new Table();
-        checkboxVPassTable.add(verifyPasswordBox).padLeft(textBoxWidth - 20).padBottom(20);
-
-        Stack passVerifyStack = new Stack();
-        passVerifyStack.add(verifyPassTable);
-        passVerifyStack.add(checkboxVPassTable);
-
         textFieldTable.add(passVerifyStack);
         //textFieldTable.add(textVerifyPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
         textFieldTable.row();
