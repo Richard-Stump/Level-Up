@@ -69,11 +69,12 @@ public class LevelSelectionScreen implements Screen {
     public static int rightColumnWidth = 250;
     public static int topBottomPad = 30;
     public static int leftColumnWidth = 400;
+    public static int labelHeight = 20;
 
     public LevelSelectionScreen(NextLevel game) {
         this.game = game;
-        atlas = new TextureAtlas(Gdx.files.internal("skin/neon-ui.atlas"));
-        skin = new Skin(Gdx.files.internal("skin/neon-ui.json"), atlas);
+        atlas = new TextureAtlas(Gdx.files.internal("skin/uiskin.atlas"));
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
         batch = game.batch;
 
@@ -130,9 +131,8 @@ public class LevelSelectionScreen implements Screen {
             }
         });
 
-        mainTable.add(backButton);
-        mainTable.add(levelSelectLabel).expandX().left();
-        //mainTable.add(userInfo).width(200);
+        mainTable.add(backButton).height(labelHeight +10);
+        mainTable.add(levelSelectLabel).expandX().left().padLeft(5);
         mainTable.add(buttonDownloadLevels).width(200);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
@@ -149,8 +149,8 @@ public class LevelSelectionScreen implements Screen {
         Table searchSortGroup = getSearchSortTable();
 
         mainTable.add();
-        mainTable.add(scrollPane);
-        mainTable.add(searchSortGroup).top();
+        mainTable.add(scrollPane).expandY();
+        mainTable.add(searchSortGroup).top().padLeft(5);
         mainTable.row();
 
         //row 3: empty placeholder, currently selected level, play button
@@ -159,8 +159,8 @@ public class LevelSelectionScreen implements Screen {
         playButton.addListener(playLevel());
 
         mainTable.add();
-        mainTable.add(selectedLevel).left().padBottom(20);
-        mainTable.add(playButton).width(150).padBottom(20);
+        mainTable.add(selectedLevel).left().padBottom(20).padLeft(5);
+        mainTable.add(playButton).width(150).padBottom(20).padLeft(5);
 
         //end
         mainTable.setFillParent(true);
@@ -187,10 +187,12 @@ public class LevelSelectionScreen implements Screen {
 
         //TODO: add search by (star) rating
 
+        //table.setDebug(true);
+
         searchButton = new TextButton("Search", skin);
         searchButton.addListener(searchButton());
 
-        table.add(searchLabel).padBottom(10);
+        table.add(searchLabel).padBottom(10).height(labelHeight + 10);
         table.row();
         table.add(searchBar).padBottom(20).width(200);
         table.row();
@@ -207,7 +209,7 @@ public class LevelSelectionScreen implements Screen {
         }
 
         table.add(searchButton).padTop(20).width(150);
-        table.row();
+        //table.row();
         return table;
     }
 
@@ -258,11 +260,11 @@ public class LevelSelectionScreen implements Screen {
         author.addListener(new HoverListener());
 
         //adding to left table
-        leftTable.add(levelName).width(leftColumnWidth).left();
+        leftTable.add(levelName).width(leftColumnWidth).left().height(labelHeight);
         leftTable.row();
-        leftTable.add(author).width(leftColumnWidth).left();
+        leftTable.add(author).width(leftColumnWidth).left().height(labelHeight);
         leftTable.row();
-        leftTable.add(difficulty).width(leftColumnWidth).left();
+        leftTable.add(difficulty).width(leftColumnWidth).left().height(labelHeight);
 
         return leftTable;
     }
@@ -290,9 +292,9 @@ public class LevelSelectionScreen implements Screen {
         playCount.addListener(new HoverListener());
 
         //add to right table
-        rightTable.add(rating).width(rightColumnWidth).left();
+        rightTable.add(rating).width(rightColumnWidth).left().height(labelHeight);
         rightTable.row();
-        rightTable.add(playCount).width(rightColumnWidth).left();
+        rightTable.add(playCount).width(rightColumnWidth).left().height(labelHeight);
 
         return rightTable;
     }
