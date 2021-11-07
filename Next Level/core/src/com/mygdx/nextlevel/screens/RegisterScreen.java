@@ -2,16 +2,20 @@ package com.mygdx.nextlevel.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -116,10 +120,10 @@ public class RegisterScreen extends AccountList implements Screen{
         textVerifyPass.setMessageText("Renter Password");
 
         //password mode
-//        textPass.setPasswordMode(true);
-//        textVerifyPass.setPasswordMode(true);
-//        textPass.setPasswordCharacter('*');
-//        textVerifyPass.setPasswordCharacter('*');
+        textPass.setPasswordMode(true);
+        textVerifyPass.setPasswordMode(true);
+        textPass.setPasswordCharacter('*');
+        textVerifyPass.setPasswordCharacter('*');
 
         //buttons
         TextButton back = new TextButton("I have an account!", skin);
@@ -145,6 +149,55 @@ public class RegisterScreen extends AccountList implements Screen{
         mainStack.add(new Image(new Texture(Gdx.files.internal("rect.png"))));
         mainStack.add(reqTable);
 
+        final CheckBox passwordBox = new CheckBox(null, skin);
+        final CheckBox verifyPasswordBox = new CheckBox(null, skin);
+
+        passwordBox.addListener(new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                //Gdx.graphics.setContinuousRendering(passwordBox.isChecked());
+                if (passwordBox.isChecked()) {
+                    textPass.setPasswordMode(false);
+                }
+
+                if (!passwordBox.isChecked()) {
+                    textPass.setPasswordMode(true);
+                }
+            }
+        });
+        verifyPasswordBox.addListener(new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                //Gdx.graphics.setContinuousRendering(passwordBox.isChecked());
+                if (verifyPasswordBox.isChecked()) {
+                    textVerifyPass.setPasswordMode(false);
+                }
+
+                if (!verifyPasswordBox.isChecked()) {
+                    textVerifyPass.setPasswordMode(true);
+                }
+            }
+        });
+
+        Table passFieldTable = new Table();
+        passFieldTable.add(textPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
+        Table checkboxPassTable = new Table();
+        //checkboxPassTable.setDebug(true);
+        checkboxPassTable.add(passwordBox).padLeft(textBoxWidth - 20).padBottom(20);
+
+        Table verifyPassTable = new Table();
+        verifyPassTable.add(textVerifyPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
+        Table checkboxVPassTable = new Table();
+        checkboxVPassTable.add(verifyPasswordBox).padLeft(textBoxWidth - 20).padBottom(20);
+
+        Stack passStack = new Stack();
+        passStack.add(passFieldTable);
+        passStack.add(checkboxPassTable);
+
+        Stack passVerifyStack = new Stack();
+        passVerifyStack.add(verifyPassTable);
+        passVerifyStack.add(checkboxVPassTable);
+
         //debug lines table, cell, and widgets
         //table.setDebug(true);
         //reqTable.setDebug(true);
@@ -160,9 +213,11 @@ public class RegisterScreen extends AccountList implements Screen{
         textFieldTable.row();
         textFieldTable.add(textEmail).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
         textFieldTable.row();
-        textFieldTable.add(textPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
+        textFieldTable.add(passStack);
+        //textFieldTable.add(textPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
         textFieldTable.row();
-        textFieldTable.add(textVerifyPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
+        textFieldTable.add(passVerifyStack);
+        //textFieldTable.add(textVerifyPass).prefWidth(textBoxWidth).padBottom(textBoxBottomPadding);
         textFieldTable.row();
         table.add(textFieldTable).colspan(2);
         table.row();
@@ -301,6 +356,116 @@ public class RegisterScreen extends AccountList implements Screen{
             }
         });
         signUp.addListener(new HoverListener());
+        textVerifyPass.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ENTER) {
+                    isInfoCorrect = true;
+
+                    //getting the inputs
+                    username = textUsername.getText();
+                    email = textEmail.getText();
+                    pass = textPass.getText();
+                    verifyPass = textVerifyPass.getText();
+
+                    //check if all fields are filled
+                    while (true) {
+                        if ((username.isEmpty()) & (email.isEmpty()) & (pass.isEmpty())) {
+                            error = "NoInfoError";
+                            isInfoCorrect = false;
+                            break;
+                        }
+
+                        //check if passwords match
+                        if (pass.compareTo(verifyPass) != 0) {
+//                        errorStage = new Stage(viewport, batch);
+//                        Table errorTable = new Table();
+//                        errorTable.add(new Label("Passwords do not match", skin));
+//                        RunnableAction setErrorMessage = new RunnableAction();
+//                        setErrorMessage.setRunnable(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                game.setScreen(new ErrorMessageScreen(game, "Passwords do not match"));
+//                                dispose();
+//                            }
+//                        });
+                            isInfoCorrect = false;
+                            error = "PassMatchError";
+                            break;
+                        } else {
+                            //check username length
+                            if (username.length() < 4 || username.length() > 16) {
+                                isInfoCorrect = false;
+                                error = "UsernameError";
+                                break;
+                            }
+                            //check if username exists already
+                            if (db.userExists(username)) {
+                                isInfoCorrect = false;
+                                error = "UserExistsError";
+                                break;
+                            }
+                            //check password length
+                            if (!email.equals("")) {
+                                String emailRegex = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+                                        + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+                                Pattern p = Pattern.compile(emailRegex);
+                                Matcher m = p.matcher(email);
+                                if (!m.matches()) {
+                                    isInfoCorrect = false;
+                                    error = "EmailRegexError";
+                                    break;
+                                }
+                                if (db.emailExists(email) > 0) {
+                                    error = "EmailExistsError";
+                                    isInfoCorrect = false;
+                                    break;
+                                }
+                            }
+                            if (verifyPass.length() < 8 || verifyPass.length() > 16) {
+                                isInfoCorrect = false;
+                                error = "PassLengthError";
+                                break;
+                            } else {
+                                String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
+                                Pattern p = Pattern.compile(regex);
+                                Matcher m = p.matcher(verifyPass);
+                                //check password requirements
+                                if (m.matches()) {
+                                    if (isInfoCorrect) {
+                                        //add account to database if everything is good
+                                        Account a = new Account(username, pass, email);
+                                        db.addUser(a);
+                                        break;
+                                    }
+                                } else {
+                                    isInfoCorrect = false;
+                                    error = "PassRegexError";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    //reset all textFields
+                    textUsername.setText("");
+                    textEmail.setText("");
+                    textPass.setText("");
+                    textVerifyPass.setText("");
+
+                    //TODO: set to next screen
+                    String[] ret = errorDisplay(error);
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, ret[0], ret[1]));
+
+                    //small code chunk to create popup (not working)
+//                Dialog dialog = new Dialog("Error", null, "dialog");
+//                dialog.text("Not enough information");
+//                dialog.show(stage);
+//                stage.addActor(new MessageDialog("Not enough information"));
+                }
+                return false;
+            }
+        });
     }
 
     @Override
