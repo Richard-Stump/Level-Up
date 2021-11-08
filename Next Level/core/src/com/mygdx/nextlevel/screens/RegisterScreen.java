@@ -27,6 +27,7 @@ import com.mygdx.nextlevel.Util.ErrorDialog;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 
+import javax.swing.plaf.synth.SynthEditorPaneUI;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -339,9 +340,12 @@ public class RegisterScreen extends AccountList implements Screen{
                             //check password requirements
                             if (m.matches()) {
                                 if (isInfoCorrect) {
+                                    System.out.println("Correct Information");
                                     //add account to database if everything is good
                                     Account a = new Account(username, pass, email);
                                     db.addUser(a);
+                                    ErrorDialog newAccount = new ErrorDialog("Created", "LoginScreen", game, skin, "Account successfully created", stage);
+                                    createdDialog = newAccount.getErrorDialog();
                                     break;
                                 }
                             } else {
@@ -362,11 +366,11 @@ public class RegisterScreen extends AccountList implements Screen{
                 textPass.setText("");
                 textVerifyPass.setText("");
 
-                if (isInfoCorrect) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
-//                    ErrorDialog newAccount = new ErrorDialog("Created", skin, "Account successfully created", stage);
+//                if (isInfoCorrect) {
+//                    //((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+//                    ErrorDialog newAccount = new ErrorDialog("Created", "LoginScreen", game, skin, "Account successfully created", stage);
 //                    createdDialog = newAccount.getErrorDialog();
-                }
+//                }
 
                 //TODO: set to next screen
 //                String[] ret = errorDisplay(error);
@@ -458,6 +462,8 @@ public class RegisterScreen extends AccountList implements Screen{
                                         //add account to database if everything is good
                                         Account a = new Account(username, pass, email);
                                         db.addUser(a);
+                                        ErrorDialog newAccount = new ErrorDialog("Created", "LoginScreen", game, skin, "Account successfully created", stage);
+                                        createdDialog = newAccount.getErrorDialog();
                                         break;
                                     }
                                 } else {
@@ -478,11 +484,11 @@ public class RegisterScreen extends AccountList implements Screen{
                     textPass.setText("");
                     textVerifyPass.setText("");
 
-                    if (isInfoCorrect) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
-//                    ErrorDialog newAccount = new ErrorDialog("Created", skin, "Account successfully created", stage);
-//                    createdDialog = newAccount.getErrorDialog();
-                    }
+//                    if (isInfoCorrect) {
+//                        //((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+//                        ErrorDialog newAccount = new ErrorDialog("Created", "LoginScreen", game, skin, "Account successfully created", stage);
+//                        createdDialog = newAccount.getErrorDialog();
+//                    }
 
                     //TODO: set to next screen
 //                    String[] ret = errorDisplay(error);

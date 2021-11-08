@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.ErrorDialog;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import org.w3c.dom.Text;
@@ -45,6 +46,9 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
     public static int buttonWidth = 170;
     public ServerDBHandler db;
 
+    Dialog updatePassDialog;
+    Dialog emailErrDialog;
+    Dialog userErrDialog;
 
     public ForgetPasswordScreen() {}
     public ForgetPasswordScreen(NextLevel game) {
@@ -137,12 +141,18 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
                 if (db.userExists(username)) {
                     if (db.getEmail(username).equals(email)) {
                         db.updatePassword(username);
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password reset to 'password'", "LoginScreen"));
+                        ErrorDialog updatePass = new ErrorDialog("Updated", "LoginScreen", game, skin, "Password reset to 'password'", stage);
+                        updatePassDialog = updatePass.getErrorDialog();
+                        //((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Password reset to 'password'", "LoginScreen"));
                     } else  {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Email inputted incorrect for this username", "ForgetPasswordScreen"));
+                        ErrorDialog emailErr = new ErrorDialog(skin, "Email inputted incorrect for this username", stage);
+                        emailErrDialog = emailErr.getErrorDialog();
+                        //((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Email inputted incorrect for this username", "ForgetPasswordScreen"));
                     }
                 }  else  {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "No account associated with this username", "ForgetPasswordScreen"));
+                    ErrorDialog userErr = new ErrorDialog(skin, "No account associated with this username", stage);
+                    userErrDialog = userErr.getErrorDialog();
+                    //((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "No account associated with this username", "ForgetPasswordScreen"));
                 }
             }
         });

@@ -231,7 +231,7 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
         table.add(verifyNewPassStack);
         //table.add(verifyNewPasswordField).width(textBoxWidth + 4).padBottom(textBoxBottomPadding);
         table.row();
-        table.add(changePasswordButton).width(buttonWidth + 18).expandY().top().padBottom(10);
+        table.add(changePasswordButton).width(buttonWidth + 18).expandY().top().padBottom(10).padTop(10);
 
         //event listeners
         backButton.addListener(new ClickListener() {
@@ -295,10 +295,9 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
                 verifyNewPasswordField.setText("");
 
                 if (isInfoCorrect) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
-                    //ErrorDialog changedPass = new ErrorDialog("Password Changed", skin, "Password successfully changed. Please login again", stage);
-//                    changedPassDialog = changedPass.getErrorDialog();
-
+                    //((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+                    ErrorDialog changedPass = new ErrorDialog("Password Changed", "LoginScreen", game, skin, "Password successfully changed. Please login again", stage);
+                    changedPassDialog = changedPass.getErrorDialog();
                 }
 //                else if (passMatchError) {
 //                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New passwords do not match", "ChangePasswordScreen"));
@@ -369,9 +368,9 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
                     verifyNewPasswordField.setText("");
 
                     if (isInfoCorrect) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
-                        //ErrorDialog changedPass = new ErrorDialog("Password Changed", skin, "Password successfully changed. Please login again", stage);
-//                    changedPassDialog = changedPass.getErrorDialog();
+                        //((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+                        ErrorDialog changedPass = new ErrorDialog("Password Changed", "LoginScreen", game, skin, "Password successfully changed. Please login again", stage);
+                        changedPassDialog = changedPass.getErrorDialog();
                     }
 //                else if (passMatchError) {
 //                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New passwords do not match", "ChangePasswordScreen"));
