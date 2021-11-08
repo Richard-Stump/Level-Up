@@ -7,8 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.screens.GameScreen2;
-import com.mygdx.nextlevel.screens.GameScreenBase;
-import com.mygdx.nextlevel.screens.ItemShowcaseScreen2;
 
 public class Player2 extends Actor2 {
     protected Vector2 respawnPosition;  //Position that the player respawns in
@@ -80,7 +78,7 @@ public class Player2 extends Actor2 {
 //        fireFlowerItem = false;
 //    }
 
-    public Player2(GameScreenBase screen, float x, float y) {
+    public Player2(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 1.0f, 1.0f);
 
         boxCollider = new BoxCollider(this,

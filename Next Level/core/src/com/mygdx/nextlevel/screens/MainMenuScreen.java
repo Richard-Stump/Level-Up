@@ -13,10 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import org.w3c.dom.Text;
 
 public class MainMenuScreen extends LoginScreen implements Screen {
@@ -32,12 +34,14 @@ public class MainMenuScreen extends LoginScreen implements Screen {
     //player information
     public String username;
     public Image profilePic;
+    public String profilePicture;
 
     //static vars
     public static int textBoxBottomPadding = 20;
     public static int buttonWidth = 200;
     public static int rightMargin = 870;
     public static int topMargin = 450;
+    ServerDBHandler db = new ServerDBHandler();
 
     public MainMenuScreen (NextLevel game) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
@@ -102,6 +106,11 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         Label usernameLabel = new Label(username, skin);
         //use player profile pic
         Image playerPic = new Image(new Texture(Gdx.files.internal("userIcon.png")));
+//        db.setProfilePic(username, "userIcon.png");
+//        profilePicture = db.getProfilePic(username);
+//        System.out.println(profilePicture);
+//        Image playerPic = new Image(new Texture(Gdx.files.internal(profilePicture)));
+//        playerPic.setScaling(Scaling.fit);
 
         HorizontalGroup userGroup = new HorizontalGroup();
         userGroup.addActor(usernameLabel);

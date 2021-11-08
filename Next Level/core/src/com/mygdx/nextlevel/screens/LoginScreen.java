@@ -137,17 +137,8 @@ public class LoginScreen extends AccountList implements Screen {
             }
         });
 
-        //Debug lines
-        //table.setDebug(true);
-        //textFieldTable.setDebug(true);
-        //rightButtonTable.setDebug(true);
-
-        textFieldTable.add(textUsername).width(textBoxWidth).padBottom(textBoxBottomPadding);
-        textFieldTable.row();
-        //make stack for password for checkbox and textfield
         Table passFieldTable = new Table();
         passFieldTable.add(textPass).width(textBoxWidth).padBottom(textBoxBottomPadding);
-
         Table checkboxTable = new Table();
         //checkboxTable.setDebug(true);
         checkboxTable.add(passwordBox).padLeft(textBoxWidth - 20).padBottom(20);
@@ -156,8 +147,14 @@ public class LoginScreen extends AccountList implements Screen {
         passStack.add(passFieldTable);
         passStack.add(checkboxTable);
 
-        textFieldTable.add(passStack);
+        //Debug lines
+        //table.setDebug(true);
+        //textFieldTable.setDebug(true);
+        //rightButtonTable.setDebug(true);
 
+        textFieldTable.add(textUsername).width(textBoxWidth).padBottom(textBoxBottomPadding);
+        textFieldTable.row();
+        textFieldTable.add(passStack);
         //textFieldTable.add(textPass).width(textBoxWidth).padBottom(textBoxBottomPadding);
 
         rightButtonTable.add(regButton).padBottom(textBoxBottomPadding / 2f).right();
@@ -266,7 +263,6 @@ public class LoginScreen extends AccountList implements Screen {
             }
         });
         loginButton.addListener(new HoverListener());
-
         passFieldTable.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {

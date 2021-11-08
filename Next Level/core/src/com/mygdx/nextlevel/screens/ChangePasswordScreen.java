@@ -2,6 +2,7 @@ package com.mygdx.nextlevel.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
@@ -9,9 +10,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -115,13 +119,85 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
         newPasswordField.setMessageText("********");
         verifyNewPasswordField.setMessageText("********");
 
-//        oldPasswordField.setPasswordMode(true);
-//        newPasswordField.setPasswordMode(true);
-//        verifyNewPasswordField.setPasswordMode(true);
-//
-//        oldPasswordField.setPasswordCharacter('*');
-//        newPasswordField.setPasswordCharacter('*');
-//        verifyNewPasswordField.setPasswordCharacter('*');
+        oldPasswordField.setPasswordMode(true);
+        newPasswordField.setPasswordMode(true);
+        verifyNewPasswordField.setPasswordMode(true);
+
+        oldPasswordField.setPasswordCharacter('*');
+        newPasswordField.setPasswordCharacter('*');
+        verifyNewPasswordField.setPasswordCharacter('*');
+
+        final CheckBox oldPassBox = new CheckBox(null, skin);
+        final CheckBox newPassBox = new CheckBox(null, skin);
+        final CheckBox verifyNewPassBox = new CheckBox(null, skin);
+
+        oldPassBox.addListener(new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                //Gdx.graphics.setContinuousRendering(passwordBox.isChecked());
+                if (oldPassBox.isChecked()) {
+                    oldPasswordField.setPasswordMode(false);
+                }
+
+                if (!oldPassBox.isChecked()) {
+                    oldPasswordField.setPasswordMode(true);
+                }
+            }
+        });
+        newPassBox.addListener(new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                //Gdx.graphics.setContinuousRendering(passwordBox.isChecked());
+                if (newPassBox.isChecked()) {
+                    newPasswordField.setPasswordMode(false);
+                }
+
+                if (!newPassBox.isChecked()) {
+                    newPasswordField.setPasswordMode(true);
+                }
+            }
+        });
+        verifyNewPassBox.addListener(new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                //Gdx.graphics.setContinuousRendering(passwordBox.isChecked());
+                if (verifyNewPassBox.isChecked()) {
+                    verifyNewPasswordField.setPasswordMode(false);
+                }
+
+                if (!verifyNewPassBox.isChecked()) {
+                    verifyNewPasswordField.setPasswordMode(true);
+                }
+            }
+        });
+
+        Table oldPassTable = new Table();
+        oldPassTable.add(oldPasswordField).width(textBoxWidth + 4);
+        Table oldPassBoxTable = new Table();
+        //oldPassBoxTable.setDebug(true);
+        oldPassBoxTable.add(oldPassBox).padLeft(textBoxWidth - 20);
+
+        Table newPassTable = new Table();
+        newPassTable.add(newPasswordField).width(textBoxWidth + 4);
+        Table newPassBoxTable = new Table();
+        newPassBoxTable.add(newPassBox).padLeft(textBoxWidth - 20);
+
+        Table verifyNewPassTable = new Table();
+        verifyNewPassTable.add(verifyNewPasswordField).width(textBoxWidth + 4);
+        Table verifyNewPassBoxTable = new Table();
+        verifyNewPassBoxTable.add(verifyNewPassBox).padLeft(textBoxWidth - 20);
+
+        Stack oldPassStack = new Stack();
+        oldPassStack.add(oldPassTable);
+        oldPassStack.add(oldPassBoxTable);
+
+        Stack newPassStack = new Stack();
+        newPassStack.add(newPassTable);
+        newPassStack.add(newPassBoxTable);
+
+        Stack verifyNewPassStack = new Stack();
+        verifyNewPassStack.add(verifyNewPassTable);
+        verifyNewPassStack.add(verifyNewPassBoxTable);
 
         TextButton backButton = new TextButton("Back", skin);
         final TextButton changePasswordButton = new TextButton("Change Password", skin);
@@ -135,15 +211,18 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
         table.row();
         table.add(oldPasswordLabel).width(labelWidth).padTop(textBoxBottomPadding);
         table.row();
-        table.add(oldPasswordField).width(textBoxWidth + 4);
+        table.add(oldPassStack);
+        //table.add(oldPasswordField).width(textBoxWidth + 4);
         table.row();
         table.add(newPasswordLabel).width(labelWidth);
         table.row();
-        table.add(newPasswordField).width(textBoxWidth + 4);
+        table.add(newPassStack);
+        //table.add(newPasswordField).width(textBoxWidth + 4);
         table.row();
         table.add(verifyNewPasswordLabel).width(labelWidth);
         table.row();
-        table.add(verifyNewPasswordField).width(textBoxWidth + 4).padBottom(textBoxBottomPadding);
+        table.add(verifyNewPassStack);
+        //table.add(verifyNewPasswordField).width(textBoxWidth + 4).padBottom(textBoxBottomPadding);
         table.row();
         table.add(changePasswordButton).width(buttonWidth + 18).expandY().top().padBottom(10);
 
@@ -212,6 +291,65 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must have upper, lower, symbol, and digit", "ChangePasswordScreen"));
                 }
 
+            }
+        });
+        verifyNewPassStack.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ENTER) {
+                    oldPassword = oldPasswordField.getText();
+                    newPassword = newPasswordField.getText();
+                    verifyNewPassword = verifyNewPasswordField.getText();
+                    if (!newPassword.equals(verifyNewPassword)) {
+                        isInfoCorrect = false;
+                        passMatchError = true;
+                    } else {
+                        if (verifyNewPassword.length() < 8 || verifyNewPassword.length() > 16) {
+                            System.out.println("Password must be at least 8 characters and no more than 16 characters");
+                            isInfoCorrect = false;
+                            passLengthError = true;
+                        } else {
+                            String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
+                            Pattern p = Pattern.compile(regex);
+                            Matcher m = p.matcher(verifyNewPassword);
+                            if (m.matches()) {
+                                if (isInfoCorrect) {
+                                    System.out.println(getCurAcc());
+                                    if (db.getPassword(getCurAcc()).equals(oldPassword)) {
+                                        db.changePassword(getCurAcc(), newPassword);
+                                    } else {
+                                        isInfoCorrect = false;
+                                        oldPassError = true;
+                                    }
+
+                                }
+
+                                //successful add to database, user is automatically set to main menu
+                            } else {
+                                System.out.println("Password must have upper, lower, symbol, and digit");
+                                isInfoCorrect = false;
+                                passRegexError = true;
+                            }
+                        }
+                    }
+                    oldPasswordField.setText("");
+                    newPasswordField.setText("");
+                    verifyNewPasswordField.setText("");
+
+                    if (isInfoCorrect) {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Passwords successfully changed. Please login again.", "LoginScreen"));
+                    } else if (passMatchError) {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New passwords do not match", "ChangePasswordScreen"));
+                    } else if (oldPassError) {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Old password does not match your existing password", "ChangePasswordScreen"));
+                    }
+                    else if (passLengthError) {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must be at least 8 characters and no more than 16 characters", "ChangePasswordScreen"));
+                    } else if (passRegexError) {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must have upper, lower, symbol, and digit", "ChangePasswordScreen"));
+                    }
+                }
+                return false;
             }
         });
 

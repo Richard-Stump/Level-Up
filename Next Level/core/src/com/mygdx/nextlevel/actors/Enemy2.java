@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.screens.GameScreen2;
-import com.mygdx.nextlevel.screens.GameScreenBase;
 
 public class Enemy2 extends Actor2 {
 
@@ -14,7 +13,7 @@ public class Enemy2 extends Actor2 {
     protected boolean right = true;
     protected final static float timeTillTurn = 2.0f;
 
-    public Enemy2(GameScreenBase screen, float x, float y) {
+    public Enemy2(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 1, 1);
 
         boxCollider = new BoxCollider(
