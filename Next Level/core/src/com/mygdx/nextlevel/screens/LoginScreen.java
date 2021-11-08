@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -60,12 +61,14 @@ public class LoginScreen extends AccountList implements Screen {
     public static int textBoxBottomPadding = 20;
     public static int buttonWidth = 170;
 
-    private String error = "";
+    //private String error = "";
     public static String curAcc = "";
     public ServerDBHandler db;
 
-    public Dialog errorDialog;
+    public Dialog passErrorDialog;
     public Dialog userErrorDialog;
+
+    public boolean isInfoCorrect = true;
 
     public float countdown;
 
@@ -211,83 +214,29 @@ public class LoginScreen extends AccountList implements Screen {
                         //check password is correct
                         if (pass.equals(ret)) {
                             curAcc = username;
+                            isInfoCorrect = true;
                             loadDB();
                             break;
                         } else if (!pass.equals(ret)) {
+                            isInfoCorrect = false;
+                            ErrorDialog passDialog = new ErrorDialog(skin, "Incorrect Password For Username", stage);
+                            passErrorDialog = passDialog.getErrorDialog();
+                            textPass.setText("");
                             textPass.setMessageText("Password");
-                            //error = "IncorrectPass";
-
-                            //add dialog for incorrect password
-                            errorDialog = new Dialog("Error", skin) {
-                                protected void result(Object object) {
-                                    System.out.println("Option: " + object);
-                                    if ((Boolean) object) {
-                                        errorDialog.hide();
-                                    } else {
-                                        Timer.schedule(new Timer.Task() {
-                                            @Override
-                                            public void run() {
-                                                errorDialog.show(stage);
-                                            }
-                                        }, 0.5f);
-                                    }
-                                }
-                            };
-
-                            errorDialog.text("Incorrect Password For Username");
-                            errorDialog.button("Close", true);
-
-                            Timer.schedule(new Timer.Task() {
-                                @Override
-                                public void run() {
-                                    errorDialog.show(stage);
-                                }
-                            }, 0.1f);
                             break;
                         }
                     } else {
+                        isInfoCorrect = false;
                         ErrorDialog userDialog = new ErrorDialog(skin, "No Account Associated With Username", stage);
                         userErrorDialog = userDialog.getErrorDialog();
-
-
-//                        userErrorDialog = new Dialog("Error", skin) {
-//                            protected void result(Object object) {
-//                                System.out.println("Option: " + object);
-//                                if ((Boolean) object) {
-//                                    userErrorDialog.hide();
-//                                } else {
-//                                    Timer.schedule(new Timer.Task() {
-//                                        @Override
-//                                        public void run() {
-//                                            userErrorDialog.show(stage);
-//                                        }
-//                                    }, 0.5f);
-//                                }
-//                            }
-//                        };
-//
-//                        userErrorDialog.text("No Account Associated With Username");
-//                        userErrorDialog.button("Close", true);
-//
-//                        Timer.schedule(new Timer.Task() {
-//                            @Override
-//                            public void run() {
-//                                userErrorDialog.show(stage);
-//                            }
-//                        }, 0.1f);
-
-                        //error = "NoAccount";
                         break;
                     }
                 }
-//                String[] retVal = errorDisplay(error);
-//                if (retVal[0].equals("")) {
-//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
-//                } else {
-//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, retVal[0], retVal[1]));
-//                }
 
-
+                if (isInfoCorrect) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+                }
+                //isInfoCorrect = true;
             }
         });
         loginButton.addListener(new HoverListener());
@@ -308,57 +257,29 @@ public class LoginScreen extends AccountList implements Screen {
                             //check password is correct
                             if (pass.equals(ret)) {
                                 curAcc = username;
+                                isInfoCorrect = true;
+                                loadDB();
                                 break;
-//                            loadDB();
                             } else if (!pass.equals(ret)) {
-//                        errorDialog = new Dialog("Warning", skin);
-//                        errorDialog.text("Incorrect Password. Please try again");
-//                        errorDialog.show(stage);
+                                isInfoCorrect = false;
+                                ErrorDialog passDialog = new ErrorDialog(skin, "Incorrect Password For Username", stage);
+                                passErrorDialog = passDialog.getErrorDialog();
+                                textPass.setText("");
                                 textPass.setMessageText("Password");
-                                error = "IncorrectPass";
                                 break;
                             }
                         } else {
-                            error = "NoAccount";
+                            isInfoCorrect = false;
+                            ErrorDialog userDialog = new ErrorDialog(skin, "No Account Associated With Username", stage);
+                            userErrorDialog = userDialog.getErrorDialog();
                             break;
-//                    errorDialog = new Dialog("Warning", skin) {
-//                        protected void result(Object object)
-//                        {
-//                            System.out.println("Option: " + object);
-//                            Timer.schedule(new Timer.Task()
-//                            {
-//
-//                                @Override
-//                                public void run()
-//                                {
-//                                    errorDialog.show(stage);
-//                                }
-//                            }, 1);
-//                        }
-//                    };
-//
-//                    Timer.schedule(new Timer.Task()
-//                    {
-//                        @Override
-//                        public void run()
-//                        {
-//                            errorDialog.show(stage);
-//                            //errorDialog.cancel();
-//
-//                            errorDialog.hide();
-//                        }
-//                    }, 1);
-//
-//                    errorDialog.text("No account linked to this username");
-                            //errorDialog.show(stage);
                         }
                     }
-                    String[] retVal = errorDisplay(error);
-                    if (retVal[0].equals("")) {
+
+                    if (isInfoCorrect) {
                         ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
-                    } else {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, retVal[0], retVal[1]));
                     }
+                    //isInfoCorrect = true;
                 }
                 return false;
             }

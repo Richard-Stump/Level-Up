@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.ErrorDialog;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 
@@ -54,6 +55,17 @@ public class RegisterScreen extends AccountList implements Screen{
     //checking errors
     public boolean isInfoCorrect = true;
     private String error = "";
+
+    //Dialogs
+    Dialog noInfoDialog;
+    Dialog passMatchDialog;
+    Dialog passRegexDialog;
+    Dialog passLenDialog;
+    Dialog userLenDialog;
+    Dialog userExistDialog;
+    Dialog emailRegexDialog;
+    Dialog emailExistDialog;
+    Dialog createdDialog;
 
     //open database
     public ServerDBHandler db = new ServerDBHandler();
@@ -262,38 +274,35 @@ public class RegisterScreen extends AccountList implements Screen{
                 //check if all fields are filled
                 while (true) {
                     if ((username.isEmpty()) & (email.isEmpty()) & (pass.isEmpty())) {
-                        error = "NoInfoError";
+                        //error = "NoInfoError";
                         isInfoCorrect = false;
+                        ErrorDialog noInfo = new ErrorDialog(skin, "Not Enough Information", stage);
+                        noInfoDialog = noInfo.getErrorDialog();
                         break;
                     }
 
                     //check if passwords match
                     if (pass.compareTo(verifyPass) != 0) {
-//                        errorStage = new Stage(viewport, batch);
-//                        Table errorTable = new Table();
-//                        errorTable.add(new Label("Passwords do not match", skin));
-//                        RunnableAction setErrorMessage = new RunnableAction();
-//                        setErrorMessage.setRunnable(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                game.setScreen(new ErrorMessageScreen(game, "Passwords do not match"));
-//                                dispose();
-//                            }
-//                        });
                         isInfoCorrect = false;
-                        error = "PassMatchError";
+                        //error = "PassMatchError";
+                        ErrorDialog noMatch = new ErrorDialog(skin, "Passwords Do Not Match", stage);
+                        passMatchDialog = noMatch.getErrorDialog();
                         break;
                     } else {
                         //check username length
                         if (username.length() < 4 || username.length() > 16) {
                             isInfoCorrect = false;
-                            error = "UsernameError";
+                            //error = "UsernameError";
+                            ErrorDialog userLen = new ErrorDialog(skin, "Username must be at least 4 characters and no more than 16 characters", stage);
+                            userLenDialog = userLen.getErrorDialog();
                             break;
                         }
                         //check if username exists already
                         if (db.userExists(username)) {
                             isInfoCorrect = false;
-                            error = "UserExistsError";
+                            //error = "UserExistsError";
+                            ErrorDialog userExists = new ErrorDialog(skin, "Account with this username already exists", stage);
+                            userExistDialog = userExists.getErrorDialog();
                             break;
                         }
                         //check password length
@@ -304,18 +313,24 @@ public class RegisterScreen extends AccountList implements Screen{
                             Matcher m = p.matcher(email);
                             if (!m.matches()) {
                                 isInfoCorrect = false;
-                                error = "EmailRegexError";
+                                //error = "EmailRegexError";
+                                ErrorDialog emailRex = new ErrorDialog(skin, "Invalid email format", stage);
+                                emailRegexDialog = emailRex.getErrorDialog();
                                 break;
                             }
                             if (db.emailExists(email) > 0) {
-                                error = "EmailExistsError";
+                                //error = "EmailExistsError";
                                 isInfoCorrect = false;
+                                ErrorDialog emailExists = new ErrorDialog(skin, "Email already associated with an account", stage);
+                                emailExistDialog = emailExists.getErrorDialog();
                                 break;
                             }
                         }
                         if (verifyPass.length() < 8 || verifyPass.length() > 16) {
                             isInfoCorrect = false;
-                            error = "PassLengthError";
+                            //error = "PassLengthError";
+                            ErrorDialog passLen = new ErrorDialog(skin, "Password must be at least 4 characters and no more than 16 characters", stage);
+                            passLenDialog = passLen.getErrorDialog();
                             break;
                         } else {
                             String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
@@ -331,7 +346,10 @@ public class RegisterScreen extends AccountList implements Screen{
                                 }
                             } else {
                                 isInfoCorrect = false;
-                                error = "PassRegexError";
+                                //error = "PassRegexError";
+                                ErrorDialog passReg = new ErrorDialog(skin, "Password must have an uppercase, lowercase, special symbol, and a number", stage);
+                                passRegexDialog = passReg.getErrorDialog();
+                                isInfoCorrect = true;
                                 break;
                             }
                         }
@@ -344,15 +362,16 @@ public class RegisterScreen extends AccountList implements Screen{
                 textPass.setText("");
                 textVerifyPass.setText("");
 
-                //TODO: set to next screen
-                String[] ret = errorDisplay(error);
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, ret[0], ret[1]));
+                if (isInfoCorrect) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+//                    ErrorDialog newAccount = new ErrorDialog("Created", skin, "Account successfully created", stage);
+//                    createdDialog = newAccount.getErrorDialog();
+                }
 
-                //small code chunk to create popup (not working)
-//                Dialog dialog = new Dialog("Error", null, "dialog");
-//                dialog.text("Not enough information");
-//                dialog.show(stage);
-//                stage.addActor(new MessageDialog("Not enough information"));
+                //TODO: set to next screen
+//                String[] ret = errorDisplay(error);
+//                ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, ret[0], ret[1]));
+
             }
         });
         signUp.addListener(new HoverListener());
@@ -371,38 +390,35 @@ public class RegisterScreen extends AccountList implements Screen{
                     //check if all fields are filled
                     while (true) {
                         if ((username.isEmpty()) & (email.isEmpty()) & (pass.isEmpty())) {
-                            error = "NoInfoError";
+                            //error = "NoInfoError";
                             isInfoCorrect = false;
+                            ErrorDialog noInfo = new ErrorDialog(skin, "Not Enough Information", stage);
+                            noInfoDialog = noInfo.getErrorDialog();
                             break;
                         }
 
                         //check if passwords match
                         if (pass.compareTo(verifyPass) != 0) {
-//                        errorStage = new Stage(viewport, batch);
-//                        Table errorTable = new Table();
-//                        errorTable.add(new Label("Passwords do not match", skin));
-//                        RunnableAction setErrorMessage = new RunnableAction();
-//                        setErrorMessage.setRunnable(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                game.setScreen(new ErrorMessageScreen(game, "Passwords do not match"));
-//                                dispose();
-//                            }
-//                        });
                             isInfoCorrect = false;
-                            error = "PassMatchError";
+                            //error = "PassMatchError";
+                            ErrorDialog noMatch = new ErrorDialog(skin, "Passwords Do Not Match", stage);
+                            passMatchDialog = noMatch.getErrorDialog();
                             break;
                         } else {
                             //check username length
                             if (username.length() < 4 || username.length() > 16) {
                                 isInfoCorrect = false;
-                                error = "UsernameError";
+                                //error = "UsernameError";
+                                ErrorDialog userLen = new ErrorDialog(skin, "Username must be at least 4 characters and no more than 16 characters", stage);
+                                userLenDialog = userLen.getErrorDialog();
                                 break;
                             }
                             //check if username exists already
                             if (db.userExists(username)) {
                                 isInfoCorrect = false;
-                                error = "UserExistsError";
+                                //error = "UserExistsError";
+                                ErrorDialog userExists = new ErrorDialog(skin, "Account with this username already exists", stage);
+                                userExistDialog = userExists.getErrorDialog();
                                 break;
                             }
                             //check password length
@@ -413,18 +429,24 @@ public class RegisterScreen extends AccountList implements Screen{
                                 Matcher m = p.matcher(email);
                                 if (!m.matches()) {
                                     isInfoCorrect = false;
-                                    error = "EmailRegexError";
+                                    //error = "EmailRegexError";
+                                    ErrorDialog emailRex = new ErrorDialog(skin, "Invalid email format", stage);
+                                    emailRegexDialog = emailRex.getErrorDialog();
                                     break;
                                 }
                                 if (db.emailExists(email) > 0) {
-                                    error = "EmailExistsError";
+                                    //error = "EmailExistsError";
                                     isInfoCorrect = false;
+                                    ErrorDialog emailExists = new ErrorDialog(skin, "Email already associated with an account", stage);
+                                    emailExistDialog = emailExists.getErrorDialog();
                                     break;
                                 }
                             }
                             if (verifyPass.length() < 8 || verifyPass.length() > 16) {
                                 isInfoCorrect = false;
-                                error = "PassLengthError";
+                                //error = "PassLengthError";
+                                ErrorDialog passLen = new ErrorDialog(skin, "Password must be at least 4 characters and no more than 16 characters", stage);
+                                passLenDialog = passLen.getErrorDialog();
                                 break;
                             } else {
                                 String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
@@ -440,7 +462,10 @@ public class RegisterScreen extends AccountList implements Screen{
                                     }
                                 } else {
                                     isInfoCorrect = false;
-                                    error = "PassRegexError";
+                                    //error = "PassRegexError";
+                                    ErrorDialog passReg = new ErrorDialog(skin, "Password must have an uppercase, lowercase, special symbol, and a number", stage);
+                                    passRegexDialog = passReg.getErrorDialog();
+                                    isInfoCorrect = true;
                                     break;
                                 }
                             }
@@ -453,9 +478,15 @@ public class RegisterScreen extends AccountList implements Screen{
                     textPass.setText("");
                     textVerifyPass.setText("");
 
+                    if (isInfoCorrect) {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+//                    ErrorDialog newAccount = new ErrorDialog("Created", skin, "Account successfully created", stage);
+//                    createdDialog = newAccount.getErrorDialog();
+                    }
+
                     //TODO: set to next screen
-                    String[] ret = errorDisplay(error);
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, ret[0], ret[1]));
+//                    String[] ret = errorDisplay(error);
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, ret[0], ret[1]));
 
                     //small code chunk to create popup (not working)
 //                Dialog dialog = new Dialog("Error", null, "dialog");
@@ -548,26 +579,26 @@ public class RegisterScreen extends AccountList implements Screen{
         return false;
     }
 
-    private String[] errorDisplay(String error) {
-        switch (error) {
-            case "NoInfoError" :
-                return new String[] {"Not enough information", "RegisterScreen"};
-            case "PassMatchError" :
-                return new String[] {"Passwords do not match", "RegisterScreen"};
-            case "UsernameError":
-                return new String[] {"Username must be at least 4 characters and no more than 16 characters", "RegisterScreen"};
-            case "EmailRegexError":
-                return new String[] {"Invalid email format", "RegisterScreen"};
-            case "EmailExistsError":
-                return new String[] {"Email already associated with an account", "RegisterScreen"};
-            case "PassLengthError" :
-                return new String[] {"Password must be at least 4 characters and no more than 16 characters", "RegisterScreen"};
-            case "PassRegexError" :
-                return new String[] {"Password must have an uppercase, lowercase, special symbol, and a number", "RegisterScreen"};
-            case "UserExistsError" :
-                return new String[] {"Account with this username already exists", "RegisterScreen"};
-            default :
-                return new String[] {"Account successfully created", "LoginScreen"};
-        }
-    }
+//    private String[] errorDisplay(String error) {
+//        switch (error) {
+//            case "NoInfoError" :
+//                return new String[] {"Not enough information", "RegisterScreen"};
+//            case "PassMatchError" :
+//                return new String[] {"Passwords do not match", "RegisterScreen"};
+//            case "UsernameError":
+//                return new String[] {"Username must be at least 4 characters and no more than 16 characters", "RegisterScreen"};
+//            case "EmailRegexError":
+//                return new String[] {"Invalid email format", "RegisterScreen"};
+//            case "EmailExistsError":
+//                return new String[] {"Email already associated with an account", "RegisterScreen"};
+//            case "PassLengthError" :
+//                return new String[] {"Password must be at least 4 characters and no more than 16 characters", "RegisterScreen"};
+//            case "PassRegexError" :
+//                return new String[] {"Password must have an uppercase, lowercase, special symbol, and a number", "RegisterScreen"};
+//            case "UserExistsError" :
+//                return new String[] {"Account with this username already exists", "RegisterScreen"};
+//            default :
+//                return new String[] {"Account successfully created", "LoginScreen"};
+//        }
+//    }
 }
