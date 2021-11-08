@@ -52,6 +52,7 @@ public class LevelSelectionScreen implements Screen {
 
     //search parameters:
     private TextField searchBar;
+    private CheckBox cbIncludeCreated;
     private SelectBox<Difficulty> difficultyDropdown;
     private ArrayList<CheckBox> tagCheckBoxes;
     private ScrollPane scrollPane;
@@ -88,6 +89,7 @@ public class LevelSelectionScreen implements Screen {
         stage = new Stage(viewport, batch);
 
         dbDownloaded = new DownloadedLevelsDB();
+        dbCreated = new CreatedLevelsDB();
         selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";
     }
@@ -173,6 +175,9 @@ public class LevelSelectionScreen implements Screen {
         searchBar = new TextField("", skin);
         searchBar.setMessageText("By Level Name, Author");
 
+        cbIncludeCreated = new CheckBox("Include my created levels", skin);
+        cbIncludeCreated.setChecked(false);
+
         Label diffLabel = new Label("Difficulty:", skin);
         difficultyDropdown = new SelectBox<>(skin);
         difficultyDropdown.setItems(Difficulty.class.getEnumConstants());
@@ -195,6 +200,8 @@ public class LevelSelectionScreen implements Screen {
         table.add(searchLabel).padBottom(10).height(labelHeight + 10);
         table.row();
         table.add(searchBar).padBottom(20).width(200);
+        table.row();
+        table.add(cbIncludeCreated).padBottom(20);
         table.row();
         table.add(diffLabel);
         table.row();
@@ -243,6 +250,9 @@ public class LevelSelectionScreen implements Screen {
             return null;
         } else {
             levelInfo = dbDownloaded.searchByID(id);
+            if (levelInfo == null) {
+                levelInfo = dbCreated.searchByID(id);
+            }
         }
 
         //adding left column labels
@@ -280,6 +290,9 @@ public class LevelSelectionScreen implements Screen {
             return null;
         } else {
             levelInfo = dbDownloaded.searchByID(id);
+            if (levelInfo == null) {
+                levelInfo = dbCreated.searchByID(id);
+            }
         }
 
         //right column labels
@@ -303,8 +316,12 @@ public class LevelSelectionScreen implements Screen {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                LevelInfo levelInfo = dbDownloaded.searchByID(id);
+                if (levelInfo == null) {
+                    levelInfo = dbCreated.searchByID(id);
+                }
                 //outline the selected level
-                selectedLevel.setText("Level Selected: " + dbDownloaded.searchByID(id).getTitle());
+                selectedLevel.setText("Level Selected: " + levelInfo.getTitle());
                 selectedId = id;
             }
         };
@@ -317,7 +334,11 @@ public class LevelSelectionScreen implements Screen {
                 if (selectedId.equals("")) {
                     return;
                 }
-                System.out.println("Should be playing: " + dbDownloaded.searchByID(selectedId).getTitle());
+                LevelInfo levelInfo = dbDownloaded.searchByID(selectedId);
+                if (levelInfo == null) {
+                    levelInfo = dbCreated.searchByID(selectedId);
+                }
+                System.out.println("Should be playing: " + levelInfo.getTitle());
                 //TODO: open the game screen with the level that is selected
 
             }
@@ -338,8 +359,17 @@ public class LevelSelectionScreen implements Screen {
                     ArrayList<LevelInfo> listAuthors = new ArrayList<>(dbDownloaded.searchByAuthor(searchBar.getText()));
 
                     ongoingList = new ArrayList<>(dbDownloaded.combineLists(listTitles, listAuthors));
+                    if (cbIncludeCreated.isChecked()) {
+                        ArrayList<LevelInfo> createdList = new ArrayList<>(dbCreated.combineLists(
+                                dbCreated.searchByTitle(searchBar.getText()), dbCreated.searchByAuthor(searchBar.getText())));
+                        ongoingList = new ArrayList<>(dbDownloaded.combineLists(ongoingList, createdList));
+                    }
                 } else {
-                    ongoingList = new ArrayList<>(dbDownloaded.sortByTitle());
+                    if (cbIncludeCreated.isChecked()) {
+                        ongoingList = new ArrayList<>(dbDownloaded.combineLists(dbDownloaded.sortByTitle(), dbCreated.sortByTitle()));
+                    } else {
+                        ongoingList = new ArrayList<>(dbDownloaded.sortByTitle());
+                    }
                 }
                 System.out.println("after searching titles and authors: " + ongoingList.size());
 

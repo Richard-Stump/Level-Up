@@ -390,6 +390,54 @@ public class ServerDBHandler {
         }
     }
 
+    /**
+     * Searches a table for a LevelInfo object by the author
+     *
+     * @param author The string to search for in the author's username
+     * @return list of LevelInfo objects that match the search
+     */
+    public List<LevelInfo> searchByAuthor(String author) {
+        return searchByString("levels", "author", author);
+    }
+
+    /**
+     * Searches a table for a LevelInfo object by the title
+     *
+     * @param title The string to search for in the title
+     * @return list of LevelInfo objects that match the search
+     */
+    public List<LevelInfo> searchByTitle(String title) {
+        return searchByString("levels", "title", title);
+    }
+
+    /**
+     * Searches a table for a LevelInfo object by the column and value.
+     * Returns it sorted by title
+     *
+     * @param column the column to search in the table
+     * @param value The value to search for
+     * @return list of LevelInfo objects that match the search
+     */
+    private List<LevelInfo> searchByString(String table, String column, String value) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM api." + table +
+                " WHERE " + column + " LIKE ?" +
+                " ORDER BY title ASC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            //add the argument
+            statement.setString(1, "%" + value + "%");
+
+            //execute the statement
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public LevelInfo getLevelByID(String id) {
         ResultSet resultSet;
 
