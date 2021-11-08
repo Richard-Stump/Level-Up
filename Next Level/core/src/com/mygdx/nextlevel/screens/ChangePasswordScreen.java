@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.ErrorDialog;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 
@@ -54,6 +55,12 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
     boolean oldPassError = false;
     boolean isInfoCorrect = true;
     ServerDBHandler db = new ServerDBHandler();
+
+    Dialog passMatchDialog;
+    Dialog oldPassMatchDialog;
+    Dialog newPassLenDialog;
+    Dialog newPassRegDialog;
+    Dialog changedPassDialog;
 
     public ChangePasswordScreen(NextLevel game) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
@@ -235,6 +242,7 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
         backButton.addListener(new HoverListener());
         changePasswordButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                isInfoCorrect = true;
 
                 //TODO: update database and if error send message if successful send message
                 // send back to main screen or ?
@@ -244,12 +252,16 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
                 verifyNewPassword = verifyNewPasswordField.getText();
                 if (!newPassword.equals(verifyNewPassword)) {
                     isInfoCorrect = false;
-                    passMatchError = true;
+                    //passMatchError = true;
+                    ErrorDialog passMatch = new ErrorDialog(skin, "New passwords do not match", stage);
+                    passMatchDialog = passMatch.getErrorDialog();
                 } else {
                     if (verifyNewPassword.length() < 8 || verifyNewPassword.length() > 16) {
                         System.out.println("Password must be at least 8 characters and no more than 16 characters");
                         isInfoCorrect = false;
-                        passLengthError = true;
+                        //passLengthError = true;
+                        ErrorDialog passLen = new ErrorDialog(skin, "New password must be at least 8 characters and no more than 16 characters", stage);
+                        newPassLenDialog = passLen.getErrorDialog();
                     } else {
                         String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
                         Pattern p = Pattern.compile(regex);
@@ -261,7 +273,9 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
                                     db.changePassword(getCurAcc(), newPassword);
                                 } else {
                                     isInfoCorrect = false;
-                                    oldPassError = true;
+                                    //oldPassError = true;
+                                    ErrorDialog oldPass = new ErrorDialog(skin, "Old password does not match your existing password", stage);
+                                    oldPassMatchDialog = oldPass.getErrorDialog();
                                 }
 
                             }
@@ -270,7 +284,9 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
                         } else {
                             System.out.println("Password must have upper, lower, symbol, and digit");
                             isInfoCorrect = false;
-                            passRegexError = true;
+                            //passRegexError = true;
+                            ErrorDialog passReg = new ErrorDialog(skin, "New password must have upper, lower, symbol, and digit", stage);
+                            newPassRegDialog = passReg.getErrorDialog();
                         }
                     }
                 }
@@ -279,17 +295,21 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
                 verifyNewPasswordField.setText("");
 
                 if (isInfoCorrect) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Passwords successfully changed. Please login again.", "LoginScreen"));
-                } else if (passMatchError) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New passwords do not match", "ChangePasswordScreen"));
-                } else if (oldPassError) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Old password does not match your existing password", "ChangePasswordScreen"));
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+                    //ErrorDialog changedPass = new ErrorDialog("Password Changed", skin, "Password successfully changed. Please login again", stage);
+//                    changedPassDialog = changedPass.getErrorDialog();
+
                 }
-                else if (passLengthError) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must be at least 8 characters and no more than 16 characters", "ChangePasswordScreen"));
-                } else if (passRegexError) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must have upper, lower, symbol, and digit", "ChangePasswordScreen"));
-                }
+//                else if (passMatchError) {
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New passwords do not match", "ChangePasswordScreen"));
+//                } else if (oldPassError) {
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Old password does not match your existing password", "ChangePasswordScreen"));
+//                }
+//                else if (passLengthError) {
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must be at least 8 characters and no more than 16 characters", "ChangePasswordScreen"));
+//                } else if (passRegexError) {
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must have upper, lower, symbol, and digit", "ChangePasswordScreen"));
+//                }
 
             }
         });
@@ -297,17 +317,24 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.ENTER) {
+                    isInfoCorrect = true;
+
+                    //game.setScreen(new MainMenuScreen(game));
                     oldPassword = oldPasswordField.getText();
                     newPassword = newPasswordField.getText();
                     verifyNewPassword = verifyNewPasswordField.getText();
                     if (!newPassword.equals(verifyNewPassword)) {
                         isInfoCorrect = false;
-                        passMatchError = true;
+                        //passMatchError = true;
+                        ErrorDialog passMatch = new ErrorDialog(skin, "New passwords do not match", stage);
+                        passMatchDialog = passMatch.getErrorDialog();
                     } else {
                         if (verifyNewPassword.length() < 8 || verifyNewPassword.length() > 16) {
                             System.out.println("Password must be at least 8 characters and no more than 16 characters");
                             isInfoCorrect = false;
-                            passLengthError = true;
+                            //passLengthError = true;
+                            ErrorDialog passLen = new ErrorDialog(skin, "New password must be at least 8 characters and no more than 16 characters", stage);
+                            newPassLenDialog = passLen.getErrorDialog();
                         } else {
                             String regex = "^(?=.*[a-z])(?=." + "*[A-Z])(?=.*\\d)" + "(?=.*[-+_!@#$%^&*., ?]).+$";
                             Pattern p = Pattern.compile(regex);
@@ -319,7 +346,10 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
                                         db.changePassword(getCurAcc(), newPassword);
                                     } else {
                                         isInfoCorrect = false;
-                                        oldPassError = true;
+                                        System.out.println("Does not match current password");
+                                        //oldPassError = true;
+                                        ErrorDialog oldPass = new ErrorDialog(skin, "Old password does not match your existing password", stage);
+                                        oldPassMatchDialog = oldPass.getErrorDialog();
                                     }
 
                                 }
@@ -328,7 +358,9 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
                             } else {
                                 System.out.println("Password must have upper, lower, symbol, and digit");
                                 isInfoCorrect = false;
-                                passRegexError = true;
+                                //passRegexError = true;
+                                ErrorDialog passReg = new ErrorDialog(skin, "New password must have upper, lower, symbol, and digit", stage);
+                                newPassRegDialog = passReg.getErrorDialog();
                             }
                         }
                     }
@@ -337,17 +369,20 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
                     verifyNewPasswordField.setText("");
 
                     if (isInfoCorrect) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Passwords successfully changed. Please login again.", "LoginScreen"));
-                    } else if (passMatchError) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New passwords do not match", "ChangePasswordScreen"));
-                    } else if (oldPassError) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Old password does not match your existing password", "ChangePasswordScreen"));
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+                        //ErrorDialog changedPass = new ErrorDialog("Password Changed", skin, "Password successfully changed. Please login again", stage);
+//                    changedPassDialog = changedPass.getErrorDialog();
                     }
-                    else if (passLengthError) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must be at least 8 characters and no more than 16 characters", "ChangePasswordScreen"));
-                    } else if (passRegexError) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must have upper, lower, symbol, and digit", "ChangePasswordScreen"));
-                    }
+//                else if (passMatchError) {
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New passwords do not match", "ChangePasswordScreen"));
+//                } else if (oldPassError) {
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "Old password does not match your existing password", "ChangePasswordScreen"));
+//                }
+//                else if (passLengthError) {
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must be at least 8 characters and no more than 16 characters", "ChangePasswordScreen"));
+//                } else if (passRegexError) {
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "New password must have upper, lower, symbol, and digit", "ChangePasswordScreen"));
+//                }
                 }
                 return false;
             }
