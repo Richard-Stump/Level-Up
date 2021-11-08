@@ -19,11 +19,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.AccountList;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.ErrorDialog;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
@@ -61,7 +63,9 @@ public class LoginScreen extends AccountList implements Screen {
     private String error = "";
     public static String curAcc = "";
     public ServerDBHandler db;
+
     public Dialog errorDialog;
+    public Dialog userErrorDialog;
 
     public float countdown;
 
@@ -210,54 +214,78 @@ public class LoginScreen extends AccountList implements Screen {
                             loadDB();
                             break;
                         } else if (!pass.equals(ret)) {
-//                        errorDialog = new Dialog("Warning", skin);
-//                        errorDialog.text("Incorrect Password. Please try again");
-//                        errorDialog.show(stage);
                             textPass.setMessageText("Password");
-                            error = "IncorrectPass";
+                            //error = "IncorrectPass";
+
+                            //add dialog for incorrect password
+                            errorDialog = new Dialog("Error", skin) {
+                                protected void result(Object object) {
+                                    System.out.println("Option: " + object);
+                                    if ((Boolean) object) {
+                                        errorDialog.hide();
+                                    } else {
+                                        Timer.schedule(new Timer.Task() {
+                                            @Override
+                                            public void run() {
+                                                errorDialog.show(stage);
+                                            }
+                                        }, 0.5f);
+                                    }
+                                }
+                            };
+
+                            errorDialog.text("Incorrect Password For Username");
+                            errorDialog.button("Close", true);
+
+                            Timer.schedule(new Timer.Task() {
+                                @Override
+                                public void run() {
+                                    errorDialog.show(stage);
+                                }
+                            }, 0.1f);
                             break;
                         }
                     } else {
-                        error = "NoAccount";
-                        break;
-//                    errorDialog = new Dialog("Warning", skin) {
-//                        protected void result(Object object)
-//                        {
-//                            System.out.println("Option: " + object);
-//                            Timer.schedule(new Timer.Task()
-//                            {
-//
-//                                @Override
-//                                public void run()
-//                                {
-//                                    errorDialog.show(stage);
+                        ErrorDialog userDialog = new ErrorDialog(skin, "No Account Associated With Username", stage);
+                        userErrorDialog = userDialog.getErrorDialog();
+
+
+//                        userErrorDialog = new Dialog("Error", skin) {
+//                            protected void result(Object object) {
+//                                System.out.println("Option: " + object);
+//                                if ((Boolean) object) {
+//                                    userErrorDialog.hide();
+//                                } else {
+//                                    Timer.schedule(new Timer.Task() {
+//                                        @Override
+//                                        public void run() {
+//                                            userErrorDialog.show(stage);
+//                                        }
+//                                    }, 0.5f);
 //                                }
-//                            }, 1);
-//                        }
-//                    };
+//                            }
+//                        };
 //
-//                    Timer.schedule(new Timer.Task()
-//                    {
-//                        @Override
-//                        public void run()
-//                        {
-//                            errorDialog.show(stage);
-//                            //errorDialog.cancel();
+//                        userErrorDialog.text("No Account Associated With Username");
+//                        userErrorDialog.button("Close", true);
 //
-//                            errorDialog.hide();
-//                        }
-//                    }, 1);
-//
-//                    errorDialog.text("No account linked to this username");
-                        //errorDialog.show(stage);
+//                        Timer.schedule(new Timer.Task() {
+//                            @Override
+//                            public void run() {
+//                                userErrorDialog.show(stage);
+//                            }
+//                        }, 0.1f);
+
+                        //error = "NoAccount";
+                        break;
                     }
                 }
-                String[] retVal = errorDisplay(error);
-                if (retVal[0].equals("")) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
-                } else {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, retVal[0], retVal[1]));
-                }
+//                String[] retVal = errorDisplay(error);
+//                if (retVal[0].equals("")) {
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+//                } else {
+//                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, retVal[0], retVal[1]));
+//                }
 
 
             }
