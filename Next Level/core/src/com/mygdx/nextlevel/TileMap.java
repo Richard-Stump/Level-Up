@@ -50,8 +50,6 @@ public class TileMap extends ApplicationAdapter{
     float xAxis = 0;
     float yAxis = 0;
 
-
-
     public void create () {
         tiledMap = new TmxMapLoader().load("test3.tmx");
         tiledMapProperties = tiledMap.getProperties();
@@ -59,11 +57,7 @@ public class TileMap extends ApplicationAdapter{
 
         mapWidth = tiledMapProperties.get("width", Integer.class);
         mapHeight = tiledMapProperties.get("height", Integer.class);
-        tilePixelWidth = tiledMapProperties.get("tilewidth", Integer.class);
-        tilePixelHeight = tiledMapProperties.get("tileheight", Integer.class);
 
-        mapPixelWidth = mapWidth * tilePixelWidth;
-        mapPixelHeight = mapHeight * tilePixelHeight;
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1.0f/32.0f);
     }
 
@@ -84,7 +78,6 @@ public class TileMap extends ApplicationAdapter{
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
         float screenWidth = Gdx.graphics.getWidth()/32f;
         if (player.getX() <= screenWidth/2f) {
             xAxis = screenWidth/2f;
@@ -102,4 +95,6 @@ public class TileMap extends ApplicationAdapter{
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
     }
+
+    public int getMapWidth() { return mapWidth; }
 }

@@ -79,11 +79,11 @@ public class Player2 extends Actor2 {
 //    }
 
     public Player2(GameScreen2 screen, float x, float y) {
-        super(screen, x, y, 1.0f, 1.0f);
+        super(screen, x, y, 0.8f, 0.8f);
 
         boxCollider = new BoxCollider(this,
                 new Vector2(x, x),
-                new Vector2(1, 1),
+                new Vector2(0.8f, 0.8f),
                 true);
 
         respawnPosition = new Vector2(boxCollider.getPosition());

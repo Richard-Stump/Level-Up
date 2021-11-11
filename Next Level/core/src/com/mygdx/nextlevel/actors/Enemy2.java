@@ -14,12 +14,12 @@ public class Enemy2 extends Actor2 {
     protected final static float timeTillTurn = 2.0f;
 
     public Enemy2(GameScreen2 screen, float x, float y) {
-        super(screen, x, y, 1, 1);
+        super(screen, x, y, 0.8f, 0.8f);
 
         boxCollider = new BoxCollider(
                 this,
                 new Vector2(x, y),
-                new Vector2(1, 1),
+                new Vector2(0.8f, 0.8f),
                 true
         );
 

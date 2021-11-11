@@ -7,32 +7,16 @@ import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class DeathBlock extends Actor2 {
     protected BoxCollider collider;
-    protected static float y = -3f;
-    protected Player2 player;
+    protected static float y = -3f; //level for which player will die at
 
-
-    public DeathBlock(GameScreen2 screen, Player2 player, float x) {
-        super(screen, x, y, 1, 1);
-        this.player = player;
+    public DeathBlock(GameScreen2 screen, int width) {
+        super(screen, width/2f, y, width, 1);
 
         collider = new BoxCollider(
                 this,
-                new Vector2(x, y),
-                new Vector2(1, 1),
+                new Vector2(width/2f, y),
+                new Vector2(width, 0),
                 false
         );
-
-        setRegion(new Texture("Block.png"));
-    }
-
-    public void update(float delta) {
-        collider.setPosition(new Vector2(player.getPosition().x, y));
-    }
-
-//    public void onCollision(Actor2 other, BoxCollider.Side side) {
-//    }
-
-    public void dispose() {
-        collider.dispose();
     }
 }

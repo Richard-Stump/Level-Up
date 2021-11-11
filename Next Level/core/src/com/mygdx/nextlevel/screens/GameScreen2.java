@@ -136,6 +136,7 @@ public class GameScreen2 implements Screen {
         //Initialize the collision manager and create the floor
         CollisionManager.init();
         floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false);
+        new DeathBlock(this, tm.getMapWidth());
 
         //Clear all the queues
         actors.clear();
@@ -157,7 +158,6 @@ public class GameScreen2 implements Screen {
         actors.add(new Block2(this, 30, 4, false, false));
         actors.add(new CheckPoint2(this, 10, 1.0f));
         actors.add(player);
-        actors.add(new DeathBlock(this, player, player.getPosition().x));
 
         hud = new Hud2(game.batch, player);
 
