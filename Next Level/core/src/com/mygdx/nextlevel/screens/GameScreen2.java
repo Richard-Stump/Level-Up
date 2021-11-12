@@ -85,6 +85,10 @@ public class GameScreen2 implements Screen {
     LinkedList<ActorSpawnInfo> spawnQueue;  //List of actors to spawn in the next frame
     LinkedList<Actor2> despawnQueue;        //List of actors to destroy in the next frame
 
+    //TODO this stuff has been added
+    ArrayList<Actor2> despawnedActors;      //The list of actors that have been despawned from the game
+    public ArrayList<Actor2> itemsList;            //The list of all items that are currently in the game screen
+
     /**
      * Initialize the game screen
      * @param game The screen that created this screen
@@ -110,12 +114,16 @@ public class GameScreen2 implements Screen {
         spawnQueue = new LinkedList<>();
         despawnQueue = new LinkedList<>();
 
+        //TODO This has been updated
+        despawnedActors = new ArrayList<>();
+        itemsList = new ArrayList<>();
+
         //create tilemap
         tm = new TileMap();
         tm.create();
 
         //setup the initial map
-        reset();
+        init();
     }
 
     /**
@@ -127,10 +135,9 @@ public class GameScreen2 implements Screen {
     }
 
     /**
-     * Resets the game world into it's initial state. This is used for when the player loses all their lives.
-     * Todo: This causes a lag spike, improve reset time when game is more fleshed out.
+     * Initial state of the game world. This is used when the world is being set up.
      */
-    private void reset() {
+    private void init() {
         CollisionManager.init();
 
         //Initialize the collision manager and create the floor
@@ -165,6 +172,30 @@ public class GameScreen2 implements Screen {
     }
 
     /**
+     * Resets the game world into it's initial state. This is used for when the player loses all their lives.
+     * Todo: This causes a lag spike, improve reset time when game is more fleshed out.
+     */
+    private void reset() {
+        //Clear all the queues
+        spawnQueue.clear();
+        despawnQueue.clear();
+
+        //need to add all actors that are in the despawnedActor queue into the actor queue
+        for(Actor2 actor : despawnedActors) {
+            queueActorSpawn(actor.getX(), actor.getY(), actor.getClass());
+            actors.add(actor);
+        }
+        despawnQueue.addAll(itemsList);
+
+        itemsList.clear();
+        despawnedActors.clear();
+
+        hud = new Hud2(game.batch, player);
+
+        shouldReset = false;
+    }
+
+    /**
      * Queues a new actor to be spawned in the next frame. This is partly to avoid the issue of colliders not being
      * able to be created in the collision handler, but also to ensure all new actors are spawned before the next frame
      * rather than in the middle of actor updated.
@@ -173,7 +204,37 @@ public class GameScreen2 implements Screen {
      * @param type The type of actor to spawn.
      */
     public void queueActorSpawn(float x, float y, Class<? extends Actor2> type) {
+//        ActorSpawnInfo actorSpawnInfo = new ActorSpawnInfo(x, y, type);
         spawnQueue.add(new ActorSpawnInfo(x, y, type));
+
+        if(type.equals(SlowItem2.class)) {
+//            try {
+//                Constructor<?> c = type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
+//                itemsList.add((Actor2) c.newInstance(this, x, y));
+//            }
+//            catch (InvocationTargetException e) {
+//                e.printStackTrace();
+//            } catch (NoSuchMethodException e) {
+//                e.printStackTrace();
+//            } catch (InstantiationException e) {
+//                e.printStackTrace();
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+//            }
+            System.out.println(type.getSuperclass());
+        } else if(type.equals(SpeedItem2.class)) {
+            itemsList.add(actors.get(actors.size() - 1));
+        } else if(type.equals(LifeItem2.class)) {
+            itemsList.add(actors.get(actors.size() - 1));
+        } else if (type.equals(MushroomItem2.class)) {
+            itemsList.add(actors.get(actors.size() - 1));
+        } else if (type.equals(StarItem2.class)) {
+            itemsList.add(actors.get(actors.size() - 1));
+        } else if (type.equals(FireFlowerItem2.class)) {
+            itemsList.add(actors.get(actors.size() - 1));
+        } else if (type.equals(LifeStealItem2.class)) {
+            itemsList.add(actors.get(actors.size() - 1));
+        }
     }
 
     /**
@@ -184,13 +245,19 @@ public class GameScreen2 implements Screen {
     public void queueActorDespawn(Actor2 o) {
         //Make sure that this object isn't in the list. If it were to be added twice,
         //then box2d would crash because it would try to destroy the object's body twice.
-        if(!despawnQueue.contains(o))
+        if(!despawnQueue.contains(o)) {
             despawnQueue.add(o);
+            if (o instanceof Item2) { //If this is an item
+                itemsList.remove(o);
+            } else {
+                despawnedActors.add(o);
+            }
+        }
     }
 
     @Override
     public void show() {
-        reset();
+        init();
     }
 
     /**
@@ -276,6 +343,9 @@ public class GameScreen2 implements Screen {
         if(!CollisionManager.getWorld().isLocked()) {
             while (!despawnQueue.isEmpty()) {
                 Actor2 a = despawnQueue.remove();
+                if (a.getClass().equals(Item2.class)) {
+                    itemsList.remove(a);
+                }
                 a.dispose();
                 actors.remove(a);
             }
