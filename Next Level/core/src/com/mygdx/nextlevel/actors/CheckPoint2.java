@@ -21,12 +21,19 @@ public class CheckPoint2 extends Actor2 {
     @Override
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         if(other instanceof Player2 && !activated) {
-            activated = true;
+//            activated = true;
             setRegion(new Texture("checkpoint2.jpg"));
         }
+    }
+
+    public void reset() {
+        activated = false;
+        setRegion(new Texture("checkpoint.png"));
     }
 
     public boolean isActivated() {
         return activated;
     }
+
+    public void setActivated(boolean activated) { this.activated = activated; }
 }

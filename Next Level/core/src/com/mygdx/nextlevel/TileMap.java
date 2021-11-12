@@ -67,7 +67,7 @@ public class TileMap extends ApplicationAdapter{
         for(MapObject object : objectLayer.getObjects()){
             if(object instanceof TextureMapObject && i !=0) {
                 TextureMapObject mapObject = (TextureMapObject) object;
-                actors.add(new Block2(screen, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false));
+                actors.add(new Block2(screen, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
             }
             i++;
         }

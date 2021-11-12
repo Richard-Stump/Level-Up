@@ -9,6 +9,7 @@ import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class Player2 extends Actor2 {
+    protected Vector2 worldSpawn;
     protected Vector2 respawnPosition;  //Position that the player respawns in
     protected BoxCollider boxCollider;
 
@@ -44,7 +45,6 @@ public class Player2 extends Actor2 {
     private int condition = 2;
 
     //Fire Timer
-    private float fireTime = 0f;
     private boolean fireSpawn = false;
 
     public Player2() {
@@ -92,7 +92,8 @@ public class Player2 extends Actor2 {
                 new Vector2(0.8f, 0.8f),
                 true);
 
-        respawnPosition = new Vector2(boxCollider.getPosition());
+        worldSpawn = new Vector2(boxCollider.getPosition());
+        respawnPosition = worldSpawn;
 
         lifeCount = 3;
         coin = 0;
@@ -112,6 +113,9 @@ public class Player2 extends Actor2 {
         if(respawn) {
             boxCollider.setPosition(respawnPosition);
             setRegion(new Texture("goomba.png"));
+            if (!facingRight) {
+                flip(true, false);
+            }
             powerUp = false;
             mushroomItem = false;
             slowItem = false;
@@ -257,7 +261,6 @@ public class Player2 extends Actor2 {
                     }
                     fireSpawn = true;
                 }
-                fireTime++;
             }
         }
 
@@ -277,8 +280,16 @@ public class Player2 extends Actor2 {
             powerUp = false;
 
             if(lifeCount < 1) {
-                screen.setShouldReset(true);
+                lifeCount = 3;
+                respawnPosition = worldSpawn;
+
+                for(Actor2 actor : screen.checkpointList) {
+                    ((CheckPoint2) actor).reset();
+                }
             }
+
+            if (!powerUp)
+                screen.setShouldReset(true);
         }
         if (other instanceof Enemy2 && side == Side.BOTTOM || other instanceof Enemy2 && (side == Side.RIGHT || side == Side.LEFT) && starItem) {
             enemiesKilled++;
@@ -289,8 +300,16 @@ public class Player2 extends Actor2 {
             lifeCount--;
             respawn = true;
 
-            if(lifeCount < 1)
-                screen.setShouldReset(true);
+            if(lifeCount < 1) {
+                lifeCount = 3;
+                respawnPosition = worldSpawn;
+
+                for(Actor2 actor : screen.checkpointList) {
+                    ((CheckPoint2) actor).reset();
+                }
+            }
+
+            screen.setShouldReset(true);
         }
 
         if(side == Side.BOTTOM) {
@@ -325,10 +344,10 @@ public class Player2 extends Actor2 {
     }
 
     public void onTrigger(Actor2 other, Side side) {
-        if(other instanceof CheckPoint2 && !checkpointTrigger) {
+        if(other instanceof CheckPoint2 && !((CheckPoint2) other).activated) {
             addLife();
             respawnPosition = ((CheckPoint2)other).collider.getPosition();
-            checkpointTrigger = true;
+            ((CheckPoint2)other).setActivated(true);
         }
         if (other instanceof End) {
             if (condition == 1 && coin == 4) {

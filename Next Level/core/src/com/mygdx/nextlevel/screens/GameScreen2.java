@@ -86,6 +86,12 @@ public class GameScreen2 implements Screen {
     LinkedList<ActorSpawnInfo> spawnQueue;  //List of actors to spawn in the next frame
     LinkedList<Actor2> despawnQueue;        //List of actors to destroy in the next frame
 
+    //TODO this stuff has been added
+    ArrayList<Actor2> despawnedActors;      //The list of actors that have been despawned from the game
+    public ArrayList<Actor2> itemsList;     //The list of all items that are currently in the game screen
+    public ArrayList<Actor2> blockList;     //The list of all item blocks that need to be reset
+    public ArrayList<Actor2> checkpointList;//The list of all checkpoints in the game screen
+
     /**
      * Initialize the game screen
      * @param game The screen that created this screen
@@ -111,12 +117,18 @@ public class GameScreen2 implements Screen {
         spawnQueue = new LinkedList<>();
         despawnQueue = new LinkedList<>();
 
+        //TODO This has been updated
+        despawnedActors = new ArrayList<>();
+        itemsList = new ArrayList<>();
+        blockList = new ArrayList<>();
+        checkpointList = new ArrayList<>();
+
         //create tilemap
         tm = new TileMap();
         tm.create();
 
         //setup the initial map
-        reset();
+        init();
     }
 
     /**
@@ -128,10 +140,9 @@ public class GameScreen2 implements Screen {
     }
 
     /**
-     * Resets the game world into it's initial state. This is used for when the player loses all their lives.
-     * Todo: This causes a lag spike, improve reset time when game is more fleshed out.
+     * Initial state of the game world. This is used when the world is being set up.
      */
-    private void reset() {
+    private void init() {
         CollisionManager.init();
 
         //Initialize the collision manager and create the floor
@@ -148,16 +159,16 @@ public class GameScreen2 implements Screen {
         player = new Player2(this, 1.0f, 1.0f);
         actors.add(new Enemy2(this,2, 2));
         actors.add(new Enemy2(this, 8, 2));
-        actors.add(new Block2(this, 7, 4, true, ItemIndex.ALL.value));
-        actors.add(new Block2(this, 10, 4, true, ItemIndex.SLOW.value));
-        actors.add(new Block2(this, 13, 4, true, ItemIndex.SPEED.value));
-        actors.add(new Block2(this, 16, 4, true, ItemIndex.LIFE.value));
-        actors.add(new Block2(this, 19, 4, true, ItemIndex.MUSHROOM.value));
-        actors.add(new Block2(this, 22, 4, true, ItemIndex.STAR.value));
-        actors.add(new Block2(this, 25, 4, true, ItemIndex.FIREFLOWER.value));
-        actors.add(new Block2(this, 28, 4, true, ItemIndex.LIFESTEAL.value));
-        actors.add(new Block2(this, 29, 4, false, true));
-        actors.add(new Block2(this, 30, 4, false, false));
+        actors.add(new Block2(this, 7, 4, true, ItemIndex.ALL.value, false));
+        actors.add(new Block2(this, 10, 4, true, ItemIndex.SLOW.value, false));
+        actors.add(new Block2(this, 13, 4, true, ItemIndex.SPEED.value, false));
+        actors.add(new Block2(this, 16, 4, true, ItemIndex.LIFE.value, false));
+        actors.add(new Block2(this, 19, 4, true, ItemIndex.MUSHROOM.value, false));
+        actors.add(new Block2(this, 22, 4, true, ItemIndex.STAR.value, false));
+        actors.add(new Block2(this, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
+        actors.add(new Block2(this, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
+        actors.add(new Block2(this, 29, 4, false,true));
+        actors.add(new Block2(this, 30, 4, false,false));
         actors.add(new CheckPoint2(this, 10, 1.0f));
         actors.add(new Coin(this, 10, 5));
         actors.add(new Coin(this, 13, 5));
@@ -165,6 +176,46 @@ public class GameScreen2 implements Screen {
         actors.add(new Coin(this, 19, 5));
         actors.add(new End(this, 30, 1));
         actors.add(player);
+
+        hud = new Hud2(game.batch, player);
+
+        //Add all checkpoints into checkpointlist
+        for (Actor2 actor : actors) {
+            if (actor.getClass().equals(CheckPoint2.class)) {
+                checkpointList.add(actor);
+            }
+        }
+
+        shouldReset = false;
+    }
+
+    /**
+     * Resets the game world into it's initial state. This is used for when the player loses all their lives.
+     */
+    private void reset() {
+        //Clear all the queues
+        spawnQueue.clear();
+        despawnQueue.clear();
+
+        //Add all despawnedActors into the spawnQueue (Blocks and Enemies)
+        for(Actor2 actor : despawnedActors) {
+            queueActorSpawn(actor.getX(), actor.getY(), actor.getClass());
+        }
+
+        //Reset all modified Blocks into the spawnQueue
+        for (Actor2 actor : blockList) {
+            if (((Block2) actor).isSpawnItem()) {
+                ((Block2) actor).reset();
+            }
+        }
+
+        //Despawn all items that are currently on the game screen
+        despawnQueue.addAll(itemsList);
+
+        //Clear Queues used to reset
+        itemsList.clear();
+        blockList.clear();
+        despawnedActors.clear();
 
         hud = new Hud2(game.batch, player);
 
@@ -191,13 +242,22 @@ public class GameScreen2 implements Screen {
     public void queueActorDespawn(Actor2 o) {
         //Make sure that this object isn't in the list. If it were to be added twice,
         //then box2d would crash because it would try to destroy the object's body twice.
-        if(!despawnQueue.contains(o))
+        if(!despawnQueue.contains(o)) {
             despawnQueue.add(o);
+
+            if (o instanceof Item2) { //If this is an item
+                itemsList.remove(o);
+            } else if (o instanceof Block2 && ((Block2) o).isSpawnItem()) {
+                blockList.add(o);
+            } else {
+                despawnedActors.add(o);
+            }
+        }
     }
 
     @Override
     public void show() {
-        reset();
+//        init();
     }
 
     /**
@@ -263,8 +323,19 @@ public class GameScreen2 implements Screen {
             //Use fancy reflection stuff to fetch the constructor and spawn the actor type specified.
             try {
                 ActorSpawnInfo i =  spawnQueue.remove();
-                Constructor<?> c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
-                actors.add((Actor2) c.newInstance(this, i.x, i.y));
+                Constructor<?> c;
+                if (i.type.equals(Block2.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, boolean.class, boolean.class);
+                    actors.add((Block2) c.newInstance(this, i.x +0.5f, i.y + 0.5f, false, true));
+                } else {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
+                    actors.add((Actor2) c.newInstance(this, i.x, i.y));
+                }
+
+                //If statement to check to see if item is in the game
+                if (i.type.getSuperclass().equals(Item2.class)) {
+                    itemsList.add(actors.get(actors.size() - 1));
+                }
             }
             catch (InvocationTargetException e) {
                 e.printStackTrace();
@@ -286,6 +357,9 @@ public class GameScreen2 implements Screen {
         if(!CollisionManager.getWorld().isLocked()) {
             while (!despawnQueue.isEmpty()) {
                 Actor2 a = despawnQueue.remove();
+                if (a.getClass().equals(Item2.class)) {
+                    itemsList.remove(a);
+                }
                 a.dispose();
                 actors.remove(a);
             }

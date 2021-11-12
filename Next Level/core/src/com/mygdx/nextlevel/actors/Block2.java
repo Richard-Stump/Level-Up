@@ -20,45 +20,28 @@ public class Block2 extends Actor2 {
 
     ArrayList<Class> items = new ArrayList<>();
 
-    public Block2(GameScreen2 screen, float x, float y, boolean spawnItem, int index) {
+    public Block2(GameScreen2 screen, float x, float y, boolean spawnItem, int index, boolean breakable) {
         super(screen, x, y, 1, 1);
 
         this.spawnItem = spawnItem;
         this.spawned = false;
-        this.breakable = false;
 
-        collider = new BoxCollider(
-                this,
-                new Vector2(x, y),
-                new Vector2(1, 1),
-                false
-        );
+        if (this.spawnItem) {
+            this.breakable = false;
 
-        //Setup all items
-        items.add(SlowItem2.class);
-        items.add(SpeedItem2.class);
-        items.add(LifeItem2.class);
-        items.add(MushroomItem2.class);
-        items.add(StarItem2.class);
-        items.add(FireFlowerItem2.class);
-        items.add(LifeStealItem2.class);
+            //Setup all items
+            items.add(SlowItem2.class);
+            items.add(SpeedItem2.class);
+            items.add(LifeItem2.class);
+            items.add(MushroomItem2.class);
+            items.add(StarItem2.class);
+            items.add(FireFlowerItem2.class);
+            items.add(LifeStealItem2.class);
 
-        itemIndex = index;
-
-        if (spawnItem) {
-            setRegion(new Texture("item-block.png"));
+            itemIndex = index;
         } else {
-            setRegion(new Texture("Block.png"));
+            this.breakable = breakable;
         }
-    }
-
-    public Block2(GameScreen2 screen, float x, float y, boolean spawnItem) {
-        super(screen, x, y, 1, 1);
-
-        this.spawnItem = spawnItem;
-        this.spawned = false;
-        this.breakable = false;
-
 
         collider = new BoxCollider(
                 this,
@@ -73,6 +56,27 @@ public class Block2 extends Actor2 {
             setRegion(new Texture("Block.png"));
         }
     }
+
+//    public Block2(GameScreen2 screen, float x, float y, boolean spawnItem) {
+//        super(screen, x, y, 1, 1);
+//
+//        this.spawnItem = spawnItem;
+//        this.spawned = false;
+//        this.breakable = false;
+//
+//        collider = new BoxCollider(
+//                this,
+//                new Vector2(x, y),
+//                new Vector2(1, 1),
+//                false
+//        );
+//
+//        if (spawnItem) {
+//            setRegion(new Texture("item-block.png"));
+//        } else {
+//            setRegion(new Texture("Block.png"));
+//        }
+//    }
 
     public Block2(GameScreen2 screen, float x, float y, boolean spawnItem, boolean breakable) {
         super(screen, x, y, 1, 1);
@@ -95,13 +99,23 @@ public class Block2 extends Actor2 {
         }
     }
 
+    public void reset() {
+        this.spawned = false;
+
+        if (spawnItem) {
+            setRegion(new Texture("item-block.png"));
+        } else {
+            setRegion(new Texture("Block.png"));
+        }
+    }
+
     public void update(float delta) {
 
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         if(other instanceof Player2 && side == Side.BOTTOM) {
-            if(spawnItem) {
+            if(spawnItem && !spawned) {
                 Vector2 pos = collider.getPosition();
                 Class itemClass;
                 if (itemIndex == 7) {
@@ -110,8 +124,10 @@ public class Block2 extends Actor2 {
                 } else {
                     itemClass = items.get(itemIndex);
                 }
+
                 screen.queueActorSpawn(pos.x, pos.y + 1.0f, itemClass);
-                spawnItem = false;
+                screen.blockList.add(this);
+                spawned = true;
                 setRegion(new Texture("used-item-block.jpg"));
             }
             if (breakable) {
@@ -123,4 +139,6 @@ public class Block2 extends Actor2 {
     public void dispose() {
         collider.dispose();
     }
+
+    public boolean isSpawnItem() { return this.spawned; }
 }
