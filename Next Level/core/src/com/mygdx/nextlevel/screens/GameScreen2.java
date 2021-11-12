@@ -182,13 +182,15 @@ public class GameScreen2 implements Screen {
         spawnQueue.clear();
         despawnQueue.clear();
 
-        //need to add all actors that are in the despawnedActor queue into the actor queue
+        //Add all despawnedActors into the spawnQueue
         for(Actor2 actor : despawnedActors) {
             queueActorSpawn(actor.getX(), actor.getY(), actor.getClass());
-            actors.add(actor);
         }
+
+        //Despawn all items that are currently on the game screen
         despawnQueue.addAll(itemsList);
 
+        //Clear Queues used to reset
         itemsList.clear();
         despawnedActors.clear();
 
@@ -206,37 +208,8 @@ public class GameScreen2 implements Screen {
      * @param type The type of actor to spawn.
      */
     public void queueActorSpawn(float x, float y, Class<? extends Actor2> type) {
-//        ActorSpawnInfo actorSpawnInfo = new ActorSpawnInfo(x, y, type);
-        spawnQueue.add(new ActorSpawnInfo(x, y, type));
-
-        if(type.equals(SlowItem2.class)) {
-//            try {
-//                Constructor<?> c = type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
-//                itemsList.add((Actor2) c.newInstance(this, x, y));
-//            }
-//            catch (InvocationTargetException e) {
-//                e.printStackTrace();
-//            } catch (NoSuchMethodException e) {
-//                e.printStackTrace();
-//            } catch (InstantiationException e) {
-//                e.printStackTrace();
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            }
-            System.out.println(type.getSuperclass());
-        } else if(type.equals(SpeedItem2.class)) {
-            itemsList.add(actors.get(actors.size() - 1));
-        } else if(type.equals(LifeItem2.class)) {
-            itemsList.add(actors.get(actors.size() - 1));
-        } else if (type.equals(MushroomItem2.class)) {
-            itemsList.add(actors.get(actors.size() - 1));
-        } else if (type.equals(StarItem2.class)) {
-            itemsList.add(actors.get(actors.size() - 1));
-        } else if (type.equals(FireFlowerItem2.class)) {
-            itemsList.add(actors.get(actors.size() - 1));
-        } else if (type.equals(LifeStealItem2.class)) {
-            itemsList.add(actors.get(actors.size() - 1));
-        }
+        ActorSpawnInfo spawnInfo = new ActorSpawnInfo(x, y, type);
+        spawnQueue.add(spawnInfo);
     }
 
     /**
@@ -249,6 +222,7 @@ public class GameScreen2 implements Screen {
         //then box2d would crash because it would try to destroy the object's body twice.
         if(!despawnQueue.contains(o)) {
             despawnQueue.add(o);
+
             if (o instanceof Item2) { //If this is an item
                 itemsList.remove(o);
             } else {
@@ -327,6 +301,12 @@ public class GameScreen2 implements Screen {
                 ActorSpawnInfo i =  spawnQueue.remove();
                 Constructor<?> c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
                 actors.add((Actor2) c.newInstance(this, i.x, i.y));
+
+                //If statement to check to see if item is in the game
+                if (i.type.getSuperclass().equals(Item2.class)) {
+                    itemsList.add(actors.get(actors.size() - 1));
+                    System.out.println(itemsList);
+                }
             }
             catch (InvocationTargetException e) {
                 e.printStackTrace();
