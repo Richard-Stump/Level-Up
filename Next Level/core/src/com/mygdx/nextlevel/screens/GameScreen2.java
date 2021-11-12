@@ -11,10 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.nextlevel.BoxCollider;
-import com.mygdx.nextlevel.CollisionManager;
-import com.mygdx.nextlevel.NextLevel;
-import com.mygdx.nextlevel.TileMap;
+import com.mygdx.nextlevel.*;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.hud.Hud2;
 
@@ -35,7 +32,7 @@ import java.util.LinkedList;
  * No modifications can be made to the Box2d world in the collision handler functions. Deleting, adding, etc.
  * actors/colliders in the collision handling methods will cause crashes.
  */
-public class GameScreen2 implements Screen {
+public class GameScreen2 extends Timer implements Screen {
     /**
      * Enums to the screen in which specify what item goes into the block
      */
@@ -57,6 +54,9 @@ public class GameScreen2 implements Screen {
     private BoxCollider floor;
     private Player2 player;
     private boolean shouldReset = false;    //Should the world be reset next frame?
+
+    long start;
+    long end;
 
     public HashMap<Item2, String> itemToName = new HashMap<>();
 
@@ -129,6 +129,8 @@ public class GameScreen2 implements Screen {
 
         //setup the initial map
         init();
+
+        start = getStartTime();
     }
 
     /**
@@ -286,6 +288,13 @@ public class GameScreen2 implements Screen {
 
         hud.update(delta, player, itemToName);
         if (player.getWin()) {
+            end = getEndTime();
+            System.out.println(start);
+            System.out.println(end);
+            System.out.println(end-start);
+            long elapsed = end-start;
+            double elapsedTime = (double) elapsed / 1000000000;
+            System.out.println(elapsedTime);
             ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
         }
     }
