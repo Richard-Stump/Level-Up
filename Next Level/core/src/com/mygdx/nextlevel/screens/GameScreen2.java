@@ -1,5 +1,6 @@
 package com.mygdx.nextlevel.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -157,6 +158,7 @@ public class GameScreen2 implements Screen {
         actors.add(new Block2(this, 29, 4, false, true));
         actors.add(new Block2(this, 30, 4, false, false));
         actors.add(new CheckPoint2(this, 10, 1.0f));
+        actors.add(new End(this, 30, 1));
         actors.add(player);
 
         hud = new Hud2(game.batch, player);
@@ -218,6 +220,9 @@ public class GameScreen2 implements Screen {
         camera.update();
 
         hud.update(delta, player, itemToName);
+        if (player.getWin()) {
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
+        }
     }
 
     /**

@@ -20,6 +20,7 @@ public class Player2 extends Actor2 {
     protected boolean facingRight = true;
     protected boolean drawTexture = false;
     protected boolean checkpointTrigger = false;
+    private boolean win = false;
     private boolean powerUp; //Check if player has powerup
 
     //Item Booleans
@@ -317,6 +318,9 @@ public class Player2 extends Actor2 {
             respawnPosition = ((CheckPoint2)other).collider.getPosition();
             checkpointTrigger = true;
         }
+        if (other instanceof End) {
+            win = true;
+        }
     }
 
     public void setfireSpawn(boolean b) { fireSpawn = b; }
@@ -340,6 +344,9 @@ public class Player2 extends Actor2 {
     }
     public boolean getSlowItem() {
         return this.slowItem;
+    }
+    public boolean getWin() {
+        return this.win;
     }
     public void setRespawnLocation(Vector2 pos) { respawnPosition = new Vector2(pos.x, pos.y); }
     public void dispose() { boxCollider.dispose(); }

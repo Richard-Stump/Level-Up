@@ -94,6 +94,12 @@ public class Hud2 {
     }
 
     public void update(float delta, Player2 player, HashMap<Item2, String> map) {
+        time += delta;
+        if (time >= 1) {
+            worldTimer--;
+            countdownLabel.setText(String.format("%03d", worldTimer));
+            time = 0;
+        }
         numLivesLabel.setText(String.format("%d", player.getLives()));
         if (player.getHeldItem() != null) {
             itemImg.setDrawable(new TextureRegionDrawable(new Texture(map.get(player.getHeldItem()))));
