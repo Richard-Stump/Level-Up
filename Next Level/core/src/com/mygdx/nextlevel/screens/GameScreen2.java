@@ -147,6 +147,7 @@ public class GameScreen2 implements Screen {
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
         player = new Player2(this, 1.0f, 1.0f);
         actors.add(new Enemy2(this,2, 2));
+        actors.add(new Enemy2(this, 8, 2));
         actors.add(new Block2(this, 7, 4, true, ItemIndex.ALL.value));
         actors.add(new Block2(this, 10, 4, true, ItemIndex.SLOW.value));
         actors.add(new Block2(this, 13, 4, true, ItemIndex.SPEED.value));
@@ -158,6 +159,10 @@ public class GameScreen2 implements Screen {
         actors.add(new Block2(this, 29, 4, false, true));
         actors.add(new Block2(this, 30, 4, false, false));
         actors.add(new CheckPoint2(this, 10, 1.0f));
+        actors.add(new Coin(this, 10, 5));
+        actors.add(new Coin(this, 13, 5));
+        actors.add(new Coin(this, 16, 5));
+        actors.add(new Coin(this, 19, 5));
         actors.add(new End(this, 30, 1));
         actors.add(player);
 

@@ -21,6 +21,8 @@ public class Player2 extends Actor2 {
     protected boolean drawTexture = false;
     protected boolean checkpointTrigger = false;
     private boolean win = false;
+    private int coin = 0;
+    private int enemiesKilled = 0;
     private boolean powerUp; //Check if player has powerup
 
     //Item Booleans
@@ -37,6 +39,9 @@ public class Player2 extends Actor2 {
     private float lifeStealTime = 0f;
     private float starTime = 0f;
     private float fireFlowerTime = 0f;
+
+    //0 = unconditional, 1 = coins, 2 = kill all enemies, 3 = kill no enemies
+    private int condition = 2;
 
     //Fire Timer
     private float fireTime = 0f;
@@ -90,6 +95,7 @@ public class Player2 extends Actor2 {
         respawnPosition = new Vector2(boxCollider.getPosition());
 
         lifeCount = 3;
+        coin = 0;
 
         //The texture region needs to be set for rendering.
         setRegion(new Texture("goomba.png"));
@@ -274,6 +280,9 @@ public class Player2 extends Actor2 {
                 screen.setShouldReset(true);
             }
         }
+        if (other instanceof Enemy2 && side == Side.BOTTOM || other instanceof Enemy2 && (side == Side.RIGHT || side == Side.LEFT) && starItem) {
+            enemiesKilled++;
+        }
 
         //Check if player falls off edge
         if (other instanceof DeathBlock) {
@@ -310,6 +319,9 @@ public class Player2 extends Actor2 {
             if (heldItem == null)
                 heldItem = (Item2) other;
         }
+        if (other instanceof Coin) {
+            coin++;
+        }
     }
 
     public void onTrigger(Actor2 other, Side side) {
@@ -319,7 +331,13 @@ public class Player2 extends Actor2 {
             checkpointTrigger = true;
         }
         if (other instanceof End) {
-            win = true;
+            if (condition == 1 && coin == 4) {
+                win = true;
+            } else if (condition == 2 && enemiesKilled == 2) {
+                win = true;
+            } else {
+                System.out.println("Not enough coins or not enough enemies killed.");
+            }
         }
     }
 
@@ -347,6 +365,15 @@ public class Player2 extends Actor2 {
     }
     public boolean getWin() {
         return this.win;
+    }
+    public int getCoins() {
+        return this.coin;
+    }
+    public int getCondition() {
+        return this.condition;
+    }
+    public int getEnemiesKilled() {
+        return this.enemiesKilled;
     }
     public void setRespawnLocation(Vector2 pos) { respawnPosition = new Vector2(pos.x, pos.y); }
     public void dispose() { boxCollider.dispose(); }
