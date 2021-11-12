@@ -42,7 +42,7 @@ public class Player2 extends Actor2 {
     private float fireFlowerTime = 0f;
 
     //0 = unconditional, 1 = coins, 2 = kill all enemies, 3 = kill no enemies
-    private int condition = 2;
+    private int condition = 1;
 
     //Fire Timer
     private boolean fireSpawn = false;
@@ -340,6 +340,7 @@ public class Player2 extends Actor2 {
         }
         if (other instanceof Coin) {
             coin++;
+            System.out.println(coin);
         }
     }
 
@@ -350,7 +351,7 @@ public class Player2 extends Actor2 {
             ((CheckPoint2)other).setActivated(true);
         }
         if (other instanceof End) {
-            if (condition == 1 && coin == 4) {
+            if (condition == 1 && coin == 5) {
                 win = true;
             } else if (condition == 2 && enemiesKilled == 2) {
                 win = true;

@@ -25,9 +25,9 @@ public class Block2 extends Actor2 {
 
         this.spawnItem = spawnItem;
         this.spawned = false;
-
-        if (this.spawnItem) {
-            this.breakable = false;
+        this.breakable = breakable;
+        if (this.spawnItem && !this.breakable) {
+//            this.breakable = false;
 
             //Setup all items
             items.add(SlowItem2.class);
@@ -39,9 +39,10 @@ public class Block2 extends Actor2 {
             items.add(LifeStealItem2.class);
 
             itemIndex = index;
-        } else {
-            this.breakable = breakable;
         }
+//        else {
+//            this.breakable = breakable;
+//        }
 
         collider = new BoxCollider(
                 this,
@@ -50,7 +51,9 @@ public class Block2 extends Actor2 {
                 false
         );
 
-        if (spawnItem) {
+        if (spawnItem && this.breakable) {
+            setRegion(new Texture("Block.png"));
+        } else if (spawnItem) {
             setRegion(new Texture("item-block.png"));
         } else {
             setRegion(new Texture("Block.png"));
@@ -92,9 +95,12 @@ public class Block2 extends Actor2 {
                 false
         );
 
-        if (spawnItem) {
+        if (spawnItem && breakable) {
+            setRegion(new Texture("Block.png"));
+        } else if (spawnItem) {
             setRegion(new Texture("item-block.png"));
-        } else {
+        }
+        else {
             setRegion(new Texture("Block.png"));
         }
     }
@@ -115,13 +121,17 @@ public class Block2 extends Actor2 {
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         if(other instanceof Player2 && side == Side.BOTTOM) {
-            if(spawnItem && !spawned) {
+            if(spawnItem && !spawned && !breakable) {
                 Vector2 pos = collider.getPosition();
                 Class itemClass;
                 if (itemIndex == 7) {
                     Random rand = new Random();
                     itemClass = items.get(rand.nextInt(items.size()));
-                } else {
+                }
+//                else if (itemIndex == -1) {
+//                    itemClass = Coin.class;
+//                }
+                else {
                     itemClass = items.get(itemIndex);
                 }
 
@@ -130,7 +140,13 @@ public class Block2 extends Actor2 {
                 spawned = true;
                 setRegion(new Texture("used-item-block.jpg"));
             }
-            if (breakable) {
+            if (this.breakable && this.spawnItem) {
+                System.out.println("here");
+                Vector2 pos = collider.getPosition();
+                Class itemClass;
+                itemClass = Coin.class;
+                screen.queueActorSpawn(pos.x, pos.y +1.0f, itemClass);
+                System.out.println("item spanwed");
                 screen.queueActorDespawn(this);
             }
         }

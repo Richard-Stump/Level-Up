@@ -122,7 +122,7 @@ public class Hud2 {
         }
         numLivesLabel.setText(String.format("%d", player.getLives()));
         if (player.getCondition() == 1) {
-            numCoinLabel.setText(String.format("%d/%d", player.getCoins(), 4));
+            numCoinLabel.setText(String.format("%d/%d", player.getCoins(), 5));
         } else if (player.getCondition() == 2) {
             numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), 2));
         }

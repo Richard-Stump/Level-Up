@@ -7,19 +7,26 @@ import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class Coin extends Actor2 {
     BoxCollider collider;
-    Boolean initial;
+    boolean spawned = true;
     public Coin() {
 
     }
 
-    public Coin(GameScreen2 screen, float x, float y) {
+    public Coin(GameScreen2 screen, float x, float y, boolean spawned) {
         super(screen, x, y, 0.5f,0.5f);
-        collider = new BoxCollider(this, new Vector2(x,y), new Vector2(0.5f, 0.5f), false, true);
-        initial = true;
+        this.spawned = spawned;
+        if (this.spawned) {
+            System.out.println("dynamic");
+            collider = new BoxCollider(this, new Vector2(x,y), new Vector2(0.5f, 0.5f), true);
+        } else {
+            System.out.println("static");
+            collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), false);
+        }
         setRegion(new Texture("coin.png"));
     }
 
     public void update() {
+//        collider.setVelocity(new Vector2(0.0f, collider.getVelocity().y));
         setPosition(collider.getPosition());
     }
 

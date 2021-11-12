@@ -167,13 +167,13 @@ public class GameScreen2 implements Screen {
         actors.add(new Block2(this, 22, 4, true, ItemIndex.STAR.value, false));
         actors.add(new Block2(this, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
         actors.add(new Block2(this, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
-        actors.add(new Block2(this, 29, 4, false,true));
+        actors.add(new Block2(this, 29, 4, true, -1, true));
         actors.add(new Block2(this, 30, 4, false,false));
         actors.add(new CheckPoint2(this, 10, 1.0f));
-        actors.add(new Coin(this, 10, 5));
-        actors.add(new Coin(this, 13, 5));
-        actors.add(new Coin(this, 16, 5));
-        actors.add(new Coin(this, 19, 5));
+        actors.add(new Coin(this, 10, 5, false));
+        actors.add(new Coin(this, 13, 5, false));
+        actors.add(new Coin(this, 16, 5, false));
+        actors.add(new Coin(this, 19, 5, false));
         actors.add(new End(this, 30, 1));
         actors.add(player);
 
@@ -327,7 +327,11 @@ public class GameScreen2 implements Screen {
                 if (i.type.equals(Block2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, boolean.class, boolean.class);
                     actors.add((Block2) c.newInstance(this, i.x +0.5f, i.y + 0.5f, false, true));
-                } else {
+                } else if (i.type.equals(Coin.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, boolean.class);
+                    actors.add((Coin) c.newInstance(this, i.x, i.y, true));
+                }
+                else {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
                     actors.add((Actor2) c.newInstance(this, i.x, i.y));
                 }
