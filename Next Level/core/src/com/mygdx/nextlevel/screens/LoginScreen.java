@@ -29,6 +29,7 @@ import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.ErrorDialog;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
+import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 
 import java.util.ArrayList;
@@ -289,36 +290,36 @@ public class LoginScreen extends AccountList implements Screen {
         stage.addActor(table);
     }
 
-
     private void loadDB() {
         ServerDBHandler serverDB = new ServerDBHandler();
         CreatedLevelsDB createdDB = new CreatedLevelsDB();
+        DownloadedLevelsDB downloadedLevelsDB = new DownloadedLevelsDB();
 
         for (LevelInfo licreated: createdDB.sortByTitle()) {
             createdDB.removeLevelInfo(licreated.getId());
         }
 
-        /*
-        String id = createdDB.generateUniqueID(username);
-        LevelInfo levelInfo = new LevelInfo(id, "Level Test " + id, username);
-        levelInfo.addTag(Tag.ART);
-        levelInfo.setDifficulty(Difficulty.HARD.ordinal());
-
-        String id2 = createdDB.generateUniqueID(username);
-        LevelInfo levelInfo2 = new LevelInfo(id2, "Level Test " + id2, username);
-        levelInfo2.addTag(Tag.BOSSBATTLE);
-        levelInfo2.addTag(Tag.ART);
-        levelInfo2.setDifficulty(Difficulty.EASY.ordinal());
-
-        serverDB.addLevel(levelInfo);
-        serverDB.addLevel(levelInfo2);
-
-         */
-
         ArrayList<LevelInfo> list = serverDB.getUsersCreatedLevels(username);
         for (LevelInfo li: list) {
             createdDB.addLevelInfo(li);
         }
+
+        //update all the levels to see if they have new information regarding play count or ratings
+        for (LevelInfo levelInfo: downloadedLevelsDB.sortByTitle()) {
+            LevelInfo updatedLevel = serverDB.getLevelByID(levelInfo.getId());
+            //updatedLevel would be null if the creator removed the level
+            //  we will still allow the user to keep it, but we won't update anything
+            if (updatedLevel != null) {
+                downloadedLevelsDB.updateLevelInfo(updatedLevel);
+            }
+        }
+
+        for (LevelInfo levelInfo: createdDB.sortByTitle()) {
+            LevelInfo updatedLevel = serverDB.getLevelByID(levelInfo.getId());
+            createdDB.updateLevelInfo(updatedLevel);
+        }
+        createdDB.closeConnection();
+        downloadedLevelsDB.closeConnection();
         serverDB.closeConnection();
     }
 

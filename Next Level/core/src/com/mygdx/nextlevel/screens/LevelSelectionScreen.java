@@ -56,6 +56,7 @@ public class LevelSelectionScreen implements Screen {
     private SelectBox<Difficulty> difficultyDropdown;
     private ArrayList<CheckBox> tagCheckBoxes;
     private ScrollPane scrollPane;
+    private SelectBox<String> sortDropdown;
 
     //left column
     public Label levelName;
@@ -175,6 +176,13 @@ public class LevelSelectionScreen implements Screen {
         searchBar = new TextField("", skin);
         searchBar.setMessageText("By Level Name, Author");
 
+        HorizontalGroup sortByGroup = new HorizontalGroup();
+        Label labelSortBy = new Label("Sort by:", skin);
+        sortDropdown = new SelectBox<>(skin);
+        sortDropdown.setItems("Title", "Rating");
+        sortByGroup.addActor(labelSortBy);
+        sortByGroup.addActor(sortDropdown);
+
         cbIncludeCreated = new CheckBox("Include my created levels", skin);
         cbIncludeCreated.setChecked(false);
 
@@ -190,8 +198,6 @@ public class LevelSelectionScreen implements Screen {
             }
         }
 
-        //TODO: add search by (star) rating
-
         //table.setDebug(true);
 
         searchButton = new TextButton("Search", skin);
@@ -200,6 +206,8 @@ public class LevelSelectionScreen implements Screen {
         table.add(searchLabel).padBottom(10).height(labelHeight + 10);
         table.row();
         table.add(searchBar).padBottom(20).width(200);
+        table.row();
+        table.add(sortByGroup);
         table.row();
         table.add(cbIncludeCreated).padBottom(20);
         table.row();
@@ -419,10 +427,29 @@ public class LevelSelectionScreen implements Screen {
 
                 System.out.println("after filtering difficulty: " + finalList.size());
 
+                ArrayList<LevelInfo> sortedList = new ArrayList<>();
+
+                //resort the list (could be optimized)
+                if (sortDropdown.getSelected().equals("Rating")) {
+                    int count = finalList.size();
+                    for (int i = 0; i < count; i++) {
+                        LevelInfo highestRatingLevel = finalList.get(0);
+                        for (LevelInfo levelInfo: finalList) {
+                            if (levelInfo.getRating() > highestRatingLevel.getRating()) {
+                                highestRatingLevel = levelInfo;
+                            }
+                        }
+                        sortedList.add(highestRatingLevel);
+                        finalList.remove(highestRatingLevel);
+                    }
+                } else {
+                    sortedList = finalList;
+                }
+
                 //redo the table
                 levelVerticalGroup.clear();;
-                Table refreshTable = new Table();
-                refreshTable = getLevelTable(finalList);
+                Table refreshTable;
+                refreshTable = getLevelTable(sortedList);
                 levelVerticalGroup.addActor(refreshTable);
             }
         };

@@ -1,11 +1,9 @@
 package com.mygdx.nextlevel.JUnitTests;
 
-import com.badlogic.gdx.Gdx;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import org.junit.*;
 
-import java.io.File;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +24,7 @@ public class CreatedLevelsDBTest {
                 dbCreated.removeLevelInfo(level);
             }
         }
-        dbCreated.close();
+        dbCreated.closeConnection();
     }
 
     @AfterClass
@@ -43,7 +41,7 @@ public class CreatedLevelsDBTest {
             for (LevelInfo levelInfo: savedListCreated) {
                 dbCreated.addLevelInfo(levelInfo);
             }
-            dbCreated.close();
+            dbCreated.closeConnection();
         }
     }
 
@@ -58,7 +56,7 @@ public class CreatedLevelsDBTest {
         for (LevelInfo level: db.sortByTitle()) {
             db.removeLevelInfo(level);
         }
-        db.close();
+        db.closeConnection();
     }
 
     @Test

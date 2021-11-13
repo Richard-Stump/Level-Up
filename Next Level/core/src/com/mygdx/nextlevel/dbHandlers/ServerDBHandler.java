@@ -479,7 +479,7 @@ public class ServerDBHandler {
             List<LevelInfo> list = resultAsList(resultSet);
             return list.get(0);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return null;
         }
     }

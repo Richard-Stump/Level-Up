@@ -567,7 +567,10 @@ public class LevelsDBController {
         return list;
     }
 
-    public void close() throws SQLException {
-        connection.close();
+    public void closeConnection() {
+        try {
+            connection.close();
+        } catch (SQLException ignored) {
+        }
     }
 }

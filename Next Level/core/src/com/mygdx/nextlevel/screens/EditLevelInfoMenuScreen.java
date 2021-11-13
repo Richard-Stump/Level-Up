@@ -27,7 +27,6 @@ import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
-import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 
 import java.sql.Date;
@@ -154,14 +153,8 @@ public class EditLevelInfoMenuScreen implements Screen {
 
                 System.out.printf("Success, level %s was created with ID %s\n", itemInDatabase.getTitle(), itemInDatabase.getId());
 
-                try {
-                    dbCreated.close();
-                    dbDownloaded.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    System.out.println("Could not save data to database, try again");
-                    return;
-                }
+                dbCreated.closeConnection();
+                dbDownloaded.closeConnection();
 
                 //TODO: maybe display a popup, or bring the user to the level information page
 
