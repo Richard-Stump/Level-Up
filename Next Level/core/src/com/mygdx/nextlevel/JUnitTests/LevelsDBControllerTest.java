@@ -1,11 +1,13 @@
 package com.mygdx.nextlevel.JUnitTests;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Null;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.LevelsDBController;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import org.junit.*;
 
+import java.io.File;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -115,7 +117,7 @@ public class LevelsDBControllerTest {
         CreatedLevelsDB tableCreated = new CreatedLevelsDB();
 
         //Conditions
-        LevelInfo toAdd = new LevelInfo(arbitraryID);
+        LevelInfo toAdd = new LevelInfo(arbitraryID, "title", "author");
 
         //actual
         int actual = tableCreated.addLevelInfo(toAdd);
@@ -134,8 +136,8 @@ public class LevelsDBControllerTest {
         CreatedLevelsDB tableCreated = new CreatedLevelsDB();
 
         //Conditions
-        LevelInfo toAdd0 = new LevelInfo(arbitraryID);
-        LevelInfo toAdd1 = new LevelInfo(arbitraryID);
+        LevelInfo toAdd0 = new LevelInfo(arbitraryID, "title", "author");
+        LevelInfo toAdd1 = new LevelInfo(arbitraryID, "title", "author");
         tableCreated.addLevelInfo(toAdd0);
 
         //actual
@@ -154,7 +156,7 @@ public class LevelsDBControllerTest {
     public void testRemoveLevelInfo() {
         //needed for test:
         CreatedLevelsDB tableCreated = new CreatedLevelsDB();
-        tableCreated.addLevelInfo(new LevelInfo(arbitraryID));
+        tableCreated.addLevelInfo(new LevelInfo(arbitraryID, "title", "author"));
 
         //actual
         int actual = tableCreated.removeLevelInfo(arbitraryID);

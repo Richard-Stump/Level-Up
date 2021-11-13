@@ -6,6 +6,7 @@ import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
 import com.mygdx.nextlevel.enums.Tag;
 
+import java.io.FileInputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -477,7 +478,7 @@ public class ServerDBHandler {
 
             List<LevelInfo> list = resultAsList(resultSet);
             return list.get(0);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

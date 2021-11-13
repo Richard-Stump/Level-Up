@@ -1,5 +1,6 @@
 package com.mygdx.nextlevel.JUnitTests;
 
+import com.badlogic.gdx.Gdx;
 import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
@@ -8,6 +9,7 @@ import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
 import org.junit.*;
 import org.postgresql.util.PSQLException;
 
+import java.io.File;
 import java.nio.channels.AcceptPendingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -137,7 +139,20 @@ public class ServerDBTest {
     @Test
     public void testAddLevel() {
         LevelInfo levelInfo = new LevelInfo("id12adsfg", "reevesLevel", "reeves34");
+        LevelInfo levelInfo2 = new LevelInfo("reeves34_dsfafdsa", "reevesLevel", "reeves34");
+        //TODO: figure out how to attach tmx, tsx, and pngs to the levelInfos
+        //File fTmx = new File(Gdx.files.internal("test2.tmx").path());
+        //File fTsx = new File(Gdx.files.internal("test2.tsx").path());
+        //File fPng = new File(Gdx.files.internal("test2.png").path());
+
+        //levelInfo.setTmx(fTmx);
+        //levelInfo.setTsx(fTsx);
+        //levelInfo.setPng(fPng);
+        //levelInfo2.setPng(fPng);
+        //levelInfo2.setTmx(fTmx);
+        //levelInfo2.setTsx(fTsx);
         int ret = db.addLevel(levelInfo);
+        db.addLevel(levelInfo2);
         TestOutputHelper.clearResult();
         TestOutputHelper.setResult("testAddLevel", 1, ret);
         assertEquals(1, ret);

@@ -37,9 +37,9 @@ public class LevelInfo {
         this.rating = 0;
         this.difficulty = Difficulty.NONE.ordinal();
         this.playCount = 0;
-        this.tmx = new File(id + ".tmx");
-        this.tsx = new File(id + ".tsx");
-        this.png = new File(id + ".png");
+        this.tmx = null;
+        this.tsx = null;
+        this.png = null;
     }
 
     /**
@@ -52,6 +52,13 @@ public class LevelInfo {
         this(id);
         this.title = title;
         this.author = author;
+    }
+
+    public LevelInfo(String id, String title, String author, File tmx, File tsx, File png) {
+        this(id, title, author);
+        this.tmx = tmx;
+        this.tsx = tsx;
+        this.png = png;
     }
 
     /**

@@ -1,9 +1,11 @@
 package com.mygdx.nextlevel.JUnitTests;
 
+import com.badlogic.gdx.Gdx;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import org.junit.*;
 
+import java.io.File;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -78,7 +80,8 @@ public class CreatedLevelsDBTest {
     public void testIsUniqueID0() throws Throwable {
         //Conditions:
         String id = "sampleID13";
-        LevelInfo sameID = new LevelInfo(id, "Title", "author");
+
+        LevelInfo sameID = new LevelInfo(id);
         db.addLevelInfo(sameID);
 
         //Get actual result

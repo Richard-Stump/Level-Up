@@ -5,6 +5,8 @@ import com.mygdx.nextlevel.dbUtil.DBConnection;
 import com.mygdx.nextlevel.enums.Tag;
 
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +81,11 @@ public class LevelsDBController {
             statement.setInt(7, levelInfo.getPlayCount());
             statement.setDate(8, levelInfo.getDateDownloaded());
 
+            //statement.setBinaryStream(9, new FileInputStream(levelInfo.getTmx()), (int) levelInfo.getTmx().length());
+            //statement.setBinaryStream(10, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
+            //statement.setBinaryStream(11, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
+
+
             //statement.setString(9, levelInfo.getTags().toString());
             String tagString = "";
             if (levelInfo.getTags().size() > 0) {
@@ -101,7 +108,11 @@ public class LevelsDBController {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } /*catch (FileNotFoundException e) {
+            System.out.println("No file was found that is associated with this levelInfo object");
+            e.printStackTrace();
         }
+        */
         return -1;
     }
 
