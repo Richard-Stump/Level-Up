@@ -26,6 +26,8 @@ public class Player2 extends Actor2 {
     private int coin = 0;
     private int enemiesKilled = 0;
     private boolean powerUp; //Check if player has powerup
+    private boolean invulernable = false;
+    private float time = 2f;
 
     //Item Booleans
     private boolean mushroomItem;
@@ -34,6 +36,7 @@ public class Player2 extends Actor2 {
     private boolean lifeStealItem;
     private boolean starItem;
     private boolean fireFlowerItem;
+    private boolean jewel;
 
     //Item Timers
     private float slowTime = 0f;
@@ -41,11 +44,12 @@ public class Player2 extends Actor2 {
     private float lifeStealTime = 0f;
     private float starTime = 0f;
     private float fireFlowerTime = 0f;
+    private float invulerableTime = 0f;
 
     private double record = 25.00;
 
-    //0 = unconditional, 1 = coins, 2 = kill all enemies, 3 = kill no enemies
-    private int condition = 1;
+    //0 = unconditional, 1 = coins, 2 = kill all enemies, 3 = kill no enemies, 4 = clear level while holding the jewel
+    private int condition = 4;
 
     //Fire Timer
     private boolean fireSpawn = false;
@@ -97,7 +101,6 @@ public class Player2 extends Actor2 {
 
         worldSpawn = new Vector2(boxCollider.getPosition());
         respawnPosition = worldSpawn;
-
         lifeCount = 3;
         coin = 0;
 
@@ -110,6 +113,7 @@ public class Player2 extends Actor2 {
         lifeStealItem = false;
         starItem = false;
         fireFlowerItem = false;
+        jewel = false;
     }
 
     public void update(float delta) {
@@ -127,6 +131,7 @@ public class Player2 extends Actor2 {
             starItem = false;
             fireFlowerItem = false;
             heldItem = null;
+            jewel = false;
             respawn = false;
         }
 
@@ -141,7 +146,6 @@ public class Player2 extends Actor2 {
                 setRegion(new Texture("paragoomba.png"));
             else
                 setRegion(new Texture("goomba.png"));
-
             if (!facingRight) {
                 flip(true, false);
             }
@@ -189,6 +193,17 @@ public class Player2 extends Actor2 {
                 drawTexture = true;
                 fireFlowerItem = false;
                 fireFlowerTime = 0f;
+            }
+        }
+        if (invulernable) {
+            invulerableTime += delta;
+            if (invulerableTime >= 1) {
+                time--;
+                invulerableTime = 0;
+                if (time == 0) {
+                    invulernable = false;
+                    time = 2f;
+                }
             }
         }
 
@@ -273,14 +288,19 @@ public class Player2 extends Actor2 {
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         //Check if player collides with enemy
-        if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) && !starItem) {
-            if (!powerUp) {
+        if (other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) && invulernable) {
+            //do nothing
+        } else if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) && !starItem && !invulernable) {
+            if (powerUp) {
+                powerUp = false;
+                invulernable = true;
+//                invulernableFunc();
+            } else {
                 lifeCount--;
                 respawn = true;
             }
 
             drawTexture = true;
-            powerUp = false;
 
             if(lifeCount < 1) {
                 lifeCount = 3;
@@ -291,7 +311,7 @@ public class Player2 extends Actor2 {
                 }
             }
 
-            if (!powerUp)
+            if (!powerUp && !invulernable)
                 screen.setShouldReset(true);
         }
         if (other instanceof Enemy2 && side == Side.BOTTOM || other instanceof Enemy2 && (side == Side.RIGHT || side == Side.LEFT) && starItem) {
@@ -299,6 +319,9 @@ public class Player2 extends Actor2 {
             if (condition == 3 && enemiesKilled > 0) {
                 fail = true;
             }
+        }
+        if (other instanceof Jewel) {
+            this.jewel = true;
         }
 
         //Check if player falls off edge
@@ -369,13 +392,28 @@ public class Player2 extends Actor2 {
                 win = true;
             } else if (condition == 3 && enemiesKilled == 0) {
                 win = true;
-            } else if (condition == 0) {
+            } else if (condition == 4 && jewel) {
+                win = true;
+            }
+            else if (condition == 0) {
                 win = true;
             } else {
                 System.out.println("Not enough coins or not enough enemies killed.");
             }
         }
     }
+
+//    public void invulernableFunc() {
+//        invulerableTime += Gdx.graphics.getDeltaTime();
+//        if (invulerableTime >= 1) {
+//            time--;
+//            invulerableTime = 0;
+//            if (time == 0) {
+//                invulernable = false;
+//                time = 5f;
+//            }
+//        }
+//    }
 
     public void setfireSpawn(boolean b) { fireSpawn = b; }
     public void addLife() { lifeCount++; }
@@ -413,6 +451,21 @@ public class Player2 extends Actor2 {
     }
     public boolean getFail() {
         return fail;
+    }
+    public boolean getJewel() {
+        return this.jewel;
+    }
+
+    public void setJewel(boolean set) {
+        this.jewel = set;
+    }
+
+    public boolean getInvulernable() {
+        return this.invulernable;
+    }
+
+    public void setInvuelnerable(boolean set) {
+        this.invulernable = set;
     }
 
     //TODO: temporary check to check record time replacement
