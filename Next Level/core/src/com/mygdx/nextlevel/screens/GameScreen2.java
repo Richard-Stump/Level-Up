@@ -289,13 +289,21 @@ public class GameScreen2 extends Timer implements Screen {
         hud.update(delta, player, itemToName);
         if (player.getWin()) {
             end = getEndTime();
-            System.out.println(start);
-            System.out.println(end);
-            System.out.println(end-start);
+//            System.out.println(start);
+//            System.out.println(end);
+//            System.out.println(end-start);
             long elapsed = end-start;
             double elapsedTime = (double) elapsed / 1000000000;
-            System.out.println(elapsedTime);
+//            System.out.println(String.format("Current Record Time: %f", player.getRecordTime()));
+            if (player.getRecordTime() > elapsedTime) {
+                player.setRecordTime(elapsedTime);
+            }
+//            System.out.println(String.format("New Record Time: %f", player.getRecordTime()));
+//            System.out.println(elapsedTime);
             ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
+        }
+        if (player.getFail()) {
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "FAIL", "MainMenuScreen"));
         }
     }
 

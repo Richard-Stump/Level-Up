@@ -22,6 +22,7 @@ public class Player2 extends Actor2 {
     protected boolean drawTexture = false;
     protected boolean checkpointTrigger = false;
     private boolean win = false;
+    private boolean fail = false;
     private int coin = 0;
     private int enemiesKilled = 0;
     private boolean powerUp; //Check if player has powerup
@@ -40,6 +41,8 @@ public class Player2 extends Actor2 {
     private float lifeStealTime = 0f;
     private float starTime = 0f;
     private float fireFlowerTime = 0f;
+
+    private double record = 25.00;
 
     //0 = unconditional, 1 = coins, 2 = kill all enemies, 3 = kill no enemies
     private int condition = 1;
@@ -293,6 +296,9 @@ public class Player2 extends Actor2 {
         }
         if (other instanceof Enemy2 && side == Side.BOTTOM || other instanceof Enemy2 && (side == Side.RIGHT || side == Side.LEFT) && starItem) {
             enemiesKilled++;
+            if (condition == 3 && enemiesKilled > 0) {
+                fail = true;
+            }
         }
 
         //Check if player falls off edge
@@ -340,7 +346,7 @@ public class Player2 extends Actor2 {
         }
         if (other instanceof Coin) {
             coin++;
-            System.out.println(coin);
+//            System.out.println(coin);
         }
     }
 
@@ -350,10 +356,20 @@ public class Player2 extends Actor2 {
             respawnPosition = ((CheckPoint2)other).collider.getPosition();
             ((CheckPoint2)other).setActivated(true);
         }
+//        if (other instanceof Coin) {
+//            coin++;
+////            System.out.println(coin);
+//        }
         if (other instanceof End) {
+            //Todo: replace coin == ? to a preset number in the level
             if (condition == 1 && coin == 5) {
                 win = true;
+                //Todo: replace enemiesKilled == ? to a preset number in the level
             } else if (condition == 2 && enemiesKilled == 2) {
+                win = true;
+            } else if (condition == 3 && enemiesKilled == 0) {
+                win = true;
+            } else if (condition == 0) {
                 win = true;
             } else {
                 System.out.println("Not enough coins or not enough enemies killed.");
@@ -392,6 +408,23 @@ public class Player2 extends Actor2 {
     public int getCondition() {
         return this.condition;
     }
+    public void setFail(boolean set) {
+        fail = set;
+    }
+    public boolean getFail() {
+        return fail;
+    }
+
+    //TODO: temporary check to check record time replacement
+    public double getRecordTime() {
+        return this.record;
+    }
+
+    public void setRecordTime(double time) {
+        this.record = time;
+    }
+
+
     public int getEnemiesKilled() {
         return this.enemiesKilled;
     }
