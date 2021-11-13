@@ -209,7 +209,7 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
         TextButton backButton = new TextButton("Back", skin);
         final TextButton changePasswordButton = new TextButton("Change Password", skin);
 
-        table.add(backButton).left().expandX().padLeft(10).padTop(10);
+        table.add(backButton).left().expandX().padLeft(20).padTop(15);
         //table.add(new Label("", skin)).width(labelWidth).expandX();
         table.row();
         table.add(title).padBottom(labelBottomPadding + 10);
@@ -236,7 +236,7 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
         //event listeners
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new ProfileMainMenu(game));
             }
         });
         backButton.addListener(new HoverListener());

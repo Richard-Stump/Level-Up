@@ -119,7 +119,7 @@ public class UserAccountScreen implements Screen {
         backButton.left();
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new ProfileMainMenu(game));
             }
         });
 

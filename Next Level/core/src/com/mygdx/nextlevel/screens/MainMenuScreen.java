@@ -187,9 +187,11 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         userGroup.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new UserAccountScreen(game));
+//                ((Game)Gdx.app.getApplicationListener()).setScreen(new UserAccountScreen(game));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new ProfileMainMenu(game));
             }
         });
+        userGroup.addListener(new HoverListener());
 
         //Set table to fill stage
         mainTable.setFillParent(true);
