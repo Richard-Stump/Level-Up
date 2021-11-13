@@ -16,18 +16,24 @@ public class Coin extends Actor2 {
         super(screen, x, y, 0.5f,0.5f);
         this.spawned = spawned;
         if (this.spawned) {
-            System.out.println("dynamic");
+//            System.out.println("dynamic");
             collider = new BoxCollider(this, new Vector2(x,y), new Vector2(0.5f, 0.5f), true);
         } else {
-            System.out.println("static");
+//            System.out.println("static");
             collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), false);
         }
         setRegion(new Texture("coin.png"));
     }
 
-    public void update() {
+    public void update(float delta) {
 //        collider.setVelocity(new Vector2(0.0f, collider.getVelocity().y));
         setPosition(collider.getPosition());
+    }
+
+    public void onTrigger(Actor2 other, BoxCollider.Side side) {
+//        if(other instanceof Player2) {
+//            screen.queueActorDespawn(this);
+//        }
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {

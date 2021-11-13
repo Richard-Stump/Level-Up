@@ -17,4 +17,14 @@ public class Timer {
         endTime = System.nanoTime();
         return endTime;
     }
+
+//    public double record;
+//    public long startTime;
+//    public long endTime;
+
+
+    //Todo: constructor for when level data is set up
+//    public Timer(Level) {
+//        record = Level.getRecord;
+//    }
 }

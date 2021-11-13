@@ -1,5 +1,6 @@
 package com.mygdx.nextlevel.hud;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -19,6 +20,7 @@ import com.mygdx.nextlevel.actors.Item;
 import com.mygdx.nextlevel.actors.Item2;
 import com.mygdx.nextlevel.actors.Player;
 import com.mygdx.nextlevel.actors.Player2;
+import com.mygdx.nextlevel.screens.ErrorMessageScreen;
 
 import java.util.HashMap;
 
@@ -46,6 +48,7 @@ public class Hud2 {
     Label numCoinLabel;
     Label enemyLabel;
     Label numEnemyLabel;
+    Label killNoEnemy;
     Image itemImg;
     private int condition = -1;
 
@@ -82,6 +85,10 @@ public class Hud2 {
         enemyLabel = new Label("ENEMIES", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         numEnemyLabel = new Label(String.format("%d/%d", player.getEnemiesKilled(), 2), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
 
+        killNoEnemy = new Label(String.format("%d", player.getEnemiesKilled()), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
+
+
+
         table.add(livesLabel).expandX().padTop(10);
         table.add(playerLabel).expandX().padTop(10);
         table.add(worldLabel).expandX().padTop(10);
@@ -89,7 +96,7 @@ public class Hud2 {
         table.add(itemLabel).expandX().padTop(10);
         if (player.getCondition() == 1) {
             table.add(coinLabel).expandX().padTop(10);
-        } else if (player.getCondition() == 2) {
+        } else if (player.getCondition() == 2 || player.getCondition() == 3) {
             table.add(enemyLabel).expandX().padTop(10);
         }
         table.row();
@@ -102,6 +109,8 @@ public class Hud2 {
             table.add(numCoinLabel).expandX();
         } else if (player.getCondition() == 2) {
             table.add(numEnemyLabel).expandX();
+        } else if (player.getCondition() == 3) {
+            table.add(killNoEnemy).expandX();
         }
 
         stage.addActor(table);
@@ -119,12 +128,17 @@ public class Hud2 {
             worldTimer--;
             countdownLabel.setText(String.format("%03d", worldTimer));
             time = 0;
+            if (worldTimer == 0 && !player.getWin()) {
+                player.setFail(true);
+            }
         }
         numLivesLabel.setText(String.format("%d", player.getLives()));
         if (player.getCondition() == 1) {
             numCoinLabel.setText(String.format("%d/%d", player.getCoins(), 5));
         } else if (player.getCondition() == 2) {
             numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), 2));
+        } else if (player.getCondition() == 3) {
+            killNoEnemy.setText(String.format("%d", player.getEnemiesKilled()));
         }
         if (player.getHeldItem() != null) {
             itemImg.setDrawable(new TextureRegionDrawable(new Texture(map.get(player.getHeldItem()))));
