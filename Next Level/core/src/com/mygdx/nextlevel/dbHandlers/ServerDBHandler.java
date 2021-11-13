@@ -501,7 +501,7 @@ public class ServerDBHandler {
             levelInfo.setAuthor(resultSet.getString("author"));
             levelInfo.setPlayCount(resultSet.getInt("playcount"));
             levelInfo.setDifficulty(resultSet.getInt("difficulty"));
-            levelInfo.setRating(resultSet.getFloat("rating"));
+            levelInfo.setRating(getLevelAverageRating(levelInfo.getId()));
             levelInfo.setBestTime(resultSet.getFloat("besttime"));
             levelInfo.setDateDownloaded(resultSet.getDate("datecreated"));
             levelInfo.setDateCreated(resultSet.getDate("datecreated"));
@@ -518,5 +518,39 @@ public class ServerDBHandler {
             list.add(levelInfo);
         }
         return list;
+    }
+
+    public ArrayList<Double> getLevelRatings(String id) {
+        ResultSet resultSet;
+        ArrayList<Double> list = new ArrayList<>();
+        String sqlQuery = "SELECT rating FROM api.levels WHERE levelid=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, id);
+            resultSet = statement.executeQuery();
+            resultSet.next();
+            Array array = resultSet.getArray("rating");
+            Double[] dArray = (Double[]) array.getArray();
+            list.addAll(Arrays.asList(dArray));
+
+            return list;
+        } catch (Exception e) {
+            //e.printStackTrace();
+            return null;
+        }
+    }
+
+    public float getLevelAverageRating(String id) {
+        ArrayList<Double> ratings = getLevelRatings(id);
+        if (ratings == null) {
+            return -1;
+        }
+        float sum = 0;
+
+        for (Double rating: ratings) {
+            sum += rating;
+        }
+
+        return sum / ratings.size();
     }
 }
