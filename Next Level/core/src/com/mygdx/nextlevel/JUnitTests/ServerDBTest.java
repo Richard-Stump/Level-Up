@@ -152,7 +152,7 @@ public class ServerDBTest {
         //levelInfo2.setTmx(fTmx);
         //levelInfo2.setTsx(fTsx);
         int ret = db.addLevel(levelInfo);
-        db.addLevel(levelInfo2);
+        //db.addLevel(levelInfo2);
         TestOutputHelper.clearResult();
         TestOutputHelper.setResult("testAddLevel", 1, ret);
         assertEquals(1, ret);

@@ -7,12 +7,14 @@ package com.mygdx.nextlevel.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -50,6 +52,7 @@ public class LevelDownloadScreen implements Screen {
     private VerticalGroup levelVerticalGroup;
 
     public TextButton searchButton;
+    public TextButton downloadButton;
 
     //search parameters:
     private TextField searchBar;
@@ -89,6 +92,7 @@ public class LevelDownloadScreen implements Screen {
         stage = new Stage(viewport, batch);
 
         dbDownloaded = new DownloadedLevelsDB();
+        dbCreated = new CreatedLevelsDB();
         dbServer = new ServerDBHandler();
         selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";
@@ -147,12 +151,13 @@ public class LevelDownloadScreen implements Screen {
 
         //row 3: empty placeholder, currently selected level, play button
 
-        TextButton downloadButton = new TextButton("Download", skin);
+        downloadButton = new TextButton("Download", skin);
         downloadButton.addListener(downloadLevel());
+        downloadButton.setColor(Color.LIGHT_GRAY);
 
         mainTable.add();
         mainTable.add(selectedLevel).left().padBottom(20).padLeft(5);
-        mainTable.add(downloadButton).width(150).padBottom(20).padLeft(5);
+        mainTable.add(downloadButton).width(200).padBottom(20).padLeft(5);
 
         //end
         mainTable.setFillParent(true);
@@ -298,6 +303,16 @@ public class LevelDownloadScreen implements Screen {
                 //outline the selected level
                 selectedLevel.setText("Level Selected: " + dbServer.getLevelByID(id).getTitle());
                 selectedId = id;
+
+                if ((dbDownloaded.searchByID(id) != null) || (dbCreated.searchByID(id) != null)) {
+                    downloadButton.setTouchable(Touchable.disabled);
+                    downloadButton.setText("Already Downloaded");
+                    downloadButton.setColor(Color.RED);
+                } else {
+                    downloadButton.setTouchable(Touchable.enabled);
+                    downloadButton.setText("Download");
+                    downloadButton.setColor(Color.GREEN);
+                }
             }
         };
     }
@@ -309,7 +324,13 @@ public class LevelDownloadScreen implements Screen {
                 if (selectedId.equals("")) {
                     return;
                 }
-                System.out.println("Should be downloading: " + dbServer.getLevelByID(selectedId).getTitle());
+                LevelInfo levelInfo = dbServer.getLevelByID(selectedId);
+                System.out.println("Should be downloading: " + levelInfo.getTitle());
+                dbDownloaded.addLevelInfo(levelInfo);
+
+                downloadButton.setTouchable(Touchable.disabled);
+                downloadButton.setText("Downloaded");
+                downloadButton.setColor(Color.RED);
             }
         };
     }
@@ -318,6 +339,10 @@ public class LevelDownloadScreen implements Screen {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                downloadButton.setTouchable(Touchable.enabled);
+                downloadButton.setText("Download");
+                downloadButton.setColor(Color.LIGHT_GRAY);
+
                 selectedId = "";
                 selectedLevel.setText("Select a level");
 
@@ -380,8 +405,8 @@ public class LevelDownloadScreen implements Screen {
                 System.out.println("after filtering difficulty: " + finalList.size());
 
                 //redo the table
-                levelVerticalGroup.clear();;
-                Table refreshTable = new Table();
+                levelVerticalGroup.clear();
+                Table refreshTable;
                 refreshTable = getLevelTable(finalList);
                 levelVerticalGroup.addActor(refreshTable);
             }
