@@ -50,6 +50,8 @@ public class Hud2 {
     Label numEnemyLabel;
     Label killNoEnemy;
     Image itemImg;
+    Label jewelLabel;
+    Image jewelImg;
     private int condition = -1;
 
     public Hud2(SpriteBatch spriteBatch, Player2 player) {
@@ -87,6 +89,9 @@ public class Hud2 {
 
         killNoEnemy = new Label(String.format("%d", player.getEnemiesKilled()), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
 
+        jewelLabel = new Label("JEWEL", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
+        jewelImg = new Image(new Texture("x.png"));
+
 
 
         table.add(livesLabel).expandX().padTop(10);
@@ -98,6 +103,8 @@ public class Hud2 {
             table.add(coinLabel).expandX().padTop(10);
         } else if (player.getCondition() == 2 || player.getCondition() == 3) {
             table.add(enemyLabel).expandX().padTop(10);
+        } else if (player.getCondition() == 4) {
+            table.add(jewelLabel).expandX().padTop(10);
         }
         table.row();
         table.add(numLivesLabel).expandX();
@@ -111,6 +118,8 @@ public class Hud2 {
             table.add(numEnemyLabel).expandX();
         } else if (player.getCondition() == 3) {
             table.add(killNoEnemy).expandX();
+        } else if (player.getCondition() == 4) {
+            table.add(jewelImg).width(25).height(25).expandX();
         }
 
         stage.addActor(table);
@@ -139,6 +148,12 @@ public class Hud2 {
             numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), 2));
         } else if (player.getCondition() == 3) {
             killNoEnemy.setText(String.format("%d", player.getEnemiesKilled()));
+        } else if (player.getCondition() == 4) {
+            if (player.getJewel()) {
+                jewelImg.setDrawable(new TextureRegionDrawable(new Texture("jewel.png")));
+            } else {
+                jewelImg.setDrawable(new TextureRegionDrawable(new Texture("x.png")));
+            }
         }
         if (player.getHeldItem() != null) {
             itemImg.setDrawable(new TextureRegionDrawable(new Texture(map.get(player.getHeldItem()))));

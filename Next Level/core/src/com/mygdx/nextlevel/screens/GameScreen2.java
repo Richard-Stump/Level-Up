@@ -159,7 +159,7 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
         player = new Player2(this, 1.0f, 1.0f);
-        actors.add(new Enemy2(this,2, 2));
+//        actors.add(new Enemy2(this,2, 2));
         actors.add(new Enemy2(this, 8, 2));
         actors.add(new Block2(this, 7, 4, true, ItemIndex.ALL.value, false));
         actors.add(new Block2(this, 10, 4, true, ItemIndex.SLOW.value, false));
@@ -177,6 +177,7 @@ public class GameScreen2 extends Timer implements Screen {
         actors.add(new Coin(this, 16, 5, false));
         actors.add(new Coin(this, 19, 5, false));
         actors.add(new End(this, 30, 1));
+        actors.add(new Jewel(this, 2, 1));
         actors.add(player);
 
         hud = new Hud2(game.batch, player);
