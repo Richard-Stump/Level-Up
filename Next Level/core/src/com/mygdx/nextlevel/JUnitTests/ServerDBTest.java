@@ -2,6 +2,7 @@ package com.mygdx.nextlevel.JUnitTests;
 
 import com.badlogic.gdx.Gdx;
 import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.Level;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
@@ -15,8 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ServerDBTest {
     private static ServerDBHandler db;
@@ -220,6 +220,39 @@ public class ServerDBTest {
         TestOutputHelper.clearResult();
         TestOutputHelper.setResult("updateProfilePic", "penguin.png", pp);
         Assert.assertEquals("penguin.png", pp);
+    }
+    public void testGetLevelRatingsEmpty() {
+        String id = "id_noRatings";
+        LevelInfo toAdd = new LevelInfo(id, "title", "reeves34");
+        db.addLevel(toAdd);
+
+        ArrayList<Double> ratings = db.getLevelRatings(id);
+
+        db.removeLevel(id);
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("testGetLevelRatingsEmpty", null, ratings);
+        assertNull(ratings);
+    }
+
+    @Test
+    public void testAddLevelRating() {
+        String id = "id_addRatings";
+        Double ratingToAdd = 4.5;
+
+        LevelInfo toAdd = new LevelInfo(id, "title", "reeves34");
+
+        db.addLevel(toAdd);
+        db.addLevelRating(id, ratingToAdd);
+        ArrayList<Double> ratings = db.getLevelRatings(id);
+        db.removeLevel(id);
+
+        ArrayList<Double> expected = new ArrayList<>();
+        expected.add(ratingToAdd);
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("testAddLevelRating", expected.get(0), ratings.get(0));
+        assertEquals(expected.get(0), ratings.get(0));
     }
 
 }

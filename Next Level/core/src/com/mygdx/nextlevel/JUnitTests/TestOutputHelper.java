@@ -12,7 +12,11 @@ public class TestOutputHelper {
 
     public static void displayResult() {
         String str;
-        if (((actualObj == null) && (expectedObj == null)) || ((actualObj != null) && (actualObj.equals(expectedObj))) || ((actualObj != null) && reverse && (!actualObj.equals(expectedObj)))) {
+        if ((expectedObj == null) && (actualObj == null)) {
+            expectedObj = "_null";
+            actualObj = "_null";
+        }
+        if (actualObj != null && actualObj.equals(expectedObj) || actualObj != null && reverse && !actualObj.equals(expectedObj)) {
             str = String.format(ANSI_GREEN +"passed" + ANSI_RESET + " %s", test);
         } else {
             str = String.format(ANSI_RED + "failed" + ANSI_RESET + " %s", test);
