@@ -1,8 +1,15 @@
+/*                             WARNING                                         */
+/* IntelliJ might mark this file as having an error regarding the line:        */
+/*     Property prop = f.getDeclaredAnnotation(Property.class);                */
+/* This is not an error, IntelliJ will suggest switching language versions.    */
+/* It is not necessary to downgrade to Java 8                                  */
+
 package com.mygdx.nextlevel.screens.editor;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextField;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -24,7 +31,7 @@ public class PropertyEditTable extends VisTable {
     }
 
     /**
-     * A group of properties. This allows for properties to be grouped up like the the completion
+     * A group of properties. This allows for properties to be grouped up like the completion
      * flags in the level settings.
      */
     class Group {
@@ -42,13 +49,19 @@ public class PropertyEditTable extends VisTable {
 
     /**
      * Initialize the table.
-     * @param clazz The type to examine to build the property table
+     * @param object The object to examine in the property table.
      */
-    public PropertyEditTable(Class<?> clazz) {
-        resultClass = clazz;
+    public PropertyEditTable(Object object) {
+        resultClass = object.getClass();
 
-        setupLists(clazz);
-        buildTable();
+        try {
+            setupLists(object.getClass(), object);
+            buildTable();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
     }
 
     /**
@@ -69,7 +82,7 @@ public class PropertyEditTable extends VisTable {
             for(EditProperty property : group.properties) {
                 row();
                 add(new VisLabel(property.name + ":")).left().padLeft(indent);
-                add(new VisLabel("...")).expandX().fillX();
+                add(property.widget).expandX().fillX();
             }
         }
     }
@@ -78,7 +91,7 @@ public class PropertyEditTable extends VisTable {
      * Sets up lists of groups, and their property lists.
      * @param clazz The type to construct the groups from.
      */
-    protected void setupLists(Class<?> clazz) {
+    protected void setupLists(Class<?> clazz, Object object) throws IllegalAccessException {
         groups = new ArrayList<>();
 
         //Keep track of each group and their names. This is needed because you can't do ArrayList.contains()
@@ -105,7 +118,7 @@ public class PropertyEditTable extends VisTable {
                 EditProperty editProperty = new EditProperty();
                 editProperty.name = prop.displayName().equals("__DEFAULT__") ? f.getName() : prop.displayName();
                 editProperty.field = f;
-                editProperty.widget = getWidgetForType(f.getType());
+                editProperty.widget = getWidgetForField(f, object);
 
                 groupsHash.get(groupName).properties.add(editProperty);
             }
@@ -117,10 +130,33 @@ public class PropertyEditTable extends VisTable {
         }
     }
 
-    protected Widget getWidgetForType(Class<?> clazz) {
-        //TODO: Implement this section to return a widget such as text fields, checkboxes, etc... depending
-        //      on the type of the clazz
-        System.out.println(clazz.getName());
+    /**
+     * Creates a widget for the editing of the specified field in the given object. Whatever editing
+     * widget is created, the editor portion is initialized to have a value the same as in the passed
+     * object.
+     *
+     * @param field     The field to create the widget for
+     * @param object    The object to retrieve the field's default values from
+     * @return          An editing widget for the passed field
+     * @throws IllegalAccessException
+     */
+    protected Widget getWidgetForField(Field field, Object object) throws IllegalAccessException {
+        Class fieldType = field.getType();
+        Object value = field.get(object);
+
+        if(fieldType.equals(Integer.TYPE)) {
+            String valueStr = value.toString();
+            VisTextField widget = new VisTextField(valueStr);
+            widget.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
+
+            return widget;
+        }
+        else if(fieldType.equals(Float.TYPE)) {
+
+        }
+        else if(fieldType.equals(Boolean.TYPE)) {
+
+        }
 
         return new Widget();
     }

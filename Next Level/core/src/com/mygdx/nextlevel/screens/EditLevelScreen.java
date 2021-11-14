@@ -341,8 +341,8 @@ class LevelSettingsWindow extends VisWindow {
         setModal(true);
         setMovable(false);
 
-        propertyTable = new PropertyEditTable(EditorLevel.class);
-        add(propertyTable).pad(10.0f).colspan(2);
+        propertyTable = new PropertyEditTable(level);
+        add(propertyTable);
 
         padTop(40.0f);
         pack();
