@@ -314,7 +314,8 @@ public class GameScreen2 extends Timer implements Screen {
             ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
         }
         if (player.getFail()) {
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "FAIL", "MainMenuScreen"));
+            System.out.println("Im here");
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud));
         }
     }
 

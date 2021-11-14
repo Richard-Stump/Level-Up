@@ -29,7 +29,7 @@ public class GameOverScreen implements Screen {
     private TextureAtlas atlas;
     protected Skin skin;
     private NextLevel game;
-    private Hud2 hud2;
+    private Hud2 hud;
 
     public Label title;
     public Label scoreLabel;
@@ -58,6 +58,7 @@ public class GameOverScreen implements Screen {
 
         stage = new Stage(viewport, batch);
         this.game = game;
+        this.hud = hud2;
     }
 
     @Override
@@ -67,14 +68,12 @@ public class GameOverScreen implements Screen {
         Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
 
         Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
-        //TextButton button = new TextButton("Click me!", titleStyle);
         //Label.LabelStyle textStyle = skin.get("subtitle", Label.LabelStyle.class);
 
         title = new Label("Game Over...", titleStyle);
-        scoreLabel = new Label("Score : " + hud2.getScore(), titleStyle);
+        scoreLabel = new Label("Score : " + hud.getScore(), titleStyle);
         //scoreLabel.scaleBy(.9f);
-
-        timeLabel = new Label("Time Remaining : " + hud2.getTime(), titleStyle);
+        timeLabel = new Label("Time Remaining : " + hud.getTime(), titleStyle);
         finishConditionLabel = new Label("Finishing Conditions : ", titleStyle);
         mainMenuButton = new TextButton("Main Menu", skin);
         tryAgainButton = new TextButton("Try Again", skin);
@@ -88,16 +87,26 @@ public class GameOverScreen implements Screen {
         });
         mainMenuButton.addListener(new HoverListener());
 
+        tryAgainButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+                //TODO: set screen to restart current level
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game));
+            }
+        });
+        tryAgainButton.addListener(new HoverListener());
+
         Table mainTable = new Table();
         //mainTable.setDebug(true);
         mainTable.add(title).colspan(2).width(labelWidth + 100).padBottom(labelBottomPadding + 20);
         mainTable.row();
-        mainTable.add(scoreLabel).colspan(2).width(labelWidth).padBottom(labelBottomPadding);
+        mainTable.add(scoreLabel).left().padRight(10).colspan(2).width(labelWidth).padBottom(labelBottomPadding);
         mainTable.row();
-        mainTable.add(timeLabel).colspan(2).width(labelWidth).padBottom(labelBottomPadding);
+        mainTable.add(timeLabel).left().padRight(10).colspan(2).width(labelWidth).padBottom(labelBottomPadding + 20);
         mainTable.row();
-        mainTable.add(finishConditionLabel).colspan(2).width(labelWidth).padBottom(labelBottomPadding + 20);
-        mainTable.row();
+//        mainTable.add(finishConditionLabel).left().padRight(10).colspan(2).width(labelWidth).padBottom(labelBottomPadding + 20);
+//        mainTable.row();
         mainTable.add(mainMenuButton).width(buttonWidth).right().padRight(5);
         mainTable.add(tryAgainButton).width(buttonWidth).left().padLeft(5);
 
