@@ -276,7 +276,7 @@ public class ServerDBHandler {
     public int addLevel(LevelInfo levelInfo) {
         String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?);";
-        String sqlQuery2 = "UPDATE api.users SET levelsuploaded=? WHERE username=?;";
+        String sqlQuery2 = "UPDATE api.users SET levelsuploaded = array_append(levelsuploaded, ?) WHERE username=?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             PreparedStatement statement2 = connection.prepareStatement(sqlQuery2);
@@ -293,11 +293,7 @@ public class ServerDBHandler {
             //statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
             //statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
 
-            String[] userOld = getUsersCreatedLevelsIDs(levelInfo.getAuthor());
-            ArrayList<String> strArr = new ArrayList<>(Arrays.asList(userOld));
-
-            strArr.add(levelInfo.getId());
-            statement2.setArray(1, connection.createArrayOf("text", strArr.toArray()));
+            statement2.setString(1, levelInfo.getId());
             statement2.setString(2, levelInfo.getAuthor());
             if (statement.executeUpdate() == 0) {
                 return 0;
@@ -360,32 +356,13 @@ public class ServerDBHandler {
         //get information about the level we will delete
         LevelInfo levelInfo = getLevelByID(id);
 
-        //get current user levels
-        ArrayList<LevelInfo> userLevels = getUsersCreatedLevels(levelInfo.getAuthor());
-
-        //cycle through and remove the one that matches
-        for (LevelInfo level: userLevels) {
-            if (level.getId().equals(id)) {
-                userLevels.remove(level);
-                break;
-            }
-        }
-
-        String[] newUserLevelIDs = new String[userLevels.size()];
-
-        //add all the level ids into a string array to be sent to the server
-        for (int i = 0; i < userLevels.size(); i++) {
-            newUserLevelIDs[i] = userLevels.get(i).getId();
-        }
-
         String sqlQuery = "DELETE FROM api.levels WHERE levelid = ?;";
-        String sqlQuery2 = "UPDATE api.users SET levelsuploaded=? WHERE username=?;";
-
+        String sqlQuery2 = "UPDATE api.users SET levelsuploaded = array_remove(levelsuploaded, ?) WHERE username=?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             PreparedStatement statement2 = connection.prepareStatement(sqlQuery2);
             statement.setString(1, id);
-            statement2.setArray(1, connection.createArrayOf("text", newUserLevelIDs));
+            statement2.setString(1, id);
             statement2.setString(2, levelInfo.getAuthor());
 
             rowsChanged = statement.executeUpdate();
@@ -530,8 +507,11 @@ public class ServerDBHandler {
             resultSet = statement.executeQuery();
             resultSet.next();
             Array array = resultSet.getArray("rating");
-            Double[] dArray = (Double[]) array.getArray();
-            list.addAll(Arrays.asList(dArray));
+            Object[] dArray = (Object[]) array.getArray();
+
+            for(Object doubObj: dArray) {
+                list.add(Double.parseDouble(doubObj.toString()));
+            }
 
             return list;
         } catch (Exception e) {
@@ -552,5 +532,25 @@ public class ServerDBHandler {
         }
 
         return sum / ratings.size();
+    }
+
+    /**
+     * Appends a rating to the levels list of ratings
+     *
+     * @param id
+     * @param toAdd
+     * @return
+     */
+    public int addLevelRating(String id, double toAdd) {
+        String sqlQuery = "UPDATE api.levels SET rating = array_append(rating, ?) WHERE levelid=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setDouble(1, toAdd);
+            statement.setString(2, id);
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }
