@@ -87,20 +87,22 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         TextButton exitButton = new TextButton("Exit", skin);
         //TextButton changePassButton = new TextButton("Change Password", skin);
 
-        buttonTable.add(playButton).colspan(2).width(buttonWidth * 2);
+        buttonTable.add(playButton).colspan(2).width(buttonWidth * 2 + 5).padBottom(10);
         buttonTable.row();
-        buttonTable.add(createLevelButton).width(buttonWidth);
-        buttonTable.add(selectLevelButton).width(buttonWidth);
+        buttonTable.add(createLevelButton).width(buttonWidth).padBottom(10).padRight(5);
+        buttonTable.add(selectLevelButton).width(buttonWidth).padBottom(10);
         buttonTable.row();
-        buttonTable.add(tutorialButton).width(buttonWidth * 2).colspan(2);
+        buttonTable.add(tutorialButton).width(buttonWidth * 2 + 5).colspan(2).padBottom(10);
         //buttonTable.add(changePassButton).width(buttonWidth);
         buttonTable.row();
-        buttonTable.add(logoutButton).width(buttonWidth);
-        buttonTable.add(exitButton).width(buttonWidth);
+        buttonTable.add(logoutButton).width(buttonWidth).padBottom(10).padRight(5);
+        buttonTable.add(exitButton).width(buttonWidth).padBottom(10);
+
+        Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
 
         //Add buttons to table
-        Label titleLabel = new Label("Next Level", skin);
-        Label welcomeLabel = new Label("Welcome back!", skin);
+        Label titleLabel = new Label("Next Level", titleStyle);
+        Label welcomeLabel = new Label("Welcome back, " + username + "!", skin);
 
         //use player username
         Label usernameLabel = new Label(username, skin);

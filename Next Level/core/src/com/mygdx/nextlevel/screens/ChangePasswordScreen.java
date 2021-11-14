@@ -85,8 +85,9 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
 
         Table table = new Table();
         //table.setDebug(true);
+        Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
 
-        Label title = new Label("Change Password", skin);
+        Label title = new Label("Change Password", titleStyle);
         Label oldPasswordLabel = new Label("Current Password", skin);
         Label newPasswordLabel = new Label("New Password", skin);
         Label verifyNewPasswordLabel = new Label("Re-enter Your New Password", skin);

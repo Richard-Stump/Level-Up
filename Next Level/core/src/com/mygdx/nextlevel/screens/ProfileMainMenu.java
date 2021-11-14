@@ -64,7 +64,9 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
 
         Table mainTable = new Table();
 
-        Label title = new Label("User Settings", skin);
+        Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
+
+        Label title = new Label("User Settings", titleStyle);
         TextButton backButton = new TextButton("Back", skin);
 
         Image playerPic = new Image(new Texture(Gdx.files.internal("mario.jpeg")));

@@ -110,8 +110,10 @@ public class LoginScreen extends AccountList implements Screen {
         Table textFieldTable = new Table();
         Table rightButtonTable = new Table();
 
+        Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
+
         //text
-        Label titleLabel = new Label("Next Level", skin);
+        Label titleLabel = new Label("Next Level", titleStyle);
         Label welcomeLabel = new Label("Welcome", skin);
 
         //creating text fields

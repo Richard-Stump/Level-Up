@@ -64,17 +64,9 @@ public class ProfilePictureScreen extends LoginScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
         Table mainTable = new Table();
-        Table buttonTable = new Table();
 
-        Label title = new Label("Profile Picture Selection", skin);
-//        Sprite pic1 = new Sprite(new Texture(Gdx.files.internal("userIcon.png")));
-//        pic1.setSize(32,32);
-//        Sprite pic2 = new Sprite(new Texture(Gdx.files.internal("smash-mario.jpeg")));
-//        pic2.setSize(32,32);
-//        Sprite pic3 = new Sprite(new Texture(Gdx.files.internal("odyssey-mario.jpeg")));
-//        pic3.setSize(32,32);
-//        Sprite pic4 = new Sprite(new Texture(Gdx.files.internal("mario.jpeg")));
-//        pic4.setSize(32,32);
+        Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
+        Label title = new Label("Profile Picture Selection", titleStyle);
 
         Image pic1 = new Image(new Texture(Gdx.files.internal("userIcon.png")));
         Image pic2 = new Image(new Texture(Gdx.files.internal("smash-mario.jpeg")));
@@ -169,9 +161,6 @@ public class ProfilePictureScreen extends LoginScreen implements Screen {
 
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
-//        HorizontalGroup userGroup = new HorizontalGroup();
-//        userGroup.addActor(title);
-//        userGroup.addActor(pic1);
     }
 
     private ClickListener setProfilePicListener() {
