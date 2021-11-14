@@ -118,7 +118,8 @@ public class LevelSelectionScreen implements Screen {
         });
 
         //screen title
-        Label levelSelectLabel = new Label("Select Level", skin);
+        Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
+        Label levelSelectLabel = new Label("Select Level", titleStyle);
 
         //current user overview
         //HorizontalGroup userInfo = new HorizontalGroup();

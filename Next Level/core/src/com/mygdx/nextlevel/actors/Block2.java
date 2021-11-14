@@ -38,6 +38,8 @@ public class Block2 extends Actor2 {
             items.add(FireFlowerItem2.class);
             items.add(LifeStealItem2.class);
 
+            items.add(Coin.class);
+
             itemIndex = index;
         }
 //        else {
@@ -124,7 +126,7 @@ public class Block2 extends Actor2 {
             if(spawnItem && !spawned && !breakable) {
                 Vector2 pos = collider.getPosition();
                 Class itemClass;
-                if (itemIndex == 7) {
+                if (itemIndex == 8) {
                     Random rand = new Random();
                     itemClass = items.get(rand.nextInt(items.size()));
                 }
@@ -141,17 +143,16 @@ public class Block2 extends Actor2 {
                 setRegion(new Texture("used-item-block.jpg"));
             }
             if (this.breakable && this.spawnItem) {
-                System.out.println("here");
+//                System.out.println("here");
                 Vector2 pos = collider.getPosition();
                 Class itemClass;
                 itemClass = Coin.class;
                 screen.queueActorSpawn(pos.x, pos.y +1.0f, itemClass);
-                System.out.println("item spanwed");
+//                System.out.println("item spanwed");
                 screen.queueActorDespawn(this);
             }
         }
     }
-
     public void dispose() {
         collider.dispose();
     }

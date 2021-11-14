@@ -62,7 +62,9 @@ public class CreateLevelMenuScreen implements Screen {
             }
         });
 
-        Label title = new Label(titleText, skin);
+        Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
+
+        Label title = new Label(titleText, titleStyle);
 
         // Create the main table and set it to fill the screen, and align at the top
         Table mainTable = new Table();
