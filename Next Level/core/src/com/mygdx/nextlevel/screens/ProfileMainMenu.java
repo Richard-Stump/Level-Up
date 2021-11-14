@@ -66,17 +66,19 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         Table mainTable = new Table();
 
         //TODO: set up format for profile menu
+        Label title = new Label("User Settings", skin);
+
         TextButton backButton = new TextButton("Back", skin);
 
-        Image playerPic = new Image(new Texture(Gdx.files.internal("userIcon.png")));
-        playerPic.scaleBy(3f);
+        Image playerPic = new Image(new Texture(Gdx.files.internal("mario.jpeg")));
+
+        //playerPic.scaleBy(3f);
 
         Label usernameLabel = new Label(username, skin);
 
         TextButton changeProfilePicButton = new TextButton("Change Profile Picture", skin);
         TextButton changePasswordButton = new TextButton("Change Password", skin);
         TextButton deleteLevelsButton = new TextButton("Delete Levels", skin);
-
 
         //TODO: rewire the buttons
         backButton.addListener(new ClickListener() {
@@ -99,6 +101,13 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
             }
         });
         deleteLevelsButton.addListener(new HoverListener());
+        changeProfilePicButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new ProfilePictureScreen(game));
+            }
+        });
+        changeProfilePicButton.addListener(new HoverListener());
 
 
         //vertical groups
@@ -106,11 +115,15 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
 //        profileGroup.addActor(playerPic);
 //        profileGroup.addActor(usernameLabel);
 
+        Stack mainStack = new Stack();
+        mainStack.add(new Image(new Texture(Gdx.files.internal("rect.png"))));
+
         Table profileTable = new Table();
         //profileTable.setDebug(true);
-        profileTable.add(playerPic).padRight(100).padBottom(bottomPadding).padLeft(100);
+        profileTable.add(playerPic).padBottom(bottomPadding).padTop(bottomPadding);
         profileTable.row();
-        profileTable.add(usernameLabel).padLeft(100);
+        profileTable.add(usernameLabel).padBottom(bottomPadding);
+        mainStack.add(profileTable);
 
 //        VerticalGroup buttonGroup = new VerticalGroup();
 //        buttonGroup.addActor(changeProfilePicButton);
@@ -124,11 +137,19 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         buttonTable.row();
         buttonTable.add(deleteLevelsButton).width(buttonWidth).padBottom(bottomPadding);
 
+//        Table headerTable = new Table();
+//        //headerTable.setDebug(true);
+//        headerTable.add(backButton).left().padRight(20);
+//        headerTable.add(title).width(830);
+
         //adding to main table
         //mainTable.setDebug(true);
         mainTable.add(backButton).left().padLeft(20).padTop(15);
+        mainTable.add(title).padTop(15).left().padLeft(5);
+        //mainTable.add(headerTable).padTop(15).colspan(2).expandX();
         mainTable.row();
-        mainTable.add(profileTable).expandY().width(450);
+        mainTable.add(new Label("", skin));
+        mainTable.add(mainStack).expandY().width(350);
         mainTable.add(buttonTable).expandY().expandX().padRight(100).padBottom(50);
 
 //        mainTable.add(playerPic).expandY();

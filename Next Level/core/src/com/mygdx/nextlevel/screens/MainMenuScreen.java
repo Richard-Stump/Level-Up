@@ -105,24 +105,27 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         //use player username
         Label usernameLabel = new Label(username, skin);
         //use player profile pic
-        Image playerPic = new Image(new Texture(Gdx.files.internal("userIcon.png")));
+        Image playerPic = new Image(new Texture(Gdx.files.internal("mario.jpeg")));
+        playerPic.scaleBy(-.9f);
 //        db.setProfilePic(username, "userIcon.png");
 //        profilePicture = db.getProfilePic(username);
 //        System.out.println(profilePicture);
 //        Image playerPic = new Image(new Texture(Gdx.files.internal(profilePicture)));
 //        playerPic.setScaling(Scaling.fit);
 
-        HorizontalGroup userGroup = new HorizontalGroup();
-        userGroup.addActor(usernameLabel);
-        userGroup.addActor(playerPic);
-        userGroup.setPosition(rightMargin - 70, topMargin);
-        stage.addActor(userGroup);
+        //HorizontalGroup userGroup = new HorizontalGroup();
+        //usernameLabel.setPosition(rightMargin - 70, topMargin);
+//        userGroup.addActor(usernameLabel);
+//        //playerPic.setPosition(rightMargin - 50, topMargin + 100);
+//        userGroup.addActor(playerPic);
+//        userGroup.setPosition(rightMargin - 70, topMargin);
+//        stage.addActor(userGroup);
 
         //using a horizontal group instead to simplify, don't need this
-        //playerPic.setPosition(rightMargin, topMargin);
-        //usernameLabel.setPosition(rightMargin - 70, topMargin);
-        //stage.addActor(playerPic);
-        //stage.addActor(usernameLabel);
+        playerPic.setPosition(rightMargin - 5, topMargin);
+        usernameLabel.setPosition(rightMargin - 70, topMargin);
+        stage.addActor(playerPic);
+        stage.addActor(usernameLabel);
 
         //mainTable.add(usernameLabel).right();
         //mainTable.row();
@@ -184,14 +187,22 @@ public class MainMenuScreen extends LoginScreen implements Screen {
             }
         });
         exitButton.addListener(new HoverListener());
-        userGroup.addListener(new ClickListener() {
+        usernameLabel.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 //                ((Game)Gdx.app.getApplicationListener()).setScreen(new UserAccountScreen(game));
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new ProfileMainMenu(game));
             }
         });
-        userGroup.addListener(new HoverListener());
+        usernameLabel.addListener(new HoverListener());
+        playerPic.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+//                ((Game)Gdx.app.getApplicationListener()).setScreen(new UserAccountScreen(game));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new ProfileMainMenu(game));
+            }
+        });
+        playerPic.addListener(new HoverListener());
 
         //Set table to fill stage
         mainTable.setFillParent(true);
