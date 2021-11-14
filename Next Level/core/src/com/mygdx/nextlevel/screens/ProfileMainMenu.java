@@ -80,7 +80,6 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         TextButton changePasswordButton = new TextButton("Change Password", skin);
         TextButton deleteLevelsButton = new TextButton("Delete Levels", skin);
 
-
         //TODO: rewire the buttons
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {

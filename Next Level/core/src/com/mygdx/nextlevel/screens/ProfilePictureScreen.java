@@ -9,11 +9,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.HoverListener;
 
 public class ProfilePictureScreen implements Screen {
     public SpriteBatch batch;
@@ -66,9 +69,24 @@ public class ProfilePictureScreen implements Screen {
         Image pic2 = new Image(new Texture(Gdx.files.internal("smash-mario.jpeg")));
         Image pic3 = new Image(new Texture(Gdx.files.internal("odyssey-mario.jpeg")));
         Image pic4 = new Image(new Texture(Gdx.files.internal("mario.jpeg")));
+        Image pic5 = new Image(new Texture(Gdx.files.internal("buildImg.jpg")));
+
+        //pic1.scaleBy(-.5f);
 
         TextButton applyButton = new TextButton("Apply", skin);
         TextButton backButton = new TextButton("Back", skin);
+
+        //event listeners
+        backButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new ProfileMainMenu(game));
+            }
+        });
+        backButton.addListener(new HoverListener());
+
+        applyButton.addListener(new ClickListener() {
+           //TODO: implement method to save to database
+        });
 
         Table header = new Table();
         header.setDebug(true);
@@ -77,21 +95,24 @@ public class ProfilePictureScreen implements Screen {
 
         //adding to main table
         mainTable.setDebug(true);
-        mainTable.add(backButton).left();
-        mainTable.add(title).colspan(3).expandX();
+        mainTable.add(backButton).left().padTop(15).width(70).padLeft(15);
+        mainTable.add(title).colspan(3).expandX().padTop(15);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
 //        mainTable.add(header).expandX().colspan(3);
         mainTable.row();
         mainTable.add(new Label("", skin));
-        mainTable.add(pic1);
-        mainTable.add(pic2);
-        mainTable.add(pic3);
+        mainTable.add(pic1).padBottom(10);
+        mainTable.add(pic2).padBottom(10);
+        mainTable.add(pic3).padBottom(10);
         mainTable.row();
         mainTable.add(new Label("", skin));
-        mainTable.add(pic4);
-        //mainTable.add(pic5);
+        mainTable.add(pic4).padBottom(10);
+        mainTable.add(pic5).padBottom(10);
         mainTable.row();
-        mainTable.add(applyButton);
+        mainTable.add(new Label("", skin));
+        mainTable.add(new Label("", skin));
+        mainTable.add(new Label("", skin));
+        mainTable.add(applyButton).expandY().padBottom(20).width(buttonWidth);
 
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
