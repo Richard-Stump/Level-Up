@@ -19,19 +19,21 @@ import java.util.ArrayList;
 
 public class EditorLevel {
     public int map[][];
-    public int width, height;
     public ArrayList<EditorActor> actors;
 
-    public String           name;
     public String           saveName;
-    public Difficulty       difficulty = Difficulty.NONE;
-    public float            gravity = -9.81f;
     public ArrayList<Tag>   tags;
-    public boolean collectCoins;
-    public boolean beatTimeLimit;
-    public boolean killAllEnemies;
-    public boolean killNoEnemies;
-    public boolean keepJewel;
+
+    @Property public int width;
+    @Property public int height;
+    @Property public String name;
+    @Property public Difficulty difficulty = Difficulty.NONE;
+    @Property public float gravity;
+    @Property(group="Completion Flags") public boolean collectCoins;
+    @Property(group="Completion Flags") public boolean beatTimeLimit;
+    @Property(group="Completion Flags") public boolean killAllEnemies;
+    @Property(group="Completion Flags") public boolean killNoEnemies;
+    @Property(group="Completion Flags") public boolean keepJewel;
 
     public static int NONE = -1;
 

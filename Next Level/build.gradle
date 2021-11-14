@@ -64,6 +64,8 @@ project(":core") {
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         compile "com.kotcrab.vis:vis-ui:$visuiVersion"
         compile group:'org.xerial', name:'sqlite-jdbc', version:'3.36.0.3'
+        compile "org.reflections:reflections:0.10.2"
+        testImplementation 'org.slf4j:slf4j-simple:1.7.32'
 
     }
 }
