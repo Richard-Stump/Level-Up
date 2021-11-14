@@ -255,4 +255,22 @@ public class ServerDBTest {
         assertEquals(expected.get(0), ratings.get(0));
     }
 
+    @Test
+    public void testIncreaseLevelPlayCount() {
+        String id = "testIncreaseLevelPlayCount";
+        LevelInfo toAdd = new LevelInfo(id, "title", "asdf");
+        db.addLevel(toAdd);
+        db.increaseLevelPlayCount(id);
+        db.increaseLevelPlayCount(id);
+
+        int actual = db.getLevelByID(id).getPlayCount();
+        db.removeLevel(id);
+
+        int expected = 2;
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(id, expected, actual);
+        assertEquals(expected, actual);
+    }
+
 }

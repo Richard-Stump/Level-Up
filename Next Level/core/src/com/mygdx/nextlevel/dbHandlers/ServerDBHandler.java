@@ -583,4 +583,16 @@ public class ServerDBHandler {
         }
         return -1;
     }
+
+    public int increaseLevelPlayCount(String id) {
+        String sqlQuery = "UPDATE api.levels SET playcount = playcount+1 WHERE levelid=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, id);
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }
