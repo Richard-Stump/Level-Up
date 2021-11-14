@@ -8,6 +8,8 @@ import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
+import java.util.ArrayList;
+
 public class Player2 extends Actor2 {
     protected Vector2 worldSpawn;
     protected Vector2 respawnPosition;  //Position that the player respawns in
@@ -46,11 +48,14 @@ public class Player2 extends Actor2 {
     private float starTime = 0f;
     private float fireFlowerTime = 0f;
     private float invulerableTime = 0f;
+    private ArrayList<Integer> conditions;
 
     private double record = 25.00;
 
     //0 = unconditional, 1 = coins, 2 = kill all enemies, 3 = kill no enemies, 4 = clear level while holding the jewel
-    private int condition = 4;
+    private int condition = 1;
+    private int condition2 = 2;
+
 
     //Fire Timer
     private boolean fireSpawn = false;
@@ -115,6 +120,9 @@ public class Player2 extends Actor2 {
         starItem = false;
         fireFlowerItem = false;
         jewel = false;
+        conditions = new ArrayList<>();
+        conditions.add(1);
+        conditions.add(2);
     }
 
     public void update(float delta) {
@@ -395,22 +403,26 @@ public class Player2 extends Actor2 {
 ////            System.out.println(coin);
 //        }
         if (other instanceof End) {
-            //Todo: replace coin == ? to a preset number in the level
-            if (condition == 1 && coin == 5) {
-                win = true;
-                //Todo: replace enemiesKilled == ? to a preset number in the level
-            } else if (condition == 2 && enemiesKilled == 2) {
-                win = true;
-            } else if (condition == 3 && enemiesKilled == 0) {
-                win = true;
-            } else if (condition == 4 && jewel) {
+//            //Todo: replace coin == ? to a preset number in the level
+//            if (condition == 1 && coin == 5) {
+//                win = true;
+//                //Todo: replace enemiesKilled == ? to a preset number in the level
+//            } else if (condition == 2 && enemiesKilled == 2) {
+//                win = true;
+//            } else if (condition == 3 && enemiesKilled == 0) {
+//                win = true;
+//            } else if (condition == 4 && jewel) {
+//                win = true;
+//            }
+//            else if (condition == 0) {
+//                win = true;
+//            } else {
+//                System.out.println("Not enough coins or not enough enemies killed.");
+//            }
+            if (condition == 1 && condition2 == 2 && coin == 5 && enemiesKilled == 1) {
                 win = true;
             }
-            else if (condition == 0) {
-                win = true;
-            } else {
-                System.out.println("Not enough coins or not enough enemies killed.");
-            }
+
         }
     }
 
@@ -456,6 +468,9 @@ public class Player2 extends Actor2 {
     }
     public int getCondition() {
         return this.condition;
+    }
+    public int getCondition2() {
+        return this.condition2;
     }
     public void setFail(boolean set) {
         fail = set;

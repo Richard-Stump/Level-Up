@@ -37,7 +37,7 @@ public class GameScreen2 extends Timer implements Screen {
      * Enums to the screen in which specify what item goes into the block
      */
     public enum ItemIndex {
-        SLOW(0), SPEED(1), LIFE(2), MUSHROOM(3), STAR(4), FIREFLOWER(5), LIFESTEAL(6), ALL(7);
+        SLOW(0), SPEED(1), LIFE(2), MUSHROOM(3), STAR(4), FIREFLOWER(5), LIFESTEAL(6), COIN(7), ALL(8);
         private final int value;
 
         ItemIndex(final int newValue) {
@@ -169,7 +169,7 @@ public class GameScreen2 extends Timer implements Screen {
         actors.add(new Block2(this, 22, 4, true, ItemIndex.STAR.value, false));
         actors.add(new Block2(this, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
         actors.add(new Block2(this, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
-        actors.add(new Block2(this, 29, 4, true, -1, true));
+        actors.add(new Block2(this, 29, 4, true, ItemIndex.COIN.value, true));
         actors.add(new Block2(this, 30, 4, false,false));
         actors.add(new CheckPoint2(this, 10, 1.0f));
         actors.add(new Coin(this, 10, 5, false));
@@ -357,7 +357,8 @@ public class GameScreen2 extends Timer implements Screen {
                     actors.add((Block2) c.newInstance(this, i.x +0.5f, i.y + 0.5f, false, true));
                 } else if (i.type.equals(Coin.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, boolean.class);
-                    actors.add((Coin) c.newInstance(this, i.x+0.25f, i.y+0.25f, false));
+//                    actors.add((Coin) c.newInstance(this, i.x+0.25f, i.y+0.25f, false));
+                    actors.add((Coin) c.newInstance(this, i.x, i.y, true));
                 } else if (i.type.equals(Jewel.class)) {
 //                    System.out.println("Jewel in spawn actors");
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
