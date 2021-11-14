@@ -15,6 +15,7 @@ import java.nio.channels.AcceptPendingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -29,32 +30,29 @@ public class ServerDBTest {
 
         //put in temporary account
         Account steveAccount = new Account("steve", "abcd1234!", "steve@example.com");
-//        steveAccount.setUsername("steve");
-//        steveAccount.setEmail("steve@example.com");
-//        steveAccount.setPassword("abcd1234!");
         db = new ServerDBHandler();
         db.addUser(steveAccount);
-
-        LevelInfo levelInfo = new LevelInfo("id123456789", "Test Level 1", "reeves34");
-        db.addLevel(levelInfo);
 
         db.closeConnection();
     }
 
     @AfterClass
     public static void restoreDatabase() {
-        ServerDBHandler adminDB = new ServerDBHandler();
-        adminDB.removeUser("steve");
-        adminDB.removeLevel("id12adsfg");
-        adminDB.closeConnection();
+        ServerDBHandler db = new ServerDBHandler();
+        db.removeUser("steve");
+        db.closeConnection();
     }
 
     @Before
     public void establishConnection() {
+        //connect
         db = new ServerDBHandler();
+
+        //add some sample data
         LevelInfo info = new LevelInfo("idtestgetrecordtime", "TestGetRecordTime", "jchen");
         Account a = new Account("testuser", "password", "testuser@example.com", "default");
 //        a.setProfilePic("default");
+
         db.addLevel(info);
         db.addUser(a);
     }
@@ -63,10 +61,13 @@ public class ServerDBTest {
     public void cleanup() {
         db.removeLevel("idtestgetrecordtime");
         db.removeUser("testuser");
+
         db.closeConnection();
         TestOutputHelper.displayResult();
         TestOutputHelper.clearResult();
     }
+
+
 
     @Test
     public void testIsActive() {
@@ -81,12 +82,50 @@ public class ServerDBTest {
         assertEquals(expected, actual);
     }
 
+
+
+
+
+    //--------------------- User table tests ---------------------//
+
     @Test
-    public void testUserExistsFalse() {
-        boolean actual = db.userExists("john");
+    public void testAddUser() {
+        String username = "erwin";
+        Account testAccount = new Account(username, "puppyDogs5000", "erwin@example.com");
+
+        db.addUser(testAccount);
+
+        boolean actual = db.userExists(username);
+        boolean expected = true;
+
+        db.removeUser(username);
+
+        TestOutputHelper.setResult("testAddUser", expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testRemoveUser() {
+        String username = "testRemoveUser";
+        Account testAccount = new Account(username, "Password1!", username + "@xmail.com");
+        db.addUser(testAccount);
+
+        db.removeUser(username);
+        boolean actual = db.userExists(username);
         boolean expected = false;
 
-        TestOutputHelper.setResult("testUserExistsFalse", expected, actual);
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(username, expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testUserExistsFalse() {
+        String username = "testUserExistsFalse";
+        boolean actual = db.userExists(username);
+        boolean expected = false;
+
+        TestOutputHelper.setResult(username, expected, actual);
         assertEquals(expected, actual);
     }
 
@@ -99,54 +138,161 @@ public class ServerDBTest {
         assertEquals(expected, actual);
     }
 
-    /*
     @Test
-    public void testGetTable() {
-        //TODO: make this into an actual test
-        //System.out.println("get table: ");
-        String[][] table = db.getTable();
-
-        for (String[] strings : table) {
-            for (int j = 0; j < table[0].length; j++) {
-                //System.out.print(strings[j] + ", ");
-            }
-            //System.out.println();
-        }
-        //System.out.println();
-        assertTrue(true);
-    }
-
-     */
-
-    @Test
-    public void testAddUser() {
-        Account testAccount = new Account("erwin", "puppyDogs5000", "erwin@example.com");
-        String username = "erwin";
-//        testAccount.setUsername(username);
-//        testAccount.setPassword("puppyDogs5000");
-//        testAccount.setEmail("erwin@example.com");
-
+    public void testEmailExistsTrue() {
+        String email = "testEmailExistsTrue";
+        Account testAccount = new Account("username", "Password1!", email + "@snails.com");
         db.addUser(testAccount);
 
-        boolean actual = db.userExists(username);
-        boolean expected = true;
+        int actual = db.emailExists(email + "@snails.com");
+        int expected = 1;
 
-        //TODO: for security reasons, we probably want to change how the switch to admin occurs
-        //cleanup with admin privileges
-        ServerDBHandler adminDB = new ServerDBHandler("admin", "CQNK2Ih8H8aikg6M");
-        adminDB.removeUser(username);
-        adminDB.closeConnection();
-        PostgreSQLConnect.changeAuth("anon", "anonpassword");
+        db.removeUser("username");
 
-        TestOutputHelper.setResult("testAddUser", expected, actual);
-        assertEquals(actual, expected);
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(email, expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testEmailExistsFalse() {
+        String email = "testEmailExistsFalse";
+
+        int actual = db.emailExists(email);
+        int expected = 0;
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(email, expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetPasswordUserExists() {
+        String password = "testGetPasswordUserExists";
+        Account testAccount = new Account("username", password + "1!", "email@example.com");
+        db.addUser(testAccount);
+
+        String actual = db.getPassword("username");
+        String expected = password + "1!";
+
+        db.removeUser("username");
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(password, expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetPasswordUserDoesntExist() {
+        String username = "testGetPasswordUserDoesntExist";
+
+        String actual = db.getPassword(username);
+        String expected = "";
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(username, expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testChangePasswordUserExists() {
+        String username = "testGetPasswordUserDoesntExist";
+        String oldPassword = "pear";
+        String newPassword = "pineapple";
+
+        Account testAccount = new Account(username, oldPassword, "email@fruits.com");
+        db.addUser(testAccount);
+
+        int actual = db.changePassword(username, newPassword);
+        int expected = 1;
+
+        String pass = db.getPassword(username);
+
+        db.removeUser(username);
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(username, expected, actual);
+        assertEquals(expected, actual);
+        assertEquals(newPassword, pass);
+        assertNotEquals(oldPassword, pass);
+    }
+
+    @Test
+    public void testChangePasswordUserDoesntExist() {
+        String username = "testGetPasswordUserDoesntExist";
+        String newPassword = "pineapple";
+
+        int actual = db.changePassword(username, newPassword);
+        int expected = 0;
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(username, expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testUpdatePasswordUserExists() {
+        String username = "testUpdatePasswordUserExists";
+        String password = "ant";
+
+        Account testAccount = new Account(username, password, "email@ant.com");
+        db.addUser(testAccount);
+
+        int actual = db.updatePassword(username);
+        int expected = 1;
+
+        String pass = db.getPassword(username);
+
+        db.removeUser(username);
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(username, expected, actual);
+        assertEquals(expected, actual);
+        assertEquals("password", pass);
+        assertNotEquals(password, pass);
+    }
+
+    @Test
+    public void testUpdatePasswordUserDoesntExist() {
+        String username = "testUpdatePasswordUserDoesntExist";
+
+        int actual = db.updatePassword(username);
+        int expected = 0;
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(username, expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetProfilePic() {
+        String pp = db.getProfilePic("testuser");
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("getProfilePic", "default", pp);
+        Assert.assertEquals("default", pp);
+    }
+
+    @Test
+    public void testUpdateProfilePic() {
+        db.setProfilePic("testuser", "penguin.png");
+        String pp = db.getProfilePic("testuser");
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("updateProfilePic", "penguin.png", pp);
+        Assert.assertEquals("penguin.png", pp);
     }
 
 
+
+
+
+
+
+    //--------------------- Level table tests ---------------------//
+
     @Test
-    public void testAddLevel() {
-        LevelInfo levelInfo = new LevelInfo("id12adsfg", "reevesLevel", "reeves34");
-        LevelInfo levelInfo2 = new LevelInfo("reeves34_dsfafdsa", "reevesLevel", "reeves34");
+    public void testAddLevel1() {
+        String id = "testAddLevel1";
+        LevelInfo levelInfo = new LevelInfo(id, "title", "testuser");
         //TODO: figure out how to attach tmx, tsx, and pngs to the levelInfos
         //File fTmx = new File(Gdx.files.internal("test2.tmx").path());
         //File fTsx = new File(Gdx.files.internal("test2.tsx").path());
@@ -155,22 +301,68 @@ public class ServerDBTest {
         //levelInfo.setTmx(fTmx);
         //levelInfo.setTsx(fTsx);
         //levelInfo.setPng(fPng);
-        //levelInfo2.setPng(fPng);
-        //levelInfo2.setTmx(fTmx);
-        //levelInfo2.setTsx(fTsx);
-        int ret = db.addLevel(levelInfo);
-        //db.addLevel(levelInfo2);
+        int actual = db.addLevel(levelInfo);
+        int expected = 1;
+
+        LevelInfo levelInfoServer = db.getLevelByID(id);
+        db.removeLevel(id);
+
         TestOutputHelper.clearResult();
-        TestOutputHelper.setResult("testAddLevel", 1, ret);
-        assertEquals(1, ret);
+        TestOutputHelper.setResult(id, expected, actual);
+        assertEquals(expected, actual);
+        assertNotNull(levelInfoServer);
+
     }
 
     @Test
-    public void testRemoveLevel() {
-        int ret = db.removeLevel("id123456789");
+    public void testAddLevel2() {
+        String id = "testAddLevel2";
+        LevelInfo existingLevel = new LevelInfo(id, "titleOriginal", "testuser");
+        db.addLevel(existingLevel);
+
+        LevelInfo levelWithSameID = new LevelInfo(id, "titleNew", "testuser");
+
+        //File fTmx = new File(Gdx.files.internal("test2.tmx").path());
+        //File fTsx = new File(Gdx.files.internal("test2.tsx").path());
+        //File fPng = new File(Gdx.files.internal("test2.png").path());
+
+        //levelInfo.setTmx(fTmx);
+        //levelInfo.setTsx(fTsx);
+        //levelInfo.setPng(fPng);
+        int actual = db.addLevel(levelWithSameID);
+        int expected = 0;
+        LevelInfo levelOnServer = db.getLevelByID(id);
+        db.removeLevel(id);
+
         TestOutputHelper.clearResult();
-        TestOutputHelper.setResult("testRemoveLevel", 1, ret);
-        assertEquals(1, ret);
+        TestOutputHelper.setResult(id, expected, actual);
+        assertEquals(expected, actual);
+        assertEquals(levelOnServer.getTitle(), "titleOriginal");
+    }
+
+    @Test
+    public void testRemoveLevel1() {
+        String id = "testRemoveLevel1";
+        LevelInfo levelInfo = new LevelInfo(id, "title", "testuser");
+        db.addLevel(levelInfo);
+
+        int actual = db.removeLevel(id);
+        int expected = 1;
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(id, expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testRemoveLevel2() {
+        String id = "testRemoveLevel2";
+
+        int actual = db.removeLevel(id);
+        int expected = -1;
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(id, expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -206,21 +398,6 @@ public class ServerDBTest {
     }
 
     @Test
-    public void testGetProfilePic() {
-        String pp = db.getProfilePic("testuser");
-        TestOutputHelper.clearResult();
-        TestOutputHelper.setResult("getProfilePic", "default", pp);
-        Assert.assertEquals("default", pp);
-    }
-
-    @Test
-    public void testUpdateProfilePic() {
-        db.setProfilePic("testuser", "penguin.png");
-        String pp = db.getProfilePic("testuser");
-        TestOutputHelper.clearResult();
-        TestOutputHelper.setResult("updateProfilePic", "penguin.png", pp);
-        Assert.assertEquals("penguin.png", pp);
-    }
     public void testGetLevelRatingsEmpty() {
         String id = "id_noRatings";
         LevelInfo toAdd = new LevelInfo(id, "title", "reeves34");
@@ -271,6 +448,44 @@ public class ServerDBTest {
         TestOutputHelper.clearResult();
         TestOutputHelper.setResult(id, expected, actual);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetLevelAverageRating() {
+        String id = "testGetLevelAverageRating";
+        LevelInfo levelInfo = new LevelInfo(id, "title", "asdf");
+        db.addLevel(levelInfo);
+
+        float sum = 0;
+        Random random = new Random();
+        for (int i = 0; i < 100; i++) {
+            //generate a random number between 0 and 10, then divide by 2 to simulate having a rating out of 5 stars
+            double rating = ((double) random.nextInt(11)) / 2;
+            db.addLevelRating(id, rating);
+            sum += rating;
+        }
+        float expected = sum / 100f;
+        float actual = db.getLevelAverageRating(id);
+        db.removeLevel(id);
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(id, expected, actual);
+        assertEquals(expected, actual, 0);
+    }
+
+    @Test
+    public void testGetLevelAverageRatingNoRatings() {
+        String id = "testGetLevelAverageRatingNoRatings";
+        LevelInfo levelInfo = new LevelInfo(id, "title", "asdf");
+        db.addLevel(levelInfo);
+
+        float actual = db.getLevelAverageRating(id);
+        db.removeLevel(id);
+        float expected = -1;
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(id, expected, actual);
+        assertEquals(expected, actual, 0);
     }
 
 }

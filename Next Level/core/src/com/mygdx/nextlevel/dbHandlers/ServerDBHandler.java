@@ -53,6 +53,9 @@ public class ServerDBHandler {
         }
     }
 
+    /**
+     * Close connection to the server database
+     */
     public void closeConnection() {
         try {
             connection.close();
@@ -63,6 +66,11 @@ public class ServerDBHandler {
     //--------------------- User table functions ---------------------//
 
 
+    /**
+     * Add a user into the server database  so they are able to log in and use the application
+     *
+     * @param account account to add
+     */
     public void addUser(Account account) {
         String sqlQuery = "INSERT INTO api.users (username, password, email) " +
                 "VALUES (?, ?, ?);";
@@ -78,6 +86,11 @@ public class ServerDBHandler {
         }
     }
 
+    /**
+     * Remove a user from the database
+     *
+     * @param username username to remove
+     */
     public void removeUser(String username) {
         String sqlQuery = "DELETE FROM api.users WHERE username = ?;";
 
@@ -91,6 +104,10 @@ public class ServerDBHandler {
         }
     }
 
+    /**
+     * Clear the entire user table
+     * Note: this is not to be called unless you know what you're doing
+     */
     public void clearUserTable() {
         String sqlQuery = "DELETE FROM api.users;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
@@ -100,6 +117,12 @@ public class ServerDBHandler {
         }
     }
 
+    /**
+     * Checks if a user exists in the server database by using the username
+     *
+     * @param username username to check for
+     * @return true if a user exists with that username, false otherwise
+     */
     public boolean userExists(String username) {
         ResultSet resultSet;
         String sqlQuery = "SELECT * FROM api.users WHERE username LIKE ?;";
@@ -119,6 +142,147 @@ public class ServerDBHandler {
         return false;
     }
 
+    /**
+     * Get a user's email address by using their username
+     *
+     * @param user username to search for
+     * @return email address of the user, or an empty string if none found
+     */
+    public String getEmail(String user) {
+        ResultSet resultSet;
+        String result = "";
+        String sqlQuery = "SELECT email FROM api.users WHERE username LIKE ?;";
+        try(PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, user);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                result = resultSet.getString("email");
+            }
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    /**
+     * Check to see if there is a user in the server database with the specified email
+     *
+     * @param email email to search by
+     * @return the number of user's with that email (2+ indicates an error)
+     */
+    public int emailExists(String email) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT * FROM api.users WHERE email LIKE ?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, email);
+            resultSet = statement.executeQuery();
+
+            int count = 0;
+            while (resultSet.next()) {
+                count++;
+            }
+            return count;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * Get a user's password from the server
+     *
+     * @param user username to get the password of
+     * @return password of the user, empty if user doesn't exist
+     */
+    public String getPassword(String user) {
+        ResultSet resultSet;
+        String result = "";
+        String sqlQuery = "SELECT password FROM api.users WHERE username LIKE ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, user);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                result = resultSet.getString("password");
+            }
+            return result;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    /**
+     * Change a user's password
+     *
+     * @param user username to change the password of
+     * @param pass the user's new password
+     * @return 1 on success, failure otherwise
+     */
+    public int changePassword(String user, String pass) {
+        String sqlQuery = "UPDATE api.users SET password = ? WHERE username LIKE ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, pass);
+            statement.setString(2, user);
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * Reset the user's password to 'password'
+     *
+     * @param user the username to reset the password of
+     * @return 1 on success, failure otherwise
+     */
+    public int updatePassword(String user) {
+        String sqlQuery = "UPDATE api.users SET password = 'password' WHERE username LIKE ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, user);
+            return statement.executeUpdate();
+        }   catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public String getProfilePic(String user) {
+        ResultSet resultSet;
+        String result = "";
+        String sqlQuery = "SELECT profilepicture from api.users WHERE user LIKE ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, user);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                result = resultSet.getString("profilepicture");
+            }
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return result;
+        }
+    }
+
+    public void setProfilePic(String user, String picture) {
+        String sqlQuery = "UPDATE api.users SET profilepicture = ? WHERE username LIKE ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, picture);
+            statement.setString(2, user);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Gets a multidimensional array of what the user table looks like in the server database
+     *
+     * @return multidimensional array containing information about the users
+     */
     public String[][] getTable() {
         String[][] table;
         ResultSet resultSet;
@@ -158,109 +322,6 @@ public class ServerDBHandler {
         return null;
     }
 
-    public String getPassword(String user) {
-        ResultSet resultSet;
-        String result = "";
-        String sqlQuery = "SELECT password FROM api.users WHERE username LIKE ?;";
-        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, user);
-            resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                result = resultSet.getString("password");
-            }
-            return result;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-    public String getEmail(String user) {
-        ResultSet resultSet;
-        String result = "";
-        String sqlQuery = "SELECT email FROM api.users WHERE username LIKE ?;";
-        try(PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, user);
-            resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                result = resultSet.getString("email");
-            }
-            return result;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-    public int emailExists(String mail) {
-        ResultSet resultSet;
-        String sqlQuery = "SELECT * FROM api.users WHERE email LIKE ?;";
-
-        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, mail);
-            resultSet = statement.executeQuery();
-
-            int count = 0;
-            while (resultSet.next()) {
-                count++;
-            }
-            return count;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    public void changePassword(String user, String pass) {
-        String sqlQuery = "UPDATE api.users SET password = ? WHERE username LIKE ?;";
-        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, pass);
-            statement.setString(2, user);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updatePassword(String user) {
-        String sqlQuery = "UPDATE api.users SET password = 'password' WHERE username LIKE ?;";
-        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, user);
-            statement.executeUpdate();
-        }   catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String getProfilePic(String user) {
-        ResultSet resultSet;
-        String result = "";
-        String sqlQuery = "SELECT profilepicture from api.users WHERE user LIKE ?;";
-        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, user);
-            resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                result = resultSet.getString("profilepicture");
-            }
-            return result;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return result;
-        }
-    }
-
-    public void setProfilePic(String user, String picture) {
-        String sqlQuery = "UPDATE api.users SET profilepicture = ? WHERE username LIKE ?;";
-        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setString(1, picture);
-            statement.setString(2, user);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 
 
@@ -271,7 +332,7 @@ public class ServerDBHandler {
      * Add a level in the server database
      *
      * @param levelInfo LevelInfo of the item to add
-     * @return 1 on success, 0 of failure
+     * @return 1 on success, 0 on failure
      */
     public int addLevel(LevelInfo levelInfo) {
         String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated) " +
@@ -295,17 +356,24 @@ public class ServerDBHandler {
 
             statement2.setString(1, levelInfo.getId());
             statement2.setString(2, levelInfo.getAuthor());
-            if (statement.executeUpdate() == 0) {
+
+            if (statement.executeUpdate() != 1) {
                 return 0;
             }
 
             return statement2.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return 0;
         }
     }
 
+    /**
+     * Gets all the level ids created by a user
+     *
+     * @param username author to search for
+     * @return Array of the level ids that the user has created
+     */
     public String[] getUsersCreatedLevelsIDs(String username) {
         ResultSet resultSet;
         String sqlQuery = "SELECT levelsuploaded FROM api.users WHERE username LIKE ?;";
@@ -314,17 +382,6 @@ public class ServerDBHandler {
             statement.setString(1, username);
             resultSet = statement.executeQuery();
             resultSet.next();
-
-
-            /*
-            if (!resultSet.next()) {
-                resultSet.close();
-                return new String[]{};
-            }
-            resultSet.close();
-            resultSet = statement.executeQuery();
-            resultSet.next();
-             */
 
             String[] toRet = (String[]) resultSet.getArray("levelsuploaded").getArray();
 
@@ -336,6 +393,12 @@ public class ServerDBHandler {
         }
     }
 
+    /**
+     * Gets all the LevelInfo objects of levels that a user has created
+     *
+     * @param username author to search for
+     * @return ArrayList of LevelInfo objects describing the levels the user has created
+     */
     public ArrayList<LevelInfo> getUsersCreatedLevels(String username) {
         ArrayList<LevelInfo> list = new ArrayList<>();
         for (String levelID: getUsersCreatedLevelsIDs(username)) {
@@ -355,6 +418,10 @@ public class ServerDBHandler {
 
         //get information about the level we will delete
         LevelInfo levelInfo = getLevelByID(id);
+
+        if (levelInfo == null) {
+            return -1;
+        }
 
         String sqlQuery = "DELETE FROM api.levels WHERE levelid = ?;";
         String sqlQuery2 = "UPDATE api.users SET levelsuploaded = array_remove(levelsuploaded, ?) WHERE username=?;";
@@ -444,6 +511,12 @@ public class ServerDBHandler {
         }
     }
 
+    /**
+     * Retrieves a level from the database using it's id
+     *
+     * @param id id of the level to retrieve
+     * @return level with the matching id
+     */
     public LevelInfo getLevelByID(String id) {
         ResultSet resultSet;
 
@@ -497,6 +570,12 @@ public class ServerDBHandler {
         return list;
     }
 
+    /**
+     * Gets all the ratings that a level has
+     *
+     * @param id id of the level to search for
+     * @return list containing all the ratings
+     */
     public ArrayList<Double> getLevelRatings(String id) {
         ResultSet resultSet;
         ArrayList<Double> list = new ArrayList<>();
@@ -520,6 +599,21 @@ public class ServerDBHandler {
         }
     }
 
+    /**
+     * Get the number of people who have rated the level
+     * @param id level id
+     * @return number of people that rated the level
+     */
+    public int getRatingCount(String id) {
+        return getLevelRatings(id).size();
+    }
+
+    /**
+     * Get the average level rating
+     *
+     * @param id level to get average rating
+     * @return average rating, or -1 if there are no ratings on the level
+     */
     public float getLevelAverageRating(String id) {
         ArrayList<Double> ratings = getLevelRatings(id);
         if (ratings == null) {
@@ -584,6 +678,12 @@ public class ServerDBHandler {
         return -1;
     }
 
+    /**
+     * Increase the level's play count by 1 in the server database
+     *
+     * @param id id of the level
+     * @return 1 on success, -1 on failure
+     */
     public int increaseLevelPlayCount(String id) {
         String sqlQuery = "UPDATE api.levels SET playcount = playcount+1 WHERE levelid=?;";
 
