@@ -333,9 +333,15 @@ class LevelSettingsWindow extends VisWindow{
     protected VisTextField nameField;
     protected VisTextField widthField;
     protected VisTextField heightField;
+    protected VisTextField gravityField;
     protected SelectBox<Difficulty> difficultySelectBox;
     protected VisTextButton applyButton;
     protected VisTextButton cancelButton;
+    protected VisCheckBox collectCoinsCheck;
+    protected VisCheckBox beatTimeLimitCheck;
+    protected VisCheckBox killAllEnemiesCheck;
+    protected VisCheckBox killNoEnemiesCheck;
+    protected VisCheckBox keepJewelCheck;
 
     protected Actor previousScrollFocus;
 
@@ -345,8 +351,6 @@ class LevelSettingsWindow extends VisWindow{
         screen.setScrollFocus(this);
 
         this.level = level;
-
-        setSize(500, 500);
         this.centerWindow();
         this.setModal(true);
         setMovable(false);
@@ -356,6 +360,20 @@ class LevelSettingsWindow extends VisWindow{
         widthField.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
         heightField = new VisTextField(Integer.toString(level.height));
         heightField.setTextFieldFilter(new VisTextField.TextFieldFilter.DigitsOnlyFilter());
+        gravityField = new VisTextField(Float.toString(level.gravity));
+        gravityField.setTextFieldFilter(new VisTextField.TextFieldFilter() {
+            @Override
+            public boolean acceptChar(VisTextField textField, char c) {
+                if(c == '-' && textField.getCursorPosition() == 0 && !textField.getText().contains("-"))
+                    return true;
+                else if(c == '.' && !textField.getText().contains("."))
+                    return true;
+                else if (Character.isDigit(c))
+                    return true;
+
+                return false;
+            }
+        });
         difficultySelectBox = new SelectBox<Difficulty>(VisUI.getSkin());
         difficultySelectBox.setItems(Difficulty.values());
         difficultySelectBox.setSelected(level.difficulty);
@@ -374,6 +392,14 @@ class LevelSettingsWindow extends VisWindow{
                 level.difficulty = difficultySelectBox.getSelected();
                 level.resize(width, height);
 
+                level.collectCoins = collectCoinsCheck.isChecked();
+                level.beatTimeLimit = beatTimeLimitCheck.isChecked();
+                level.killAllEnemies = killAllEnemiesCheck.isChecked();
+                level.killNoEnemies = killNoEnemiesCheck.isChecked();
+                level.keepJewel = keepJewelCheck.isChecked();
+
+                level.gravity = Float.parseFloat(gravityField.getText());
+
                 close();
                 stage.setScrollFocus(previousScrollFocus);
             }
@@ -387,7 +413,15 @@ class LevelSettingsWindow extends VisWindow{
             }
         });
 
+        collectCoinsCheck = new VisCheckBox("Collect All Coins", level.collectCoins);
+        beatTimeLimitCheck = new VisCheckBox("Beat Time Limit", level.beatTimeLimit);
+        killAllEnemiesCheck = new VisCheckBox("Kill All Enemies", level.killAllEnemies);
+        killNoEnemiesCheck = new VisCheckBox("Don't Kill Any Enemies", level.killNoEnemies);
+        keepJewelCheck = new VisCheckBox("Keep The Sacred Jewel", level.keepJewel);
+
         setupTable();
+        padTop(40.0f);
+        pack();
     }
 
     protected void setupTable() {
@@ -410,10 +444,28 @@ class LevelSettingsWindow extends VisWindow{
         contentTable.add(heightField).expandX().fillX();
 
         contentTable.row();
+        contentTable.add(new VisLabel("Gravity:    ")).left();
+        contentTable.add(gravityField).expandX().fillX();
+
+        contentTable.row();
         contentTable.add(new VisLabel("Difficulty: ")).left();
         contentTable.add(difficultySelectBox).expandX().fillX();
 
-        this.add(contentTable).expand().fill().colspan(2);
+        contentTable.row();
+        contentTable.add(new VisLabel("Level Completion Criteria:")).left().colspan(2);
+
+        contentTable.row();
+        contentTable.add(collectCoinsCheck).colspan(2).left().padLeft(10.0f);
+        contentTable.row();
+        contentTable.add(beatTimeLimitCheck).colspan(2).left().padLeft(10.0f);
+        contentTable.row();
+        contentTable.add(killAllEnemiesCheck).colspan(2).left().padLeft(10.0f);
+        contentTable.row();
+        contentTable.add(killNoEnemiesCheck).colspan(2).left().padLeft(10.0f);
+        contentTable.row();
+        contentTable.add(keepJewelCheck).colspan(2).left().padLeft(10.0f);
+
+        this.add(contentTable).expand().fill().colspan(2).pad(10.0f);
         this.row();
         this.add(applyButton);
         this.add(cancelButton);

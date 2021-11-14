@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.kotcrab.vis.ui.widget.VisCheckBox;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 
@@ -24,7 +25,13 @@ public class EditorLevel {
     public String           name;
     public String           saveName;
     public Difficulty       difficulty = Difficulty.NONE;
+    public float            gravity = -9.81f;
     public ArrayList<Tag>   tags;
+    public boolean collectCoins;
+    public boolean beatTimeLimit;
+    public boolean killAllEnemies;
+    public boolean killNoEnemies;
+    public boolean keepJewel;
 
     public static int NONE = -1;
 
