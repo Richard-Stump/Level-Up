@@ -285,7 +285,7 @@ public class ServerDBHandler {
             statement.setString(2, levelInfo.getTitle());
             statement.setString(3, levelInfo.getAuthor());
             statement.setArray(4, connection.createArrayOf("text", levelInfo.getTags().toArray()));
-            statement.setFloat(5, levelInfo.getBestTime());
+            statement.setDouble(5, levelInfo.getBestTime());
             statement.setString(6, levelInfo.getAuthor());
             statement.setDate(7, levelInfo.getDateCreated());
             //need to get
@@ -552,5 +552,36 @@ public class ServerDBHandler {
         }
 
         return sum / ratings.size();
+    }
+
+    public double getRecordTime(String id) {
+        ResultSet resultSet;
+        double ret = -1.0;
+
+        String sqlQuery = "SELECT besttime FROM api.levels WHERE levelid=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, id);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                ret = resultSet.getDouble("besttime");
+            }
+            return ret;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ret;
+        }
+    }
+
+    public void updateRecordTime(String id, double time) {
+        String sqlQuery = "UPDATE api.levels SET besttime = ? WHERE levelid = ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setDouble(1, time);
+            statement.setString(2, id);
+            statement.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

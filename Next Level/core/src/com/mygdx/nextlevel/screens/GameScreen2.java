@@ -202,6 +202,9 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Add all despawnedActors into the spawnQueue (Blocks and Enemies)
         for(Actor2 actor : despawnedActors) {
+//            if (actor.getClass() == Jewel.class) {
+//                System.out.println("Respawning jewel");
+//            }
             queueActorSpawn(actor.getX(), actor.getY(), actor.getClass());
         }
 
@@ -252,8 +255,15 @@ public class GameScreen2 extends Timer implements Screen {
                 itemsList.remove(o);
             } else if (o instanceof Block2 && ((Block2) o).isSpawnItem()) {
                 blockList.add(o);
-            } else {
+            }
+//            else if (o instanceof Jewel) {
+//                System.out.println("Spawn jewel");
+//            }
+            else {
                 despawnedActors.add(o);
+                if (o instanceof Jewel) {
+                    System.out.println("Jewel added in despawned actors");
+                }
             }
         }
     }
@@ -347,7 +357,11 @@ public class GameScreen2 extends Timer implements Screen {
                     actors.add((Block2) c.newInstance(this, i.x +0.5f, i.y + 0.5f, false, true));
                 } else if (i.type.equals(Coin.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, boolean.class);
-                    actors.add((Coin) c.newInstance(this, i.x, i.y, true));
+                    actors.add((Coin) c.newInstance(this, i.x+0.25f, i.y+0.25f, false));
+                } else if (i.type.equals(Jewel.class)) {
+                    System.out.println("Jewel in spawn actors");
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
+                    actors.add((Jewel) c.newInstance(this, i.x, i.y));
                 }
                 else {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);

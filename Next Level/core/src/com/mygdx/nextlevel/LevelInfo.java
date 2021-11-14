@@ -13,7 +13,7 @@ public class LevelInfo {
     private String title;
     private String author;
     private List<Tag> tags;
-    private float bestTime;
+    private double bestTime;
     private float rating;
     private int difficulty;
     private int playCount;
@@ -33,7 +33,7 @@ public class LevelInfo {
         }
         this.id = id;
         this.tags = new ArrayList<>();
-        this.bestTime = 0;
+        this.bestTime = 10000.00;
         this.rating = 0;
         this.difficulty = Difficulty.NONE.ordinal();
         this.playCount = 0;
@@ -123,7 +123,7 @@ public class LevelInfo {
     /*
     Getters:
      */
-    public float getBestTime() {
+    public double getBestTime() {
         return bestTime;
     }
 

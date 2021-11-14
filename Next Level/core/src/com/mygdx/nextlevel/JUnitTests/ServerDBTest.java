@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ServerDBTest {
     private static ServerDBHandler db;
+    private static final double DELTA = 1e-15;
 
     @BeforeClass
     public static void populateDatabase() {
@@ -51,12 +52,18 @@ public class ServerDBTest {
     @Before
     public void establishConnection() {
         db = new ServerDBHandler();
+        LevelInfo info = new LevelInfo("idtestgetrecordtime", "TestGetRecordTime", "jchen");
+        Account a = new Account("testuser", "password", "testuser@example.com", "default");
+//        a.setProfilePic("default");
+        db.addLevel(info);
+        db.addUser(a);
     }
 
     @After
     public void cleanup() {
+        db.removeLevel("idtestgetrecordtime");
+        db.removeUser("testuser");
         db.closeConnection();
-
         TestOutputHelper.displayResult();
         TestOutputHelper.clearResult();
     }
@@ -164,6 +171,55 @@ public class ServerDBTest {
         TestOutputHelper.clearResult();
         TestOutputHelper.setResult("testRemoveLevel", 1, ret);
         assertEquals(1, ret);
+    }
+
+    @Test
+    public void testGetRecordTime() {
+        double time = db.getRecordTime("idtestgetrecordtime");
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("testGetRecordTime", 10000.00, time);
+        Assert.assertEquals(10000.00, time, DELTA);
+    }
+
+    @Test
+    public void testUpdateRecordTime() {
+        double time = db.getRecordTime("idtestgetrecordtime");
+        double newTime = 13.57;
+        if (time > newTime) {
+            db.updateRecordTime("idtestgetrecordtime", newTime);
+        }
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("updateRecordTime", 13.57, db.getRecordTime("idtestgetrecordtime"));
+        Assert.assertEquals(13.57, db.getRecordTime("idtestgetrecordtime"), DELTA);
+    }
+
+    @Test
+    public void testUpdateRecordTime2() {
+        double time = db.getRecordTime("idtestgetrecordtime");
+        double newTime = 100001.00;
+        if (time > newTime) {
+            db.updateRecordTime("idtestgetrecordtime", newTime);
+        }
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("updateRecordTime2", 10000.00, db.getRecordTime("idtestgetrecordtime"));
+        Assert.assertEquals(10000.00, db.getRecordTime("idtestgetrecordtime"), DELTA);
+    }
+
+    @Test
+    public void testGetProfilePic() {
+        String pp = db.getProfilePic("testuser");
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("getProfilePic", "default", pp);
+        Assert.assertEquals("default", pp);
+    }
+
+    @Test
+    public void testUpdateProfilePic() {
+        db.setProfilePic("testuser", "penguin.png");
+        String pp = db.getProfilePic("testuser");
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("updateProfilePic", "penguin.png", pp);
+        Assert.assertEquals("penguin.png", pp);
     }
 
 }

@@ -75,7 +75,7 @@ public class LevelsDBController {
             statement.setString(1, levelInfo.getId());
             statement.setString(2, levelInfo.getTitle());
             statement.setString(3, levelInfo.getAuthor());
-            statement.setFloat(4, levelInfo.getBestTime());
+            statement.setDouble(4, levelInfo.getBestTime());
             statement.setFloat(5, levelInfo.getRating());
             statement.setInt(6, levelInfo.getDifficulty());
             statement.setInt(7, levelInfo.getPlayCount());
@@ -149,7 +149,7 @@ public class LevelsDBController {
                 "WHERE id = ?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setFloat(1, levelInfo.getBestTime());
+            statement.setDouble(1, levelInfo.getBestTime());
             statement.setFloat(2, levelInfo.getRating());
             statement.setInt(3, levelInfo.getPlayCount());
             statement.setInt(4, levelInfo.getDifficulty());
