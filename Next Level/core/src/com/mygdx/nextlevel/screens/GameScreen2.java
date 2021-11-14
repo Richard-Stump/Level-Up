@@ -160,7 +160,7 @@ public class GameScreen2 extends Timer implements Screen {
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
         player = new Player2(this, 1.0f, 1.0f);
 //        actors.add(new Enemy2(this,2, 2));
-        actors.add(new Enemy2(this, 8, 2));
+        actors.add(new Enemy2(this, 8, 2, Enemy2.Action.JUMP));
         actors.add(new Block2(this, 7, 4, true, ItemIndex.ALL.value, false));
         actors.add(new Block2(this, 10, 4, true, ItemIndex.SLOW.value, false));
         actors.add(new Block2(this, 13, 4, true, ItemIndex.SPEED.value, false));
@@ -359,7 +359,7 @@ public class GameScreen2 extends Timer implements Screen {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, boolean.class);
                     actors.add((Coin) c.newInstance(this, i.x+0.25f, i.y+0.25f, false));
                 } else if (i.type.equals(Jewel.class)) {
-                    System.out.println("Jewel in spawn actors");
+//                    System.out.println("Jewel in spawn actors");
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
                     actors.add((Jewel) c.newInstance(this, i.x, i.y));
                 }

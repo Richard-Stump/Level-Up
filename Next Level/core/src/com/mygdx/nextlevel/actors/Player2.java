@@ -28,6 +28,7 @@ public class Player2 extends Actor2 {
     private boolean powerUp; //Check if player has powerup
     private boolean invulernable = false;
     private float time = 2f;
+    private boolean launch = false;
 
     //Item Booleans
     private boolean mushroomItem;
@@ -152,6 +153,10 @@ public class Player2 extends Actor2 {
 
             drawTexture = false;
         }
+
+//        if (launch) {
+//            BoxCollider jewelCollider = new BoxCollider()
+//        }
 
         if (slowItem) {
             slowTime+= delta;
@@ -288,9 +293,15 @@ public class Player2 extends Actor2 {
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         //Check if player collides with enemy
+        Vector2 pos = boxCollider.getPosition();
         if (other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) && invulernable) {
             //do nothing
         } else if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) && !starItem && !invulernable) {
+            if (jewel) {
+                jewel = false;
+                screen.queueActorSpawn(pos.x, pos.y + 1.0f, Jewel.class);
+                launch = true;
+            }
             if (powerUp) {
                 powerUp = false;
                 invulernable = true;
@@ -477,6 +488,13 @@ public class Player2 extends Actor2 {
         this.record = time;
     }
 
+    public boolean getLaunch() {
+        return this.launch;
+    }
+
+    public void setLaunch(boolean launch) {
+        this.launch = launch;
+    }
 
     public int getEnemiesKilled() {
         return this.enemiesKilled;
