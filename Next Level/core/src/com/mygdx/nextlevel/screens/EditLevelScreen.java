@@ -18,6 +18,7 @@ import com.mygdx.nextlevel.screens.editor.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /* TODO: Make it so that the object TabbedPane always aligns to the left.
@@ -98,6 +99,7 @@ public class EditLevelScreen implements Screen {
         // TODO: Figure out how to use the same skin as the main menu
         if(!VisUI.isLoaded())
             VisUI.load(VisUI.SkinScale.X2);
+
     }
 
     public EditLevelScreen(NextLevel game, int mapWidth, int mapHeight) {
@@ -328,7 +330,26 @@ class MenuWindow extends VisWindow {
     }
 }
 
-class LevelSettingsWindow extends VisWindow{
+class LevelSettingsWindow extends VisWindow {
+    protected PropertyEditTable propertyTable;
+
+    public LevelSettingsWindow(EditLevelScreen screen, final EditorLevel level) {
+        super("Level Settings");
+
+        screen.setScrollFocus(this);
+        centerWindow();
+        setModal(true);
+        setMovable(false);
+
+        propertyTable = new PropertyEditTable(level);
+        add(propertyTable);
+
+        padTop(40.0f);
+        pack();
+    }
+}
+
+class LevelSettingsWindow2 extends VisWindow{
     protected EditorLevel level;
     protected VisTextField nameField;
     protected VisTextField widthField;
@@ -345,7 +366,7 @@ class LevelSettingsWindow extends VisWindow{
 
     protected Actor previousScrollFocus;
 
-    public LevelSettingsWindow(EditLevelScreen screen, final EditorLevel level) {
+    public LevelSettingsWindow2(EditLevelScreen screen, final EditorLevel level) {
         super("Level Settings");
 
         screen.setScrollFocus(this);
