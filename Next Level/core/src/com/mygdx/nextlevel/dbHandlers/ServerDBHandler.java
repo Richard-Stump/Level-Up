@@ -448,6 +448,26 @@ public class ServerDBHandler {
      *
      * @return a list of LevelInfo objects that are sorted alphabetically by title
      */
+    public List<LevelInfo> sortPublicByTitle() {
+        ResultSet resultSet;
+
+        String sqlQuery = "SELECT * FROM api.levels ORDER BY title ASC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet, false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     *  This function sorts the table alphabetically
+     *
+     * @return a list of LevelInfo objects that are sorted alphabetically by title
+     */
     public List<LevelInfo> sortAllByTitle() {
         ResultSet resultSet;
 
@@ -456,7 +476,7 @@ public class ServerDBHandler {
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             resultSet = statement.executeQuery();
 
-            return resultAsList(resultSet);
+            return resultAsList(resultSet, true);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -467,20 +487,22 @@ public class ServerDBHandler {
      * Searches a table for a LevelInfo object by the author
      *
      * @param author The string to search for in the author's username
+     * @param includePrivate determines whether levels listed as private are searched for
      * @return list of LevelInfo objects that match the search
      */
-    public List<LevelInfo> searchByAuthor(String author) {
-        return searchByString("levels", "author", author);
+    public List<LevelInfo> searchByAuthor(String author, boolean includePrivate) {
+        return searchByString("levels", "author", author, includePrivate);
     }
 
     /**
      * Searches a table for a LevelInfo object by the title
      *
      * @param title The string to search for in the title
+     * @param includePrivate determines whether levels listed as private are searched for
      * @return list of LevelInfo objects that match the search
      */
-    public List<LevelInfo> searchByTitle(String title) {
-        return searchByString("levels", "title", title);
+    public List<LevelInfo> searchByTitle(String title, boolean includePrivate) {
+        return searchByString("levels", "title", title, includePrivate);
     }
 
     /**
@@ -489,9 +511,10 @@ public class ServerDBHandler {
      *
      * @param column the column to search in the table
      * @param value The value to search for
+     * @param includePrivate determines whether levels listed as private are searched for
      * @return list of LevelInfo objects that match the search
      */
-    private List<LevelInfo> searchByString(String table, String column, String value) {
+    private List<LevelInfo> searchByString(String table, String column, String value, boolean includePrivate) {
         ResultSet resultSet;
         String sqlQuery = "SELECT * FROM api." + table +
                 " WHERE " + column + " LIKE ?" +
@@ -504,7 +527,7 @@ public class ServerDBHandler {
             //execute the statement
             resultSet = statement.executeQuery();
 
-            return resultAsList(resultSet);
+            return resultAsList(resultSet, includePrivate);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -526,7 +549,7 @@ public class ServerDBHandler {
             statement.setString(1, id);
             resultSet = statement.executeQuery();
 
-            List<LevelInfo> list = resultAsList(resultSet);
+            List<LevelInfo> list = resultAsList(resultSet, true);
             return list.get(0);
         } catch (Exception e) {
             //e.printStackTrace();
@@ -538,10 +561,11 @@ public class ServerDBHandler {
      * Takes a ResultSet and makes a List of LevelInfo's out of it
      *
      * @param resultSet raw resultset
+     * @param includePrivate determines whether levels listed as private are searched for
      * @return a list of LevelInfo objects that match the search
      * @throws SQLException if there's an SQL exception
      */
-    public List<LevelInfo> resultAsList(ResultSet resultSet) throws SQLException {
+    public List<LevelInfo> resultAsList(ResultSet resultSet, boolean includePrivate) throws SQLException {
         List<LevelInfo> list = new ArrayList<>();
 
         //cycle through results and add it to the list
@@ -555,6 +579,7 @@ public class ServerDBHandler {
             levelInfo.setBestTime(resultSet.getFloat("besttime"));
             levelInfo.setDateDownloaded(resultSet.getDate("datecreated"));
             levelInfo.setDateCreated(resultSet.getDate("datecreated"));
+            levelInfo.setPublic(resultSet.getBoolean("public"));
 
             ArrayList<Tag> tags = new ArrayList<>();
             Array a = resultSet.getArray("tags");
@@ -565,7 +590,13 @@ public class ServerDBHandler {
             }
             levelInfo.setTags(tags);
 
-            list.add(levelInfo);
+            if (levelInfo.isPublic()) {
+                list.add(levelInfo);
+            } else {
+                if (includePrivate) {
+                    list.add(levelInfo);
+                }
+            }
         }
         return list;
     }

@@ -10,7 +10,11 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.viewport.*;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
+import com.mygdx.nextlevel.Account;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.screens.editor.*;
 //import jdk.internal.org.jline.reader.Editor;
@@ -528,6 +532,19 @@ class SaveAsDialog extends VisWindow {
                 try {
                     finalLevel.exportTo(name);
                     finalLevel.saveName = name;
+
+                    //save to created database (and publish)
+                    /*
+                    //TODO: save the tmx file in the database
+                    CreatedLevelsDB dbCreated = new CreatedLevelsDB();
+                    ServerDBHandler dbServer = new ServerDBHandler();
+                    String currUser = LoginScreen.getCurAcc();
+
+                    LevelInfo newLevel = new LevelInfo(dbCreated.generateUniqueID(currUser), name.substring(0, name.length()-4), currUser);
+                    File fTmx = new File(name);
+                    newLevel.setTmx(fTmx);
+                     */
+
                 } catch (FileNotFoundException e) {
                     stage.addActor(new MessageDialog("Could not open \"" + name + "\" to save file"));
                 }

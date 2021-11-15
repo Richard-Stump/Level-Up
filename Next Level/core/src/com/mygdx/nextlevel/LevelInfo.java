@@ -22,6 +22,7 @@ public class LevelInfo {
     private File tmx;
     private File tsx;
     private File png;
+    private boolean isPublic;
 
     /**
      * Constructor
@@ -40,6 +41,7 @@ public class LevelInfo {
         this.tmx = null;
         this.tsx = null;
         this.png = null;
+        isPublic = false;
     }
 
     /**
@@ -175,6 +177,10 @@ public class LevelInfo {
         return png;
     }
 
+    public boolean isPublic() {
+        return isPublic;
+    }
+
     /*
     Setters:
      */
@@ -225,5 +231,9 @@ public class LevelInfo {
 
     public void setPng(File png) {
         this.png = png;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 }

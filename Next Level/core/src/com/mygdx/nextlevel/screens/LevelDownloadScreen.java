@@ -137,7 +137,7 @@ public class LevelDownloadScreen implements Screen {
         mainTable.row();
 
         //set up level information section
-        Table infoTable = getLevelTable(new ArrayList<>(dbServer.sortAllByTitle()));
+        Table infoTable = getLevelTable(new ArrayList<>(dbServer.sortPublicByTitle()));
         levelVerticalGroup = new VerticalGroup();
         levelVerticalGroup.addActor(infoTable);
 
@@ -358,12 +358,12 @@ public class LevelDownloadScreen implements Screen {
                 //search all levels and make a list that contains this string in the title or author:
                 ArrayList<LevelInfo> ongoingList;
                 if (!searchBar.getText().equals("")) {
-                    ArrayList<LevelInfo> listTitles = new ArrayList<>(dbServer.searchByTitle(searchBar.getText()));
-                    ArrayList<LevelInfo> listAuthors = new ArrayList<>(dbServer.searchByAuthor(searchBar.getText()));
+                    ArrayList<LevelInfo> listTitles = new ArrayList<>(dbServer.searchByTitle(searchBar.getText(), false));
+                    ArrayList<LevelInfo> listAuthors = new ArrayList<>(dbServer.searchByAuthor(searchBar.getText(), false));
 
                     ongoingList = new ArrayList<>(dbDownloaded.combineLists(listTitles, listAuthors));
                 } else {
-                    ongoingList = new ArrayList<>(dbServer.sortAllByTitle());
+                    ongoingList = new ArrayList<>(dbServer.sortPublicByTitle());
                 }
                 System.out.println("after searching titles and authors: " + ongoingList.size());
 

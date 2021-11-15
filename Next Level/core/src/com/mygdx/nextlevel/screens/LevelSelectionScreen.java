@@ -36,7 +36,6 @@ public class LevelSelectionScreen implements Screen {
     private OrthographicCamera camera;
     private Viewport viewport;
     private Stage stage;
-    private final String titleText = "Level Select";
     private DownloadedLevelsDB dbDownloaded;
     private CreatedLevelsDB dbCreated;
 
