@@ -9,10 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.nextlevel.NextLevel;
-import com.mygdx.nextlevel.screens.ChangePasswordScreen;
-import com.mygdx.nextlevel.screens.ForgetPasswordScreen;
-import com.mygdx.nextlevel.screens.LoginScreen;
-import com.mygdx.nextlevel.screens.RegisterScreen;
+import com.mygdx.nextlevel.screens.*;
 
 public class ErrorDialog {
 
@@ -56,6 +53,9 @@ public class ErrorDialog {
                 System.out.println("Option: " + object);
                 if ((Boolean) object) {
                     switch (nextScreen) {
+                        case("MainMenuScreen"):
+                            game.setScreen(new MainMenuScreen(game));
+                            break;
                         case("RegisterScreen"):
                             game.setScreen(new RegisterScreen(game));
                             break;
