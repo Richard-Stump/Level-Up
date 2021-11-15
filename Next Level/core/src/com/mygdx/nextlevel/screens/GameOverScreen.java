@@ -31,7 +31,9 @@ public class GameOverScreen implements Screen {
     private NextLevel game;
     private Hud2 hud;
 
-    public Label title;
+    public String title;
+
+    public Label titleLabel;
     public Label scoreLabel;
     public Label timeLabel;
     public Label finishConditionLabel;
@@ -44,7 +46,7 @@ public class GameOverScreen implements Screen {
     public static int labelBottomPadding = 20;
     public static int buttonWidth = 190;
 
-    public GameOverScreen (NextLevel game, Hud2 hud2) {
+    public GameOverScreen (NextLevel game, Hud2 hud2, String title) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
@@ -59,6 +61,7 @@ public class GameOverScreen implements Screen {
         stage = new Stage(viewport, batch);
         this.game = game;
         this.hud = hud2;
+        this.title = title;
     }
 
     @Override
@@ -70,7 +73,7 @@ public class GameOverScreen implements Screen {
         Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
         //Label.LabelStyle textStyle = skin.get("subtitle", Label.LabelStyle.class);
 
-        title = new Label("Game Over...", titleStyle);
+        titleLabel = new Label(title, titleStyle);
         scoreLabel = new Label("Score : " + hud.getScore(), titleStyle);
         //scoreLabel.scaleBy(.9f);
         timeLabel = new Label("Time Remaining : " + hud.getTime(), titleStyle);
