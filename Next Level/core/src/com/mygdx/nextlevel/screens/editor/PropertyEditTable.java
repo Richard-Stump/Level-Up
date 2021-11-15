@@ -6,10 +6,9 @@
 
 package com.mygdx.nextlevel.screens.editor;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisTextField;
+import com.kotcrab.vis.ui.widget.*;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class PropertyEditTable extends VisTable {
     class EditProperty {
         public String name;
         public Field field;
-        public Widget widget;
+        public Actor widget;
     }
 
     /**
@@ -45,14 +44,14 @@ public class PropertyEditTable extends VisTable {
     }
 
     protected ArrayList<Group> groups;
-    protected Class<?> resultClass;
+    protected Object object;
 
     /**
      * Initialize the table.
      * @param object The object to examine in the property table.
      */
     public PropertyEditTable(Object object) {
-        resultClass = object.getClass();
+        this.object = object;
 
         try {
             setupLists(object.getClass(), object);
@@ -71,18 +70,38 @@ public class PropertyEditTable extends VisTable {
         top();
 
         for(Group group : groups) {
+            VisTable groupTable = new VisTable();
+            groupTable.top();
+
             float indent = 0.0f;
 
             if(!group.name.equals("__DEFAULT__")) {
-                row();
-                add(new VisLabel(group.name)).colspan(2).left();
+                groupTable.row();
+                groupTable.add(new VisLabel(group.name)).colspan(2).left();
                 indent = 40.0f;
             }
 
             for(EditProperty property : group.properties) {
-                row();
-                add(new VisLabel(property.name + ":")).left().padLeft(indent);
-                add(property.widget).expandX().fillX();
+                groupTable.row();
+                groupTable.add(new VisLabel(property.name + ": ")).left().padLeft(indent);
+                groupTable.add(property.widget).expandX().fillX();
+            }
+
+            add(groupTable).expandX().fillX().pad(10.0f);
+            row();
+        }
+    }
+
+    public void updateObjectProperties() {
+        for(Group group : groups) {
+            for(EditProperty property : group.properties) {
+                Field field = property.field;
+
+                try {
+                    field.set(object, getPropertyValue(property));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -130,6 +149,12 @@ public class PropertyEditTable extends VisTable {
         }
     }
 
+    //====================================================================================
+    //                                     WARNING:
+    // Long if-else statement chains ahead. This is the only Way I could figure out how to
+    // use different widgets types for the different property types.
+    //====================================================================================
+
     /**
      * Creates a widget for the editing of the specified field in the given object. Whatever editing
      * widget is created, the editor portion is initialized to have a value the same as in the passed
@@ -140,7 +165,7 @@ public class PropertyEditTable extends VisTable {
      * @return          An editing widget for the passed field
      * @throws IllegalAccessException
      */
-    protected Widget getWidgetForField(Field field, Object object) throws IllegalAccessException {
+    protected Actor getWidgetForField(Field field, Object object) throws IllegalAccessException {
         Class fieldType = field.getType();
         Object value = field.get(object);
 
@@ -152,12 +177,77 @@ public class PropertyEditTable extends VisTable {
             return widget;
         }
         else if(fieldType.equals(Float.TYPE)) {
+            VisTextField widget = new VisTextField(value.toString());
+            widget.setTextFieldFilter(new VisTextField.TextFieldFilter() {
+                @Override
+                public boolean acceptChar(VisTextField textField, char c) {
+                    if(c == '-' && textField.getCursorPosition() == 0 && !textField.getText().contains("-"))
+                        return true;
+                    else if(c == '.' && !textField.getText().contains("."))
+                        return true;
+                    else if (Character.isDigit(c))
+                        return true;
 
+                    return false;
+                }
+            });
+            return widget;
         }
         else if(fieldType.equals(Boolean.TYPE)) {
+            boolean valueBool = (boolean)value;
+            VisCheckBox widget = new VisCheckBox( "", valueBool);
+            return widget;
+        }
+        else if(fieldType.equals(String.class)) {
+            VisTextField widget = new VisTextField((String)value);
+            return widget;
+        }
+        else if (fieldType.isEnum()) {
+            Object[] values = fieldType.getEnumConstants();
 
+            VisSelectBox widget = new VisSelectBox();
+            widget.setItems(values);
+            widget.setSelected(value);
+
+            return widget;
         }
 
         return new Widget();
     }
+
+    /**
+     * Gets the value for the specified property. This is used to update properties of
+     * the object passed to this class when wanted.
+     *
+     * @param property The property to retrieve the value of
+     * @return An object containing the value of the specified property.
+     */
+    protected Object getPropertyValue(EditProperty property) {
+        Field field = property.field;
+        Class fieldType = property.field.getType();
+
+        if(fieldType.equals(Integer.TYPE)) {
+            VisTextField widget = (VisTextField)property.widget;
+            return Integer.parseInt(widget.getText());
+        }
+        else if(fieldType.equals(Float.TYPE)) {
+            VisTextField widget = (VisTextField)property.widget;
+            return Float.parseFloat(widget.getText());
+        }
+        else if(fieldType.equals(Boolean.TYPE)) {
+            VisCheckBox widget = (VisCheckBox)property.widget;
+            return widget.isChecked();
+        }
+        else if(fieldType.equals(String.class)) {
+            VisTextField widget = (VisTextField)property.widget;
+            return widget.getText();
+        }
+        else if(fieldType.isEnum()) {
+            VisSelectBox widget = (VisSelectBox)property.widget;
+            return widget.getSelected();
+        }
+
+        throw new RuntimeException("Invalid Property Type. None Returned");
+    }
+
 }
