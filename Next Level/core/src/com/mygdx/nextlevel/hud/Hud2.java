@@ -33,7 +33,7 @@ public class Hud2 {
 
     public Integer worldTimer;
     public float time;
-    private Integer score;
+    public Integer score;
 
     Label countdownLabel;
     Label scoreLabel;
@@ -172,5 +172,13 @@ public class Hud2 {
         } else {
             itemImg.setDrawable(new TextureRegionDrawable(new Texture("x.png")));
         }
+    }
+
+    public Integer getTime() {
+        return worldTimer;
+    }
+
+    public Integer getScore() {
+        return score;
     }
 }

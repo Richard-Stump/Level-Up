@@ -118,7 +118,8 @@ public class LevelSelectionScreen implements Screen {
         });
 
         //screen title
-        Label levelSelectLabel = new Label("Select Level", skin);
+        Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
+        Label levelSelectLabel = new Label("Select Level", titleStyle);
 
         //current user overview
         //HorizontalGroup userInfo = new HorizontalGroup();
@@ -134,9 +135,9 @@ public class LevelSelectionScreen implements Screen {
             }
         });
 
-        mainTable.add(backButton).height(labelHeight +10);
-        mainTable.add(levelSelectLabel).expandX().left().padLeft(5);
-        mainTable.add(buttonDownloadLevels).width(200);
+        mainTable.add(backButton).height(labelHeight +10).padTop(10);
+        mainTable.add(levelSelectLabel).expandX().left().padLeft(5).padTop(10);
+        mainTable.add(buttonDownloadLevels).width(200).padTop(10);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
 

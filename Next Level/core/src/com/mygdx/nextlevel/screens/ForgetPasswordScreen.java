@@ -77,7 +77,9 @@ public class ForgetPasswordScreen extends AccountList implements Screen {
 
         //table.setDebug(true);
 
-        Label title = new Label("Next Level", skin);
+        Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
+
+        Label title = new Label("Next Level", titleStyle);
         Label forgotPassText = new Label("Forgot Password", skin);
 
         //textfield

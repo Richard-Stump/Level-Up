@@ -30,7 +30,7 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
 
     //player information
     public String username;
-    public Image profilePic;
+    public String profilePic;
 
     //static vars
     public static int bottomPadding = 20;
@@ -53,8 +53,7 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
 
         stage = new Stage(viewport, batch);
         this.game = game;
-        //this.username = MainMenuScreen.curAcc;
-        this.username = "michelle";
+        this.username = LoginScreen.getCurAcc();
     }
 
     @Override
@@ -65,12 +64,17 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
 
         Table mainTable = new Table();
 
-        //TODO: set up format for profile menu
-        Label title = new Label("User Settings", skin);
+        Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
 
+        Label title = new Label("User Settings", titleStyle);
         TextButton backButton = new TextButton("Back", skin);
 
         Image playerPic = new Image(new Texture(Gdx.files.internal("mario.jpeg")));
+        //TODO: database crashes, string is not being saved.
+        profilePic = db.getProfilePic(username);
+//        Image playerPic = new Image(new Texture(Gdx.files.internal(profilePic)));
+
+        System.out.println("current pic: " + profilePic);
 
         //playerPic.scaleBy(3f);
 
@@ -144,8 +148,8 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
 
         //adding to main table
         //mainTable.setDebug(true);
-        mainTable.add(backButton).left().padLeft(20).padTop(15);
-        mainTable.add(title).padTop(15).left().padLeft(5);
+        mainTable.add(backButton).left().padLeft(15).padTop(15).width(70);
+        mainTable.add(title).padTop(15).left().padLeft(10);
         //mainTable.add(headerTable).padTop(15).colspan(2).expandX();
         mainTable.row();
         mainTable.add(new Label("", skin));

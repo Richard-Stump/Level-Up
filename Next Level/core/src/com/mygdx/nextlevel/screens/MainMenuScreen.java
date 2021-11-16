@@ -57,7 +57,7 @@ public class MainMenuScreen extends LoginScreen implements Screen {
 
         stage = new Stage(viewport, batch);
         this.game = game;
-        this.username = MainMenuScreen.curAcc;
+        this.username = LoginScreen.getCurAcc();
     }
 
 
@@ -85,33 +85,37 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         TextButton tutorialButton = new TextButton("Tutorial", skin);
         TextButton logoutButton = new TextButton("Logout", skin);
         TextButton exitButton = new TextButton("Exit", skin);
-        TextButton changePassButton = new TextButton("Change Password", skin);
+        //TextButton changePassButton = new TextButton("Change Password", skin);
 
-        buttonTable.add(playButton).colspan(2).width(buttonWidth * 2);
+        buttonTable.add(playButton).colspan(2).width(buttonWidth * 2 + 5).padBottom(10);
         buttonTable.row();
-        buttonTable.add(createLevelButton).width(buttonWidth);
-        buttonTable.add(selectLevelButton).width(buttonWidth);
+        buttonTable.add(createLevelButton).width(buttonWidth).padBottom(10).padRight(5);
+        buttonTable.add(selectLevelButton).width(buttonWidth).padBottom(10);
         buttonTable.row();
-        buttonTable.add(tutorialButton).width(buttonWidth);
-        buttonTable.add(changePassButton).width(buttonWidth);
+        buttonTable.add(tutorialButton).width(buttonWidth * 2 + 5).colspan(2).padBottom(10);
+        //buttonTable.add(changePassButton).width(buttonWidth);
         buttonTable.row();
-        buttonTable.add(logoutButton).width(buttonWidth);
-        buttonTable.add(exitButton).width(buttonWidth);
+        buttonTable.add(logoutButton).width(buttonWidth).padBottom(10).padRight(5);
+        buttonTable.add(exitButton).width(buttonWidth).padBottom(10);
+
+        Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
 
         //Add buttons to table
-        Label titleLabel = new Label("Next Level", skin);
-        Label welcomeLabel = new Label("Welcome back!", skin);
+        Label titleLabel = new Label("Next Level", titleStyle);
+        Label welcomeLabel = new Label("Welcome back, " + username + "!", skin);
 
         //use player username
         Label usernameLabel = new Label(username, skin);
         //use player profile pic
-        Image playerPic = new Image(new Texture(Gdx.files.internal("mario.jpeg")));
-        playerPic.scaleBy(-.9f);
-//        db.setProfilePic(username, "userIcon.png");
+
+        db.setProfilePic(username, "userIcon.png");
 //        profilePicture = db.getProfilePic(username);
 //        System.out.println(profilePicture);
 //        Image playerPic = new Image(new Texture(Gdx.files.internal(profilePicture)));
 //        playerPic.setScaling(Scaling.fit);
+
+        Image playerPic = new Image(new Texture(Gdx.files.internal("mario.jpeg")));
+        playerPic.scaleBy(-.9f);
 
         //HorizontalGroup userGroup = new HorizontalGroup();
         //usernameLabel.setPosition(rightMargin - 70, topMargin);
@@ -166,19 +170,19 @@ public class MainMenuScreen extends LoginScreen implements Screen {
             }
         });
         tutorialButton.addListener(new HoverListener());
-        changePassButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new ChangePasswordScreen(game));
-            }
-        });
-        changePassButton.addListener(new HoverListener());
-        logoutButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
-            }
-        });
+//        changePassButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                ((Game)Gdx.app.getApplicationListener()).setScreen(new ChangePasswordScreen(game));
+//            }
+//        });
+//        changePassButton.addListener(new HoverListener());
+//        logoutButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+//            }
+//        });
         logoutButton.addListener(new HoverListener());
         exitButton.addListener(new ClickListener(){
             @Override

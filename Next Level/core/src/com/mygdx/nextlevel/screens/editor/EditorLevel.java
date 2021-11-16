@@ -19,19 +19,23 @@ import java.util.ArrayList;
 
 public class EditorLevel {
     public int map[][];
-    public int width, height;
     public ArrayList<EditorActor> actors;
 
-    public String           name;
     public String           saveName;
-    public Difficulty       difficulty = Difficulty.NONE;
-    public float            gravity = -9.81f;
     public ArrayList<Tag>   tags;
-    public boolean collectCoins;
-    public boolean beatTimeLimit;
-    public boolean killAllEnemies;
-    public boolean killNoEnemies;
-    public boolean keepJewel;
+
+    private int oldWidth, oldHeight;
+
+    @Property public int width;
+    @Property public int height;
+    @Property public String name;
+    @Property public Difficulty difficulty = Difficulty.NONE;
+    @Property public float gravity;
+    @Property(group="Completion Flags") public boolean collectCoins;
+    @Property(group="Completion Flags") public boolean beatTimeLimit;
+    @Property(group="Completion Flags") public boolean killAllEnemies;
+    @Property(group="Completion Flags") public boolean killNoEnemies;
+    @Property(group="Completion Flags") public boolean keepJewel;
 
     public static int NONE = -1;
 
@@ -39,6 +43,8 @@ public class EditorLevel {
     public EditorLevel(int width, int height) {
         this.width = width;
         this.height = height;
+        this.oldWidth = width;
+        this.oldHeight = height;
         this.name = null;
         this.difficulty = null;
         this.tags = null;
@@ -57,7 +63,11 @@ public class EditorLevel {
     public EditorLevel(String name, int width, int height) {
         this(width, height);
 
-        this.name = new String(name);
+        this.name = name;
+    }
+
+    public void updateFromProperties() {
+        resize(width, height);
     }
 
     public void setTile(int x, int y, int tileId) {
@@ -74,13 +84,15 @@ public class EditorLevel {
         //clear the new map
         for(int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if(x < this.width && y < this.height)
+                if(x < this.oldWidth && y < this.oldHeight)
                     newMap[x][y] = map[x][y];
                 else
                     newMap[x][y] = NONE;
             }
         }
 
+        this.oldWidth = width;
+        this.oldHeight = height;
         this.width = width;
         this.height = height;
         this.map = newMap;

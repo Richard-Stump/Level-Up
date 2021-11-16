@@ -130,9 +130,9 @@ public class LevelDownloadScreen implements Screen {
         //userInfo.addActor(usernameLabel);
         //add stuff here for user info
 
-        mainTable.add(backButton).height(labelHeight +10);
-        mainTable.add(levelSelectLabel).expandX().left().padLeft(5);
-        mainTable.add(usernameLabel).width(200);
+        mainTable.add(backButton).height(labelHeight +10).padTop(10);
+        mainTable.add(levelSelectLabel).expandX().left().padLeft(5).padTop(10);
+        mainTable.add(usernameLabel).width(200).padTop(10);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
 
