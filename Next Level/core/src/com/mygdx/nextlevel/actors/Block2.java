@@ -37,7 +37,6 @@ public class Block2 extends Actor2 {
             items.add(StarItem2.class);
             items.add(FireFlowerItem2.class);
             items.add(LifeStealItem2.class);
-
             items.add(Coin.class);
 
             itemIndex = index;
@@ -110,8 +109,10 @@ public class Block2 extends Actor2 {
     public void reset() {
         this.spawned = false;
 
-        if (spawnItem) {
+        if (spawnItem && !breakable) {
             setRegion(new Texture("item-block.png"));
+        } else if (spawnItem && breakable) {
+            setRegion(new Texture("Block.png"));
         } else {
             setRegion(new Texture("Block.png"));
         }
@@ -129,11 +130,7 @@ public class Block2 extends Actor2 {
                 if (itemIndex == 8) {
                     Random rand = new Random();
                     itemClass = items.get(rand.nextInt(items.size()));
-                }
-//                else if (itemIndex == -1) {
-//                    itemClass = Coin.class;
-//                }
-                else {
+                } else {
                     itemClass = items.get(itemIndex);
                 }
 
@@ -142,7 +139,7 @@ public class Block2 extends Actor2 {
                 spawned = true;
                 setRegion(new Texture("used-item-block.jpg"));
             }
-            if (this.breakable && this.spawnItem) {
+            if (breakable && spawnItem) {
 //                System.out.println("here");
                 Vector2 pos = collider.getPosition();
                 Class itemClass;
@@ -158,4 +155,8 @@ public class Block2 extends Actor2 {
     }
 
     public boolean isSpawnItem() { return this.spawned; }
+
+    public boolean isBreakable() {
+        return this.breakable;
+    }
 }
