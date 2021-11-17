@@ -207,6 +207,10 @@ public class BoxCollider {
         body.setTransform(vec, 0.0f);
     }
 
+//    public void setImpulse() {
+//        body.applyForceToCenter(new Vector2(0f, 13f), false);
+//    }
+
 
     /**
      * This should never get called in the middle of an Actor's onCollision() or onTrigger() methods.

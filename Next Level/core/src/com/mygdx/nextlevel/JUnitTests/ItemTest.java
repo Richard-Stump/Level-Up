@@ -50,10 +50,12 @@ public class ItemTest {
 
     @Test
     public void mushroomTest() {
-//        System.out.println("Here");
+        System.out.println("Here");
 //        Player2 player = new Player2(screen, 32, 32);
 //        MushroomItem2 mushroom = new MushroomItem2(screen, 32, 32);
+        System.out.println(player);
         player.onCollision(mushroom, BoxCollider.Side.RIGHT);
+        System.out.println("Here2");
         TestOutputHelper.setResult("mushroomTest", true, player.getMushroom());
         Assert.assertTrue(player.getMushroom());
     }

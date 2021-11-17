@@ -47,21 +47,19 @@ public class ServerDBTest {
     public void establishConnection() {
         //connect
         db = new ServerDBHandler();
-
         //add some sample data
         LevelInfo info = new LevelInfo("idtestgetrecordtime", "TestGetRecordTime", "jchen");
         Account a = new Account("testuser", "password", "testuser@example.com", "default");
-//        a.setProfilePic("default");
 
         db.addLevel(info);
         db.addUser(a);
+        db.setProfilePic("testuser", "default");
     }
 
     @After
     public void cleanup() {
         db.removeLevel("idtestgetrecordtime");
         db.removeUser("testuser");
-
         db.closeConnection();
         TestOutputHelper.displayResult();
         TestOutputHelper.clearResult();
@@ -266,6 +264,8 @@ public class ServerDBTest {
 
     @Test
     public void testGetProfilePic() {
+        System.out.println(db.getPassword("testuser"));
+        System.out.println(db.getEmail("testuser"));
         String pp = db.getProfilePic("testuser");
         TestOutputHelper.clearResult();
         TestOutputHelper.setResult("getProfilePic", "default", pp);

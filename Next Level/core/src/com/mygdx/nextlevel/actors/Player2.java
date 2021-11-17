@@ -69,6 +69,13 @@ public class Player2 extends Actor2 {
         lifeStealItem = false;
         starItem = false;
         fireFlowerItem = false;
+        jewel = false;
+        coin = 0;
+        enemiesKilled = 0;
+//        boxCollider = new BoxCollider(this,
+//                new Vector2(1, 1),
+//                new Vector2(0.8f, 0.8f),
+//                true);
     }
 
 //    /**

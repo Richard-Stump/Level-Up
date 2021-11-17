@@ -10,7 +10,7 @@ public class CoinStatic extends Actor2 {
     boolean spawned = true;
     boolean reset = false;
     public CoinStatic() {
-
+//        collider = new BoxCollider(this, new Vector2(1, 1), new Vector2(0.5f, 0.5f), false);
     }
 
     public CoinStatic(GameScreen2 screen, float x, float y) {

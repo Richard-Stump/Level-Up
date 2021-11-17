@@ -59,14 +59,18 @@ public class Enemy2 extends Actor2 {
             }
             if (jump) {
                 dir.add(0.0f,13.0f);
+//                boxCollider.setImpulse();
+                jump = false;
             }
             turnTimer -= delta;
             if (turnTimer <= 0.0f) {
                 right = !right;
-                jump = !jump;
+//                boxCollider.setImpulse();
                 turnTimer = timeTillTurn;
             }
-//            boxCollider.setPosition(dir);
+            boxCollider.setVelocity(dir);
+
+
 
             setPosition(boxCollider.getPosition());
         } else if (this.action == Action.SHOOT) {
@@ -87,6 +91,9 @@ public class Enemy2 extends Actor2 {
         }
         if (other instanceof Fire2) {
             screen.queueActorDespawn(this);
+        }
+        if (side == BoxCollider.Side.BOTTOM) {
+            jump = true;
         }
     }
 

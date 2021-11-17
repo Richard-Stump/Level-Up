@@ -9,6 +9,10 @@ public class Jewel extends Actor2 {
     BoxCollider collider;
     boolean spawned = true;
 
+    public Jewel() {
+        collider = new BoxCollider(this, new Vector2(1,1), new Vector2(0.5f, 0.5f), true);
+    }
+
     public Jewel(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 0.5f,0.5f);
         collider = new BoxCollider(this, new Vector2(x,y), new Vector2(0.5f, 0.5f), true);
