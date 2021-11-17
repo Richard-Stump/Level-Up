@@ -254,7 +254,7 @@ public class ServerDBHandler {
     public String getProfilePic(String user) {
         ResultSet resultSet;
         String result = "";
-        String sqlQuery = "SELECT profilepicture from api.users WHERE user LIKE ?;";
+        String sqlQuery = "SELECT profilepicture FROM api.users WHERE username LIKE ?;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setString(1, user);
             resultSet = statement.executeQuery();
@@ -264,7 +264,7 @@ public class ServerDBHandler {
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
-            return result;
+            return "";
         }
     }
 

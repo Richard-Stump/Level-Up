@@ -266,6 +266,7 @@ public class ServerDBTest {
     public void testGetProfilePic() {
         System.out.println(db.getPassword("testuser"));
         System.out.println(db.getEmail("testuser"));
+        System.out.println(db.getProfilePic("testuser"));
         String pp = db.getProfilePic("testuser");
         TestOutputHelper.clearResult();
         TestOutputHelper.setResult("getProfilePic", "default", pp);
