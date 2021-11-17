@@ -172,10 +172,14 @@ public class GameScreen2 extends Timer implements Screen {
         actors.add(new Block2(this, 29, 4, true, ItemIndex.COIN.value, true));
         actors.add(new Block2(this, 30, 4, false,false));
         actors.add(new CheckPoint2(this, 10, 1.0f));
-        actors.add(new Coin(this, 10, 5, false));
-        actors.add(new Coin(this, 13, 5, false));
-        actors.add(new Coin(this, 16, 5, false));
-        actors.add(new Coin(this, 19, 5, false));
+//        actors.add(new Coin(this, 10, 5, false));
+//        actors.add(new Coin(this, 13, 5, false));
+//        actors.add(new Coin(this, 16, 5, false));
+//        actors.add(new Coin(this, 19, 5, false));
+        actors.add(new CoinStatic(this, 10, 5));
+        actors.add(new CoinStatic(this, 13, 5));
+        actors.add(new CoinStatic(this, 16, 5));
+        actors.add(new CoinStatic(this, 19, 5));
         actors.add(new End(this, 30, 1));
         actors.add(new Jewel(this, 2, 1));
         actors.add(player);
@@ -210,6 +214,9 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Reset all modified Blocks into the spawnQueue
         for (Actor2 actor : blockList) {
+//            if (((Block2) actor).isSpawnItem() && ((Block2) actor).isBreakable()) {
+//
+//            }
             if (((Block2) actor).isSpawnItem()) {
                 ((Block2) actor).reset();
             }
@@ -253,6 +260,8 @@ public class GameScreen2 extends Timer implements Screen {
 
             if (o instanceof Item2) { //If this is an item
                 itemsList.remove(o);
+            } else if (o instanceof Block2 && ((Block2) o ).isSpawnItem() && ((Block2) o).isBreakable()) {
+                blockList.add(o);
             } else if (o instanceof Block2 && ((Block2) o).isSpawnItem()) {
                 blockList.add(o);
             }
@@ -261,9 +270,9 @@ public class GameScreen2 extends Timer implements Screen {
 //            }
             else {
                 despawnedActors.add(o);
-                if (o instanceof Jewel) {
-                    System.out.println("Jewel added in despawned actors");
-                }
+//                if (o instanceof Jewel) {
+////                    System.out.println("Jewel added in despawned actors");
+//                }
             }
         }
     }
@@ -311,11 +320,12 @@ public class GameScreen2 extends Timer implements Screen {
             }
 //            System.out.println(String.format("New Record Time: %f", player.getRecordTime()));
 //            System.out.println(elapsedTime);
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
+            //((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY"));
         }
         if (player.getFail()) {
             //System.out.println("Im here");
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud));
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over..."));
         }
     }
 
@@ -356,15 +366,20 @@ public class GameScreen2 extends Timer implements Screen {
                 if (i.type.equals(Block2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, boolean.class, boolean.class);
                     actors.add((Block2) c.newInstance(this, i.x +0.5f, i.y + 0.5f, false, true));
-                } else if (i.type.equals(Coin.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, boolean.class);
-//                    actors.add((Coin) c.newInstance(this, i.x+0.25f, i.y+0.25f, false));
-                    actors.add((Coin) c.newInstance(this, i.x, i.y, true));
-                } else if (i.type.equals(Jewel.class)) {
+                }
+                else if (i.type.equals(CoinStatic.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
+                    actors.add((CoinStatic) c.newInstance(this, i.x +0.25f, i.y+0.25f));
+                }
+                else if (i.type.equals(Jewel.class)) {
 //                    System.out.println("Jewel in spawn actors");
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
                     actors.add((Jewel) c.newInstance(this, i.x, i.y));
                 }
+//                else if (i.type.equals(CoinStatic.class)) {
+//                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
+//                    actors.add((Actor2) c.newInstance(this, i.x, i.y));
+//                }
                 else {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
                     actors.add((Actor2) c.newInstance(this, i.x, i.y));

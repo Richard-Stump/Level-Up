@@ -10,6 +10,10 @@ public class Item2 extends Actor2 {
 
     public Item2() {}
 
+//    public Item2(GameScreen2 screen, float x, float y, boolean isSpawned, boolean isStatic) {
+//        super(screen, x, y, 0.f, 0.5f);
+//    }
+
     public Item2(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 0.5f, 0.5f);
 

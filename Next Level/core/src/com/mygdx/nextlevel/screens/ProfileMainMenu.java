@@ -148,8 +148,8 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
 
         //adding to main table
         //mainTable.setDebug(true);
-        mainTable.add(backButton).left().padLeft(20).padTop(15);
-        mainTable.add(title).padTop(15).left().padLeft(5);
+        mainTable.add(backButton).left().padLeft(15).padTop(15).width(70);
+        mainTable.add(title).padTop(15).left().padLeft(10);
         //mainTable.add(headerTable).padTop(15).colspan(2).expandX();
         mainTable.row();
         mainTable.add(new Label("", skin));

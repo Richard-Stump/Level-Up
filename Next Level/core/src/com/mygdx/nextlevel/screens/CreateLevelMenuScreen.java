@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.editor.EditorLevel;
@@ -29,6 +31,7 @@ public class CreateLevelMenuScreen implements Screen {
     private Stage               stage;
 
     private final String titleText = "Create New Level";
+    public static int buttonWidth = 140;
 
     public CreateLevelMenuScreen(NextLevel game) {
         this.game = game;
@@ -69,11 +72,14 @@ public class CreateLevelMenuScreen implements Screen {
         // Create the main table and set it to fill the screen, and align at the top
         Table mainTable = new Table();
         mainTable.setFillParent(true);
-        mainTable.top();
+        //mainTable.setDebug(true);
+        //mainTable.top();
 
         // add the back button and title to the same row, setting the back button to the left of the screen
-        mainTable.add(backButton).width(75);
-        mainTable.add(title).center().expandX();
+        //mainTable.add(backButton).padTop(10).padLeft(10).left();
+        backButton.setPosition(10, 460);
+        stage.addActor(backButton);
+        mainTable.add(title).padTop(10).colspan(2);
 
         // Create the fields to set the window width and height
         final TextField nameField = new TextField("", skin);
@@ -84,9 +90,13 @@ public class CreateLevelMenuScreen implements Screen {
 
         // Use a new table to center the settings. This is probably not the best to do this,
         // but it's what I found simple.
+        Stack mainStack = new Stack();
+        mainStack.add(new Image(new Texture(Gdx.files.internal("rect.png"))));
+
         Table settingsTable = new Table();
+        //settingsTable.setDebug(true);
         settingsTable.top();
-        settingsTable.add(new Label("Level Setings (These can be changed later)", skin)).colspan(2);
+        settingsTable.add(new Label("Level Settings (These can be changed later)", skin)).colspan(2).padTop(5);
         settingsTable.row();
         settingsTable.add(new Label("", skin));
         settingsTable.row();
@@ -97,10 +107,12 @@ public class CreateLevelMenuScreen implements Screen {
         settingsTable.add(widthField);
         settingsTable.row();
         settingsTable.add(new Label("Height: ", skin));
-        settingsTable.add(heightField);
+        settingsTable.add(heightField).padBottom(5);
+
+        mainStack.add(settingsTable);
 
         mainTable.row();
-        mainTable.add(settingsTable).colspan(2).center().expand();
+        mainTable.add(mainStack).width(300).height(100).padTop(50).padBottom(50).colspan(2);
 
         // Button to create the new level
         TextButton createButton = new TextButton("Create", skin);
@@ -115,6 +127,7 @@ public class CreateLevelMenuScreen implements Screen {
                 game.setScreen(new EditLevelScreen(game, level));
             }
         });
+        createButton.addListener(new HoverListener());
 
         TextButton createEmptyButton = new TextButton("Create Empty", skin);
         createEmptyButton.addListener(new ClickListener() {
@@ -149,11 +162,12 @@ public class CreateLevelMenuScreen implements Screen {
                 game.setScreen(new MainMenuScreen(game));
             }
         });
+        createEmptyButton.addListener(new HoverListener());
 
         mainTable.row();
-        mainTable.add(createButton).colspan(2).center().expandX();
-        mainTable.row();
-        mainTable.add(createEmptyButton).colspan(2).center().expandX();
+        mainTable.add(createEmptyButton).center().width(buttonWidth);
+        mainTable.add(createButton).center().width(buttonWidth);
+
 
         // Add the ui to the scene
         stage.addActor(mainTable);

@@ -336,6 +336,9 @@ class MenuWindow extends VisWindow {
 
 class LevelSettingsWindow extends VisWindow {
     protected PropertyEditTable propertyTable;
+    protected VisTextButton applyButton;
+    protected VisTextButton cancelButton;
+    protected Actor         previousScrollFocus;
 
     public LevelSettingsWindow(EditLevelScreen screen, final EditorLevel level) {
         super("Level Settings");
@@ -346,7 +349,32 @@ class LevelSettingsWindow extends VisWindow {
         setMovable(false);
 
         propertyTable = new PropertyEditTable(level);
-        add(propertyTable);
+        add(propertyTable).colspan(2);
+
+        final Stage stage = screen.getStage();
+        previousScrollFocus = stage.getScrollFocus();
+
+        applyButton = new VisTextButton("Apply");
+        applyButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y){
+                propertyTable.updateObjectProperties();
+                level.updateFromProperties();
+                close();
+                stage.setScrollFocus(previousScrollFocus);
+            }
+        });
+
+        cancelButton = new VisTextButton("Cancel");
+        cancelButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y){
+                close();
+                stage.setScrollFocus(previousScrollFocus);
+            }
+        });
+
+        row();
+        add(applyButton);
+        add(cancelButton);
 
         padTop(40.0f);
         pack();

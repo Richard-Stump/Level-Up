@@ -24,6 +24,8 @@ public class EditorLevel {
     public String           saveName;
     public ArrayList<Tag>   tags;
 
+    private int oldWidth, oldHeight;
+
     @Property public int width;
     @Property public int height;
     @Property public String name;
@@ -41,6 +43,8 @@ public class EditorLevel {
     public EditorLevel(int width, int height) {
         this.width = width;
         this.height = height;
+        this.oldWidth = width;
+        this.oldHeight = height;
         this.name = null;
         this.difficulty = null;
         this.tags = null;
@@ -59,7 +63,11 @@ public class EditorLevel {
     public EditorLevel(String name, int width, int height) {
         this(width, height);
 
-        this.name = new String(name);
+        this.name = name;
+    }
+
+    public void updateFromProperties() {
+        resize(width, height);
     }
 
     public void setTile(int x, int y, int tileId) {
@@ -76,13 +84,15 @@ public class EditorLevel {
         //clear the new map
         for(int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if(x < this.width && y < this.height)
+                if(x < this.oldWidth && y < this.oldHeight)
                     newMap[x][y] = map[x][y];
                 else
                     newMap[x][y] = NONE;
             }
         }
 
+        this.oldWidth = width;
+        this.oldHeight = height;
         this.width = width;
         this.height = height;
         this.map = newMap;
