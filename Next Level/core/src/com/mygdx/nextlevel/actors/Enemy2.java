@@ -8,18 +8,21 @@ import com.mygdx.nextlevel.screens.GameScreen2;
 public class Enemy2 extends Actor2 {
 
     protected BoxCollider boxCollider;
+    BoxCollider playerCollider;
 
     protected float turnTimer;
     protected boolean right = true;
     boolean jump = false;
     protected final static float timeTillTurn = 2.0f;
     Enemy2.Action action;
+    boolean fireSpawn = false;
+    Player2 player;
 
     public enum Action {
         DEFAULT, JUMP, SHOOT;
     }
 
-    public Enemy2(GameScreen2 screen, float x, float y, Enemy2.Action action) {
+    public Enemy2(GameScreen2 screen, float x, float y, Enemy2.Action action, Player2 player) {
         super(screen, x, y, 0.8f, 0.8f);
         boxCollider = new BoxCollider(
                 this,
@@ -27,6 +30,8 @@ public class Enemy2 extends Actor2 {
                 new Vector2(0.8f, 0.8f),
                 true
         );
+        playerCollider = player.getBoxCollider();
+        this.player = player;
         this.action = action;
         turnTimer = timeTillTurn;
         setRegion(new Texture("enemy.jpg"));
@@ -58,7 +63,7 @@ public class Enemy2 extends Actor2 {
                 boxCollider.setVelocity(new Vector2(-2.0f, boxCollider.getVelocity().y));
             }
             if (jump) {
-                dir.add(0.0f,13.0f);
+                dir.add(0.0f,8.0f);
 //                boxCollider.setImpulse();
                 jump = false;
             }
@@ -74,7 +79,32 @@ public class Enemy2 extends Actor2 {
 
             setPosition(boxCollider.getPosition());
         } else if (this.action == Action.SHOOT) {
+            if (right) {
+                boxCollider.setVelocity(new Vector2(2.0f, boxCollider.getVelocity().y));
+            } else {
+                boxCollider.setVelocity(new Vector2(-2.0f, boxCollider.getVelocity().y));
+            }
 
+            turnTimer -= delta;
+            if (turnTimer <= 0.0f) {
+                right = !right;
+                turnTimer = timeTillTurn;
+            }
+
+            setPosition(boxCollider.getPosition());
+            if (playerCollider.getPosition().x > boxCollider.getPosition().x) {
+                System.out.println("Shoot right");
+                if (!fireSpawn) {
+                    screen.queueActorSpawn(getX() + 1, getY(), BlueFire.class);
+                    fireSpawn = true;
+                }
+            } else {
+                System.out.println("Shoot left");
+                if (!fireSpawn) {
+                    screen.queueActorSpawn(getX() - 1, getY(), BlueFire.class);
+                    fireSpawn = true;
+                }
+            }
         }
     }
 

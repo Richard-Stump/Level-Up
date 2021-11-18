@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.ErrorDialog;
 import com.mygdx.nextlevel.Util.HoverListener;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 
 public class RateScreen implements Screen {
     public SpriteBatch batch;
@@ -25,13 +26,16 @@ public class RateScreen implements Screen {
     private TextureAtlas atlas;
     protected Skin skin;
     private NextLevel game;
+    private String levelid;
 
     public String lastButtonClicked = "";
 
     public static int buttonWidth = 200;
     public static int buttonBottomPad = 10;
+    ServerDBHandler db;
 
     public RateScreen(NextLevel game) {
+        db = new ServerDBHandler();
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
@@ -106,6 +110,7 @@ public class RateScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //TODO: add rating to database
+//                db.addLevelRating(levelid, rate);
 
                 //TODO: if successful show dialog then set screen to main menu
                 ErrorDialog dialog = new ErrorDialog("Rating Level", "MainMenuScreen", game, skin, "Thank you for rating!", stage);

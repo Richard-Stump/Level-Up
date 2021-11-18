@@ -369,6 +369,10 @@ public class ServerDBHandler {
         }
     }
 
+//    public String getLevelId(LevelInfo level) {
+//        String sqlQuery = "SELECT levelid"
+//    }
+
     /**
      * Gets all the level ids created by a user
      *

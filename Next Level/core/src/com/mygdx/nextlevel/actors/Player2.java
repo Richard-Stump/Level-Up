@@ -108,7 +108,7 @@ public class Player2 extends Actor2 {
         super(screen, x, y, 0.8f, 0.8f);
 
         boxCollider = new BoxCollider(this,
-                new Vector2(x, x),
+                new Vector2(x, y),
                 new Vector2(0.8f, 0.8f),
                 true);
 
@@ -311,7 +311,7 @@ public class Player2 extends Actor2 {
         Vector2 pos = boxCollider.getPosition();
         if (other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) && invulernable) {
             //do nothing
-        } else if(other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) && !starItem && !invulernable) {
+        } else if((other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) && !starItem && !invulernable) || other instanceof BlueFire) {
             if (jewel) {
                 jewel = false;
                 screen.queueActorSpawn(pos.x, pos.y + 1.0f, Jewel.class);
@@ -499,6 +499,10 @@ public class Player2 extends Actor2 {
 
     public void setInvuelnerable(boolean set) {
         this.invulernable = set;
+    }
+
+    public BoxCollider getBoxCollider() {
+        return this.boxCollider;
     }
 
     //TODO: temporary check to check record time replacement
