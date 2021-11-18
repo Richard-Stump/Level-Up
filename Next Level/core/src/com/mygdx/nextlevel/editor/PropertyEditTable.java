@@ -4,7 +4,7 @@
 /* This is not an error, IntelliJ will suggest switching language versions.    */
 /* It is not necessary to downgrade to Java 8                                  */
 
-package com.mygdx.nextlevel.screens.editor;
+package com.mygdx.nextlevel.editor;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;

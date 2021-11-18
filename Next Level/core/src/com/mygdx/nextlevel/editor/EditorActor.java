@@ -1,4 +1,4 @@
-package com.mygdx.nextlevel.screens.editor;
+package com.mygdx.nextlevel.editor;
 
 /**
  * Class to represent an actor placed in an editor

@@ -19,7 +19,7 @@ import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
-import com.mygdx.nextlevel.screens.editor.EditorLevel;
+import com.mygdx.nextlevel.editor.EditorLevel;
 
 public class CreateLevelMenuScreen implements Screen {
     private NextLevel           game;

@@ -1,14 +1,10 @@
-package com.mygdx.nextlevel.screens.editor;
+package com.mygdx.nextlevel.editor;
 
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.kotcrab.vis.ui.widget.VisCheckBox;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 
@@ -31,6 +27,7 @@ public class EditorLevel {
     @Property public String name;
     @Property public Difficulty difficulty = Difficulty.NONE;
     @Property public float gravity;
+    @Property public float timeLimit;
     @Property(group="Completion Flags") public boolean collectCoins;
     @Property(group="Completion Flags") public boolean beatTimeLimit;
     @Property(group="Completion Flags") public boolean killAllEnemies;

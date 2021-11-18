@@ -1,4 +1,4 @@
-package com.mygdx.nextlevel.screens.editor;
+package com.mygdx.nextlevel.editor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
