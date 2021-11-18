@@ -218,7 +218,7 @@ public class LoginScreen extends AccountList implements Screen {
                         if (pass.equals(ret)) {
                             curAcc = username;
                             isInfoCorrect = true;
-                            loadDB();
+//                            loadDB();
                             break;
                         } else if (!pass.equals(ret)) {
                             isInfoCorrect = false;

@@ -69,9 +69,9 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         Label title = new Label("User Settings", titleStyle);
         TextButton backButton = new TextButton("Back", skin);
 
-        Image playerPic = new Image(new Texture(Gdx.files.internal("mario.jpeg")));
-        //TODO: database crashes, string is not being saved.
         profilePic = db.getProfilePic(username);
+        Image playerPic = new Image(new Texture(Gdx.files.internal(profilePic)));
+        //TODO: database crashes, string is not being saved.
 //        Image playerPic = new Image(new Texture(Gdx.files.internal(profilePic)));
 
         System.out.println("current pic: " + profilePic);
