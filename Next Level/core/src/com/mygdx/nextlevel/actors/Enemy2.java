@@ -93,13 +93,13 @@ public class Enemy2 extends Actor2 {
 
             setPosition(boxCollider.getPosition());
             if (playerCollider.getPosition().x > boxCollider.getPosition().x) {
-                System.out.println("Shoot right");
+//                System.out.println("Shoot right");
                 if (!fireSpawn) {
                     screen.queueActorSpawn(getX() + 1, getY(), BlueFire.class);
                     fireSpawn = true;
                 }
             } else {
-                System.out.println("Shoot left");
+//                System.out.println("Shoot left");
                 if (!fireSpawn) {
                     screen.queueActorSpawn(getX() - 1, getY(), BlueFire.class);
                     fireSpawn = true;

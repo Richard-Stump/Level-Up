@@ -111,7 +111,6 @@ public class Player2 extends Actor2 {
                 new Vector2(x, y),
                 new Vector2(0.8f, 0.8f),
                 true);
-
         worldSpawn = new Vector2(boxCollider.getPosition());
         respawnPosition = worldSpawn;
         lifeCount = 3;
