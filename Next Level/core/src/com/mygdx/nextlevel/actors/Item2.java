@@ -2,13 +2,16 @@ package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
+import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class Item2 extends Actor2 {
     BoxCollider collider;
     private boolean inital;
 
-    public Item2() {}
+    public Item2() {
+//        collider = new BoxCollider(this, new Vector2(1f, 1f), new Vector2(0.5f, 0.5f), true);
+    }
 
 //    public Item2(GameScreen2 screen, float x, float y, boolean isSpawned, boolean isStatic) {
 //        super(screen, x, y, 0.f, 0.5f);
@@ -19,6 +22,7 @@ public class Item2 extends Actor2 {
 
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true);
         inital = true;
+//        collider.setFixtureDef(CollisionGroups.ITEMS);
     }
 
     public void update(float delta) {

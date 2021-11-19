@@ -160,7 +160,7 @@ public class GameScreen2 extends Timer implements Screen {
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
         player = new Player2(this, 1.0f, 1.0f);
 //        actors.add(new Enemy2(this,2, 2));
-        actors.add(new Enemy2(this, 8, 2, Enemy2.Action.JUMP));
+        actors.add(new Enemy2(this, 8, 2, Enemy2.Action.SHOOT, player));
         actors.add(new Block2(this, 7, 4, true, ItemIndex.ALL.value, false));
         actors.add(new Block2(this, 10, 4, true, ItemIndex.SLOW.value, false));
         actors.add(new Block2(this, 13, 4, true, ItemIndex.SPEED.value, false));
@@ -269,7 +269,11 @@ public class GameScreen2 extends Timer implements Screen {
 //                System.out.println("Spawn jewel");
 //            }
             else {
-                despawnedActors.add(o);
+                if (o instanceof BlueFire) {
+
+                } else {
+                    despawnedActors.add(o);
+                }
 //                if (o instanceof Jewel) {
 ////                    System.out.println("Jewel added in despawned actors");
 //                }
@@ -287,12 +291,12 @@ public class GameScreen2 extends Timer implements Screen {
      * @param delta How much time has passed since the last frame
      */
     private void update(float delta) {
+        despawnActorsInQueue();
         if(shouldReset)
             reset();
 
         //New actors should be spawned before physics and update methods are called because we want the new
         //actors to be considered in this frame.
-        despawnActorsInQueue();
         spawnActorsInQueue();
 
         //I think higher iteration constants decreases the chances for side detection failure.
@@ -380,6 +384,10 @@ public class GameScreen2 extends Timer implements Screen {
 //                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
 //                    actors.add((Actor2) c.newInstance(this, i.x, i.y));
 //                }
+                else if (i.type.equals(Enemy2.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Enemy2.Action.class, Player2.class);
+                    actors.add((Enemy2) c.newInstance(this, i.x, i.y, Enemy2.Action.JUMP, player));
+                }
                 else {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
                     actors.add((Actor2) c.newInstance(this, i.x, i.y));

@@ -108,14 +108,14 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         Label usernameLabel = new Label(username, skin);
         //use player profile pic
 
-        db.setProfilePic(username, "userIcon.png");
+//        db.setProfilePic(username, "userIcon.png");
 //        profilePicture = db.getProfilePic(username);
 //        System.out.println(profilePicture);
 //        Image playerPic = new Image(new Texture(Gdx.files.internal(profilePicture)));
 //        playerPic.setScaling(Scaling.fit);
 
-        Image playerPic = new Image(new Texture(Gdx.files.internal("mario.jpeg")));
-        playerPic.scaleBy(-.9f);
+        Image playerPic = new Image(new Texture(Gdx.files.internal(db.getProfilePic(username))));
+        playerPic.scaleBy(-.75f);
 
         //HorizontalGroup userGroup = new HorizontalGroup();
         //usernameLabel.setPosition(rightMargin - 70, topMargin);
@@ -126,8 +126,8 @@ public class MainMenuScreen extends LoginScreen implements Screen {
 //        stage.addActor(userGroup);
 
         //using a horizontal group instead to simplify, don't need this
-        playerPic.setPosition(rightMargin - 5, topMargin);
-        usernameLabel.setPosition(rightMargin - 70, topMargin);
+        playerPic.setPosition(rightMargin - 5, topMargin - 10);
+        usernameLabel.setPosition(rightMargin - 80, topMargin);
         stage.addActor(playerPic);
         stage.addActor(usernameLabel);
 

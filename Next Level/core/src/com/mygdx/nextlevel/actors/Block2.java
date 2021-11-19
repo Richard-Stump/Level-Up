@@ -37,9 +37,11 @@ public class Block2 extends Actor2 {
             items.add(StarItem2.class);
             items.add(FireFlowerItem2.class);
             items.add(LifeStealItem2.class);
-            items.add(Coin.class);
+//            items.add(Coin.class);
 
             itemIndex = index;
+        } else if (this.spawnItem && this.breakable) {
+            items.add(Coin.class);
         }
 //        else {
 //            this.breakable = breakable;
@@ -108,7 +110,9 @@ public class Block2 extends Actor2 {
 
     public void reset() {
         this.spawned = false;
-
+        if (items.contains(Coin.class)) {
+            this.breakable = true;
+        }
         if (spawnItem && !breakable) {
             setRegion(new Texture("item-block.png"));
         } else if (spawnItem && breakable) {

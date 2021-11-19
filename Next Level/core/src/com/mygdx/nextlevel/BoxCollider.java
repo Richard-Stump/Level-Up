@@ -46,6 +46,9 @@ public class BoxCollider {
     protected Fixture[]         sensorFixtures;
     protected PolygonShape[]    sensorShapes;
 
+    //TODO Test
+    protected FixtureDef    fixtureDef;
+
     public boolean isTrigger;
     public boolean debugPrint = false;
 
@@ -55,7 +58,7 @@ public class BoxCollider {
 
         setupBodies(dynamic, pos);
         setupShapes(pos, size);
-        setupFixtures(isTrigger);
+        setupFixtures((short) 1, (short) 0);
     }
 
     public BoxCollider(Vector2 pos, Vector2 size, boolean dynamic) {
@@ -127,7 +130,7 @@ public class BoxCollider {
      * Sets up the fixtures for the collider. The main one is used for actual collision, and the edges are
      * sensors that detect which side the collision occured
      */
-    protected void setupFixtures(boolean isTrigger) {
+    protected void setupFixtures(short mask, short group) {
         //setup the main fixture
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.density = 100.0f;    //How much mass is there per unit of volume
@@ -135,6 +138,8 @@ public class BoxCollider {
         fixtureDef.restitution = 0.0f;  //How bouncy is this object. None because we don't want our objects to bounce.
         fixtureDef.shape = mainShape;
         fixtureDef.isSensor = isTrigger;
+        fixtureDef.filter.maskBits = mask;
+        fixtureDef.filter.groupIndex = group;
         fixture = body.createFixture(fixtureDef);
         fixture.setUserData(this);
 
@@ -206,6 +211,10 @@ public class BoxCollider {
     public void setPosition(Vector2 vec) {
         body.setTransform(vec, 0.0f);
     }
+
+//    public void setImpulse() {
+//        body.applyForceToCenter(new Vector2(0f, 13f), false);
+//    }
 
 
     /**

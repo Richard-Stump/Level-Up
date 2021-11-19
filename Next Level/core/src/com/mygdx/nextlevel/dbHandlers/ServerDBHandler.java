@@ -72,13 +72,14 @@ public class ServerDBHandler {
      * @param account account to add
      */
     public void addUser(Account account) {
-        String sqlQuery = "INSERT INTO api.users (username, password, email) " +
-                "VALUES (?, ?, ?);";
+        String sqlQuery = "INSERT INTO api.users (username, password, email, profilepicture) " +
+                "VALUES (?, ?, ?, ?);";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setString(1, account.getUsername());
             statement.setString(2, account.getPassword());
             statement.setString(3, account.getEmail());
+            statement.setString(4, account.getProfilePic());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -253,7 +254,7 @@ public class ServerDBHandler {
     public String getProfilePic(String user) {
         ResultSet resultSet;
         String result = "";
-        String sqlQuery = "SELECT profilepicture from api.users WHERE user LIKE ?;";
+        String sqlQuery = "SELECT profilepicture FROM api.users WHERE username LIKE ?;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setString(1, user);
             resultSet = statement.executeQuery();
@@ -263,7 +264,7 @@ public class ServerDBHandler {
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
-            return result;
+            return "";
         }
     }
 
@@ -367,6 +368,10 @@ public class ServerDBHandler {
             return 0;
         }
     }
+
+//    public String getLevelId(LevelInfo level) {
+//        String sqlQuery = "SELECT levelid"
+//    }
 
     /**
      * Gets all the level ids created by a user
