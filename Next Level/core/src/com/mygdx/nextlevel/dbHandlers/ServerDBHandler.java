@@ -67,7 +67,7 @@ public class ServerDBHandler {
 
 
     /**
-     * Add a user into the server database  so they are able to log in and use the application
+     * Add a user into the server database so they are able to log in and use the application
      *
      * @param account account to add
      */
@@ -307,11 +307,17 @@ public class ServerDBHandler {
                 table[j][1] = resultSet.getString("password");
                 table[j][2] = resultSet.getString("email");
                 //these aren't strings
-                //table[j][3] = resultSet.getString("levelsuploaded");
-                //table[j][4] = resultSet.getString("assetsuploaded");
-                //table[j][5] = resultSet.getString("profilepicture");
-                //table[j][6] = resultSet.getString("levelscompleted");
-                table[j][7] = ((Boolean) resultSet.getBoolean("active")).toString();
+                Array uploadedLevels = resultSet.getArray("levelsuploaded");
+                table[j][3] = uploadedLevels.getArray().toString();
+
+                Array uploadedAssets = resultSet.getArray("assetsuploaded");
+                table[j][4] = uploadedAssets.getArray().toString();
+
+                Array levelsCompleted = resultSet.getArray("levelscompleted");
+                table[j][5] = levelsCompleted.getArray().toString();
+
+                table[j][6] = ((Boolean) resultSet.getBoolean("active")).toString();
+                table[j][7] = resultSet.getString("profilepicture");
                 j++;
             }
 
