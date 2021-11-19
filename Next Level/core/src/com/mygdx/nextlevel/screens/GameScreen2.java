@@ -149,7 +149,7 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Initialize the collision manager and create the floor
         CollisionManager.init();
-        floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false);
+        floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false, CollisionGroups.ALL, CollisionGroups.WORLD);
         new DeathBlock(this, tm.getMapWidth());
 
         //Clear all the queues

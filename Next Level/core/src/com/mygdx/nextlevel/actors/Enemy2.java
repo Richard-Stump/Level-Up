@@ -2,7 +2,9 @@ package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.kotcrab.vis.ui.widget.CollapsibleWidget;
 import com.mygdx.nextlevel.BoxCollider;
+import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class Enemy2 extends Actor2 {
@@ -28,7 +30,8 @@ public class Enemy2 extends Actor2 {
                 this,
                 new Vector2(x, y),
                 new Vector2(0.8f, 0.8f),
-                true
+                true,
+                (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR
         );
         playerCollider = player.getBoxCollider();
         this.player = player;

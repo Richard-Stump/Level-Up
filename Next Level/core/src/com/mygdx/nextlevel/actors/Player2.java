@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
+import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 import java.util.ArrayList;
@@ -110,7 +111,8 @@ public class Player2 extends Actor2 {
         boxCollider = new BoxCollider(this,
                 new Vector2(x, y),
                 new Vector2(0.8f, 0.8f),
-                true);
+                true,
+                (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR);
         worldSpawn = new Vector2(boxCollider.getPosition());
         respawnPosition = worldSpawn;
         lifeCount = 3;

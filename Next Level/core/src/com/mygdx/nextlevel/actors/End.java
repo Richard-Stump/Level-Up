@@ -3,6 +3,7 @@ package com.mygdx.nextlevel.actors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
+import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class End extends Actor2 {
@@ -13,7 +14,7 @@ public class End extends Actor2 {
     public End(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 1, 1);
 
-        collider = new BoxCollider(this, new Vector2(x, y), new Vector2(1.0f, 1.0f), false, true);
+        collider = new BoxCollider(this, new Vector2(x, y), new Vector2(1.0f, 1.0f), false, true, CollisionGroups.ACTOR, CollisionGroups.ACTOR);
 
         setRegion(new Texture("end.jpeg"));
     }

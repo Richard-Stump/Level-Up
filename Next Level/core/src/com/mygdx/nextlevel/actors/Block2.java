@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
+import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 import java.util.ArrayList;
@@ -51,7 +52,8 @@ public class Block2 extends Actor2 {
                 this,
                 new Vector2(x, y),
                 new Vector2(1, 1),
-                false
+                false,
+                (short) (CollisionGroups.ACTOR | CollisionGroups.ITEM | CollisionGroups.WORLD), CollisionGroups.BLOCK
         );
 
         if (spawnItem && this.breakable) {
@@ -95,7 +97,8 @@ public class Block2 extends Actor2 {
                 this,
                 new Vector2(x, y),
                 new Vector2(1, 1),
-                false
+                false,
+                CollisionGroups.NONE, CollisionGroups.ACTOR
         );
 
         if (spawnItem && breakable) {

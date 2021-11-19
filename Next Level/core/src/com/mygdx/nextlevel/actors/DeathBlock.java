@@ -3,6 +3,7 @@ package com.mygdx.nextlevel.actors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
+import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class DeathBlock extends Actor2 {
@@ -16,7 +17,8 @@ public class DeathBlock extends Actor2 {
                 this,
                 new Vector2(width/2f, y),
                 new Vector2(width, 0),
-                false
+                false,
+                CollisionGroups.ALL, CollisionGroups.WORLD
         );
     }
 }
