@@ -89,7 +89,7 @@ public class ServerDBTest {
     @Test
     public void testAddUser() {
         String username = "erwin";
-        Account testAccount = new Account(username, "puppyDogs5000", "erwin@example.com");
+        Account testAccount = new Account(username, "puppyDogs5000", "erwin@example.com", "default");
 
         db.addUser(testAccount);
 

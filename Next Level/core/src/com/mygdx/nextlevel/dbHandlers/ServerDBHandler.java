@@ -694,6 +694,7 @@ public class ServerDBHandler {
             e.printStackTrace();
         }
     }
+
     /**
      * Appends a rating to the levels list of ratings
      *

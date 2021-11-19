@@ -152,7 +152,7 @@ public class CreateLevelMenuScreen implements Screen {
                 }
 
                 //refresh created table
-                for (LevelInfo li: serverDB.sortPublicByTitle()) {
+                for (LevelInfo li: serverDB.sortAllByTitle()) {
                     if (li.getAuthor().equals(username)) {
                         createdDB.addLevelInfo(li);
                     }
