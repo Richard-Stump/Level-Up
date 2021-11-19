@@ -181,7 +181,7 @@ public class GameScreen2 extends Timer implements Screen {
         actors.add(new CoinStatic(this, 16, 5));
         actors.add(new CoinStatic(this, 19, 5));
         actors.add(new End(this, 30, 1));
-        actors.add(new Jewel(this, 2, 1));
+//        actors.add(new Jewel(this, 2, 1));
         actors.add(player);
 
         hud = new Hud2(game.batch, player);
@@ -386,7 +386,10 @@ public class GameScreen2 extends Timer implements Screen {
 //                }
                 else if (i.type.equals(Enemy2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Enemy2.Action.class, Player2.class);
-                    actors.add((Enemy2) c.newInstance(this, i.x, i.y, Enemy2.Action.JUMP, player));
+                    actors.add((Enemy2) c.newInstance(this, i.x, i.y, Enemy2.Action.SHOOT, player));
+                } else if (i.type.equals(BlueFire.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Player2.class);
+                    actors.add((BlueFire) c.newInstance(this, i.x, i.y, player));
                 }
                 else {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);

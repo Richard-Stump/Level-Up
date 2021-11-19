@@ -7,17 +7,29 @@ import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class BlueFire extends Actor2 {
     BoxCollider collider;
+    float ogX;
+    Player2 player;
+    BoxCollider playerCollider;
 
-    public BlueFire(GameScreen2 screen, float x, float y) {
+    public BlueFire(GameScreen2 screen, float x, float y, Player2 player) {
         super(screen, x, y, 1, 1);
+        ogX = x;
+        this.player = player;
+        playerCollider = player.getBoxCollider();
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true);
         setRegion(new Texture("blue-fire.png"));
     }
 
     public void update(float delta) {
-//        collider.setVelocity(new Vector2(5.0f, collider.getVelocity().y));
-        collider.setVelocity(new Vector2(-1.0f, collider.getVelocity().y));
+        if (playerCollider.getPosition().x > collider.getPosition().x) {
+            collider.setVelocity(new Vector2(5.0f, collider.getVelocity().y));
+        } else {
+            collider.setVelocity(new Vector2(-3.0f, collider.getVelocity().y));
+        }
         setPosition(collider.getPosition());
+        if (Math.abs(ogX - collider.getPosition().x) > 5f) {
+            screen.queueActorDespawn(this);
+        }
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
