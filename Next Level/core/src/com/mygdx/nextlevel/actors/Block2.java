@@ -21,13 +21,13 @@ public class Block2 extends Actor2 {
 
     ArrayList<Class> items = new ArrayList<>();
 
-    public Block2(GameScreen2 screen, float x, float y, boolean spawnItem, int index, boolean breakable) {
+    public Block2(GameScreen2 screen, Texture texture , float x, float y, boolean spawnItem, int index, boolean breakable) {
         super(screen, x, y, 1, 1);
 
         this.spawnItem = spawnItem;
         this.spawned = false;
         this.breakable = breakable;
-        if (this.spawnItem && !this.breakable) {
+        if (this.spawnItem && !this.breakable && index != -1) {
 //            this.breakable = false;
 
             //Setup all items
@@ -56,59 +56,40 @@ public class Block2 extends Actor2 {
                 (short) (CollisionGroups.ACTOR | CollisionGroups.ITEM | CollisionGroups.WORLD), CollisionGroups.BLOCK
         );
 
-        if (spawnItem && this.breakable) {
-            setRegion(new Texture("Block.png"));
-        } else if (spawnItem) {
-            setRegion(new Texture("item-block.png"));
-        } else {
-            setRegion(new Texture("Block.png"));
-        }
-    }
-
-//    public Block2(GameScreen2 screen, float x, float y, boolean spawnItem) {
-//        super(screen, x, y, 1, 1);
-//
-//        this.spawnItem = spawnItem;
-//        this.spawned = false;
-//        this.breakable = false;
-//
-//        collider = new BoxCollider(
-//                this,
-//                new Vector2(x, y),
-//                new Vector2(1, 1),
-//                false
-//        );
-//
-//        if (spawnItem) {
+//        if (spawnItem && this.breakable) {
+//            setRegion(new Texture("Block.png"));
+//        } else if (spawnItem) {
 //            setRegion(new Texture("item-block.png"));
 //        } else {
 //            setRegion(new Texture("Block.png"));
 //        }
-//    }
+        setRegion(texture);
+    }
 
-    public Block2(GameScreen2 screen, float x, float y, boolean spawnItem, boolean breakable) {
-        super(screen, x, y, 1, 1);
+    public Block2(GameScreen2 screen, Texture texture, float x, float y, boolean spawnItem, boolean breakable) {
+        this(screen, texture, x, y, spawnItem, -1, breakable);
+//        super(screen, x, y, 1, 1);
 
-        this.spawnItem = spawnItem;
-        this.spawned = false;
-        this.breakable = breakable;
+//        this.spawnItem = spawnItem;
+//        this.spawned = false;
+//        this.breakable = breakable;
 
-        collider = new BoxCollider(
-                this,
-                new Vector2(x, y),
-                new Vector2(1, 1),
-                false,
-                CollisionGroups.NONE, CollisionGroups.ACTOR
-        );
+//        collider = new BoxCollider(
+//                this,
+//                new Vector2(x, y),
+//                new Vector2(1, 1),
+//                false,
+//                (short) (CollisionGroups.ACTOR | CollisionGroups.ITEM | CollisionGroups.WORLD), CollisionGroups.BLOCK
+//        );
 
-        if (spawnItem && breakable) {
-            setRegion(new Texture("Block.png"));
-        } else if (spawnItem) {
-            setRegion(new Texture("item-block.png"));
-        }
-        else {
-            setRegion(new Texture("Block.png"));
-        }
+//        if (spawnItem && breakable) {
+//            setRegion(new Texture("Block.png"));
+//        } else if (spawnItem) {
+//            setRegion(new Texture("item-block.png"));
+//        }
+//        else {
+//            setRegion(new Texture("Block.png"));
+//        }
     }
 
     public void reset() {

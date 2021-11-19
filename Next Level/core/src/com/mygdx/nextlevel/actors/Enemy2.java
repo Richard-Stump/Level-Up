@@ -24,7 +24,7 @@ public class Enemy2 extends Actor2 {
         DEFAULT, JUMP, SHOOT;
     }
 
-    public Enemy2(GameScreen2 screen, float x, float y, Enemy2.Action action, Player2 player) {
+    public Enemy2(GameScreen2 screen, Texture texture, float x, float y, Enemy2.Action action, Player2 player) {
         super(screen, x, y, 0.8f, 0.8f);
         boxCollider = new BoxCollider(
                 this,
@@ -37,7 +37,7 @@ public class Enemy2 extends Actor2 {
         this.player = player;
         this.action = action;
         turnTimer = timeTillTurn;
-        setRegion(new Texture("enemy.jpg"));
+        setRegion(texture);
     }
 
     public void update(float delta) {

@@ -15,6 +15,7 @@ public class Player2 extends Actor2 {
     protected Vector2 worldSpawn;
     protected Vector2 respawnPosition;  //Position that the player respawns in
     protected BoxCollider boxCollider;
+    protected Texture texture;
 
     protected int lifeCount;
     protected Item2 heldItem;
@@ -105,8 +106,9 @@ public class Player2 extends Actor2 {
 //        fireFlowerItem = false;
 //    }
 
-    public Player2(GameScreen2 screen, float x, float y) {
+    public Player2(GameScreen2 screen, Texture texture, float x, float y) {
         super(screen, x, y, 0.8f, 0.8f);
+        this.texture = texture;
 
         boxCollider = new BoxCollider(this,
                 new Vector2(x, y),
@@ -119,7 +121,7 @@ public class Player2 extends Actor2 {
         coin = 0;
 
         //The texture region needs to be set for rendering.
-        setRegion(new Texture("goomba.png"));
+        setRegion(this.texture);
         powerUp = false;
         mushroomItem = false;
         slowItem = false;
@@ -136,7 +138,7 @@ public class Player2 extends Actor2 {
     public void update(float delta) {
         if(respawn) {
             boxCollider.setPosition(respawnPosition);
-            setRegion(new Texture("goomba.png"));
+            setRegion(texture);
             if (!facingRight) {
                 flip(true, false);
             }
@@ -162,7 +164,7 @@ public class Player2 extends Actor2 {
             else if (powerUp)
                 setRegion(new Texture("paragoomba.png"));
             else
-                setRegion(new Texture("goomba.png"));
+                setRegion(texture);
             if (!facingRight) {
                 flip(true, false);
             }
