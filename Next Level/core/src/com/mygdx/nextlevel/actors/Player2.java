@@ -8,6 +8,7 @@ import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
+import com.sun.tools.javac.comp.Check;
 
 import java.util.ArrayList;
 
@@ -74,37 +75,7 @@ public class Player2 extends Actor2 {
         jewel = false;
         coin = 0;
         enemiesKilled = 0;
-//        boxCollider = new BoxCollider(this,
-//                new Vector2(1, 1),
-//                new Vector2(0.8f, 0.8f),
-//                true);
     }
-
-//    /**
-//     * TEMPORARY
-//     */
-//    public Player2(ItemShowcaseScreen2 screen, float x, float y) {
-//        super(screen, x, y, 1.0f, 1.0f);
-//
-//        boxCollider = new BoxCollider(this,
-//                new Vector2(x, x),
-//                new Vector2(1, 1),
-//                true);
-//
-//        respawnPosition = new Vector2(boxCollider.getPosition());
-//
-//        lifeCount = 3;
-//
-//        //The texture region needs to be set for rendering.
-//        setRegion(new Texture("goomba.png"));
-//        powerUp = false;
-//        mushroomItem = false;
-//        slowItem = false;
-//        speedItem = false;
-//        lifeStealItem = false;
-//        starItem = false;
-//        fireFlowerItem = false;
-//    }
 
     public Player2(GameScreen2 screen, Texture texture, float x, float y) {
         super(screen, x, y, 0.8f, 0.8f);
@@ -152,6 +123,9 @@ public class Player2 extends Actor2 {
             heldItem = null;
             jewel = false;
             respawn = false;
+
+            coin = 0;
+            enemiesKilled = 0;
         }
 
         if (drawTexture) {
@@ -396,18 +370,19 @@ public class Player2 extends Actor2 {
             if (heldItem == null)
                 heldItem = (Item2) other;
         }
-        if (other instanceof Coin) {
+        if (other instanceof Coin || other instanceof CoinStatic) {
             coin++;
 //            System.out.println(coin);
         }
     }
 
     public void onTrigger(Actor2 other, Side side) {
-        if(other instanceof CheckPoint2 && !((CheckPoint2) other).activated) {
-            addLife();
-            respawnPosition = ((CheckPoint2)other).collider.getPosition();
-            ((CheckPoint2)other).setActivated(true);
-        }
+//        if(other instanceof CheckPoint2 && !((CheckPoint2) other).activated) {
+//            addLife();
+//            System.out.println("Test checkpoint2");
+//            respawnPosition = ((CheckPoint2)other).collider.getPosition();
+//            ((CheckPoint2)other).setActivated(true);
+//        }
 //        if (other instanceof Coin) {
 //            coin++;
 ////            System.out.println(coin);
@@ -429,9 +404,10 @@ public class Player2 extends Actor2 {
 //            } else {
 //                System.out.println("Not enough coins or not enough enemies killed.");
 //            }
-            if (condition == 1 && condition2 == 2 && coin == 5 && enemiesKilled == 1) {
-                win = true;
-            }
+//            System.out.println("TEst");
+//            if (condition == 1 && condition2 == 2 && coin == 5 && enemiesKilled == 1) {
+//                win = true;
+//            }
 
         }
     }
@@ -470,6 +446,7 @@ public class Player2 extends Actor2 {
     public boolean getSlowItem() {
         return this.slowItem;
     }
+    public void setWin(boolean win) { this.win = win; }
     public boolean getWin() {
         return this.win;
     }

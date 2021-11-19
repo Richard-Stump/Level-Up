@@ -171,6 +171,8 @@ public class GameScreen2 extends Timer implements Screen {
 
         player = new Player2(this, new Texture("goomba.png"), 1.0f, 1.0f);
         actors.add(new Enemy2(this,new Texture("enemy.jpg"), 8, 2, Enemy2.Action.SHOOT, player));
+        actors.add(new CheckPoint2(this, 10, 1.0f, player));
+        actors.add(new End(this, 30, 1, player));
         actors.add(new Block2(this,new Texture("item-block.png"), 7, 4, true, ItemIndex.ALL.value, false));
         actors.add(new Block2(this, new Texture("item-block.png"), 10, 4, true, ItemIndex.SLOW.value, false));
         actors.add(new Block2(this, new Texture("item-block.png"), 13, 4, true, ItemIndex.SPEED.value, false));
@@ -181,7 +183,6 @@ public class GameScreen2 extends Timer implements Screen {
         actors.add(new Block2(this, new Texture("item-block.png"), 28, 4, true, ItemIndex.LIFESTEAL.value, false));
         actors.add(new Block2(this, new Texture("jewel.png"), 29, 4, true, ItemIndex.COIN.value, true));
         actors.add(new Block2(this, new Texture("Block.png"), 30, 4, false,false));
-        actors.add(new CheckPoint2(this, 10, 1.0f));
 //        actors.add(new Coin(this, 10, 5, false));
 //        actors.add(new Coin(this, 13, 5, false));
 //        actors.add(new Coin(this, 16, 5, false));
@@ -190,7 +191,6 @@ public class GameScreen2 extends Timer implements Screen {
         actors.add(new CoinStatic(this, 13, 5));
         actors.add(new CoinStatic(this, 16, 5));
         actors.add(new CoinStatic(this, 19, 5));
-        actors.add(new End(this, 30, 1));
 //        actors.add(new Jewel(this, 2, 1));
         actors.add(player);
 
