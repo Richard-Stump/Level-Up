@@ -26,16 +26,18 @@ public class EditorLevel {
 
     private int oldWidth, oldHeight;
 
-    @Property public int width;
-    @Property public int height;
-    @Property public String name;
-    @Property public Difficulty difficulty = Difficulty.NONE;
-    @Property public float gravity;
-    @Property(group="Completion Flags") public boolean collectCoins;
-    @Property(group="Completion Flags") public boolean beatTimeLimit;
-    @Property(group="Completion Flags") public boolean killAllEnemies;
-    @Property(group="Completion Flags") public boolean killNoEnemies;
-    @Property(group="Completion Flags") public boolean keepJewel;
+    @Property(displayName="Level Width") public int width;
+    @Property(displayName="Level Height") public int height;
+    @Property(displayName="Level Name") public String name;
+    @Property(displayName="Difficulty") public Difficulty difficulty = Difficulty.NONE;
+    @Property(displayName="Gravity") public float gravity;
+    @Property(displayName="Time Limit") public int timeLimit;
+
+    @Property(group="Completion Flags", displayName="Collect All Coins") public boolean collectCoins;
+    @Property(group="Completion Flags", displayName="Beat The Time Limit") public boolean beatTimeLimit;
+    @Property(group="Completion Flags", displayName="Kill All Enemies") public boolean killAllEnemies;
+    @Property(group="Completion Flags", displayName="Kill No Enemies") public boolean killNoEnemies;
+    @Property(group="Completion Flags", displayName="Keep The Jewel Safe") public boolean keepJewel;
 
     public static int NONE = -1;
 
