@@ -47,6 +47,24 @@ public class GameScreen2 extends Timer implements Screen {
             value = newValue;
         }
     }
+    public enum PlayerIndex {
+        DEFAULT(0), POWERUP(1), STAR(2), FIRE(3), LIFESTEAL(4);
+        private final int value;
+
+        PlayerIndex(final int newValue) { value = newValue; }
+    }
+    public enum BlockIndex {
+        DEFAULT(0), EMPTY(1);
+        private final int value;
+
+        BlockIndex(final int newValue) { value = newValue; }
+    }
+    public enum CheckpointIndex {
+        DEFAULT(0), TRIGGERED(1);
+        private final int value;
+
+        CheckpointIndex(final int newValue) { value = newValue; }
+    }
 
     private NextLevel game;
     private Box2DDebugRenderer box2dRenderer;
@@ -90,7 +108,6 @@ public class GameScreen2 extends Timer implements Screen {
     LinkedList<ActorSpawnInfo> spawnQueue;  //List of actors to spawn in the next frame
     LinkedList<Actor2> despawnQueue;        //List of actors to destroy in the next frame
 
-    //TODO this stuff has been added
     ArrayList<Actor2> despawnedActors;      //The list of actors that have been despawned from the game
     public ArrayList<Actor2> itemsList;     //The list of all items that are currently in the game screen
     public ArrayList<Actor2> blockList;     //The list of all item blocks that need to be reset
@@ -121,7 +138,6 @@ public class GameScreen2 extends Timer implements Screen {
         spawnQueue = new LinkedList<>();
         despawnQueue = new LinkedList<>();
 
-        //TODO This has been updated
         despawnedActors = new ArrayList<>();
         itemsList = new ArrayList<>();
         blockList = new ArrayList<>();
@@ -172,7 +188,14 @@ public class GameScreen2 extends Timer implements Screen {
 
         //TODO on classes that can create multiple texture (Player, Checkpoint, Block (Items)) pass in textures as arraylist
         //TODO have the index of the array list correspond with the texture (block/item or baseTexture/updateTexture)
-        player = new Player2(this, new Texture("goomba.png"), 1.0f, 1.0f);
+        ArrayList<Texture> playerTexture = new ArrayList<>();
+        playerTexture.add(PlayerIndex.DEFAULT.value, new Texture("goomba.png"));
+        playerTexture.add(PlayerIndex.POWERUP.value, new Texture("paragoomba.png"));
+        playerTexture.add(PlayerIndex.STAR.value, new Texture("stargoomba.png"));
+        playerTexture.add(PlayerIndex.FIRE.value, new Texture("firegoomba.png"));
+        playerTexture.add(PlayerIndex.LIFESTEAL.value, new Texture("lifesteal-goomba.png"));
+//        player = new Player2(this, new Texture("goomba.png"), 1.0f, 1.0f);
+        player = new Player2(this, playerTexture, 1.0f, 1.0f);
         actors.add(new Enemy2(this,new Texture("enemy.jpg"), 16, 2, Enemy2.Action.SHOOT, player));
         actors.add(new CheckPoint2(this, new Texture("checkpoint.png"), 10.0f, 1.0f, player));
         actors.add(new End(this, new Texture("end.jpeg"), 30, 1, player));
