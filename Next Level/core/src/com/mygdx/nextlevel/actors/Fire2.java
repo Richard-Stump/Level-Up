@@ -9,9 +9,11 @@ import com.mygdx.nextlevel.screens.GameScreen2;
 public class Fire2 extends Actor2 {
     BoxCollider collider;
     Boolean inital;
+    float ogX;
 
     public Fire2(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 1, 1);
+        ogX = x;
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true, (short) (CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.FIRE);
         setRegion(new Texture("fireball.png"));
         inital = true;
@@ -27,8 +29,11 @@ public class Fire2 extends Actor2 {
             }
             inital = false;
         }
-
         setPosition(collider.getPosition());
+
+        if (Math.abs(ogX - collider.getPosition().x) > 10f) {
+            screen.queueActorDespawn(this);
+        }
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {

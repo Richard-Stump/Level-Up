@@ -14,10 +14,10 @@ public class Jewel extends Actor2 {
         collider = new BoxCollider(this, new Vector2(1,1), new Vector2(0.5f, 0.5f), true, (short) (CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR);
     }
 
-    public Jewel(GameScreen2 screen, float x, float y) {
+    public Jewel(GameScreen2 screen, Texture texture, float x, float y) {
         super(screen, x, y, 0.5f,0.5f);
         collider = new BoxCollider(this, new Vector2(x,y), new Vector2(0.5f, 0.5f), true, (short) (CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR);
-        setRegion(new Texture("jewel.png"));
+        setRegion(texture);
     }
 
     public void update(float delta) {
