@@ -9,16 +9,17 @@ import com.mygdx.nextlevel.screens.GameScreen2;
 public class CheckPoint2 extends Actor2 {
     protected boolean activated = false;
     protected Player2 player;
-
+    protected Texture regularTexture;
     protected BoxCollider collider;
 
-    public CheckPoint2(GameScreen2 screen, float x, float y, Player2 player) {
+    public CheckPoint2(GameScreen2 screen, Texture texture, float x, float y, Player2 player) {
         super(screen, x, y, 1, 1);
         this.player = player;
+        this.regularTexture = texture;
 
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(1.0f, 1.0f), false, true, CollisionGroups.ACTOR, CollisionGroups.ACTOR);
 
-        setRegion(new Texture("checkpoint.png"));
+        setRegion(regularTexture);
     }
 
     @Override
@@ -33,7 +34,7 @@ public class CheckPoint2 extends Actor2 {
 
     public void reset() {
         activated = false;
-        setRegion(new Texture("checkpoint.png"));
+        setRegion(regularTexture);
     }
 
     public boolean isActivated() {

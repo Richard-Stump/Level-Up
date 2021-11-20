@@ -16,6 +16,7 @@ import com.mygdx.nextlevel.*;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.hud.Hud2;
+import org.w3c.dom.Text;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -161,21 +162,6 @@ public class GameScreen2 extends Timer implements Screen {
         despawnQueue.clear();
 
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
-////        player = new Player2(this, 1.0f, 1.0f);
-//        player = new Player2(this, 15.0f, 1.0f);
-////        actors.add(new Enemy2(this,2, 2));
-//        actors.add(new Enemy2(this, 8, 2, Enemy2.Action.JUMP, player));
-//        actors.add(new Block2(this, 7, 4, true, ItemIndex.ALL.value, false));
-//        actors.add(new Block2(this, 10, 4, true, ItemIndex.SLOW.value, false));
-//        actors.add(new Block2(this, 13, 4, true, ItemIndex.SPEED.value, false));
-//        actors.add(new Block2(this, 16, 4, true, ItemIndex.LIFE.value, false));
-//        actors.add(new Block2(this, 19, 4, true, ItemIndex.MUSHROOM.value, false));
-//        actors.add(new Block2(this, 22, 4, true, ItemIndex.STAR.value, false));
-//        actors.add(new Block2(this, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
-//        actors.add(new Block2(this, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
-//        actors.add(new Block2(this, 29, 4, true, ItemIndex.COIN.value, true));
-//        actors.add(new Block2(this, 30, 4, false,false));
-//        actors.add(new CheckPoint2(this, 10, 1.0f));
         //TODO add interface with DB in which if the file is not in data base then go to default skin
         /*
         Texture texture = new Texture(Gdx.files.internal(db.getProfilePic(textureValue)));
@@ -184,10 +170,12 @@ public class GameScreen2 extends Timer implements Screen {
         }
          */
 
+        //TODO on classes that can create multiple texture (Player, Checkpoint, Block (Items)) pass in textures as arraylist
+        //TODO have the index of the array list correspond with the texture (block/item or baseTexture/updateTexture)
         player = new Player2(this, new Texture("goomba.png"), 1.0f, 1.0f);
-        actors.add(new Enemy2(this,new Texture("enemy.jpg"), 8, 2, Enemy2.Action.SHOOT, player));
-        actors.add(new CheckPoint2(this, 10, 1.0f, player));
-        actors.add(new End(this, 30, 1, player));
+        actors.add(new Enemy2(this,new Texture("enemy.jpg"), 16, 2, Enemy2.Action.SHOOT, player));
+        actors.add(new CheckPoint2(this, new Texture("checkpoint.png"), 10.0f, 1.0f, player));
+        actors.add(new End(this, new Texture("end.jpeg"), 30, 1, player));
         actors.add(new Block2(this,new Texture("item-block.png"), 7, 4, true, ItemIndex.ALL.value, false));
         actors.add(new Block2(this, new Texture("item-block.png"), 10, 4, true, ItemIndex.SLOW.value, false));
         actors.add(new Block2(this, new Texture("item-block.png"), 13, 4, true, ItemIndex.SPEED.value, false));
@@ -202,11 +190,11 @@ public class GameScreen2 extends Timer implements Screen {
 //        actors.add(new Coin(this, 13, 5, false));
 //        actors.add(new Coin(this, 16, 5, false));
 //        actors.add(new Coin(this, 19, 5, false));
-        actors.add(new CoinStatic(this, 10, 5));
-        actors.add(new CoinStatic(this, 13, 5));
-        actors.add(new CoinStatic(this, 16, 5));
-        actors.add(new CoinStatic(this, 19, 5));
-//        actors.add(new Jewel(this, 2, 1));
+        actors.add(new CoinStatic(this, new Texture("coin.png"), 10, 5));
+        actors.add(new CoinStatic(this, new Texture("coin.png"), 13, 5));
+        actors.add(new CoinStatic(this, new Texture("coin.png"), 16, 5));
+        actors.add(new CoinStatic(this, new Texture("coin.png"), 19, 5));
+//        actors.add(new Jewel(this, new Texture("jewel.png"), 2, 1));
         actors.add(player);
 
         hud = new Hud2(game.batch, player);
@@ -397,13 +385,13 @@ public class GameScreen2 extends Timer implements Screen {
                     actors.add((Block2) c.newInstance(this, new Texture("badlogic.jpg"), i.x +0.5f, i.y + 0.5f, true, ItemIndex.COIN.value, true));
                 }
                 else if (i.type.equals(CoinStatic.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
-                    actors.add((CoinStatic) c.newInstance(this, i.x +0.25f, i.y+0.25f));
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
+                    actors.add((CoinStatic) c.newInstance(this, new Texture("badlogic.jpg"), i.x +0.25f, i.y+0.25f));
                 }
                 else if (i.type.equals(Jewel.class)) {
 //                    System.out.println("Jewel in spawn actors");
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
-                    actors.add((Jewel) c.newInstance(this, i.x, i.y));
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
+                    actors.add((Jewel) c.newInstance(this, new Texture("badlogic.jpg"), i.x, i.y));
                 }
 //                else if (i.type.equals(CoinStatic.class)) {
 //                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);

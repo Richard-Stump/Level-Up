@@ -11,12 +11,14 @@ public class BlueFire extends Actor2 {
     float ogX;
     Player2 player;
     BoxCollider playerCollider;
+    protected boolean initial;
 
     public BlueFire(GameScreen2 screen, float x, float y, Player2 player) {
         super(screen, x, y, 1, 1);
         ogX = x;
         this.player = player;
         playerCollider = player.getBoxCollider();
+        initial = true;
 //        collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true);
 
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true, (short) (CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.FIRE);
@@ -34,8 +36,18 @@ public class BlueFire extends Actor2 {
 //    }
 
     public void update(float delta) {
+//        setPosition(collider.getPosition());
+        if (initial) {
+            if (playerCollider.getPosition().x > collider.getPosition().x) {
+                collider.setVelocity(new Vector2(4.0f, collider.getVelocity().y));
+            } else {
+                collider.setVelocity(new Vector2( - 4.0f, collider.getVelocity().y));
+            }
+            initial = false;
+        }
         setPosition(collider.getPosition());
-        if (Math.abs(ogX - collider.getPosition().x) > 5f) {
+
+        if (Math.abs(ogX - collider.getPosition().x) > 10f) {
             screen.queueActorDespawn(this);
         }
     }
