@@ -61,7 +61,7 @@ public class Hud2 {
         worldTimer = 10;
         time = 0;
         score = 0;
-        condition = player.getCondition();
+//        condition = player.getCondition();
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera());
         stage = new Stage(viewport, spriteBatch);
 

@@ -34,6 +34,11 @@ public class Player2 extends Actor2 {
     private boolean invulernable = false;
     private float time = 2f;
     private boolean launch = false;
+    boolean coinConditionMet = false;
+    boolean killEnemyConditionMet = false;
+    boolean killNoEnemyConditionMet = false;
+    boolean jewelConditionMet = false;
+    boolean timeLimitConditionMet = false;
 
     //Item Booleans
     private boolean mushroomItem;
@@ -56,8 +61,8 @@ public class Player2 extends Actor2 {
     private double record = 25.00;
 
     //0 = unconditional, 1 = coins, 2 = kill all enemies, 3 = kill no enemies, 4 = clear level while holding the jewel, 5 = clear within time limit
-    private int condition = 5;
-    private int condition2 = 2;
+//    private int condition = 5;
+//    private int condition2 = 2;
 
 
 
@@ -105,6 +110,7 @@ public class Player2 extends Actor2 {
         conditions = new ArrayList<>();
         conditions.add(1);
         conditions.add(2);
+        conditions.add(5);
     }
 
     public void update(float delta) {
@@ -320,9 +326,9 @@ public class Player2 extends Actor2 {
         }
         if (other instanceof Enemy2 && side == Side.BOTTOM || other instanceof Enemy2 && (side == Side.RIGHT || side == Side.LEFT) && starItem) {
             enemiesKilled++;
-            if (condition == 3 && enemiesKilled > 0) {
-                fail = true;
-            }
+//            if (condition == 3 && enemiesKilled > 0) {
+//                fail = true;
+//            }
         }
         if (other instanceof Jewel) {
             this.jewel = true;
@@ -389,6 +395,7 @@ public class Player2 extends Actor2 {
 ////            System.out.println(coin);
 //        }
         if (other instanceof End) {
+            checkConditions(conditions);
 //            //Todo: replace coin == ? to a preset number in the level
 //            if (condition == 1 && coin == 5) {
 //                win = true;
@@ -409,9 +416,11 @@ public class Player2 extends Actor2 {
 //            if (condition == 1 && condition2 == 2 && coin == 5 && enemiesKilled == 1) {
 //                win = true;
 //            }
-            if (condition == 5) {
-                win = true;
-            }
+//            System.out.println("Here");
+//            if (condition == 5) {
+////                System.out.println("Win");
+//                win = true;
+//            }
 
 //            System.out.println("TEst");
 //            if (condition == 1 && condition2 == 2 && coin == 5 && enemiesKilled == 1) {
@@ -463,12 +472,12 @@ public class Player2 extends Actor2 {
     public int getCoins() {
         return this.coin;
     }
-    public int getCondition() {
-        return this.condition;
-    }
-    public int getCondition2() {
-        return this.condition2;
-    }
+//    public int getCondition() {
+//        return this.condition;
+//    }
+//    public int getCondition2() {
+//        return this.condition2;
+//    }
     public void setFail(boolean set) {
         fail = set;
     }
@@ -520,5 +529,34 @@ public class Player2 extends Actor2 {
 
     public ArrayList<Integer> getConditions() {
         return conditions;
+    }
+
+    public void checkConditions(ArrayList<Integer> conditions) {
+        while (!win && !fail) {
+            if (conditions.contains(1)) {
+                coinConditionMet = false;
+                if (coin == 5) {
+                    coinConditionMet = true;
+                }
+            } else {
+                coinConditionMet = true;
+            }
+            if (conditions.contains(2)) {
+                killEnemyConditionMet = false;
+                if (enemiesKilled == 1) {
+                    killEnemyConditionMet = true;
+                }
+            } else  {
+                killEnemyConditionMet = true;
+            }
+            if (conditions.contains(3)) {
+                killNoEnemyConditionMet = false;
+                if (enemiesKilled == 0) {
+                    killNoEnemyConditionMet = true;
+                }
+            } else {
+                killNoEnemyConditionMet = true;
+            }
+        }
     }
 }

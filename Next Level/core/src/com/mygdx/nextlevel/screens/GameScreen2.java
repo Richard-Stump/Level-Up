@@ -52,7 +52,7 @@ public class GameScreen2 extends Timer implements Screen {
     private OrthographicCamera camera;
     private Hud2 hud;
     TileMap tm;
-    ServerDBHandler db = new ServerDBHandler();
+//    ServerDBHandler db = new ServerDBHandler();
 
     private BoxCollider floor;
     private Player2 player;
@@ -349,12 +349,13 @@ public class GameScreen2 extends Timer implements Screen {
             }
 //            System.out.println(String.format("New Record Time: %f", player.getRecordTime()));
 //            System.out.println(elapsedTime);
-            //((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY"));
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
+//            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY"));
         }
         if (player.getFail()) {
             //System.out.println("Im here");
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over..."));
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "FAIL", "MainMenuScreen"));
+//            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over..."));
         }
     }
 
