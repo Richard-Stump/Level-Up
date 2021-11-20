@@ -308,13 +308,13 @@ public class ServerDBHandler {
                 table[j][2] = resultSet.getString("email");
                 //these aren't strings
                 Array uploadedLevels = resultSet.getArray("levelsuploaded");
-                table[j][3] = uploadedLevels.getArray().toString();
+                table[j][3] = Arrays.toString((String[]) uploadedLevels.getArray());
 
                 Array uploadedAssets = resultSet.getArray("assetsuploaded");
-                table[j][4] = uploadedAssets.getArray().toString();
+                table[j][4] = Arrays.toString((String[]) uploadedAssets.getArray());
 
                 Array levelsCompleted = resultSet.getArray("levelscompleted");
-                table[j][5] = levelsCompleted.getArray().toString();
+                table[j][5] = Arrays.toString((String[]) levelsCompleted.getArray());
 
                 table[j][6] = ((Boolean) resultSet.getBoolean("active")).toString();
                 table[j][7] = resultSet.getString("profilepicture");
