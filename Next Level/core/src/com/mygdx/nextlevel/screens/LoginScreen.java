@@ -46,11 +46,9 @@ public class LoginScreen extends AccountList implements Screen {
 
     //textFields
     public TextField textUsername, textPass;
-//    public TextField textPass;
 
     //inputted strings
     public String username, pass;
-//    public String pass;
 
     //buttons
     public TextButton loginButton;
@@ -150,22 +148,16 @@ public class LoginScreen extends AccountList implements Screen {
         Table passFieldTable = new Table();
         passFieldTable.add(textPass).width(textBoxWidth).padBottom(textBoxBottomPadding);
         Table checkboxTable = new Table();
-        //checkboxTable.setDebug(true);
         checkboxTable.add(passwordBox).padLeft(textBoxWidth - 20).padBottom(20);
 
         Stack passStack = new Stack();
         passStack.add(passFieldTable);
         passStack.add(checkboxTable);
 
-        //Debug lines
-        //table.setDebug(true);
-        //textFieldTable.setDebug(true);
-        //rightButtonTable.setDebug(true);
 
         textFieldTable.add(textUsername).width(textBoxWidth).padBottom(textBoxBottomPadding);
         textFieldTable.row();
         textFieldTable.add(passStack);
-        //textFieldTable.add(textPass).width(textBoxWidth).padBottom(textBoxBottomPadding);
 
         rightButtonTable.add(regButton).padBottom(textBoxBottomPadding / 2f).right();
         rightButtonTable.row();
@@ -173,8 +165,6 @@ public class LoginScreen extends AccountList implements Screen {
 
         //adding actors to table
         table.add(titleLabel).padBottom(textBoxBottomPadding);
-        //table.row();
-        //table.add(new Label("", skin)).width(300);
         table.row();
         table.add(welcomeLabel).padBottom(textBoxBottomPadding + 25);
         table.row();
@@ -205,41 +195,7 @@ public class LoginScreen extends AccountList implements Screen {
         loginButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
-                //get information from text fields
-                username = textUsername.getText();
-                pass = textPass.getText();
-
-                //check if user exists
-                while (true) {
-                    if (db.userExists(username)) {
-                        String ret = db.getPassword(username);
-                        //check password is correct
-                        if (pass.equals(ret)) {
-                            curAcc = username;
-                            isInfoCorrect = true;
-                            loadDB();
-                            break;
-                        } else if (!pass.equals(ret)) {
-                            isInfoCorrect = false;
-                            ErrorDialog passDialog = new ErrorDialog(skin, "Incorrect Password For Username", stage);
-                            passErrorDialog = passDialog.getErrorDialog();
-                            textPass.setText("");
-                            textPass.setMessageText("Password");
-                            break;
-                        }
-                    } else {
-                        isInfoCorrect = false;
-                        ErrorDialog userDialog = new ErrorDialog(skin, "No Account Associated With Username", stage);
-                        userErrorDialog = userDialog.getErrorDialog();
-                        break;
-                    }
-                }
-
-                if (isInfoCorrect) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
-                }
-                //isInfoCorrect = true;
+                loginHandler();
             }
         });
         loginButton.addListener(new HoverListener());
@@ -249,40 +205,7 @@ public class LoginScreen extends AccountList implements Screen {
                 if (keycode == Input.Keys.ENTER) {
                     System.out.println("Enter key pressed");
 
-                    //get information from text fields
-                    username = textUsername.getText();
-                    pass = textPass.getText();
-
-                    //check if user exists
-                    while (true) {
-                        if (db.userExists(username)) {
-                            String ret = db.getPassword(username);
-                            //check password is correct
-                            if (pass.equals(ret)) {
-                                curAcc = username;
-                                isInfoCorrect = true;
-                                loadDB();
-                                break;
-                            } else if (!pass.equals(ret)) {
-                                isInfoCorrect = false;
-                                ErrorDialog passDialog = new ErrorDialog(skin, "Incorrect Password For Username", stage);
-                                passErrorDialog = passDialog.getErrorDialog();
-                                textPass.setText("");
-                                textPass.setMessageText("Password");
-                                break;
-                            }
-                        } else {
-                            isInfoCorrect = false;
-                            ErrorDialog userDialog = new ErrorDialog(skin, "No Account Associated With Username", stage);
-                            userErrorDialog = userDialog.getErrorDialog();
-                            break;
-                        }
-                    }
-
-                    if (isInfoCorrect) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
-                    }
-                    //isInfoCorrect = true;
+                    loginHandler();
                 }
                 return false;
             }
@@ -325,13 +248,55 @@ public class LoginScreen extends AccountList implements Screen {
         serverDB.closeConnection();
     }
 
+    /**
+     * Checks if the username and password are valid, and then logs them in and
+     * takes them to the main menu screen.
+     *
+     * This should be called by any buttons or keyboard commands that activate the login.
+     */
+    private void loginHandler()
+    {
+        //get information from text fields
+        username = textUsername.getText();
+        pass = textPass.getText();
+
+        //check if user exists
+        while (true) {
+            if (db.userExists(username)) {
+                String ret = db.getPassword(username);
+                //check password is correct
+                if (pass.equals(ret)) {
+                    curAcc = username;
+                    isInfoCorrect = true;
+                    break;
+                } else if (!pass.equals(ret)) {
+                    isInfoCorrect = false;
+                    ErrorDialog passDialog = new ErrorDialog(skin, "Incorrect Password For Username", stage);
+                    passErrorDialog = passDialog.getErrorDialog();
+                    textPass.setText("");
+                    textPass.setMessageText("Password");
+                    break;
+                }
+            } else {
+                isInfoCorrect = false;
+                ErrorDialog userDialog = new ErrorDialog(skin, "No Account Associated With Username", stage);
+                userErrorDialog = userDialog.getErrorDialog();
+                break;
+            }
+        }
+
+        if (isInfoCorrect) {
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
+        }
+        //isInfoCorrect = true;
+    }
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(.1f, .12f, .16f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stage.act();
-        //errorDialog.act(delta);
         stage.draw();
     }
 

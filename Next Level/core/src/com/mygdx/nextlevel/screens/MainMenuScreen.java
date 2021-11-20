@@ -118,7 +118,7 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         playerPic.scaleBy(-.75f);
 
         //HorizontalGroup userGroup = new HorizontalGroup();
-        //usernameLabel.setPosition(rightMargin - 70, topMargin);
+        //usernameLabel.setPosition(rightMargin - 70, topMargin)  ;
 //        userGroup.addActor(usernameLabel);
 //        //playerPic.setPosition(rightMargin - 50, topMargin + 100);
 //        userGroup.addActor(playerPic);
