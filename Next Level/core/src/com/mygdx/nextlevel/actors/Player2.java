@@ -16,7 +16,7 @@ public class Player2 extends Actor2 {
     protected Vector2 worldSpawn;
     protected Vector2 respawnPosition;  //Position that the player respawns in
     protected BoxCollider boxCollider;
-    protected Texture texture;
+    protected ArrayList<Texture> textures;
 
     protected int lifeCount;
     protected Item2 heldItem;
@@ -69,6 +69,13 @@ public class Player2 extends Actor2 {
     //Fire Timer
     private boolean fireSpawn = false;
 
+    public enum PlayerIndex {
+        DEFAULT(0), POWERUP(1), STAR(2), FIRE(3), LIFESTEAL(4);
+        private final int value;
+
+        PlayerIndex(final int newValue) { value = newValue; }
+    }
+
     public Player2() {
         lifeCount = 3;
         mushroomItem = false;
@@ -83,9 +90,9 @@ public class Player2 extends Actor2 {
         enemiesKilled = 0;
     }
 
-    public Player2(GameScreen2 screen, Texture texture, float x, float y) {
+    public Player2(GameScreen2 screen, ArrayList<Texture> textures, float x, float y) {
         super(screen, x, y, 0.8f, 0.8f);
-        this.texture = texture;
+        this.textures = textures;
 
         boxCollider = new BoxCollider(this,
                 new Vector2(x, y),
@@ -98,7 +105,7 @@ public class Player2 extends Actor2 {
         coin = 0;
 
         //The texture region needs to be set for rendering.
-        setRegion(this.texture);
+        setRegion(this.textures.get(PlayerIndex.DEFAULT.value));
         powerUp = false;
         mushroomItem = false;
         slowItem = false;
@@ -116,7 +123,7 @@ public class Player2 extends Actor2 {
     public void update(float delta) {
         if(respawn) {
             boxCollider.setPosition(respawnPosition);
-            setRegion(texture);
+            setRegion(this.textures.get(PlayerIndex.DEFAULT.value));
             if (!facingRight) {
                 flip(true, false);
             }
@@ -137,15 +144,15 @@ public class Player2 extends Actor2 {
 
         if (drawTexture) {
             if (starItem)
-                setRegion(new Texture("stargoomba.png"));
+                setRegion(this.textures.get(PlayerIndex.STAR.value));
             else if (fireFlowerItem)
-                setRegion(new Texture("firegoomba.png"));
+                setRegion(this.textures.get(PlayerIndex.FIRE.value));
             else if (lifeStealItem)
-                setRegion(new Texture("lifesteal-goomba.png"));
+                setRegion(this.textures.get(PlayerIndex.LIFESTEAL.value));
             else if (powerUp)
-                setRegion(new Texture("paragoomba.png"));
+                setRegion(this.textures.get(PlayerIndex.POWERUP.value));
             else
-                setRegion(texture);
+                setRegion(this.textures.get(PlayerIndex.DEFAULT.value));
             if (!facingRight) {
                 flip(true, false);
             }
