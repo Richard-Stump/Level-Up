@@ -3,6 +3,7 @@ package com.mygdx.nextlevel.actors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
+import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class CoinStatic extends Actor2 {
@@ -13,11 +14,11 @@ public class CoinStatic extends Actor2 {
 //        collider = new BoxCollider(this, new Vector2(1, 1), new Vector2(0.5f, 0.5f), false);
     }
 
-    public CoinStatic(GameScreen2 screen, float x, float y) {
+    public CoinStatic(GameScreen2 screen, Texture texture, float x, float y) {
         super(screen, x, y, 0.5f, 0.5f);
 
-        collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), false);
-        setRegion(new Texture("coin.png"));
+        collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), false, (short) (CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ITEM);
+        setRegion(texture);
     }
 
     public void update(float delta) {

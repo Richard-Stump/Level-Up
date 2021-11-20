@@ -5,6 +5,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -65,9 +66,10 @@ public class TileMap extends ApplicationAdapter{
         MapLayer objectLayer = tiledMap.getLayers().get("Object Layer 1");
         int i = 0;
         for(MapObject object : objectLayer.getObjects()){
+            //TODO Will add actors into the game from TileMap
             if(object instanceof TextureMapObject && i !=0) {
                 TextureMapObject mapObject = (TextureMapObject) object;
-                actors.add(new Block2(screen, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
+                actors.add(new Block2(screen, new Texture("coin.png"),mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
             }
             i++;
         }

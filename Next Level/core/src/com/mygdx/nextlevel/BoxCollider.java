@@ -46,32 +46,33 @@ public class BoxCollider {
     protected Fixture[]         sensorFixtures;
     protected PolygonShape[]    sensorShapes;
 
-    //TODO Test
-    protected FixtureDef    fixtureDef;
-
     public boolean isTrigger;
     public boolean debugPrint = false;
 
-    public BoxCollider(Vector2 pos, Vector2 size, boolean dynamic, boolean isTrigger) {
+    public BoxCollider(Vector2 pos, Vector2 size, boolean dynamic, boolean isTrigger, short mask, short category) {
         this.owner = null;
         this.isTrigger = isTrigger;
 
         setupBodies(dynamic, pos);
         setupShapes(pos, size);
-        setupFixtures((short) 1, (short) 0);
+        setupFixtures(mask, category);
     }
 
-    public BoxCollider(Vector2 pos, Vector2 size, boolean dynamic) {
-        this(pos, size, dynamic, false);
+    public BoxCollider(Vector2 pos, Vector2 size, boolean dynamic, short mask, short category) {
+        this(pos, size, dynamic, false, mask, category);
     }
 
-    public BoxCollider(Actor2 owner, Vector2 pos, Vector2 size, boolean dynamic, boolean isTrigger) {
-        this(pos, size, dynamic,  isTrigger);
+    public BoxCollider(Actor2 owner, Vector2 pos, Vector2 size, boolean dynamic, boolean isTrigger, short mask, short category) {
+        this(pos, size, dynamic,  isTrigger, mask, category);
         this.owner = owner;
     }
 
-    public BoxCollider(Actor2 owner, Vector2 pos, Vector2 size, boolean dynamic) {
-        this(owner, pos, size, dynamic, false);
+//    public BoxCollider(Actor2 owner, Vector2 pos, Vector2 size, boolean dynamic, short mask, short group) {
+//        this(owner, pos, size, dynamic, false, mask, group);
+//    }
+
+    public BoxCollider(Actor2 owner, Vector2 pos, Vector2 size, boolean dynamic, short mask, short category) {
+        this(owner, pos, size, dynamic, false, mask, category);
     }
 
     protected void setupBodies(boolean dynamic, Vector2 position) {
@@ -130,7 +131,7 @@ public class BoxCollider {
      * Sets up the fixtures for the collider. The main one is used for actual collision, and the edges are
      * sensors that detect which side the collision occured
      */
-    protected void setupFixtures(short mask, short group) {
+    protected void setupFixtures(short mask, short category) {
         //setup the main fixture
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.density = 100.0f;    //How much mass is there per unit of volume
@@ -138,8 +139,8 @@ public class BoxCollider {
         fixtureDef.restitution = 0.0f;  //How bouncy is this object. None because we don't want our objects to bounce.
         fixtureDef.shape = mainShape;
         fixtureDef.isSensor = isTrigger;
-        fixtureDef.filter.maskBits = mask;
-        fixtureDef.filter.groupIndex = group;
+        fixtureDef.filter.maskBits = mask; //I Collide with ...
+        fixtureDef.filter.categoryBits = category; //I am a ...
         fixture = body.createFixture(fixtureDef);
         fixture.setUserData(this);
 

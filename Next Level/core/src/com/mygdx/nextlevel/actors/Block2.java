@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
+import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 import java.util.ArrayList;
@@ -17,18 +18,18 @@ public class Block2 extends Actor2 {
     protected boolean breakable;
     protected BoxCollider collider;
     protected int itemIndex = 0;
+    protected Texture regularTexture;
 
     ArrayList<Class> items = new ArrayList<>();
 
-    public Block2(GameScreen2 screen, float x, float y, boolean spawnItem, int index, boolean breakable) {
+    public Block2(GameScreen2 screen, Texture texture , float x, float y, boolean spawnItem, int index, boolean breakable) {
         super(screen, x, y, 1, 1);
+        this.regularTexture = texture;
 
         this.spawnItem = spawnItem;
         this.spawned = false;
         this.breakable = breakable;
-        if (this.spawnItem && !this.breakable) {
-//            this.breakable = false;
-
+        if (this.spawnItem && !this.breakable && index != -1) {
             //Setup all items
             items.add(SlowItem2.class);
             items.add(SpeedItem2.class);
@@ -37,7 +38,6 @@ public class Block2 extends Actor2 {
             items.add(StarItem2.class);
             items.add(FireFlowerItem2.class);
             items.add(LifeStealItem2.class);
-//            items.add(Coin.class);
 
             itemIndex = index;
         } else if (this.spawnItem && this.breakable) {
@@ -51,61 +51,22 @@ public class Block2 extends Actor2 {
                 this,
                 new Vector2(x, y),
                 new Vector2(1, 1),
-                false
+                false,
+                (short) (CollisionGroups.ACTOR | CollisionGroups.ITEM | CollisionGroups.WORLD), CollisionGroups.BLOCK
         );
 
-        if (spawnItem && this.breakable) {
-            setRegion(new Texture("Block.png"));
-        } else if (spawnItem) {
-            setRegion(new Texture("item-block.png"));
-        } else {
-            setRegion(new Texture("Block.png"));
-        }
-    }
-
-//    public Block2(GameScreen2 screen, float x, float y, boolean spawnItem) {
-//        super(screen, x, y, 1, 1);
-//
-//        this.spawnItem = spawnItem;
-//        this.spawned = false;
-//        this.breakable = false;
-//
-//        collider = new BoxCollider(
-//                this,
-//                new Vector2(x, y),
-//                new Vector2(1, 1),
-//                false
-//        );
-//
-//        if (spawnItem) {
+//        if (spawnItem && this.breakable) {
+//            setRegion(new Texture("Block.png"));
+//        } else if (spawnItem) {
 //            setRegion(new Texture("item-block.png"));
 //        } else {
 //            setRegion(new Texture("Block.png"));
 //        }
-//    }
+        setRegion(regularTexture);
+    }
 
-    public Block2(GameScreen2 screen, float x, float y, boolean spawnItem, boolean breakable) {
-        super(screen, x, y, 1, 1);
-
-        this.spawnItem = spawnItem;
-        this.spawned = false;
-        this.breakable = breakable;
-
-        collider = new BoxCollider(
-                this,
-                new Vector2(x, y),
-                new Vector2(1, 1),
-                false
-        );
-
-        if (spawnItem && breakable) {
-            setRegion(new Texture("Block.png"));
-        } else if (spawnItem) {
-            setRegion(new Texture("item-block.png"));
-        }
-        else {
-            setRegion(new Texture("Block.png"));
-        }
+    public Block2(GameScreen2 screen, Texture texture, float x, float y, boolean spawnItem, boolean breakable) {
+        this(screen, texture, x, y, spawnItem, -1, breakable);
     }
 
     public void reset() {
@@ -113,13 +74,14 @@ public class Block2 extends Actor2 {
         if (items.contains(Coin.class)) {
             this.breakable = true;
         }
-        if (spawnItem && !breakable) {
-            setRegion(new Texture("item-block.png"));
-        } else if (spawnItem && breakable) {
-            setRegion(new Texture("Block.png"));
-        } else {
-            setRegion(new Texture("Block.png"));
-        }
+//        if (spawnItem && !breakable) {
+//            setRegion(regularTexture);
+////        } else if (spawnItem && breakable) {
+////            setRegion(new Texture("Block.png"));
+//        } else {
+//            setRegion(new Texture(regularTexture));
+//        }
+        setRegion(regularTexture);
     }
 
     public void update(float delta) {
@@ -144,12 +106,10 @@ public class Block2 extends Actor2 {
                 setRegion(new Texture("used-item-block.jpg"));
             }
             if (breakable && spawnItem) {
-//                System.out.println("here");
                 Vector2 pos = collider.getPosition();
                 Class itemClass;
                 itemClass = Coin.class;
                 screen.queueActorSpawn(pos.x, pos.y +1.0f, itemClass);
-//                System.out.println("item spanwed");
                 screen.queueActorDespawn(this);
             }
         }

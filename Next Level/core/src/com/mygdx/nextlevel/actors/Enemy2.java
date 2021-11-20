@@ -2,17 +2,19 @@ package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.kotcrab.vis.ui.widget.CollapsibleWidget;
 import com.mygdx.nextlevel.BoxCollider;
+import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class Enemy2 extends Actor2 {
-
     protected BoxCollider boxCollider;
     BoxCollider playerCollider;
 
     protected float turnTimer;
     protected boolean right = true;
     boolean jump = false;
+    boolean contactFloor = false;
     protected final static float timeTillTurn = 2.0f;
     Enemy2.Action action;
     boolean fireSpawn = false;
@@ -22,23 +24,23 @@ public class Enemy2 extends Actor2 {
         DEFAULT, JUMP, SHOOT;
     }
 
-    public Enemy2(GameScreen2 screen, float x, float y, Enemy2.Action action, Player2 player) {
+    public Enemy2(GameScreen2 screen, Texture texture, float x, float y, Enemy2.Action action, Player2 player) {
         super(screen, x, y, 0.8f, 0.8f);
         boxCollider = new BoxCollider(
                 this,
                 new Vector2(x, y),
                 new Vector2(0.8f, 0.8f),
-                true
+                true,
+                (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR
         );
         playerCollider = player.getBoxCollider();
         this.player = player;
         this.action = action;
         turnTimer = timeTillTurn;
-        setRegion(new Texture("enemy.jpg"));
+        setRegion(texture);
     }
 
     public void update(float delta) {
-
         boxCollider.setVelocity(new Vector2(0.0f, boxCollider.getVelocity().y));
         Vector2 dir = new Vector2();
         dir.y = boxCollider.getVelocity().y;
@@ -58,25 +60,28 @@ public class Enemy2 extends Actor2 {
             setPosition(boxCollider.getPosition());
         } else if (this.action == Action.JUMP) {
             if (right) {
+                if (jump) {
+                    dir.add(0.0f,8.0f);
+//                boxCollider.setImpulse();
+                    jump = false;
+                }
                 boxCollider.setVelocity(new Vector2(2.0f, boxCollider.getVelocity().y));
             } else {
+                if (jump) {
+                    dir.add(0.0f,8.0f);
+                    jump = false;
+                }
                 boxCollider.setVelocity(new Vector2(-2.0f, boxCollider.getVelocity().y));
-            }
-            if (jump) {
-                dir.add(0.0f,8.0f);
-//                boxCollider.setImpulse();
-                jump = false;
             }
             turnTimer -= delta;
             if (turnTimer <= 0.0f) {
                 right = !right;
-//                boxCollider.setImpulse();
+//                if (contactFloor) {
+//                    jump = true;
+//                }
                 turnTimer = timeTillTurn;
             }
             boxCollider.setVelocity(dir);
-
-
-
             setPosition(boxCollider.getPosition());
         } else if (this.action == Action.SHOOT) {
             if (right) {
@@ -92,6 +97,12 @@ public class Enemy2 extends Actor2 {
             }
 
             setPosition(boxCollider.getPosition());
+
+//            if  (screen.getBlueFireDespawn()) {
+//                System.out.println("Respawn fire");
+//                fireSpawn = true;
+//            }
+
             if (playerCollider.getPosition().x > boxCollider.getPosition().x) {
 //                System.out.println("Shoot right");
                 if (!fireSpawn) {
@@ -123,6 +134,7 @@ public class Enemy2 extends Actor2 {
             screen.queueActorDespawn(this);
         }
         if (side == BoxCollider.Side.BOTTOM) {
+//            contactFloor = true;
             jump = true;
         }
     }

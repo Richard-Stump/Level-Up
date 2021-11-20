@@ -20,9 +20,8 @@ public class Item2 extends Actor2 {
     public Item2(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 0.5f, 0.5f);
 
-        collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true);
+        collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true, (short) (CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ITEM);
         inital = true;
-//        collider.setFixtureDef(CollisionGroups.ITEMS);
     }
 
     public void update(float delta) {

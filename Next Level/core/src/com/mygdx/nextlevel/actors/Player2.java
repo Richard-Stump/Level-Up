@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
+import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
+import com.sun.tools.javac.comp.Check;
 
 import java.util.ArrayList;
 
@@ -14,6 +16,7 @@ public class Player2 extends Actor2 {
     protected Vector2 worldSpawn;
     protected Vector2 respawnPosition;  //Position that the player respawns in
     protected BoxCollider boxCollider;
+    protected Texture texture;
 
     protected int lifeCount;
     protected Item2 heldItem;
@@ -31,6 +34,11 @@ public class Player2 extends Actor2 {
     private boolean invulernable = false;
     private float time = 2f;
     private boolean launch = false;
+    boolean coinConditionMet = false;
+    boolean killEnemyConditionMet = false;
+    boolean killNoEnemyConditionMet = false;
+    boolean jewelConditionMet = false;
+    boolean timeLimitConditionMet = false;
 
     //Item Booleans
     private boolean mushroomItem;
@@ -52,9 +60,10 @@ public class Player2 extends Actor2 {
 
     private double record = 25.00;
 
-    //0 = unconditional, 1 = coins, 2 = kill all enemies, 3 = kill no enemies, 4 = clear level while holding the jewel
-    private int condition = 1;
-    private int condition2 = 2;
+    //0 = unconditional, 1 = coins, 2 = kill all enemies, 3 = kill no enemies, 4 = clear level while holding the jewel, 5 = clear within time limit
+//    private int condition = 5;
+//    private int condition2 = 2;
+
 
 
     //Fire Timer
@@ -72,52 +81,24 @@ public class Player2 extends Actor2 {
         jewel = false;
         coin = 0;
         enemiesKilled = 0;
-//        boxCollider = new BoxCollider(this,
-//                new Vector2(1, 1),
-//                new Vector2(0.8f, 0.8f),
-//                true);
     }
 
-//    /**
-//     * TEMPORARY
-//     */
-//    public Player2(ItemShowcaseScreen2 screen, float x, float y) {
-//        super(screen, x, y, 1.0f, 1.0f);
-//
-//        boxCollider = new BoxCollider(this,
-//                new Vector2(x, x),
-//                new Vector2(1, 1),
-//                true);
-//
-//        respawnPosition = new Vector2(boxCollider.getPosition());
-//
-//        lifeCount = 3;
-//
-//        //The texture region needs to be set for rendering.
-//        setRegion(new Texture("goomba.png"));
-//        powerUp = false;
-//        mushroomItem = false;
-//        slowItem = false;
-//        speedItem = false;
-//        lifeStealItem = false;
-//        starItem = false;
-//        fireFlowerItem = false;
-//    }
-
-    public Player2(GameScreen2 screen, float x, float y) {
+    public Player2(GameScreen2 screen, Texture texture, float x, float y) {
         super(screen, x, y, 0.8f, 0.8f);
+        this.texture = texture;
 
         boxCollider = new BoxCollider(this,
                 new Vector2(x, y),
                 new Vector2(0.8f, 0.8f),
-                true);
+                true,
+                (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR);
         worldSpawn = new Vector2(boxCollider.getPosition());
         respawnPosition = worldSpawn;
         lifeCount = 3;
         coin = 0;
 
         //The texture region needs to be set for rendering.
-        setRegion(new Texture("goomba.png"));
+        setRegion(this.texture);
         powerUp = false;
         mushroomItem = false;
         slowItem = false;
@@ -129,12 +110,13 @@ public class Player2 extends Actor2 {
         conditions = new ArrayList<>();
         conditions.add(1);
         conditions.add(2);
+        conditions.add(5);
     }
 
     public void update(float delta) {
         if(respawn) {
             boxCollider.setPosition(respawnPosition);
-            setRegion(new Texture("goomba.png"));
+            setRegion(texture);
             if (!facingRight) {
                 flip(true, false);
             }
@@ -148,6 +130,9 @@ public class Player2 extends Actor2 {
             heldItem = null;
             jewel = false;
             respawn = false;
+
+            coin = 0;
+            enemiesKilled = 0;
         }
 
         if (drawTexture) {
@@ -160,7 +145,7 @@ public class Player2 extends Actor2 {
             else if (powerUp)
                 setRegion(new Texture("paragoomba.png"));
             else
-                setRegion(new Texture("goomba.png"));
+                setRegion(texture);
             if (!facingRight) {
                 flip(true, false);
             }
@@ -341,9 +326,9 @@ public class Player2 extends Actor2 {
         }
         if (other instanceof Enemy2 && side == Side.BOTTOM || other instanceof Enemy2 && (side == Side.RIGHT || side == Side.LEFT) && starItem) {
             enemiesKilled++;
-            if (condition == 3 && enemiesKilled > 0) {
-                fail = true;
-            }
+//            if (condition == 3 && enemiesKilled > 0) {
+//                fail = true;
+//            }
         }
         if (other instanceof Jewel) {
             this.jewel = true;
@@ -392,23 +377,25 @@ public class Player2 extends Actor2 {
             if (heldItem == null)
                 heldItem = (Item2) other;
         }
-        if (other instanceof Coin) {
+        if (other instanceof Coin || other instanceof CoinStatic) {
             coin++;
 //            System.out.println(coin);
         }
     }
 
     public void onTrigger(Actor2 other, Side side) {
-        if(other instanceof CheckPoint2 && !((CheckPoint2) other).activated) {
-            addLife();
-            respawnPosition = ((CheckPoint2)other).collider.getPosition();
-            ((CheckPoint2)other).setActivated(true);
-        }
+//        if(other instanceof CheckPoint2 && !((CheckPoint2) other).activated) {
+//            addLife();
+//            System.out.println("Test checkpoint2");
+//            respawnPosition = ((CheckPoint2)other).collider.getPosition();
+//            ((CheckPoint2)other).setActivated(true);
+//        }
 //        if (other instanceof Coin) {
 //            coin++;
 ////            System.out.println(coin);
 //        }
         if (other instanceof End) {
+            checkConditions(conditions);
 //            //Todo: replace coin == ? to a preset number in the level
 //            if (condition == 1 && coin == 5) {
 //                win = true;
@@ -425,9 +412,21 @@ public class Player2 extends Actor2 {
 //            } else {
 //                System.out.println("Not enough coins or not enough enemies killed.");
 //            }
-            if (condition == 1 && condition2 == 2 && coin == 5 && enemiesKilled == 1) {
-                win = true;
-            }
+
+//            if (condition == 1 && condition2 == 2 && coin == 5 && enemiesKilled == 1) {
+//                win = true;
+//            }
+//            System.out.println("Here");
+//            if (condition == 5) {
+////                System.out.println("Win");
+//                win = true;
+//            }
+
+//            System.out.println("TEst");
+//            if (condition == 1 && condition2 == 2 && coin == 5 && enemiesKilled == 1) {
+//                win = true;
+//            }
+
 
         }
     }
@@ -466,18 +465,19 @@ public class Player2 extends Actor2 {
     public boolean getSlowItem() {
         return this.slowItem;
     }
+    public void setWin(boolean win) { this.win = win; }
     public boolean getWin() {
         return this.win;
     }
     public int getCoins() {
         return this.coin;
     }
-    public int getCondition() {
-        return this.condition;
-    }
-    public int getCondition2() {
-        return this.condition2;
-    }
+//    public int getCondition() {
+//        return this.condition;
+//    }
+//    public int getCondition2() {
+//        return this.condition2;
+//    }
     public void setFail(boolean set) {
         fail = set;
     }
@@ -526,4 +526,37 @@ public class Player2 extends Actor2 {
     }
     public void setRespawnLocation(Vector2 pos) { respawnPosition = new Vector2(pos.x, pos.y); }
     public void dispose() { boxCollider.dispose(); }
+
+    public ArrayList<Integer> getConditions() {
+        return conditions;
+    }
+
+    public void checkConditions(ArrayList<Integer> conditions) {
+        while (!win && !fail) {
+            if (conditions.contains(1)) {
+                coinConditionMet = false;
+                if (coin == 5) {
+                    coinConditionMet = true;
+                }
+            } else {
+                coinConditionMet = true;
+            }
+            if (conditions.contains(2)) {
+                killEnemyConditionMet = false;
+                if (enemiesKilled == 1) {
+                    killEnemyConditionMet = true;
+                }
+            } else  {
+                killEnemyConditionMet = true;
+            }
+            if (conditions.contains(3)) {
+                killNoEnemyConditionMet = false;
+                if (enemiesKilled == 0) {
+                    killNoEnemyConditionMet = true;
+                }
+            } else {
+                killNoEnemyConditionMet = true;
+            }
+        }
+    }
 }
