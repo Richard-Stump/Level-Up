@@ -2,7 +2,9 @@ package com.mygdx.nextlevel.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.kotcrab.vis.ui.widget.CollapsibleWidget;
 import com.mygdx.nextlevel.BoxCollider;
+import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class Enemy2 extends Actor2 {
@@ -22,19 +24,20 @@ public class Enemy2 extends Actor2 {
         DEFAULT, JUMP, SHOOT;
     }
 
-    public Enemy2(GameScreen2 screen, float x, float y, Enemy2.Action action, Player2 player) {
+    public Enemy2(GameScreen2 screen, Texture texture, float x, float y, Enemy2.Action action, Player2 player) {
         super(screen, x, y, 0.8f, 0.8f);
         boxCollider = new BoxCollider(
                 this,
                 new Vector2(x, y),
                 new Vector2(0.8f, 0.8f),
-                true
+                true,
+                (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR
         );
         playerCollider = player.getBoxCollider();
         this.player = player;
         this.action = action;
         turnTimer = timeTillTurn;
-        setRegion(new Texture("enemy.jpg"));
+        setRegion(texture);
     }
 
     public void update(float delta) {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.nextlevel.*;
 import com.mygdx.nextlevel.actors.*;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.hud.Hud2;
 
 import java.lang.reflect.Constructor;
@@ -50,6 +52,7 @@ public class GameScreen2 extends Timer implements Screen {
     private OrthographicCamera camera;
     private Hud2 hud;
     TileMap tm;
+    ServerDBHandler db = new ServerDBHandler();
 
     private BoxCollider floor;
     private Player2 player;
@@ -149,7 +152,7 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Initialize the collision manager and create the floor
         CollisionManager.init();
-        floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false);
+        floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false, CollisionGroups.ALL, CollisionGroups.WORLD);
         new DeathBlock(this, tm.getMapWidth());
 
         //Clear all the queues
@@ -158,21 +161,43 @@ public class GameScreen2 extends Timer implements Screen {
         despawnQueue.clear();
 
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
-//        player = new Player2(this, 1.0f, 1.0f);
-        player = new Player2(this, 15.0f, 1.0f);
-//        actors.add(new Enemy2(this,2, 2));
-        actors.add(new Enemy2(this, 8, 2, Enemy2.Action.JUMP, player));
-        actors.add(new Block2(this, 7, 4, true, ItemIndex.ALL.value, false));
-        actors.add(new Block2(this, 10, 4, true, ItemIndex.SLOW.value, false));
-        actors.add(new Block2(this, 13, 4, true, ItemIndex.SPEED.value, false));
-        actors.add(new Block2(this, 16, 4, true, ItemIndex.LIFE.value, false));
-        actors.add(new Block2(this, 19, 4, true, ItemIndex.MUSHROOM.value, false));
-        actors.add(new Block2(this, 22, 4, true, ItemIndex.STAR.value, false));
-        actors.add(new Block2(this, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
-        actors.add(new Block2(this, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
-        actors.add(new Block2(this, 29, 4, true, ItemIndex.COIN.value, true));
-        actors.add(new Block2(this, 30, 4, false,false));
-        actors.add(new CheckPoint2(this, 10, 1.0f));
+////        player = new Player2(this, 1.0f, 1.0f);
+//        player = new Player2(this, 15.0f, 1.0f);
+////        actors.add(new Enemy2(this,2, 2));
+//        actors.add(new Enemy2(this, 8, 2, Enemy2.Action.JUMP, player));
+//        actors.add(new Block2(this, 7, 4, true, ItemIndex.ALL.value, false));
+//        actors.add(new Block2(this, 10, 4, true, ItemIndex.SLOW.value, false));
+//        actors.add(new Block2(this, 13, 4, true, ItemIndex.SPEED.value, false));
+//        actors.add(new Block2(this, 16, 4, true, ItemIndex.LIFE.value, false));
+//        actors.add(new Block2(this, 19, 4, true, ItemIndex.MUSHROOM.value, false));
+//        actors.add(new Block2(this, 22, 4, true, ItemIndex.STAR.value, false));
+//        actors.add(new Block2(this, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
+//        actors.add(new Block2(this, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
+//        actors.add(new Block2(this, 29, 4, true, ItemIndex.COIN.value, true));
+//        actors.add(new Block2(this, 30, 4, false,false));
+//        actors.add(new CheckPoint2(this, 10, 1.0f));
+        //TODO add interface with DB in which if the file is not in data base then go to default skin
+        /*
+        Texture texture = new Texture(Gdx.files.internal(db.getProfilePic(textureValue)));
+        if (texture == null) {
+            //TODO Get default value from the database.
+        }
+         */
+
+        player = new Player2(this, new Texture("goomba.png"), 1.0f, 1.0f);
+        actors.add(new Enemy2(this,new Texture("enemy.jpg"), 8, 2, Enemy2.Action.SHOOT, player));
+        actors.add(new CheckPoint2(this, 10, 1.0f, player));
+        actors.add(new End(this, 30, 1, player));
+        actors.add(new Block2(this,new Texture("item-block.png"), 7, 4, true, ItemIndex.ALL.value, false));
+        actors.add(new Block2(this, new Texture("item-block.png"), 10, 4, true, ItemIndex.SLOW.value, false));
+        actors.add(new Block2(this, new Texture("item-block.png"), 13, 4, true, ItemIndex.SPEED.value, false));
+        actors.add(new Block2(this, new Texture("item-block.png"), 16, 4, true, ItemIndex.LIFE.value, false));
+        actors.add(new Block2(this, new Texture("item-block.png"), 19, 4, true, ItemIndex.MUSHROOM.value, false));
+        actors.add(new Block2(this, new Texture("item-block.png"), 22, 4, true, ItemIndex.STAR.value, false));
+        actors.add(new Block2(this, new Texture("item-block.png"), 25, 4, true, ItemIndex.FIREFLOWER.value, false));
+        actors.add(new Block2(this, new Texture("item-block.png"), 28, 4, true, ItemIndex.LIFESTEAL.value, false));
+        actors.add(new Block2(this, new Texture("jewel.png"), 29, 4, true, ItemIndex.COIN.value, true));
+        actors.add(new Block2(this, new Texture("Block.png"), 30, 4, false,false));
 //        actors.add(new Coin(this, 10, 5, false));
 //        actors.add(new Coin(this, 13, 5, false));
 //        actors.add(new Coin(this, 16, 5, false));
@@ -181,7 +206,6 @@ public class GameScreen2 extends Timer implements Screen {
         actors.add(new CoinStatic(this, 13, 5));
         actors.add(new CoinStatic(this, 16, 5));
         actors.add(new CoinStatic(this, 19, 5));
-        actors.add(new End(this, 30, 1));
 //        actors.add(new Jewel(this, 2, 1));
         actors.add(player);
 
@@ -369,8 +393,8 @@ public class GameScreen2 extends Timer implements Screen {
                 ActorSpawnInfo i =  spawnQueue.remove();
                 Constructor<?> c;
                 if (i.type.equals(Block2.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, boolean.class, boolean.class);
-                    actors.add((Block2) c.newInstance(this, i.x +0.5f, i.y + 0.5f, false, true));
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class, boolean.class, int.class, boolean.class);
+                    actors.add((Block2) c.newInstance(this, new Texture("badlogic.jpg"), i.x +0.5f, i.y + 0.5f, true, ItemIndex.COIN.value, true));
                 }
                 else if (i.type.equals(CoinStatic.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
@@ -386,8 +410,8 @@ public class GameScreen2 extends Timer implements Screen {
 //                    actors.add((Actor2) c.newInstance(this, i.x, i.y));
 //                }
                 else if (i.type.equals(Enemy2.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Enemy2.Action.class, Player2.class);
-                    actors.add((Enemy2) c.newInstance(this, i.x, i.y, Enemy2.Action.SHOOT, player));
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class,float.class, float.class, Enemy2.Action.class, Player2.class);
+                    actors.add((Enemy2) c.newInstance(this, new Texture("badlogic.jpg"), i.x, i.y, Enemy2.Action.SHOOT, player));
                 } else if (i.type.equals(BlueFire.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Player2.class);
                     actors.add((BlueFire) c.newInstance(this, i.x, i.y, player));
