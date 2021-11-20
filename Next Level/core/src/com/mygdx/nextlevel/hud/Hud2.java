@@ -58,7 +58,7 @@ public class Hud2 {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
-        worldTimer = 300;
+        worldTimer = 10;
         time = 0;
         score = 0;
         condition = player.getCondition();
@@ -106,10 +106,10 @@ public class Hud2 {
 //        } else if (player.getCondition() == 4) {
 //            table.add(jewelLabel).expandX().padTop(10);
 //        }
-        if (player.getCondition() == 1 && player.getCondition2() == 2) {
-            table.add(coinLabel).expandX().padTop(10);
-            table.add(enemyLabel).expandX().padTop(10);
-        }
+//        if (player.getCondition() == 1 && player.getCondition2() == 2) {
+//            table.add(coinLabel).expandX().padTop(10);
+//            table.add(enemyLabel).expandX().padTop(10);
+//        }
         table.row();
         table.add(numLivesLabel).expandX();
         table.add(scoreLabel).expandX();
@@ -125,10 +125,10 @@ public class Hud2 {
 //        } else if (player.getCondition() == 4) {
 //            table.add(jewelImg).width(25).height(25).expandX();
 //        }
-        if (player.getCondition() == 1 && player.getCondition2() == 2) {
-            table.add(numCoinLabel).expandX();
-            table.add(numEnemyLabel).expandX();
-        }
+//        if (player.getCondition() == 1 && player.getCondition2() == 2) {
+//            table.add(numCoinLabel).expandX();
+//            table.add(numEnemyLabel).expandX();
+//        }
 
         stage.addActor(table);
     }
@@ -145,7 +145,7 @@ public class Hud2 {
             worldTimer--;
             countdownLabel.setText(String.format("%03d", worldTimer));
             time = 0;
-            if (worldTimer == 0 && !player.getWin()) {
+            if (worldTimer == 0 && !player.getWin() && player.getConditions().contains(5)) {
                 player.setFail(true);
             }
         }
@@ -163,10 +163,10 @@ public class Hud2 {
 //                jewelImg.setDrawable(new TextureRegionDrawable(new Texture("x.png")));
 //            }
 //        }
-        if (player.getCondition() == 1 && player.getCondition2() == 2) {
-            numCoinLabel.setText(String.format("%d/%d", player.getCoins(), 5));
-            numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), 1));
-        }
+//        if (player.getCondition() == 1 && player.getCondition2() == 2) {
+//            numCoinLabel.setText(String.format("%d/%d", player.getCoins(), 5));
+//            numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), 1));
+//        }
         if (player.getHeldItem() != null) {
             itemImg.setDrawable(new TextureRegionDrawable(new Texture(map.get(player.getHeldItem()))));
         } else {

@@ -17,15 +17,15 @@ public class BlueFire extends Actor2 {
         this.player = player;
         playerCollider = player.getBoxCollider();
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true);
-        setRegion(new Texture("blue-fire.png"));
-    }
-
-    public void update(float delta) {
         if (playerCollider.getPosition().x > collider.getPosition().x) {
             collider.setVelocity(new Vector2(5.0f, collider.getVelocity().y));
         } else {
             collider.setVelocity(new Vector2(-3.0f, collider.getVelocity().y));
         }
+        setRegion(new Texture("blue-fire.png"));
+    }
+
+    public void update(float delta) {
         setPosition(collider.getPosition());
         if (Math.abs(ogX - collider.getPosition().x) > 5f) {
             screen.queueActorDespawn(this);

@@ -52,9 +52,10 @@ public class Player2 extends Actor2 {
 
     private double record = 25.00;
 
-    //0 = unconditional, 1 = coins, 2 = kill all enemies, 3 = kill no enemies, 4 = clear level while holding the jewel
-    private int condition = 1;
+    //0 = unconditional, 1 = coins, 2 = kill all enemies, 3 = kill no enemies, 4 = clear level while holding the jewel, 5 = clear within time limit
+    private int condition = 5;
     private int condition2 = 2;
+
 
 
     //Fire Timer
@@ -425,7 +426,10 @@ public class Player2 extends Actor2 {
 //            } else {
 //                System.out.println("Not enough coins or not enough enemies killed.");
 //            }
-            if (condition == 1 && condition2 == 2 && coin == 5 && enemiesKilled == 1) {
+//            if (condition == 1 && condition2 == 2 && coin == 5 && enemiesKilled == 1) {
+//                win = true;
+//            }
+            if (condition == 5) {
                 win = true;
             }
 
@@ -526,4 +530,8 @@ public class Player2 extends Actor2 {
     }
     public void setRespawnLocation(Vector2 pos) { respawnPosition = new Vector2(pos.x, pos.y); }
     public void dispose() { boxCollider.dispose(); }
+
+    public ArrayList<Integer> getConditions() {
+        return conditions;
+    }
 }

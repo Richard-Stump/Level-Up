@@ -337,7 +337,7 @@ public class RegisterScreen extends AccountList implements Screen{
                                 if (isInfoCorrect) {
                                     System.out.println("Correct Information");
                                     //add account to database if everything is good
-                                    Account a = new Account(username, pass, email);
+                                    Account a = new Account(username, pass, email, "userIcon.png");
                                     db.addUser(a);
                                     ErrorDialog newAccount = new ErrorDialog("Created", "LoginScreen", game, skin, "Account successfully created", stage);
                                     createdDialog = newAccount.getErrorDialog();

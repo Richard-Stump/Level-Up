@@ -158,9 +158,10 @@ public class GameScreen2 extends Timer implements Screen {
         despawnQueue.clear();
 
         //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
-        player = new Player2(this, 1.0f, 1.0f);
+//        player = new Player2(this, 1.0f, 1.0f);
+        player = new Player2(this, 15.0f, 1.0f);
 //        actors.add(new Enemy2(this,2, 2));
-        actors.add(new Enemy2(this, 8, 2, Enemy2.Action.SHOOT, player));
+        actors.add(new Enemy2(this, 8, 2, Enemy2.Action.JUMP, player));
         actors.add(new Block2(this, 7, 4, true, ItemIndex.ALL.value, false));
         actors.add(new Block2(this, 10, 4, true, ItemIndex.SLOW.value, false));
         actors.add(new Block2(this, 13, 4, true, ItemIndex.SPEED.value, false));
@@ -458,4 +459,13 @@ public class GameScreen2 extends Timer implements Screen {
     }
 
     public Player2 getPlayer() {return this.player;}
+
+    public boolean getBlueFireDespawn() {
+        for (Actor2 a : despawnQueue) {
+            if (a instanceof BlueFire) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
