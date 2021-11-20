@@ -7,20 +7,30 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
+    /*
+    current:
     private static String url = "jdbc:sqlite:" + System.getProperty("user.dir") + "/Next Level/core/src/com" +
             "/mygdx/nextlevel/data/";
 
-    public static Connection getConnection(String databaseName) throws SQLException {
-        //System.out.println(DBConnection.class.getResource("DBConnection.class").toString().replaceAll("%20", " "));
+     */
 
+    //new:
+    private static String url = "jdbc:sqlite:";
+
+    public static Connection getConnection(String databaseName) throws SQLException {
         String connAll = url;
         connAll = connAll.concat(databaseName);
         connAll = connAll.concat(".sqlite");
+        //connAll = connAll.concat("?createDatabaseIfNotExist=true");
+
+        //create data directory for it
+
 
         try {
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(connAll);
         } catch (Exception e) {
+            /*
             url = "jdbc:sqlite:" + System.getProperty("user.dir") + "/com/mygdx/nextlevel/data/";
             connAll = url;
             connAll = connAll.concat(databaseName);
@@ -31,6 +41,8 @@ public class DBConnection {
             } catch (ClassNotFoundException r) {
                 r.printStackTrace();
             }
+
+             */
             return null;
         }
     }

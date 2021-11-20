@@ -5,8 +5,6 @@ import com.mygdx.nextlevel.dbUtil.DBConnection;
 import com.mygdx.nextlevel.enums.Tag;
 
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +30,43 @@ public class LevelsDBController {
         }
         if (isDBActive()) {
             this.tableName = tableName;
+
+            //create tables if they don't exist
+            createTable();
+
         } else {
             this.tableName = null;
         }
+    }
+
+    private int createTable() {
+        String sqlCreatedTable = getSqlQueryCreateTable(tableName);
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlCreatedTable)) {
+            statement.executeUpdate();
+            return 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    private String getSqlQueryCreateTable(String name) {
+        String sqlCreateTable = "CREATE TABLE IF NOT EXISTS " + name + " (" +
+                "id TEXT PRIMARY KEY," +
+                "title TEXT," +
+                "author TEXT," +
+                "bestTime DECIMAL," +
+                "rating DECIMAL(3, 2)," +
+                "difficulty INTEGER," +
+                "playCount INTEGER," +
+                "dateDownloaded DATE," +
+                "tags TEXT," +
+                "dateCreated DATE," +
+                "tmx BLOB," +
+                "tsx BLOB," +
+                "png BLOB);";
+        return sqlCreateTable;
     }
 
     /**
