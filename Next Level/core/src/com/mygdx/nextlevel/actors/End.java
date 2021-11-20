@@ -27,9 +27,12 @@ public class End extends Actor2 {
 //            activated = true;
 ////            setRegion(new Texture("end.jpeg"));
 //        }
-        if (player.getCondition() == 1 && player.getCondition2() == 2 && player.getCoins() == 5 && player.getEnemiesKilled() == 1) {
+        if (other instanceof Player2) {
             player.setWin(true);
         }
+//        if (player.getCondition() == 1 && player.getCondition2() == 2 && player.getCoins() == 5 && player.getEnemiesKilled() == 1) {
+//            player.setWin(true);
+//        }
 //        if (condition == 1 && condition2 == 2 && coin == 5 && enemiesKilled == 1) {
 //            win = true;
 //        }

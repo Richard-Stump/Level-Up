@@ -52,7 +52,7 @@ public class GameScreen2 extends Timer implements Screen {
     private OrthographicCamera camera;
     private Hud2 hud;
     TileMap tm;
-    ServerDBHandler db = new ServerDBHandler();
+//    ServerDBHandler db = new ServerDBHandler();
 
     private BoxCollider floor;
     private Player2 player;
