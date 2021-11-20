@@ -1,5 +1,7 @@
 package com.mygdx.nextlevel.dbUtil;
 
+import org.postgresql.util.PSQLException;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.*;
@@ -25,13 +27,8 @@ public class PostgreSQLConnect {
 
         try {
             Class.forName("org.postgresql.Driver");
-            Connection conn = DriverManager.getConnection(url, props);
-            if (conn == null) {
-                System.out.println("Failed to connect to server database");
-            }
-            return conn;
+            return DriverManager.getConnection(url, props);
         } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
             return null;
         }
     }

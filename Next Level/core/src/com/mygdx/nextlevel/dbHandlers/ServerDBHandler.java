@@ -48,7 +48,7 @@ public class ServerDBHandler {
     public boolean isDBActive() {
         try {
             return (!connection.isClosed());
-        } catch (SQLException e) {
+        } catch (SQLException | NullPointerException e) {
             return false;
         }
     }
