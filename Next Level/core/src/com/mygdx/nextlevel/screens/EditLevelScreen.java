@@ -106,7 +106,7 @@ public class EditLevelScreen implements Screen {
 
     public EditLevelScreen(LevelInfo levelInfo) {
         this.level = new EditorLevel(0, 0);
-        level.importFrom(levelInfo.getTmx());
+        level.importFrom(levelInfo + ".tmx");
     }
 
     /**

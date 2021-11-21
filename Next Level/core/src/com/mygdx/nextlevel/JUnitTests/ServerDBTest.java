@@ -7,10 +7,12 @@ import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
+import com.mygdx.nextlevel.screens.LoginScreen;
 import org.junit.*;
 import org.postgresql.util.PSQLException;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.channels.AcceptPendingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,6 +51,12 @@ public class ServerDBTest {
         db = new ServerDBHandler();
         //add some sample data
         LevelInfo info = new LevelInfo("idtestgetrecordtime", "TestGetRecordTime", "jchen");
+        File fTmx = new File("idtestgetrecordtime.tmx");
+        try {
+            fTmx.createNewFile();
+        } catch (IOException ignored) {
+
+        }
         Account a = new Account("testuser", "password", "testuser@example.com", "default");
 
         db.addLevel(info);
@@ -58,6 +66,8 @@ public class ServerDBTest {
 
     @After
     public void cleanup() {
+        File fTmx = new File("idtestgetrecordtime.tmx");
+        fTmx.delete();
         db.removeLevel("idtestgetrecordtime");
         db.removeUser("testuser");
         db.closeConnection();
@@ -294,21 +304,17 @@ public class ServerDBTest {
     public void testAddLevel1() {
         String id = "testAddLevel1";
         LevelInfo levelInfo = new LevelInfo(id, "title", "testuser");
-        //TODO: figure out how to attach tmx, tsx, and pngs to the levelInfos
-        //File fTmx = new File(Gdx.files.internal("test2.tmx").path());
-        //File fTsx = new File(Gdx.files.internal("test2.tsx").path());
-        //File fPng = new File(Gdx.files.internal("test2.png").path());
-
-        //levelInfo.setTmx(fTmx);
-        //levelInfo.setTsx(fTsx);
-        //levelInfo.setPng(fPng);
+        File fTmx = new File(id + ".tmx");
+        try {
+            fTmx.createNewFile();
+        } catch (IOException ignored) {
+        }
         int actual = db.addLevel(levelInfo);
         int expected = 1;
+        fTmx.delete();
 
         LevelInfo levelInfoServer = db.getLevelByID(id, false);
         db.removeLevel(id);
-
-
 
         TestOutputHelper.clearResult();
         TestOutputHelper.setResult(id, expected, actual);
@@ -321,17 +327,15 @@ public class ServerDBTest {
     public void testAddLevel2() {
         String id = "testAddLevel2";
         LevelInfo existingLevel = new LevelInfo(id, "titleOriginal", "testuser");
+        File fTmx = new File(id + ".tmx");
+        try {
+            fTmx.createNewFile();
+        } catch (IOException ignored) {
+        }
         db.addLevel(existingLevel);
+        fTmx.delete();
 
         LevelInfo levelWithSameID = new LevelInfo(id, "titleNew", "testuser");
-
-        //File fTmx = new File(Gdx.files.internal("test2.tmx").path());
-        //File fTsx = new File(Gdx.files.internal("test2.tsx").path());
-        //File fPng = new File(Gdx.files.internal("test2.png").path());
-
-        //levelInfo.setTmx(fTmx);
-        //levelInfo.setTsx(fTsx);
-        //levelInfo.setPng(fPng);
         int actual = db.addLevel(levelWithSameID);
         int expected = 0;
         LevelInfo levelOnServer = db.getLevelByID(id, false);
@@ -347,7 +351,13 @@ public class ServerDBTest {
     public void testRemoveLevel1() {
         String id = "testRemoveLevel1";
         LevelInfo levelInfo = new LevelInfo(id, "title", "testuser");
+        File fTmx = new File(id + ".tmx");
+        try {
+            fTmx.createNewFile();
+        } catch (IOException ignored) {
+        }
         db.addLevel(levelInfo);
+        fTmx.delete();
 
         int actual = db.removeLevel(id);
         int expected = 1;
@@ -404,7 +414,13 @@ public class ServerDBTest {
     public void testGetLevelRatingsEmpty() {
         String id = "id_noRatings";
         LevelInfo toAdd = new LevelInfo(id, "title", "reeves34");
+        File fTmx = new File(id + ".tmx");
+        try {
+            fTmx.createNewFile();
+        } catch (IOException ignored) {
+        }
         db.addLevel(toAdd);
+        fTmx.delete();
 
         ArrayList<Double> ratings = db.getLevelRatings(id);
 
@@ -421,8 +437,14 @@ public class ServerDBTest {
         Double ratingToAdd = 4.5;
 
         LevelInfo toAdd = new LevelInfo(id, "title", "reeves34");
+        File fTmx = new File(id + ".tmx");
+        try {
+            fTmx.createNewFile();
+        } catch (IOException ignored) {
+        }
 
         db.addLevel(toAdd);
+        fTmx.delete();
         db.addLevelRating(id, ratingToAdd);
         ArrayList<Double> ratings = db.getLevelRatings(id);
         db.removeLevel(id);
@@ -439,7 +461,13 @@ public class ServerDBTest {
     public void testIncreaseLevelPlayCount() {
         String id = "testIncreaseLevelPlayCount";
         LevelInfo toAdd = new LevelInfo(id, "title", "asdf");
+        File fTmx = new File(id + ".tmx");
+        try {
+            fTmx.createNewFile();
+        } catch (IOException ignored) {
+        }
         db.addLevel(toAdd);
+        fTmx.delete();
         db.increaseLevelPlayCount(id);
         db.increaseLevelPlayCount(id);
 
@@ -457,8 +485,14 @@ public class ServerDBTest {
     public void testGetLevelAverageRating() {
         String id = "testGetLevelAverageRating";
         LevelInfo levelInfo = new LevelInfo(id, "title", "asdf");
-        db.addLevel(levelInfo);
+        File fTmx = new File(id + ".tmx");
+        try {
+            fTmx.createNewFile();
+        } catch (IOException ignored) {
+        }
 
+        db.addLevel(levelInfo);
+        fTmx.delete();
         float sum = 0;
         Random random = new Random();
         for (int i = 0; i < 100; i++) {
@@ -473,14 +507,20 @@ public class ServerDBTest {
 
         TestOutputHelper.clearResult();
         TestOutputHelper.setResult(id, expected, actual);
-        assertEquals(expected, actual, 0);
+        assertEquals(expected, actual, 0.1);
     }
 
     @Test
     public void testGetLevelAverageRatingNoRatings() {
         String id = "testGetLevelAverageRatingNoRatings";
         LevelInfo levelInfo = new LevelInfo(id, "title", "asdf");
+        File fTmx = new File(id + ".tmx");
+        try {
+            fTmx.createNewFile();
+        } catch (IOException ignored) {
+        }
         db.addLevel(levelInfo);
+        fTmx.delete();
 
         float actual = db.getLevelAverageRating(id);
         db.removeLevel(id);
@@ -488,7 +528,35 @@ public class ServerDBTest {
 
         TestOutputHelper.clearResult();
         TestOutputHelper.setResult(id, expected, actual);
-        assertEquals(expected, actual, 0);
+        assertEquals(expected, actual, 0.1);
+    }
+
+    @Test
+    public void testAfterUserPlaysLevelFirst() {
+        String id = "testAfterUserPlaysLevelFirst";
+        String user = "steve";
+        double userRating = 3.5;
+        double time = 453.12;
+
+        LevelInfo levelInfo = new LevelInfo(id, "title", "reeves34");
+
+        db.addLevel(levelInfo);
+
+        LoginScreen.curAcc = user;
+        db.afterFirstUniquePlay(id, userRating, time);
+
+        LevelInfo fromServer = db.getLevelByID(id, false);
+        db.removeLevel(id);
+
+        int expected = 1;
+        int actual = fromServer.getPlayCount();
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(id, expected, actual);
+        assertEquals(1, fromServer.getPlayCount());
+        assertEquals(userRating, fromServer.getRating(), 0.1);
+        assertEquals(time, fromServer.getBestTime(), 0.01);
+        assertEquals(user, fromServer.getBestTimeUser());
     }
 
 }

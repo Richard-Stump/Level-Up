@@ -5,6 +5,7 @@ import com.mygdx.nextlevel.Level;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
 import com.mygdx.nextlevel.enums.Tag;
+import com.mygdx.nextlevel.screens.LoginScreen;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -361,7 +362,33 @@ public class ServerDBHandler {
         return null;
     }
 
+    /**
+     * Handles updating level information on the server after the first unique play.
+     * Increases, play count, adds the rating, and checks to see if the time passed in is better than the record
+     *
+     * @param id id of the level
+     * @param rating rating the user gives the level
+     * @param time time that the user got
+     */
+    public void afterFirstUniquePlay(String id, double rating, double time) {
+        increaseLevelPlayCount(id);
+        addLevelRating(id, rating);
 
+        String sqlQuery = "UPDATE api.users SET levelscompleted = array_append(levelscompleted, ?) WHERE username=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, id);
+            statement.setString(2, LoginScreen.getCurAcc());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        LevelInfo levelInfo = getLevelByID(id, false);
+        if (time < levelInfo.getBestTime()) {
+            updateRecordTime(id, LoginScreen.getCurAcc(), time);
+        }
+    }
 
 
 
@@ -618,7 +645,7 @@ public class ServerDBHandler {
     }
 
     /**
-     * Retrieves a level from the database using it's id
+     * Retrieves a level from the database using its id
      *
      * @param id id of the level to retrieve
      * @param downloadLevel determines whether to download the level or just retrieve the info about a level
@@ -662,6 +689,7 @@ public class ServerDBHandler {
             levelInfo.setDifficulty(resultSet.getInt("difficulty"));
             levelInfo.setRating(getLevelAverageRating(levelInfo.getId()));
             levelInfo.setBestTime(resultSet.getFloat("besttime"));
+            levelInfo.setBestTimeUser(resultSet.getString("besttimeuser"));
             levelInfo.setDateDownloaded(resultSet.getDate("datecreated"));
             levelInfo.setDateCreated(resultSet.getDate("datecreated"));
             levelInfo.setPublic(resultSet.getBoolean("public"));
@@ -777,11 +805,37 @@ public class ServerDBHandler {
         }
     }
 
+    /**
+     * Updates the record time, regardless of whether it is better or worse than current record time
+     *
+     * @param id id of the level
+     * @param time new time to put in the database
+     */
     public void updateRecordTime(String id, double time) {
         String sqlQuery = "UPDATE api.levels SET besttime = ? WHERE levelid = ?;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setDouble(1, time);
             statement.setString(2, id);
+            statement.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Updates the record time, regardless of whether it is better or worse than current record time
+     *
+     * @param id id of the level
+     * @param user the user with the new best time
+     * @param time new time to put in the database
+     */
+    public void updateRecordTime(String id, String user, double time) {
+        String sqlQuery = "UPDATE api.levels SET besttime = ?, besttimeuser = ? WHERE levelid = ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setDouble(1, time);
+            statement.setString(2, user);
+            statement.setString(3, id);
             statement.executeUpdate();
 
         } catch (Exception e) {

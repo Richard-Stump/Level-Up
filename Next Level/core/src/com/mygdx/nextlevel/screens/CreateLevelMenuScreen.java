@@ -135,7 +135,6 @@ public class CreateLevelMenuScreen implements Screen {
                 try {
                     File file = level.exportTo(id + ".tmx");
                     String name2 = file.getName();
-                    levelInfo.setTmx(name2);
                     dbHandler.addLevel(levelInfo);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
