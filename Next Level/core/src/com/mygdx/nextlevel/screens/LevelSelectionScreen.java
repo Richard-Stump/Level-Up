@@ -131,7 +131,7 @@ public class LevelSelectionScreen implements Screen {
             }
         });
 
-        mainTable.add(backButton).height(labelHeight +10).padTop(10);
+        mainTable.add(backButton).height(labelHeight +10).padTop(10).padLeft(5);
         mainTable.add(levelSelectLabel).expandX().left().padLeft(5).padTop(10);
         mainTable.add(buttonDownloadLevels).width(200).padTop(10);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
