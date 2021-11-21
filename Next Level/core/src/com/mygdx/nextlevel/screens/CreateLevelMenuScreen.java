@@ -21,6 +21,9 @@ import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.editor.EditorLevel;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 public class CreateLevelMenuScreen implements Screen {
     private NextLevel           game;
     private Skin                skin;
@@ -129,8 +132,14 @@ public class CreateLevelMenuScreen implements Screen {
 
                 LevelInfo levelInfo = new LevelInfo(id, name, LoginScreen.curAcc);
                 levelInfo.setPublic(false);
-
-                dbHandler.addLevel(levelInfo);
+                try {
+                    File file = level.exportTo(id + ".tmx");
+                    String name2 = file.getName();
+                    levelInfo.setTmx(name2);
+                    dbHandler.addLevel(levelInfo);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
 
                 game.setScreen(new EditLevelScreen(game, level));
             }

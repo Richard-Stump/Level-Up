@@ -374,8 +374,8 @@ public class ServerDBHandler {
      * @return 1 on success, 0 on failure
      */
     public int addLevel(LevelInfo levelInfo) {
-        String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated, tmx, tsx, png) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated, tmx) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         String sqlQuery2 = "UPDATE api.users SET levelsuploaded = array_append(levelsuploaded, ?) WHERE username=?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
@@ -432,15 +432,6 @@ public class ServerDBHandler {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public String getNewLevelId(String username) {
-        String[] ids = getUsersCreatedLevelsIDs(username);
-        String newId = null;
-        //Find the maximum value in the database
-
-
-        return newId;
     }
 
     /**

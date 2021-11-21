@@ -10,10 +10,12 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.viewport.*;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.screens.editor.*;
 //import jdk.internal.org.jline.reader.Editor;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
@@ -100,6 +102,11 @@ public class EditLevelScreen implements Screen {
 
     public EditLevelScreen(NextLevel game, int mapWidth, int mapHeight) {
        this(game, new EditorLevel(mapWidth, mapHeight));
+    }
+
+    public EditLevelScreen(LevelInfo levelInfo) {
+        this.level = new EditorLevel(0, 0);
+        level.importFrom(levelInfo.getTmx());
     }
 
     /**
