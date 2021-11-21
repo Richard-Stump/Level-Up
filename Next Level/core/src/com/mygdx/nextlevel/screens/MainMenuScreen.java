@@ -82,6 +82,7 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         TextButton playButton = new TextButton("Play", skin);
         TextButton createLevelButton = new TextButton("Create Level", skin);
         TextButton selectLevelButton = new TextButton("Select Level", skin);
+        TextButton editLevelButton = new TextButton("Edit Level", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
         TextButton logoutButton = new TextButton("Logout", skin);
         TextButton exitButton = new TextButton("Exit", skin);
@@ -89,11 +90,15 @@ public class MainMenuScreen extends LoginScreen implements Screen {
 
         buttonTable.add(playButton).colspan(2).width(buttonWidth * 2 + 5).padBottom(10);
         buttonTable.row();
+        buttonTable.add(tutorialButton).width(buttonWidth * 2 + 5).colspan(2).padBottom(10);
+        buttonTable.row();
         buttonTable.add(createLevelButton).width(buttonWidth).padBottom(10).padRight(5);
         buttonTable.add(selectLevelButton).width(buttonWidth).padBottom(10);
         buttonTable.row();
-        buttonTable.add(tutorialButton).width(buttonWidth * 2 + 5).colspan(2).padBottom(10);
+        buttonTable.add(editLevelButton).width(buttonWidth).padBottom(10).padRight(5);
         //buttonTable.add(changePassButton).width(buttonWidth);
+        buttonTable.row();
+        buttonTable.add(new Label("", skin));
         buttonTable.row();
         buttonTable.add(logoutButton).width(buttonWidth).padBottom(10).padRight(5);
         buttonTable.add(exitButton).width(buttonWidth).padBottom(10);
@@ -178,9 +183,15 @@ public class MainMenuScreen extends LoginScreen implements Screen {
 //        });
 //        changePassButton.addListener(new HoverListener());
         logoutButton.addListener(new ClickListener() {
+                                     @Override
+                                     public void clicked(InputEvent event, float x, float y) {
+                                         ((Game) Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+                                     }
+                                 });
+        editLevelButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new EditLevelSelectionScreen(game));
             }
         });
         logoutButton.addListener(new HoverListener());
@@ -214,6 +225,7 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         //Add table to stage
         stage.addActor(mainTable);
     }
+
 
     @Override
     public void render(float delta) {

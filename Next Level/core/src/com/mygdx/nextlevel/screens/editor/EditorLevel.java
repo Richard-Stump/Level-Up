@@ -1,14 +1,10 @@
 package com.mygdx.nextlevel.screens.editor;
 
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.kotcrab.vis.ui.widget.VisCheckBox;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 
@@ -106,8 +102,10 @@ public class EditorLevel {
      *  - "Object Layer #"  Stores the object
      */
 
-    public void exportTo(String filename) throws FileNotFoundException {
-        PrintWriter fileWriter = new PrintWriter(new File(filename));
+    public File exportTo(String filename) throws FileNotFoundException {
+        File file = new File(filename);
+
+        PrintWriter fileWriter = new PrintWriter(file);
 
         fileWriter.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         fileWriter.print("<map version=\"1.2\" tiledversion=\"1.3.4\" orientation=\"orthogonal\"");
@@ -137,6 +135,7 @@ public class EditorLevel {
         fileWriter.println("</map>");
 
         fileWriter.flush();
+        return file;
     }
 
     public void clearMap() {
@@ -145,6 +144,10 @@ public class EditorLevel {
                 map[x][y] = NONE;
             }
         }
+    }
+
+    public void importFrom(File file) {
+        importFrom(file.getName());
     }
 
     public void importFrom(String filename) {
