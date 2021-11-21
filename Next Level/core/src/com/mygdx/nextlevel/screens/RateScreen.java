@@ -128,6 +128,7 @@ public class RateScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //TODO: add rating to database
+                //when level rating is updated so is # users rated
 //                db.addLevelRating(levelid, rate);
 
                 //TODO: if successful show dialog then set screen to main menu

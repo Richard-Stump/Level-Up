@@ -70,7 +70,7 @@ public class LevelSelectionScreen implements Screen {
     public static int rightColumnWidth = 250;
     public static int topBottomPad = 30;
     public static int leftColumnWidth = 400;
-    public static int labelHeight = 20;
+    public static int labelHeight = 25;
 
     public LevelSelectionScreen(NextLevel game) {
         this.game = game;
@@ -200,23 +200,21 @@ public class LevelSelectionScreen implements Screen {
         searchButton = new TextButton("Search", skin);
         searchButton.addListener(searchButton());
 
-        table.add(searchLabel).padBottom(10).height(labelHeight + 10);
+        table.add(searchLabel).padBottom(10).height(labelHeight + 5);
         table.row();
-        table.add(searchBar).padBottom(20).width(200);
+        table.add(searchBar).padBottom(10).width(200);
         table.row();
-        table.add(sortByGroup);
-        table.row();
-        table.add(cbIncludeCreated).padBottom(20);
+        table.add(sortByGroup).height(labelHeight + 5).padBottom(10);
         table.row();
         table.add(diffLabel);
         table.row();
         table.add(difficultyDropdown).padBottom(10).width(150);
         table.row();
-        table.add(tagLabel);
+        table.add(tagLabel).height(labelHeight);
         table.row();
 
         for (CheckBox cb: tagCheckBoxes) {
-            table.add(cb);
+            table.add(cb).height(labelHeight);
             table.row();
         }
 
@@ -231,8 +229,8 @@ public class LevelSelectionScreen implements Screen {
 
         for (LevelInfo levelInfo: levels) {
             String id = levelInfo.getId();
-            infoTable.add(getLeftColumn(id)).padTop(topBottomPad);
-            infoTable.add(getRightColumn(id)).padTop(10);
+            infoTable.add(getLeftColumn(id)).padTop(topBottomPad).padLeft(5);
+            infoTable.add(getRightColumn(id)).padTop(5);
             infoTable.row();
         }
 
@@ -275,11 +273,11 @@ public class LevelSelectionScreen implements Screen {
         author.addListener(new HoverListener());
 
         //adding to left table
-        leftTable.add(levelName).width(leftColumnWidth).left().height(labelHeight);
+        leftTable.add(levelName).width(leftColumnWidth - 10).left().height(labelHeight);
         leftTable.row();
-        leftTable.add(author).width(leftColumnWidth).left().height(labelHeight);
+        leftTable.add(author).width(leftColumnWidth - 10).left().height(labelHeight);
         leftTable.row();
-        leftTable.add(difficulty).width(leftColumnWidth).left().height(labelHeight);
+        leftTable.add(difficulty).width(leftColumnWidth - 10).left().height(labelHeight);
 
         return leftTable;
     }
