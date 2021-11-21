@@ -68,6 +68,9 @@ public class ErrorDialog {
                         case("ChangePasswordScreen"):
                             game.setScreen(new ChangePasswordScreen(game));
                             break;
+                        case("ProfileMainMenu"):
+                            game.setScreen(new ProfileMainMenu(game));
+                            break;
                         default:
                             break;
                         //errorDialog.hide();
