@@ -305,8 +305,10 @@ public class ServerDBTest {
         int actual = db.addLevel(levelInfo);
         int expected = 1;
 
-        LevelInfo levelInfoServer = db.getLevelByID(id);
+        LevelInfo levelInfoServer = db.getLevelByID(id, false);
         db.removeLevel(id);
+
+
 
         TestOutputHelper.clearResult();
         TestOutputHelper.setResult(id, expected, actual);
@@ -332,7 +334,7 @@ public class ServerDBTest {
         //levelInfo.setPng(fPng);
         int actual = db.addLevel(levelWithSameID);
         int expected = 0;
-        LevelInfo levelOnServer = db.getLevelByID(id);
+        LevelInfo levelOnServer = db.getLevelByID(id, false);
         db.removeLevel(id);
 
         TestOutputHelper.clearResult();
@@ -441,7 +443,7 @@ public class ServerDBTest {
         db.increaseLevelPlayCount(id);
         db.increaseLevelPlayCount(id);
 
-        int actual = db.getLevelByID(id).getPlayCount();
+        int actual = db.getLevelByID(id, false).getPlayCount();
         db.removeLevel(id);
 
         int expected = 2;

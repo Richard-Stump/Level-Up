@@ -365,6 +365,8 @@ public class ServerDBHandler {
 
 
 
+
+
     //--------------------- Level table functions ---------------------//
 
     /**
@@ -483,7 +485,7 @@ public class ServerDBHandler {
     public ArrayList<LevelInfo> getUsersCreatedLevels(String username) {
         ArrayList<LevelInfo> list = new ArrayList<>();
         for (String levelID: getUsersCreatedLevelsIDs(username)) {
-            list.add(getLevelByID(levelID));
+            list.add(getLevelByID(levelID, false));
         }
         return list;
     }
@@ -498,7 +500,7 @@ public class ServerDBHandler {
         int rowsChanged;
 
         //get information about the level we will delete
-        LevelInfo levelInfo = getLevelByID(id);
+        LevelInfo levelInfo = getLevelByID(id, false);
 
         if (levelInfo == null) {
             return -1;
@@ -537,7 +539,7 @@ public class ServerDBHandler {
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             resultSet = statement.executeQuery();
 
-            return resultAsList(resultSet, false);
+            return resultAsList(resultSet, false, false);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -557,7 +559,7 @@ public class ServerDBHandler {
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             resultSet = statement.executeQuery();
 
-            return resultAsList(resultSet, true);
+            return resultAsList(resultSet, true, false);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -608,7 +610,7 @@ public class ServerDBHandler {
             //execute the statement
             resultSet = statement.executeQuery();
 
-            return resultAsList(resultSet, includePrivate);
+            return resultAsList(resultSet, includePrivate, false);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -619,9 +621,10 @@ public class ServerDBHandler {
      * Retrieves a level from the database using it's id
      *
      * @param id id of the level to retrieve
+     * @param downloadLevel determines whether to download the level or just retrieve the info about a level
      * @return level with the matching id
      */
-    public LevelInfo getLevelByID(String id) {
+    public LevelInfo getLevelByID(String id, boolean downloadLevel) {
         ResultSet resultSet;
 
         String sqlQuery = "SELECT * FROM api.levels WHERE levelid=?;";
@@ -630,7 +633,7 @@ public class ServerDBHandler {
             statement.setString(1, id);
             resultSet = statement.executeQuery();
 
-            List<LevelInfo> list = resultAsList(resultSet, true);
+            List<LevelInfo> list = resultAsList(resultSet, true, downloadLevel);
             return list.get(0);
         } catch (Exception e) {
             //e.printStackTrace();
@@ -643,10 +646,11 @@ public class ServerDBHandler {
      *
      * @param resultSet raw resultset
      * @param includePrivate determines whether levels listed as private are searched for
+     * @param downloadLevel determines whether to download the level or just the levelinfo
      * @return a list of LevelInfo objects that match the search
      * @throws SQLException if there's an SQL exception
      */
-    public List<LevelInfo> resultAsList(ResultSet resultSet, boolean includePrivate) throws SQLException {
+    public List<LevelInfo> resultAsList(ResultSet resultSet, boolean includePrivate, boolean downloadLevel) throws SQLException {
         List<LevelInfo> list = new ArrayList<>();
 
         //cycle through results and add it to the list
@@ -662,23 +666,19 @@ public class ServerDBHandler {
             levelInfo.setDateCreated(resultSet.getDate("datecreated"));
             levelInfo.setPublic(resultSet.getBoolean("public"));
 
-
-            String filename = levelInfo.getId();
-            byte[] tmxBytes = resultSet.getBytes("tmx");
-            try {
-                FileOutputStream fosTmx = new FileOutputStream(new File(filename + ".tmx"));
-                fosTmx.write(tmxBytes);
-                fosTmx.close();
-            } catch (Exception e) {
-                System.out.println("Couldn't save the tmx from the server");
-                e.printStackTrace();
+            if (downloadLevel) {
+                String filename = levelInfo.getId();
+                byte[] tmxBytes = resultSet.getBytes("tmx");
+                try {
+                    FileOutputStream fosTmx = new FileOutputStream(new File(filename + ".tmx"));
+                    fosTmx.write(tmxBytes);
+                    fosTmx.close();
+                    System.out.println("Saved tmx file from server!");
+                } catch (Exception e) {
+                    System.out.println("Couldn't save the tmx from the server");
+                    e.printStackTrace();
+                }
             }
-
-            /*
-            //levelInfo.setTmx(resultSet.getBinaryStream());
-            //levelInfo.setTsx();
-            //levelInfo.setPng();
-             */
 
             ArrayList<Tag> tags = new ArrayList<>();
             Array a = resultSet.getArray("tags");

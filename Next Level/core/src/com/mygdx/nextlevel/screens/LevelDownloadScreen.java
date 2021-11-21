@@ -249,7 +249,7 @@ public class LevelDownloadScreen implements Screen {
             System.out.println("db is not active");
             return null;
         } else {
-            levelInfo = dbServer.getLevelByID(id);
+            levelInfo = dbServer.getLevelByID(id, false);
         }
 
         //adding left column labels
@@ -288,7 +288,7 @@ public class LevelDownloadScreen implements Screen {
             System.out.println("db is not active");
             return null;
         } else {
-            levelInfo = dbServer.getLevelByID(id);
+            levelInfo = dbServer.getLevelByID(id, false);
             //TODO: get the number of users that have rated the level, currently having an issue with db
             //numRaters = dbServer.getRatingCount(id);
         }
@@ -315,7 +315,7 @@ public class LevelDownloadScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //outline the selected level
-                selectedLevel.setText("Level Selected: " + dbServer.getLevelByID(id).getTitle());
+                selectedLevel.setText("Level Selected: " + dbServer.getLevelByID(id, false).getTitle());
                 selectedId = id;
 
                 if ((dbDownloaded.searchByID(id) != null) || (dbCreated.searchByID(id) != null)) {
@@ -338,7 +338,7 @@ public class LevelDownloadScreen implements Screen {
                 if (selectedId.equals("")) {
                     return;
                 }
-                LevelInfo levelInfo = dbServer.getLevelByID(selectedId);
+                LevelInfo levelInfo = dbServer.getLevelByID(selectedId, true);
                 System.out.println("Should be downloading: " + levelInfo.getTitle());
                 dbDownloaded.addLevelInfo(levelInfo);
 
