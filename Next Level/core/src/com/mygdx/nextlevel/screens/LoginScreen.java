@@ -19,8 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Null;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.AccountList;
@@ -93,7 +91,7 @@ public class LoginScreen extends AccountList implements Screen {
     @Override
     public void show() {
         System.out.println();
-        String[][] tab = db.getTable();
+        String[][] tab = db.getUsersTable();
         for (int i = 0; i < tab.length; i++) {
             for (int j = 0; j < tab[0].length; j++) {
                 System.out.print(tab[i][j] + " ");

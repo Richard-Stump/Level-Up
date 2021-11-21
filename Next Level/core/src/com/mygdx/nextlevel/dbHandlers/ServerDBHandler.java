@@ -6,7 +6,9 @@ import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
 import com.mygdx.nextlevel.enums.Tag;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,6 +91,8 @@ public class ServerDBHandler {
 
     /**
      * Remove a user from the database
+     * TODO: also remove all the user's levels
+     * If you just want to deactivate a user (and keep all the levels they uploaded), see deactivate below
      *
      * @param username username to remove
      */
@@ -141,6 +145,34 @@ public class ServerDBHandler {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * Activate a user in the database
+     *
+     * @param user
+     * @return
+     */
+    public int activateUser(String user) {
+        String sqlQuery = "UPDATE api.users SET active = true WHERE username LIKE " + user + ";";
+        return 1;
+    }
+
+    /**
+     * Deactivate a user in the database. Should be used when deleting an account.
+     * Levels created by the user should remain in the server database.
+     *
+     * @param user
+     * @return
+     */
+    public int deactivateUser(String user) {
+        String sqlQuery = "UPDATE api.users SET active = false WHERE username LIKE " + user + ";";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            return -1;
+        }
     }
 
     /**
@@ -284,7 +316,7 @@ public class ServerDBHandler {
      *
      * @return multidimensional array containing information about the users
      */
-    public String[][] getTable() {
+    public String[][] getUsersTable() {
         String[][] table;
         ResultSet resultSet;
         String sqlQuery = "SELECT * FROM api.users;";
@@ -342,8 +374,8 @@ public class ServerDBHandler {
      * @return 1 on success, 0 on failure
      */
     public int addLevel(LevelInfo levelInfo) {
-        String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?);";
+        String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated, tmx, tsx, png) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         String sqlQuery2 = "UPDATE api.users SET levelsuploaded = array_append(levelsuploaded, ?) WHERE username=?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
@@ -357,9 +389,9 @@ public class ServerDBHandler {
             statement.setString(6, levelInfo.getAuthor());
             statement.setDate(7, levelInfo.getDateCreated());
             //need to get
-            //statement.setBinaryStream(8, new FileInputStream(levelInfo.getTmx()), (int) levelInfo.getTmx().length());
-            //statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
-            //statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
+            statement.setBinaryStream(8, new FileInputStream(levelInfo.getTmx()), (int) levelInfo.getTmx().length());
+            statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
+            statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
 
             statement2.setString(1, levelInfo.getId());
             statement2.setString(2, levelInfo.getAuthor());
@@ -374,10 +406,6 @@ public class ServerDBHandler {
             return 0;
         }
     }
-
-//    public String getLevelId(LevelInfo level) {
-//        String sqlQuery = "SELECT levelid"
-//    }
 
     /**
      * Gets all the level ids created by a user
@@ -464,7 +492,7 @@ public class ServerDBHandler {
     }
 
     /**
-     *  This function sorts the table alphabetically
+     *  This function sorts all public levels in the server alphabetically
      *
      * @return a list of LevelInfo objects that are sorted alphabetically by title
      */
@@ -484,7 +512,7 @@ public class ServerDBHandler {
     }
 
     /**
-     *  This function sorts the table alphabetically
+     *  This function sorts all levels in the server database, both public and private, alphabetically
      *
      * @return a list of LevelInfo objects that are sorted alphabetically by title
      */
@@ -504,7 +532,7 @@ public class ServerDBHandler {
     }
 
     /**
-     * Searches a table for a LevelInfo object by the author
+     * Gets all LevelInfo objects from an author
      *
      * @param author The string to search for in the author's username
      * @param includePrivate determines whether levels listed as private are searched for
@@ -515,7 +543,7 @@ public class ServerDBHandler {
     }
 
     /**
-     * Searches a table for a LevelInfo object by the title
+     * Searches for all LevelInfo objects in the server database by the title
      *
      * @param title The string to search for in the title
      * @param includePrivate determines whether levels listed as private are searched for
@@ -526,7 +554,7 @@ public class ServerDBHandler {
     }
 
     /**
-     * Searches a table for a LevelInfo object by the column and value.
+     * Searches the server database for a LevelInfo object by the column and value.
      * Returns it sorted by title
      *
      * @param column the column to search in the table
@@ -600,6 +628,20 @@ public class ServerDBHandler {
             levelInfo.setDateDownloaded(resultSet.getDate("datecreated"));
             levelInfo.setDateCreated(resultSet.getDate("datecreated"));
             levelInfo.setPublic(resultSet.getBoolean("public"));
+
+            /*
+            String filename = levelInfo.getId();
+            byte[] tmxBytes = resultSet.getBytes("tmx");
+            try {
+                FileOutputStream fosTmx = new FileOutputStream(new File(filename + ".tmx"));
+
+            }
+
+            //levelInfo.setTmx(resultSet.getBinaryStream());
+            //levelInfo.setTsx();
+            //levelInfo.setPng();
+
+             */
 
             ArrayList<Tag> tags = new ArrayList<>();
             Array a = resultSet.getArray("tags");
