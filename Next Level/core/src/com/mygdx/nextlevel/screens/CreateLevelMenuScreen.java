@@ -72,8 +72,6 @@ public class CreateLevelMenuScreen implements Screen {
         // Create the main table and set it to fill the screen, and align at the top
         Table mainTable = new Table();
         mainTable.setFillParent(true);
-        //mainTable.setDebug(true);
-        //mainTable.top();
 
         // add the back button and title to the same row, setting the back button to the left of the screen
         //mainTable.add(backButton).padTop(10).padLeft(10).left();
@@ -124,49 +122,24 @@ public class CreateLevelMenuScreen implements Screen {
 
                 EditorLevel level = new EditorLevel(name, width, height);
 
+                ServerDBHandler dbHandler = new ServerDBHandler();
+                CreatedLevelsDB createdDb = new CreatedLevelsDB();
+
+                String id = createdDb.generateUniqueID(LoginScreen.curAcc);
+
+                LevelInfo levelInfo = new LevelInfo(id, name, LoginScreen.curAcc);
+                levelInfo.setPublic(false);
+
+                dbHandler.addLevel(levelInfo);
+
                 game.setScreen(new EditLevelScreen(game, level));
             }
         });
         createButton.addListener(new HoverListener());
 
-        TextButton createEmptyButton = new TextButton("Create Empty", skin);
-        createEmptyButton.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                String name = nameField.getText();
-                int width = Integer.parseInt(widthField.getText());
-                int height = Integer.parseInt(heightField.getText());
-
-                CreatedLevelsDB createdDB = new CreatedLevelsDB();
-                ServerDBHandler serverDB = new ServerDBHandler();
-
-                String username = LoginScreen.getCurAcc();
-                String id = createdDB.generateUniqueID(username);
-
-                LevelInfo levelInfo = new LevelInfo(id, name, username);
-
-                serverDB.addLevel(levelInfo);
-
-                //remove all previous
-                for (LevelInfo licreated: createdDB.sortByTitle()) {
-                    createdDB.removeLevelInfo(licreated.getId());
-                }
-
-                //refresh created table
-                for (LevelInfo li: serverDB.sortAllByTitle()) {
-                    if (li.getAuthor().equals(username)) {
-                        createdDB.addLevelInfo(li);
-                    }
-                }
-                serverDB.closeConnection();
-
-                game.setScreen(new MainMenuScreen(game));
-            }
-        });
-        createEmptyButton.addListener(new HoverListener());
 
         mainTable.row();
-        mainTable.add(createEmptyButton).center().width(buttonWidth);
-        mainTable.add(createButton).center().width(buttonWidth);
+        mainTable.add(createButton).center().width(buttonWidth).colspan(2);
 
 
         // Add the ui to the scene

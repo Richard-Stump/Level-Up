@@ -404,6 +404,15 @@ public class ServerDBHandler {
         }
     }
 
+    public String getNewLevelId(String username) {
+        String[] ids = getUsersCreatedLevelsIDs(username);
+        String newId = null;
+        //Find the maximum value in the database
+
+
+        return newId;
+    }
+
     /**
      * Gets all the LevelInfo objects of levels that a user has created
      *
