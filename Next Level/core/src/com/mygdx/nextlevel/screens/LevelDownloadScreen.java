@@ -76,7 +76,7 @@ public class LevelDownloadScreen implements Screen {
     public static int rightColumnWidth = 250;
     public static int topBottomPad = 30;
     public static int leftColumnWidth = 400;
-    public static int labelHeight = 20;
+    public static int labelHeight = 25;
 
     public LevelDownloadScreen(NextLevel game) {
         this.game = game;
@@ -130,7 +130,7 @@ public class LevelDownloadScreen implements Screen {
         //userInfo.addActor(usernameLabel);
         //add stuff here for user info
 
-        mainTable.add(backButton).height(labelHeight +10).padTop(10);
+        mainTable.add(backButton).height(labelHeight +10).padTop(10).padLeft(5);
         mainTable.add(levelSelectLabel).expandX().left().padLeft(5).padTop(10);
         mainTable.add(usernameLabel).width(200).padTop(10);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
@@ -175,6 +175,7 @@ public class LevelDownloadScreen implements Screen {
 
         HorizontalGroup sortByGroup = new HorizontalGroup();
         Label labelSortBy = new Label("Sort by:", skin);
+        //labelSortBy.setHeight(labelHeight + 10);
         sortDropdown = new SelectBox<>(skin);
         sortDropdown.setItems("Title", "Rating");
         sortByGroup.addActor(labelSortBy);
@@ -196,25 +197,25 @@ public class LevelDownloadScreen implements Screen {
         searchButton = new TextButton("Search", skin);
         searchButton.addListener(searchButton());
 
-        table.add(searchLabel).padBottom(10).height(labelHeight + 10);
+        table.add(searchLabel).padBottom(10).height(labelHeight + 5);
         table.row();
-        table.add(searchBar).padBottom(20).width(200);
+        table.add(searchBar).padBottom(10).width(200);
         table.row();
-        table.add(sortByGroup);
+        table.add(sortByGroup).height(labelHeight + 5).padBottom(10);
         table.row();
         table.add(diffLabel);
         table.row();
         table.add(difficultyDropdown).padBottom(10).width(150);
         table.row();
-        table.add(tagLabel);
+        table.add(tagLabel).height(labelHeight);
         table.row();
 
         for (CheckBox cb: tagCheckBoxes) {
-            table.add(cb);
+            table.add(cb).height(labelHeight);
             table.row();
         }
 
-        table.add(searchButton).padTop(20).width(150);
+        table.add(searchButton).padTop(20).width(200);
         //table.row();
         return table;
     }
@@ -225,8 +226,8 @@ public class LevelDownloadScreen implements Screen {
 
         for (LevelInfo levelInfo: levels) {
             String id = levelInfo.getId();
-            infoTable.add(getLeftColumn(id)).padTop(topBottomPad);
-            infoTable.add(getRightColumn(id)).padTop(10);
+            infoTable.add(getLeftColumn(id)).padTop(topBottomPad).padLeft(5);
+            infoTable.add(getRightColumn(id)).padTop(5);
             infoTable.row();
         }
 
@@ -266,11 +267,11 @@ public class LevelDownloadScreen implements Screen {
         author.addListener(new HoverListener());
 
         //adding to left table
-        leftTable.add(levelName).width(leftColumnWidth).left().height(labelHeight);
+        leftTable.add(levelName).width(leftColumnWidth - 10).left().height(labelHeight);
         leftTable.row();
-        leftTable.add(author).width(leftColumnWidth).left().height(labelHeight);
+        leftTable.add(author).width(leftColumnWidth - 10).left().height(labelHeight);
         leftTable.row();
-        leftTable.add(difficulty).width(leftColumnWidth).left().height(labelHeight);
+        leftTable.add(difficulty).width(leftColumnWidth - 10).left().height(labelHeight);
 
         return leftTable;
     }
@@ -280,17 +281,21 @@ public class LevelDownloadScreen implements Screen {
         LevelInfo levelInfo;
         //rightTable.setDebug(true);
 
+        int numRaters = 0;
+
         //verify database is connected
         if (!dbServer.isDBActive()) {
             System.out.println("db is not active");
             return null;
         } else {
             levelInfo = dbServer.getLevelByID(id);
+            //TODO: get the number of users that have rated the level, currently having an issue with db
+            //numRaters = dbServer.getRatingCount(id);
         }
 
         //right column labels
-        rating = new Label("" + levelInfo.getRating() + "/5", skin);
-        playCount = new Label("" + levelInfo.getPlayCount(), skin);
+        rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
+        playCount = new Label("Play Count: " + levelInfo.getPlayCount(), skin);
 
         rating.addListener(selectLevelListener(id));
         rating.addListener(new HoverListener());

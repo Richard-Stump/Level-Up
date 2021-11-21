@@ -76,7 +76,7 @@ public class UserAccountScreen implements Screen {
     public static int rightColumnWidth = 150;
     public static int topBottomPad = 30;
     public static int leftColumnWidth = 350;
-    public static int labelHeight = 20;
+    public static int labelHeight = 25;
 
     public UserAccountScreen(NextLevel game) {
         this.game = game;
@@ -168,8 +168,8 @@ public class UserAccountScreen implements Screen {
         hgButtons.addActor(createdLevelsButton);
         hgButtons.addActor(downloadedLevelsButton);
 
-        mainTable.add(backButton).height(labelHeight +10);
-        mainTable.add(activeDBLabel).expandX().left().padLeft(5);
+        mainTable.add(backButton).height(labelHeight +10).padTop(10).padLeft(5);
+        mainTable.add(activeDBLabel).padTop(10).expandX().left().padLeft(5).height(labelHeight);
         mainTable.add(hgButtons).width(200);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
@@ -231,19 +231,19 @@ public class UserAccountScreen implements Screen {
         searchButton = new TextButton("Search", skin);
         searchButton.addListener(searchButton());
 
-        table.add(searchLabel).padBottom(10).height(labelHeight +10);
+        table.add(searchLabel).padBottom(10).height(labelHeight + 5);
         table.row();
-        table.add(searchBar).padBottom(20).width(200);
+        table.add(searchBar).padBottom(10).width(200);
         table.row();
         table.add(diffLabel);
         table.row();
         table.add(difficultyDropdown).padBottom(10).width(150);
         table.row();
-        table.add(tagLabel);
+        table.add(tagLabel).height(labelHeight);
         table.row();
 
         for (CheckBox cb: tagCheckBoxes) {
-            table.add(cb);
+            table.add(cb).height(labelHeight);
             table.row();
         }
 
@@ -254,12 +254,12 @@ public class UserAccountScreen implements Screen {
 
     private Table getLevelTable(ArrayList<LevelInfo> levels) {
         Table infoTable = new Table();
-        infoTable.setDebug(true);
+        //infoTable.setDebug(true);
 
         for (LevelInfo levelInfo: levels) {
             String id = levelInfo.getId();
-            infoTable.add(getLeftColumn(id)).padLeft(2).padBottom(15);
-            infoTable.add(getRightColumn(id)).padBottom(15);
+            infoTable.add(getLeftColumn(id)).padTop(topBottomPad).padLeft(5);
+            infoTable.add(getRightColumn(id)).padTop(5);
 
             TextButton deleteButton = new TextButton("Delete", skin);
             deleteButton.addListener(deleteLevelListener(id));
@@ -315,9 +315,9 @@ public class UserAccountScreen implements Screen {
         author.addListener(new HoverListener());
 
         //adding to left table
-        leftTable.add(levelName).width(leftColumnWidth).left().height(labelHeight);
+        leftTable.add(levelName).width(leftColumnWidth - 10).left().height(labelHeight);
         leftTable.row();
-        leftTable.add(difficulty).width(leftColumnWidth).left().height(labelHeight);
+        leftTable.add(difficulty).width(leftColumnWidth - 10).left().height(labelHeight);
 
         return leftTable;
     }

@@ -30,7 +30,7 @@ public class RateScreen implements Screen {
 
     public String lastButtonClicked = "";
 
-    public static int buttonWidth = 200;
+    public static int buttonWidth = 150;
     public static int buttonBottomPad = 10;
     ServerDBHandler db;
 
@@ -60,22 +60,37 @@ public class RateScreen implements Screen {
         Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
         Label titleLabel = new Label("Rate This Level", titleStyle);
 
-        TextButton star1 = new TextButton("One Star", skin);
-        TextButton star2 = new TextButton("Two Stars", skin);
-        TextButton star3 = new TextButton("Three Stars", skin);
-        TextButton star4 = new TextButton("Four Stars", skin);
-        TextButton star5 = new TextButton("Five Stars", skin);
+        TextButton starHalf = new TextButton("0.5 Stars", skin);
+        TextButton star1 = new TextButton("1 Star", skin);
+        TextButton star1half = new TextButton("1.5 Stars", skin);
+        TextButton star2 = new TextButton("2 Stars", skin);
+        TextButton star2half = new TextButton("2.5 Stars", skin);
+        TextButton star3 = new TextButton("3 Stars", skin);
+        TextButton star3half = new TextButton("3.5 Stars", skin);
+        TextButton star4 = new TextButton("4 Stars", skin);
+        TextButton star4half = new TextButton("4.5 Stars", skin);
+        TextButton star5 = new TextButton("5 Stars", skin);
 
+        starHalf.addListener(rateListener(0.5f));
         star1.addListener(rateListener(1));
+        star1half.addListener(rateListener(1.5f));
         star2.addListener(rateListener(2));
+        star2half.addListener(rateListener(2.5f));
         star3.addListener(rateListener(3));
+        star3half.addListener(rateListener(3.5f));
         star4.addListener(rateListener(4));
+        star4half.addListener(rateListener(4.5f));
         star5.addListener(rateListener(5));
 
+        starHalf.addListener(new HoverListener());
         star1.addListener(new HoverListener());
+        star1half.addListener(new HoverListener());
         star2.addListener(new HoverListener());
+        star2half.addListener(new HoverListener());
         star3.addListener(new HoverListener());
+        star3half.addListener(new HoverListener());
         star4.addListener(new HoverListener());
+        star4half.addListener(new HoverListener());
         star5.addListener(new HoverListener());
 
         //TextButton rateButton = new TextButton("Rate", skin);
@@ -84,17 +99,20 @@ public class RateScreen implements Screen {
         Table mainTable = new Table();
         //mainTable.setDebug(true);
 
-        mainTable.add(titleLabel).padBottom(40);
+        mainTable.add(titleLabel).padBottom(40).colspan(4);
         mainTable.row();
-        mainTable.add(star1).width(buttonWidth).padBottom(buttonBottomPad);
+        mainTable.add(starHalf).width(buttonWidth).padBottom(buttonBottomPad).padRight(10);
+        mainTable.add(star1).width(buttonWidth).padBottom(buttonBottomPad).padRight(10);
+        mainTable.add(star1half).width(buttonWidth).padBottom(buttonBottomPad).padRight(10);
+        mainTable.add(star2).width(buttonWidth).padBottom(buttonBottomPad).padRight(10);
         mainTable.row();
-        mainTable.add(star2).width(buttonWidth).padBottom(buttonBottomPad);
+        mainTable.add(star2half).width(buttonWidth).padBottom(buttonBottomPad).padRight(10);
+        mainTable.add(star3).width(buttonWidth).padBottom(buttonBottomPad).padRight(10);
+        mainTable.add(star3half).width(buttonWidth).padBottom(buttonBottomPad).padRight(10);
+        mainTable.add(star4).width(buttonWidth).padBottom(buttonBottomPad).padRight(10);
         mainTable.row();
-        mainTable.add(star3).width(buttonWidth).padBottom(buttonBottomPad);
-        mainTable.row();
-        mainTable.add(star4).width(buttonWidth).padBottom(buttonBottomPad);
-        mainTable.row();
-        mainTable.add(star5).width(buttonWidth).padBottom(35);
+        mainTable.add(star4half).width(buttonWidth).padBottom(buttonBottomPad).colspan(2).right().padRight(10);
+        mainTable.add(star5).width(buttonWidth).colspan(2).padRight(10).left().padBottom(buttonBottomPad);
         //mainTable.row();
         //mainTable.add(rateButton).width(buttonWidth + 30);
 
@@ -105,11 +123,12 @@ public class RateScreen implements Screen {
         stage.addActor(mainTable);
     }
 
-    private ClickListener rateListener(final int rate) {
+    private ClickListener rateListener(final float rate) {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //TODO: add rating to database
+                //when level rating is updated so is # users rated
 //                db.addLevelRating(levelid, rate);
 
                 //TODO: if successful show dialog then set screen to main menu

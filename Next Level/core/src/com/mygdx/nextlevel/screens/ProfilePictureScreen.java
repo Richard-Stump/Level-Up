@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.ErrorDialog;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 
@@ -168,7 +169,10 @@ public class ProfilePictureScreen extends LoginScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 db.setProfilePic(username, selectedPic);
-                game.setScreen(new ProfileMainMenu(game));
+                ErrorDialog message = new ErrorDialog("Profile Picture",
+                        "ProfileMainMenu", game, skin,
+                        "Profile picture successfully changed!", stage);
+                //game.setScreen(new ProfileMainMenu(game));
             }
         };
     }
