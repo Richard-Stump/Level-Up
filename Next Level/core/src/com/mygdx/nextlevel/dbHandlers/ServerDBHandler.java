@@ -388,10 +388,12 @@ public class ServerDBHandler {
             statement.setDouble(5, levelInfo.getBestTime());
             statement.setString(6, levelInfo.getAuthor());
             statement.setDate(7, levelInfo.getDateCreated());
+
             //need to get
-            statement.setBinaryStream(8, new FileInputStream(levelInfo.getTmx()), (int) levelInfo.getTmx().length());
-            statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
-            statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
+            File tmxFile = new File(levelInfo.getId() + ".tmx");
+            statement.setBinaryStream(8, new FileInputStream(tmxFile), (int) tmxFile.length());
+            //statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
+            //statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
 
             statement2.setString(1, levelInfo.getId());
             statement2.setString(2, levelInfo.getAuthor());
@@ -629,18 +631,22 @@ public class ServerDBHandler {
             levelInfo.setDateCreated(resultSet.getDate("datecreated"));
             levelInfo.setPublic(resultSet.getBoolean("public"));
 
-            /*
+
             String filename = levelInfo.getId();
             byte[] tmxBytes = resultSet.getBytes("tmx");
             try {
                 FileOutputStream fosTmx = new FileOutputStream(new File(filename + ".tmx"));
-
+                fosTmx.write(tmxBytes);
+                fosTmx.close();
+            } catch (Exception e) {
+                System.out.println("Couldn't save the tmx from the server");
+                e.printStackTrace();
             }
 
+            /*
             //levelInfo.setTmx(resultSet.getBinaryStream());
             //levelInfo.setTsx();
             //levelInfo.setPng();
-
              */
 
             ArrayList<Tag> tags = new ArrayList<>();

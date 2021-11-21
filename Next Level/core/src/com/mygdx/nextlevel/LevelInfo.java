@@ -19,9 +19,9 @@ public class LevelInfo {
     private int playCount;
     private Date dateDownloaded;
     private Date dateCreated;
-    private File tmx;
-    private File tsx;
-    private File png;
+    private String tmx;
+    //private File tsx;
+    //private File png;
     private boolean isPublic;
 
     /**
@@ -39,8 +39,8 @@ public class LevelInfo {
         this.difficulty = Difficulty.NONE.ordinal();
         this.playCount = 0;
         this.tmx = null;
-        this.tsx = null;
-        this.png = null;
+        //this.tsx = null;
+        //this.png = null;
         isPublic = false;
     }
 
@@ -56,11 +56,11 @@ public class LevelInfo {
         this.author = author;
     }
 
-    public LevelInfo(String id, String title, String author, File tmx, File tsx, File png) {
+    public LevelInfo(String id, String title, String author, String tmx) {
         this(id, title, author);
         this.tmx = tmx;
-        this.tsx = tsx;
-        this.png = png;
+        //this.tsx = tsx;
+        //this.png = png;
     }
 
     /**
@@ -165,10 +165,11 @@ public class LevelInfo {
         return id;
     }
 
-    public File getTmx() {
+    public String getTmx() {
         return tmx;
     }
 
+    /*
     public File getTsx() {
         return tsx;
     }
@@ -176,6 +177,8 @@ public class LevelInfo {
     public File getPng() {
         return png;
     }
+
+     */
 
     public boolean isPublic() {
         return isPublic;
@@ -221,10 +224,11 @@ public class LevelInfo {
         this.tags = tags;
     }
 
-    public void setTmx(File tmx) {
+    public void setTmx(String tmx) {
         this.tmx = tmx;
     }
 
+    /*
     public void setTsx(File tsx) {
         this.tsx = tsx;
     }
@@ -232,6 +236,8 @@ public class LevelInfo {
     public void setPng(File png) {
         this.png = png;
     }
+
+     */
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;

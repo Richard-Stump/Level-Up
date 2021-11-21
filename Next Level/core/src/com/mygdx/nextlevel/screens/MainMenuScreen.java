@@ -177,12 +177,12 @@ public class MainMenuScreen extends LoginScreen implements Screen {
 //            }
 //        });
 //        changePassButton.addListener(new HoverListener());
-//        logoutButton.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
-//            }
-//        });
+        logoutButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new LoginScreen(game));
+            }
+        });
         logoutButton.addListener(new HoverListener());
         exitButton.addListener(new ClickListener(){
             @Override
