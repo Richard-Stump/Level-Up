@@ -231,6 +231,13 @@ public class LevelSelectionScreen implements Screen {
             String id = levelInfo.getId();
             infoTable.add(getLeftColumn(id)).padTop(topBottomPad).padLeft(5);
             infoTable.add(getRightColumn(id)).padTop(5);
+
+            TextButton publishButton = new TextButton("Publish", skin);
+            infoTable.add(publishButton).width(80);
+
+            publishButton.addListener(publishLevelListener(id));
+            publishButton.addListener(new HoverListener());
+
             infoTable.row();
         }
 
@@ -313,6 +320,12 @@ public class LevelSelectionScreen implements Screen {
         rightTable.add(playCount).width(rightColumnWidth).left().height(labelHeight);
 
         return rightTable;
+    }
+
+    private ClickListener publishLevelListener(final String id) {
+        return new ClickListener() {
+           //TODO: make level visible to public in db
+        };
     }
 
     private ClickListener selectLevelListener(final String id) {
