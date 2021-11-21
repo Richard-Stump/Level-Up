@@ -410,6 +410,46 @@ public class ServerDBHandler {
     }
 
     /**
+     * Change a level's status from private to public
+     *
+     * @param id id of the level
+     * @return 1 on success, 0 on failure
+     */
+    public int publishLevel(String id) {
+        String sqlQuery = "UPDATE api.levels SET public=true WHERE levelid=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, id);
+            if (statement.executeUpdate() == 1) {
+                return 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * Change a level's status from public to private
+     *
+     * @param id id of the level
+     * @return 1 on success, 0 on failure
+     */
+    public int unpublishLevel(String id) {
+        String sqlQuery = "UPDATE api.levels SET public=false WHERE levelid=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, id);
+            if (statement.executeUpdate() == 1) {
+                return 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
      * Gets all the level ids created by a user
      *
      * @param username author to search for
