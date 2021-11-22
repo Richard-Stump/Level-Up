@@ -402,7 +402,7 @@ public class Player2 extends Actor2 {
 ////            System.out.println(coin);
 //        }
         if (other instanceof End) {
-            checkConditions(conditions);
+//                checkConditions(conditions);
 //            //Todo: replace coin == ? to a preset number in the level
 //            if (condition == 1 && coin == 5) {
 //                win = true;
@@ -479,12 +479,7 @@ public class Player2 extends Actor2 {
     public int getCoins() {
         return this.coin;
     }
-//    public int getCondition() {
-//        return this.condition;
-//    }
-//    public int getCondition2() {
-//        return this.condition2;
-//    }
+
     public void setFail(boolean set) {
         fail = set;
     }
@@ -564,6 +559,42 @@ public class Player2 extends Actor2 {
             } else {
                 killNoEnemyConditionMet = true;
             }
+            if (conditions.contains(4)) {
+                jewelConditionMet = false;
+                if (jewel) {
+                    jewelConditionMet = true;
+                }
+            } else {
+                jewelConditionMet = true;
+            }
+            if (conditions.contains(5)) {
+                timeLimitConditionMet = false;
+                if (!getFail()) {
+                    timeLimitConditionMet = true;
+                }
+            } else {
+                timeLimitConditionMet = true;
+            }
         }
+    }
+
+    public boolean getCoinCondition() {
+        return coinConditionMet;
+    }
+
+    public boolean getKillCondition() {
+        return killEnemyConditionMet;
+    }
+
+    public boolean getNoKillCondition() {
+        return killNoEnemyConditionMet;
+    }
+
+    public boolean getTimeCondition() {
+        return timeLimitConditionMet;
+    }
+
+    public boolean getJewelCondition() {
+        return jewelConditionMet;
     }
 }
