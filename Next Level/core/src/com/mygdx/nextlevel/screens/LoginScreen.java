@@ -229,7 +229,7 @@ public class LoginScreen extends AccountList implements Screen {
 
         //update all the levels to see if they have new information regarding play count or ratings
         for (LevelInfo levelInfo: downloadedLevelsDB.sortByTitle()) {
-            LevelInfo updatedLevel = serverDB.getLevelByID(levelInfo.getId());
+            LevelInfo updatedLevel = serverDB.getLevelByID(levelInfo.getId(), false);
             //updatedLevel would be null if the creator removed the level
             //  we will still allow the user to keep it, but we won't update anything
             if (updatedLevel != null) {
@@ -238,7 +238,7 @@ public class LoginScreen extends AccountList implements Screen {
         }
 
         for (LevelInfo levelInfo: createdDB.sortByTitle()) {
-            LevelInfo updatedLevel = serverDB.getLevelByID(levelInfo.getId());
+            LevelInfo updatedLevel = serverDB.getLevelByID(levelInfo.getId(), false);
             createdDB.updateLevelInfo(updatedLevel);
         }
         createdDB.closeConnection();
@@ -284,6 +284,7 @@ public class LoginScreen extends AccountList implements Screen {
         }
 
         if (isInfoCorrect) {
+            loadDB();
             ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
         }
         //isInfoCorrect = true;

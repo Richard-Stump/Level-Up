@@ -5,7 +5,6 @@ import com.mygdx.nextlevel.JUnitTests.CheckpointTest;
 import com.mygdx.nextlevel.JUnitTests.CreatedLevelsDBTest;
 import com.mygdx.nextlevel.JUnitTests.LevelsDBControllerTest;
 import com.mygdx.nextlevel.JUnitTests.RegisterTest;
-import com.mygdx.nextlevel.screens.LoginScreen;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
