@@ -337,7 +337,7 @@ public class LevelDownloadScreen implements Screen {
                 selectedId = id;
 
                 if ((dbDownloaded.searchByID(id) != null) || (dbCreated.searchByID(id) != null)) {
-                    downloadAndPlayButton.setTouchable(Touchable.enabled);
+                    downloadAndPlayButton.setTouchable(Touchable.disabled);
                     downloadAndPlayButton.setText("Play");
                     downloadAndPlayButton.setColor(Color.RED);
                 } else {
@@ -362,7 +362,7 @@ public class LevelDownloadScreen implements Screen {
                 System.out.println("Should be downloading: " + levelInfo.getTitle());
                 dbDownloaded.addLevelInfo(levelInfo);
 
-                downloadAndPlayButton.setTouchable(Touchable.enabled);
+                downloadAndPlayButton.setTouchable(Touchable.disabled);
                 downloadAndPlayButton.setText("Play");
                 downloadAndPlayButton.setColor(Color.RED);
 

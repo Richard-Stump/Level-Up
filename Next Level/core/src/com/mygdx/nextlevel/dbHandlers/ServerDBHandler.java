@@ -516,6 +516,38 @@ public class ServerDBHandler {
         }
     }
 
+    public int updateLevel(LevelInfo levelInfo) {
+        String sqlQuery = "UPDATE api.levels SET (title, author, tags, besttime, besttimeuser, datecreated, tmx) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?) WHERE levelid=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+
+            statement.setString(1, levelInfo.getTitle());
+            statement.setString(2, levelInfo.getAuthor());
+            statement.setArray(3, connection.createArrayOf("text", levelInfo.getTags().toArray()));
+            statement.setDouble(4, levelInfo.getBestTime());
+            statement.setString(5, levelInfo.getAuthor());
+            statement.setDate(6, levelInfo.getDateCreated());
+
+            //need to get
+            File tmxFile = new File(levelInfo.getId() + ".tmx");
+            statement.setBinaryStream(8, new FileInputStream(tmxFile), (int) tmxFile.length());
+            //statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
+            //statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
+
+            statement.setString(8, levelInfo.getId());
+
+            if (statement.executeUpdate() != 1) {
+                return 0;
+            }
+
+            return 1;
+        } catch (Exception e) {
+            //e.printStackTrace();
+            return 0;
+        }
+    }
+
     /**
      * Updates level files on the server, and updates the level information if necessary
      *

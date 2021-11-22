@@ -31,7 +31,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
-public class UserAccountScreen implements Screen {
+public class UserAccountScreen extends LoginScreen implements Screen {
     private NextLevel game;
     private Skin skin;
     private TextureAtlas atlas;
@@ -42,6 +42,7 @@ public class UserAccountScreen implements Screen {
     private final String titleText = "Level Select";
     private DownloadedLevelsDB dbDownloaded;
     private CreatedLevelsDB dbCreated;
+    private ServerDBHandler dbHandler;
 
     public static final int STAGE_WIDTH = 1920 / 2;
     public static final int STAGE_HEIGHT = 1080 / 2;
@@ -72,6 +73,8 @@ public class UserAccountScreen implements Screen {
     public Label rating;
     public Label playCount;
 
+    public String username;
+
     //static vars
     public static int rightColumnWidth = 150;
     public static int topBottomPad = 30;
@@ -95,10 +98,13 @@ public class UserAccountScreen implements Screen {
         stage = new Stage(viewport, batch);
 
         dbCreated = new CreatedLevelsDB();
+        dbHandler = new ServerDBHandler();
         dbDownloaded = new DownloadedLevelsDB();
         selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";
         activeDB = "created";
+
+        username = LoginScreen.curAcc;
     }
 
     public void show() {
@@ -490,6 +496,7 @@ public class UserAccountScreen implements Screen {
                 ongoingList = new ArrayList<>(dbCreated.combineLists(listTitles, listAuthors));
             } else {
                 ongoingList = new ArrayList<>(dbCreated.sortByTitle());
+                //ongoingList = new ArrayList<>(dbHandler.getUsersCreatedLevels(username));
             }
         } else if (table.equals("downloaded")) {
             if (!searchBar.getText().equals("")) {

@@ -165,6 +165,8 @@ public class EditorLevel {
         map = new int[width][height];
         this.width = width;
         this.height = height;
+        this.oldWidth = width;
+        this.oldHeight = height;
 
         for(int y = height - 1; y >= 0; y--) {
             for(int x = 0; x < width; x++) {
@@ -178,7 +180,6 @@ public class EditorLevel {
         }
 
         MapObjects objects = tiledMap.getLayers().get("Tile Layer 1").getObjects();
-
 
         return;
     }
