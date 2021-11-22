@@ -2,7 +2,6 @@ package com.mygdx.nextlevel.JUnitTests;
 
 import com.badlogic.gdx.Gdx;
 import com.mygdx.nextlevel.Account;
-import com.mygdx.nextlevel.Level;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;

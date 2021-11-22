@@ -1,7 +1,6 @@
 package com.mygdx.nextlevel.dbHandlers;
 
 import com.mygdx.nextlevel.Account;
-import com.mygdx.nextlevel.Level;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
 import com.mygdx.nextlevel.enums.Tag;

@@ -5,7 +5,9 @@ import com.mygdx.nextlevel.dbHandlers.LevelsDBController;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import org.junit.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -243,5 +245,41 @@ public class LevelsDBControllerTest {
         assertEquals(0, tableCreated.sortByTitle().size()); //did it change the table at all?
     }
 
-    //TODO: more tests
+    @Test
+    public void testSortByTitle() {
+        CreatedLevelsDB db = new CreatedLevelsDB();
+        for (LevelInfo levelInfo: db.sortByTitle()) {
+            db.removeLevelInfo(levelInfo);
+        }
+
+        String id = "testSortByTitle";
+        LevelInfo lZ = new LevelInfo(id + "Z", "z", "reeves34");
+        LevelInfo lB = new LevelInfo(id + "B", "b", "reeves34");
+        LevelInfo lG = new LevelInfo(id + "G", "g", "reeves34");
+        LevelInfo lA = new LevelInfo(id + "A", "a", "reeves34");
+
+        ArrayList<LevelInfo> expected = new ArrayList<>();
+        expected.add(lA);
+        expected.add(lB);
+        expected.add(lG);
+        expected.add(lZ);
+
+        db.addLevelInfo(lZ);
+        db.addLevelInfo(lB);
+        db.addLevelInfo(lA);
+        db.addLevelInfo(lG);
+
+        ArrayList<LevelInfo> actual = new ArrayList<>(db.sortByTitle());
+
+        for (LevelInfo levelInfo: db.sortByTitle()) {
+            db.removeLevelInfo(levelInfo);
+        }
+        db.closeConnection();
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(id, expected.get(0).getTitle(), actual.get(0).getTitle());
+        for (int i = 0; i < actual.size(); i++) {
+            assertEquals(expected.get(i).getTitle(), actual.get(i).getTitle());
+        }
+    }
 }
