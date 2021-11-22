@@ -133,7 +133,9 @@ public class CreateLevelMenuScreen implements Screen {
                 LevelInfo levelInfo = new LevelInfo(id, name, LoginScreen.curAcc);
                 levelInfo.setPublic(false);
                 try {
-                    level.setTile(0, 0, 0);
+                    // The file needs to be exported to a file before it can be uploaded to the database.
+                    // This file is named after the level's id. The data is saved to the file, then streamed to the
+                    // database
                     File file = level.exportTo(id + ".tmx");
                     String name2 = file.getName();
                     dbHandler.addLevel(levelInfo);
