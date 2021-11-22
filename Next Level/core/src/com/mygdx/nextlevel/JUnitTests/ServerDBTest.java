@@ -6,6 +6,7 @@ import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
+import com.mygdx.nextlevel.enums.Tag;
 import com.mygdx.nextlevel.screens.LoginScreen;
 import org.junit.*;
 import org.postgresql.util.PSQLException;
@@ -556,6 +557,62 @@ public class ServerDBTest {
         assertEquals(userRating, fromServer.getRating(), 0.1);
         assertEquals(time, fromServer.getBestTime(), 0.01);
         assertEquals(user, fromServer.getBestTimeUser());
+    }
+
+    @Test
+    public void testUpdateLevel() {
+        String id = "testUpdateLevel";
+        LevelInfo original = new LevelInfo(id, "title", "reeves34");
+        db.addLevel(original);
+
+        LevelInfo updated = new LevelInfo(id, "new title", "reeves34");
+        updated.setPublic(true);
+        updated.addTag(Tag.PUZZLE);
+        updated.setBestTime(483.1f);
+
+        int actual = db.updateLevel(updated);
+        int expected = 1;
+
+        LevelInfo fromServer = db.getLevelByID(id, false);
+        db.removeLevel(id);
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(id, expected, actual);
+
+        assertEquals(updated.getTitle(), fromServer.getTitle());
+        assertEquals(updated.getTags().get(0), fromServer.getTags().get(0));
+        assertEquals(updated.getBestTime(), fromServer.getBestTime(), 0.01);
+        assertEquals(updated.isPublic(), fromServer.isPublic());
+        assertEquals(updated.getId(), fromServer.getId());
+    }
+
+    @Test
+    public void testUpdateLevel2() {
+        String id = "testUpdateLevel2";
+        LevelInfo original = new LevelInfo(id, "title", "reeves34");
+        original.addTag(Tag.PUZZLE);
+        original.setBestTime(326.4f);
+
+        db.addLevel(original);
+
+        LevelInfo updated = new LevelInfo(id, "new title", "reeves34");
+        updated.setPublic(true);
+        updated.setBestTime(483.1f);
+
+        int actual = db.updateLevel(updated);
+        int expected = 1;
+
+        LevelInfo fromServer = db.getLevelByID(id, false);
+        db.removeLevel(id);
+
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult(id, expected, actual);
+
+        assertEquals(updated.getTitle(), fromServer.getTitle());
+        assertEquals(original.getTags().get(0), fromServer.getTags().get(0));
+        assertEquals(original.getBestTime(), fromServer.getBestTime(), 0.01);
+        assertEquals(updated.isPublic(), fromServer.isPublic());
+        assertEquals(updated.getId(), fromServer.getId());
     }
 
 }

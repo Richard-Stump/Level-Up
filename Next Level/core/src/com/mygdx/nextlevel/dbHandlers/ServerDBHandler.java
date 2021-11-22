@@ -520,16 +520,29 @@ public class ServerDBHandler {
      * Updates level files on the server, and updates the level information if necessary
      *
      * @param levelInfo the updated information
-     * @return 1 on success, 0 on failure
+     * @return 1 on success, -1 on failure, 0 if there are a mix of success and failures
      */
     public int updateLevel(LevelInfo levelInfo) {
         int ret = 1;
         if (levelInfo == null) {
-            return 0;
+            return -1;
         }
         LevelInfo serverVersion = getLevelByID(levelInfo.getId(), false);
         if (serverVersion == null) {
-            return 0;
+            return -1;
+        }
+
+        if ((!levelInfo.getTitle().equals("")) && (levelInfo.getTitle() != null)) {
+            String sqlQueryTitle = "UPDATE api.levels SET title=? WHERE levelid=?;";
+
+            try (PreparedStatement statement = connection.prepareStatement(sqlQueryTitle)) {
+                statement.setString(1, levelInfo.getTitle());
+                statement.setString(2, levelInfo.getId());
+
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                ret = 0;
+            }
         }
 
         if ((levelInfo.getAuthor() != null) && (!levelInfo.getAuthor().equals(""))) {
@@ -589,6 +602,7 @@ public class ServerDBHandler {
         try (PreparedStatement statement = connection.prepareStatement(sqlQueryFiles)) {
             File tmxFile = new File(levelInfo.getId() + ".tmx");
             statement.setBinaryStream(1, new FileInputStream(tmxFile), (int) tmxFile.length());
+            statement.setString(2, levelInfo.getId());
 
             statement.executeUpdate();
         } catch (SQLException | FileNotFoundException e) {
