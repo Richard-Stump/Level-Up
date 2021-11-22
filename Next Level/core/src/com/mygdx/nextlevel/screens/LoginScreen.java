@@ -284,6 +284,7 @@ public class LoginScreen extends AccountList implements Screen {
         }
 
         if (isInfoCorrect) {
+            loadDB();
             ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
         }
         //isInfoCorrect = true;

@@ -181,6 +181,10 @@ public class LevelDownloadScreen implements Screen {
         stage.addActor(mainTable);
     }
 
+    /**
+     * Gets the search table that will hold all the search parameters that the user can use
+     * @return
+     */
     private Table getSearchSortTable() {
         final Table table = new Table();
         Label searchLabel = new Label("Search:", skin);
