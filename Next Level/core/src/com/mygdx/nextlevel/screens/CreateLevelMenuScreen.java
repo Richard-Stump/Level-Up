@@ -133,6 +133,7 @@ public class CreateLevelMenuScreen implements Screen {
                 LevelInfo levelInfo = new LevelInfo(id, name, LoginScreen.curAcc);
                 levelInfo.setPublic(false);
                 try {
+                    level.setTile(0, 0, 0);
                     File file = level.exportTo(id + ".tmx");
                     String name2 = file.getName();
                     dbHandler.addLevel(levelInfo);
@@ -140,7 +141,7 @@ public class CreateLevelMenuScreen implements Screen {
                     e.printStackTrace();
                 }
 
-                game.setScreen(new EditLevelScreen(game, level));
+                game.setScreen(new EditLevelScreen(game, levelInfo, level));
             }
         });
         createButton.addListener(new HoverListener());

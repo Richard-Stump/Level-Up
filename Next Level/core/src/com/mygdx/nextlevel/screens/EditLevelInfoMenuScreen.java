@@ -66,7 +66,7 @@ public class EditLevelInfoMenuScreen implements Screen {
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new EditLevelScreen(game));
+                game.setScreen(new EditLevelScreen(game, null));
             }
         });
 

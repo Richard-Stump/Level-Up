@@ -138,7 +138,8 @@ public class MyLevelsScreen implements Screen {
         editButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new EditLevelScreen(level));
+
+                game.setScreen(new EditLevelScreen(game, level));
             }
         });
 

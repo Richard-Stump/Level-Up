@@ -49,25 +49,38 @@ public class EditLevelScreen implements Screen {
     public static final int STAGE_WIDTH = 1920;
     public static final int STAGE_HEIGHT = 1000;
 
-
     /**
-     * Initializes the level editor with an empty level of size 32x32
+     * Constructor called passing an already loaded level. This should be used for creating new levels
      *
-     * @param game A reference to the NextLevel class in use
+     * @param game      The game that owns this screen
+     * @param levelInfo The level info object for the passed level
+     * @param level     The actual level data
      */
-    public EditLevelScreen(NextLevel game) {
-        this(game, 32, 32);
+    public EditLevelScreen(NextLevel game, LevelInfo levelInfo, EditorLevel level) {
+        this.game = game;
+        this.level = level;
+        level.info = levelInfo;
+
+        initializeUi();
     }
 
     /**
-     * Initializes the level editor with an empty level of the given size
+     * Constructor to be called when the level is not already loaded into an object.
      *
-     * @param game A reference to the NextLevel class in use
-     * @param level The EditorLevel to edit.
+     * @param game      The game that owns this screen
+     * @param levelInfo The level info object to load the level data for
      */
-    public EditLevelScreen(NextLevel game, EditorLevel level) {
+    public EditLevelScreen(NextLevel game, LevelInfo levelInfo) {
         this.game = game;
-        this.level = level;
+        this.level = new EditorLevel(0, 0);
+        level.importFrom(levelInfo.getId() + ".tmx");
+
+        level.info = levelInfo;
+
+        initializeUi();
+    }
+
+    protected void initializeUi() {
         this.screenWidth = Gdx.graphics.getWidth();
         this.screenHeight = Gdx.graphics.getHeight();
         this.camera = new OrthographicCamera(screenWidth, screenHeight);
@@ -97,16 +110,6 @@ public class EditLevelScreen implements Screen {
         // TODO: Figure out how to use the same skin as the main menu
         if(!VisUI.isLoaded())
             VisUI.load(VisUI.SkinScale.X2);
-
-    }
-
-    public EditLevelScreen(NextLevel game, int mapWidth, int mapHeight) {
-       this(game, new EditorLevel(mapWidth, mapHeight));
-    }
-
-    public EditLevelScreen(LevelInfo levelInfo) {
-        this.level = new EditorLevel(0, 0);
-        level.importFrom(levelInfo + ".tmx");
     }
 
     /**
@@ -173,22 +176,14 @@ public class EditLevelScreen implements Screen {
         camera.update();
     }
 
-    @Override public void pause () {
-    }
+    @Override public void pause () {}
 
 
-    @Override
-    public void resume() {
+    @Override public void resume() {}
 
-    }
+    @Override public void hide() {}
 
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void dispose() {
+    @Override public void dispose() {
         VisUI.dispose();
     }
 

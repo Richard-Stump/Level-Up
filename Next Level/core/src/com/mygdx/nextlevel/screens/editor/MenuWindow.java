@@ -8,8 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisWindow;
+import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
+import com.mygdx.nextlevel.dbHandlers.LevelsDBController;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.EditLevelScreen;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 /**
@@ -46,14 +50,15 @@ public class MenuWindow extends VisWindow {
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (lev.saveName == null)
-                    finalStage.addActor(new SaveAsDialog(level, stage));
-                else {
-                    try {
-                        lev.exportTo(lev.saveName);
-                    } catch (FileNotFoundException e) {
-                        stage.addActor(new MessageDialog("Could not open + \"" + lev.saveName + "\"to save the level"));
-                    }
+                try {
+                    File file = level.exportTo(level.info.getId() + ".tmx");
+                    String name2 = file.getName();
+                    level.info.setTmx(name2);
+
+                    CreatedLevelsDB db = new CreatedLevelsDB();
+                    db.updateLevelInfo(lev.info);
+                } catch (FileNotFoundException e) {
+                    stage.addActor(new MessageDialog("Could not open + \"" + lev.saveName + "\"to save the level"));
                 }
             }
         });
