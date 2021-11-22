@@ -118,6 +118,7 @@ public class DeleteDownloadedLevelsScreen implements Screen {
 
         //screen title
         activeDBLabel = new Label("Your downloaded levels:", skin);
+        activeDB = "downloaded";
 
 //        downloadedLevelsButton.addListener(new ClickListener() {
 //            @Override
@@ -180,6 +181,8 @@ public class DeleteDownloadedLevelsScreen implements Screen {
         //end
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
+
+        //System.out.println(activeDB);
     }
 
     private Table getSearchSortTable() {
@@ -268,25 +271,28 @@ public class DeleteDownloadedLevelsScreen implements Screen {
         }
 
         //adding left column labels
-        levelName = new Label(levelInfo.getTitle(), skin);
-        author = new Label(levelInfo.getAuthor(), skin);
+        if (levelInfo  != null) {
+            levelName = new Label(levelInfo.getTitle(), skin);
+            author = new Label(levelInfo.getAuthor(), skin);
 
-        String difficultyString = Difficulty.values()[levelInfo.getDifficulty()].getDisplayName();
-        difficulty = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
+            String difficultyString = Difficulty.values()[levelInfo.getDifficulty()].getDisplayName();
+            difficulty = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
 
-        difficulty.addListener(selectLevelListener(id));
-        difficulty.addListener(new HoverListener());
-        levelName.addListener(selectLevelListener(id));
-        levelName.addListener(new HoverListener());
-        author.addListener(selectLevelListener(id));
-        author.addListener(new HoverListener());
+            difficulty.addListener(selectLevelListener(id));
+            difficulty.addListener(new HoverListener());
+            levelName.addListener(selectLevelListener(id));
+            levelName.addListener(new HoverListener());
+            author.addListener(selectLevelListener(id));
+            author.addListener(new HoverListener());
 
-        //adding to left table
-        leftTable.add(levelName).width(leftColumnWidth - 10).left().height(labelHeight);
-        leftTable.row();
-        leftTable.add(difficulty).width(leftColumnWidth - 10).left().height(labelHeight);
+            //adding to left table
+            leftTable.add(levelName).width(leftColumnWidth - 10).left().height(labelHeight);
+            leftTable.row();
+            leftTable.add(difficulty).width(leftColumnWidth - 10).left().height(labelHeight);
 
-        return leftTable;
+            return leftTable;
+        }
+        return new Table();
     }
 
     private Table getRightColumn(String id) {
@@ -307,20 +313,23 @@ public class DeleteDownloadedLevelsScreen implements Screen {
         }
 
         //right column labels
-        rating = new Label("" + levelInfo.getRating() + "/5", skin);
-        playCount = new Label("" + levelInfo.getPlayCount(), skin);
+        if (levelInfo != null) {
+            rating = new Label("" + levelInfo.getRating() + "/5", skin);
+            playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
-        rating.addListener(selectLevelListener(id));
-        rating.addListener(new HoverListener());
-        playCount.addListener(selectLevelListener(id));
-        playCount.addListener(new HoverListener());
+            rating.addListener(selectLevelListener(id));
+            rating.addListener(new HoverListener());
+            playCount.addListener(selectLevelListener(id));
+            playCount.addListener(new HoverListener());
 
-        //add to right table
-        rightTable.add(rating).width(rightColumnWidth).left().height(labelHeight);
-        rightTable.row();
-        rightTable.add(playCount).width(rightColumnWidth).left().height(labelHeight);
+            //add to right table
+            rightTable.add(rating).width(rightColumnWidth).left().height(labelHeight);
+            rightTable.row();
+            rightTable.add(playCount).width(rightColumnWidth).left().height(labelHeight);
 
-        return rightTable;
+            return rightTable;
+        }
+        return new Table();
     }
 
     private ClickListener selectLevelListener(final String id) {
