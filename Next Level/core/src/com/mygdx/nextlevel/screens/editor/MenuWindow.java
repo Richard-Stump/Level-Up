@@ -53,7 +53,6 @@ public class MenuWindow extends VisWindow {
                 try {
                     File file = level.exportTo(level.info.getId() + ".tmx");
                     String name2 = file.getName();
-                    level.info.setTmx(name2);
 
                     CreatedLevelsDB db = new CreatedLevelsDB();
                     db.updateLevelInfo(lev.info);
