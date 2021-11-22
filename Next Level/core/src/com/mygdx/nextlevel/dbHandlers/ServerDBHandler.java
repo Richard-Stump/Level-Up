@@ -3,11 +3,13 @@ package com.mygdx.nextlevel.dbHandlers;
 import com.mygdx.nextlevel.Account;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
+import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 import com.mygdx.nextlevel.screens.LoginScreen;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.sql.*;
 import java.util.ArrayList;
@@ -479,8 +481,8 @@ public class ServerDBHandler {
      * @return 1 on success, 0 on failure
      */
     public int addLevel(LevelInfo levelInfo) {
-        String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated, tmx) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, difficulty, besttime, besttimeuser, datecreated, tmx) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         String sqlQuery2 = "UPDATE api.users SET levelsuploaded = array_append(levelsuploaded, ?) WHERE username=?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
@@ -490,15 +492,15 @@ public class ServerDBHandler {
             statement.setString(2, levelInfo.getTitle());
             statement.setString(3, levelInfo.getAuthor());
             statement.setArray(4, connection.createArrayOf("text", levelInfo.getTags().toArray()));
-            statement.setDouble(5, levelInfo.getBestTime());
-            statement.setString(6, levelInfo.getAuthor());
-            statement.setDate(7, levelInfo.getDateCreated());
+            statement.setInt(5, levelInfo.getDifficulty());
+            statement.setDouble(6, levelInfo.getBestTime());
+            statement.setString(7, levelInfo.getAuthor());
+            statement.setDate(8, levelInfo.getDateCreated());
 
-            //need to get
             File tmxFile = new File(levelInfo.getId() + ".tmx");
-            statement.setBinaryStream(8, new FileInputStream(tmxFile), (int) tmxFile.length());
-            //statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
-            //statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
+            statement.setBinaryStream(9, new FileInputStream(tmxFile), (int) tmxFile.length());
+            //statement.setBinaryStream(10, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
+            //statement.setBinaryStream(11, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
 
             statement2.setString(1, levelInfo.getId());
             statement2.setString(2, levelInfo.getAuthor());
@@ -512,6 +514,91 @@ public class ServerDBHandler {
             //e.printStackTrace();
             return 0;
         }
+    }
+
+    /**
+     * Updates level files on the server, and updates the level information if necessary
+     *
+     * @param levelInfo the updated information
+     * @return 1 on success, 0 on failure
+     */
+    public int updateLevel(LevelInfo levelInfo) {
+        int ret = 1;
+        if (levelInfo == null) {
+            return 0;
+        }
+        LevelInfo serverVersion = getLevelByID(levelInfo.getId(), false);
+        if (serverVersion == null) {
+            return 0;
+        }
+
+        if ((levelInfo.getAuthor() != null) && (!levelInfo.getAuthor().equals(""))) {
+            String sqlQueryBestTime = "UPDATE api.levels SET besttimeuser=?, besttime=? WHERE (levelid=?) AND (besttime > ?);";
+            //update metadata (play count, ratings, record time, record time user)
+            try (PreparedStatement statement = connection.prepareStatement(sqlQueryBestTime)) {
+                statement.setString(1, levelInfo.getBestTimeUser());
+                statement.setDouble(2, levelInfo.getBestTime());
+                statement.setString(3, levelInfo.getId());
+                statement.setDouble(4, levelInfo.getBestTime());
+
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                ret = 0;
+            }
+        }
+
+        String sqlQueryPlayCount = "UPDATE api.levels SET playcount=? WHERE (levelid=?) AND (playcount < ?);";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQueryPlayCount)) {
+            statement.setInt(1, levelInfo.getPlayCount());
+            statement.setString(2, levelInfo.getId());
+            statement.setInt(3, levelInfo.getPlayCount());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            ret = 0;
+        }
+
+        String sqlQueryTags = "UPDATE api.levels SET tags=? WHERE levelid=?;";
+        if (levelInfo.getTags().size() != 0) {
+            //update tags
+            try (PreparedStatement statement = connection.prepareStatement(sqlQueryTags)) {
+                statement.setArray(1, connection.createArrayOf("text", levelInfo.getTags().toArray()));
+                statement.setString(2, levelInfo.getId());
+
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                ret = 0;
+            }
+        }
+
+        String sqlQueryDifficulty = "UPDATE api.levels SET difficulty=? WHERE levelid=?;";
+        if (levelInfo.getDifficulty() != Difficulty.NONE.ordinal()) {
+            //update difficulty
+            try (PreparedStatement statement = connection.prepareStatement(sqlQueryDifficulty)) {
+                statement.setInt(1, levelInfo.getDifficulty());
+                statement.setString(2, levelInfo.getId());
+
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                ret = 0;
+            }
+        }
+
+        //update files
+        String sqlQueryFiles = "UPDATE api.levels SET tmx=? WHERE levelid=?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQueryFiles)) {
+            File tmxFile = new File(levelInfo.getId() + ".tmx");
+            statement.setBinaryStream(1, new FileInputStream(tmxFile), (int) tmxFile.length());
+
+            statement.executeUpdate();
+        } catch (SQLException | FileNotFoundException e) {
+            ret = 0;
+        }
+
+        if (levelInfo.isPublic()) {
+            publishLevel(levelInfo.getId());
+        }
+        return ret;
     }
 
     /**
