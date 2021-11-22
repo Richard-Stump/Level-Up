@@ -364,13 +364,16 @@ public class ServerDBHandler {
 
     /**
      * Handles updating level information on the server after the first unique play.
-     * Increases, play count, adds the rating, and checks to see if the time passed in is better than the record
+     * Increases play count, adds the rating, and checks to see if the time passed in is better than the record
      *
      * @param id id of the level
      * @param rating rating the user gives the level
      * @param time time that the user got
      */
     public void afterFirstUniquePlay(String id, double rating, double time) {
+        if (userHasPlayedLevelBefore(id)) {
+            return;
+        }
         increaseLevelPlayCount(id);
         addLevelRating(id, rating);
 
@@ -388,6 +391,80 @@ public class ServerDBHandler {
         if (time < levelInfo.getBestTime()) {
             updateRecordTime(id, LoginScreen.getCurAcc(), time);
         }
+    }
+
+    /**
+     * This handles all the server stuff after a user completes a level
+     * Checks to see if it's the user's first time playing the level and handles that if needed
+     * If it isn't the user's first time playing, rating doesn't matter
+     *
+     * @param id id of the level
+     * @param time time it took the user to complete the level
+     * @param rating rating that the user gave the level
+     */
+    public void afterLevelFinish(String id, double time, double rating) {
+        if (!userHasPlayedLevelBefore(id)) {
+            afterFirstUniquePlay(id, rating, time);
+            return;
+        }
+
+        //not the users first time playing
+        afterLevelFinish(id, time);
+    }
+
+    /**
+     * Handles server stuff after a user completes a level
+     * Rating is not required in this function
+     *
+     * @param id id of the completed level
+     * @param time time it took for the user to complete the level
+     */
+    private void afterLevelFinish(String id, double time) {
+        if (!userHasPlayedLevelBefore(id)) {
+            //shouldn't be called if the user hasn't played it before
+            return;
+        }
+
+        LevelInfo levelInfo = getLevelByID(id, false);
+        if (time < levelInfo.getBestTime()) {
+            updateRecordTime(id, LoginScreen.getCurAcc(), time);
+        }
+    }
+
+    /**
+     * Checks to see if the current user has played a level before
+     *
+     * @param levelid id of the level
+     * @return true if the user has played the level, false otherwise
+     */
+    public boolean userHasPlayedLevelBefore(String levelid) {
+        return userHasPlayedLevelBefore(levelid, LoginScreen.getCurAcc());
+    }
+
+    /**
+     * Checks to see if a user has played a level before
+     *
+     * @param levelid id of the level
+     * @param username username of the user
+     * @return true if the user has played the level, false otherwise
+     */
+    public boolean userHasPlayedLevelBefore(String levelid, String username) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT levelscompleted FROM api.users WHERE username=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, username);
+            resultSet = statement.executeQuery();
+            ArrayList<LevelInfo> list = new ArrayList<>(resultAsList(resultSet, true, false));
+            for (LevelInfo levelInfo: list) {
+                if (levelInfo.getId().equals(levelid)) {
+                    resultSet.close();
+                    return true;
+                }
+            }
+        } catch (SQLException ignored) {
+        }
+        return false;
     }
 
 
