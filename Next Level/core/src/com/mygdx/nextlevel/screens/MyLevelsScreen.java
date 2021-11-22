@@ -27,7 +27,7 @@ import java.util.ArrayList;
 /**
  * A Screen that enables the user to pick a level from their list of created levels and edit it
  */
-public class EditLevelSelectionScreen implements Screen {
+public class MyLevelsScreen implements Screen {
     protected NextLevel game;
     protected Skin skin;
     protected TextureAtlas atlas;
@@ -41,7 +41,7 @@ public class EditLevelSelectionScreen implements Screen {
      * Constructs the screen
      * @param game The game that created this screen
      */
-    public EditLevelSelectionScreen(NextLevel game) {
+    public MyLevelsScreen(NextLevel game) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
@@ -86,39 +86,14 @@ public class EditLevelSelectionScreen implements Screen {
 
         //Add each of the levels to the table list
         for(final LevelInfo level : createdLevels) {
-            Table levelTable = new Table(); //Overall table
-            Table leftTable = new Table();  //Table to hold the Title and other information
-
-            //Add the information on this level.
-            //TODO: Add a picture to display?
-            leftTable.top();
-            leftTable.add(new Label(level.getTitle(), titleStyle)).align(Align.left);
-            leftTable.row();
-            leftTable.add(new Label("Published: " + level.isPublic(), skin)).align(Align.left).padLeft(20.0f);
-
-            //Add a button that takes the user to the editor with this level
-            TextButton button = new TextButton("Edit", skin);
-            button.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    game.setScreen(new EditLevelScreen(level));
-                }
-            });
-
-            //Set a background that allows the user to easily differentiate the levels
-            levelTable.setBackground(background);
-
-            //Add the info and button to the overall table
-            levelTable.top();
-            levelTable.add(leftTable).padRight(50.0f);
-            levelTable.add(button);
+            Table levelTable = addLevelTable(level, background, titleStyle);
 
             scrollTable.row();
             scrollTable.add(levelTable);
         }
 
         //Add everything to the main table
-        mainTable.add(new Label("Select a Level to Edit", titleStyle));
+        mainTable.add(new Label("My Levels", titleStyle));
         mainTable.row();
         mainTable.add(scrollPane).expand().align(Align.top);
 
@@ -137,6 +112,53 @@ public class EditLevelSelectionScreen implements Screen {
         stage.addActor(mainTable);
         stage.addActor(backButton);
     }
+
+    public Table addLevelTable(final LevelInfo level, Drawable background, Label.LabelStyle titleStyle) {
+        Table levelTable = new Table(); //Overall table
+        Table leftTable = new Table();  //Table to hold the Title and other information
+        Table rightTable = new Table();
+
+        //Add the information on this level.
+        //TODO: Add a picture to display?
+        leftTable.top();
+        leftTable.add(new Label(level.getTitle(), titleStyle)).align(Align.left);
+        leftTable.row();
+        leftTable.add(new Label("Published: " + level.isPublic(), skin)).align(Align.left).padLeft(20.0f);
+
+        TextButton playButton = new TextButton("Play", skin);
+        playButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Play Pressed");
+            }
+        });
+
+        //Add a button that takes the user to the editor with this level
+        TextButton editButton = new TextButton("Edit", skin);
+        editButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+                game.setScreen(new EditLevelScreen(game, level));
+            }
+        });
+
+        rightTable.top();
+        rightTable.add(playButton);
+        rightTable.row();
+        rightTable.add(editButton);
+
+        //Set a background that allows the user to easily differentiate the levels
+        levelTable.setBackground(background);
+
+        //Add the info and button to the overall table
+        levelTable.top();
+        levelTable.add(leftTable).padRight(50.0f);
+        levelTable.add(rightTable);
+
+        return levelTable;
+    }
+
 
     @Override
     public void render(float delta) {

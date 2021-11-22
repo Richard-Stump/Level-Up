@@ -1,13 +1,15 @@
 package com.mygdx.nextlevel.dbHandlers;
 
 import com.mygdx.nextlevel.Account;
-import com.mygdx.nextlevel.Level;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
+import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
+import com.mygdx.nextlevel.screens.LoginScreen;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.sql.*;
 import java.util.ArrayList;
@@ -361,6 +363,111 @@ public class ServerDBHandler {
         return null;
     }
 
+    /**
+     * Handles updating level information on the server after the first unique play.
+     * Increases play count, adds the rating, and checks to see if the time passed in is better than the record
+     *
+     * @param id id of the level
+     * @param rating rating the user gives the level
+     * @param time time that the user got
+     */
+    public void afterFirstUniquePlay(String id, double rating, double time) {
+        if (userHasPlayedLevelBefore(id)) {
+            return;
+        }
+        increaseLevelPlayCount(id);
+        addLevelRating(id, rating);
+
+        String sqlQuery = "UPDATE api.users SET levelscompleted = array_append(levelscompleted, ?) WHERE username=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, id);
+            statement.setString(2, LoginScreen.getCurAcc());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        LevelInfo levelInfo = getLevelByID(id, false);
+        if (time < levelInfo.getBestTime()) {
+            updateRecordTime(id, LoginScreen.getCurAcc(), time);
+        }
+    }
+
+    /**
+     * This handles all the server stuff after a user completes a level
+     * Checks to see if it's the user's first time playing the level and handles that if needed
+     * If it isn't the user's first time playing, rating doesn't matter
+     *
+     * @param id id of the level
+     * @param time time it took the user to complete the level
+     * @param rating rating that the user gave the level
+     */
+    public void afterLevelFinish(String id, double time, double rating) {
+        if (!userHasPlayedLevelBefore(id)) {
+            afterFirstUniquePlay(id, rating, time);
+            return;
+        }
+
+        //not the users first time playing
+        afterLevelFinish(id, time);
+    }
+
+    /**
+     * Handles server stuff after a user completes a level
+     * Rating is not required in this function
+     *
+     * @param id id of the completed level
+     * @param time time it took for the user to complete the level
+     */
+    private void afterLevelFinish(String id, double time) {
+        if (!userHasPlayedLevelBefore(id)) {
+            //shouldn't be called if the user hasn't played it before
+            return;
+        }
+
+        LevelInfo levelInfo = getLevelByID(id, false);
+        if (time < levelInfo.getBestTime()) {
+            updateRecordTime(id, LoginScreen.getCurAcc(), time);
+        }
+    }
+
+    /**
+     * Checks to see if the current user has played a level before
+     *
+     * @param levelid id of the level
+     * @return true if the user has played the level, false otherwise
+     */
+    public boolean userHasPlayedLevelBefore(String levelid) {
+        return userHasPlayedLevelBefore(levelid, LoginScreen.getCurAcc());
+    }
+
+    /**
+     * Checks to see if a user has played a level before
+     *
+     * @param levelid id of the level
+     * @param username username of the user
+     * @return true if the user has played the level, false otherwise
+     */
+    public boolean userHasPlayedLevelBefore(String levelid, String username) {
+        ResultSet resultSet;
+        String sqlQuery = "SELECT levelscompleted FROM api.users WHERE username=?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, username);
+            resultSet = statement.executeQuery();
+            ArrayList<LevelInfo> list = new ArrayList<>(resultAsList(resultSet, true, false));
+            for (LevelInfo levelInfo: list) {
+                if (levelInfo.getId().equals(levelid)) {
+                    resultSet.close();
+                    return true;
+                }
+            }
+        } catch (SQLException ignored) {
+        }
+        return false;
+    }
+
 
 
 
@@ -374,8 +481,8 @@ public class ServerDBHandler {
      * @return 1 on success, 0 on failure
      */
     public int addLevel(LevelInfo levelInfo) {
-        String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, besttime, besttimeuser, datecreated, tmx) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String sqlQuery = "INSERT INTO api.levels (levelid, title, author, tags, difficulty, besttime, besttimeuser, datecreated, tmx) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         String sqlQuery2 = "UPDATE api.users SET levelsuploaded = array_append(levelsuploaded, ?) WHERE username=?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
@@ -385,15 +492,15 @@ public class ServerDBHandler {
             statement.setString(2, levelInfo.getTitle());
             statement.setString(3, levelInfo.getAuthor());
             statement.setArray(4, connection.createArrayOf("text", levelInfo.getTags().toArray()));
-            statement.setDouble(5, levelInfo.getBestTime());
-            statement.setString(6, levelInfo.getAuthor());
-            statement.setDate(7, levelInfo.getDateCreated());
+            statement.setInt(5, levelInfo.getDifficulty());
+            statement.setDouble(6, levelInfo.getBestTime());
+            statement.setString(7, levelInfo.getAuthor());
+            statement.setDate(8, levelInfo.getDateCreated());
 
-            //need to get
             File tmxFile = new File(levelInfo.getId() + ".tmx");
-            statement.setBinaryStream(8, new FileInputStream(tmxFile), (int) tmxFile.length());
-            //statement.setBinaryStream(9, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
-            //statement.setBinaryStream(10, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
+            statement.setBinaryStream(9, new FileInputStream(tmxFile), (int) tmxFile.length());
+            //statement.setBinaryStream(10, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
+            //statement.setBinaryStream(11, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
 
             statement2.setString(1, levelInfo.getId());
             statement2.setString(2, levelInfo.getAuthor());
@@ -407,6 +514,105 @@ public class ServerDBHandler {
             //e.printStackTrace();
             return 0;
         }
+    }
+
+    /**
+     * Updates level files on the server, and updates the level information if necessary
+     *
+     * @param levelInfo the updated information
+     * @return 1 on success, -1 on failure, 0 if there are a mix of success and failures
+     */
+    public int updateLevel(LevelInfo levelInfo) {
+        int ret = 1;
+        if (levelInfo == null) {
+            return -1;
+        }
+        LevelInfo serverVersion = getLevelByID(levelInfo.getId(), false);
+        if (serverVersion == null) {
+            return -1;
+        }
+
+        if ((!levelInfo.getTitle().equals("")) && (levelInfo.getTitle() != null)) {
+            String sqlQueryTitle = "UPDATE api.levels SET title=? WHERE levelid=?;";
+
+            try (PreparedStatement statement = connection.prepareStatement(sqlQueryTitle)) {
+                statement.setString(1, levelInfo.getTitle());
+                statement.setString(2, levelInfo.getId());
+
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                ret = 0;
+            }
+        }
+
+        if ((levelInfo.getAuthor() != null) && (!levelInfo.getAuthor().equals(""))) {
+            String sqlQueryBestTime = "UPDATE api.levels SET besttimeuser=?, besttime=? WHERE (levelid=?) AND (besttime > ?);";
+            //update metadata (play count, ratings, record time, record time user)
+            try (PreparedStatement statement = connection.prepareStatement(sqlQueryBestTime)) {
+                statement.setString(1, levelInfo.getBestTimeUser());
+                statement.setDouble(2, levelInfo.getBestTime());
+                statement.setString(3, levelInfo.getId());
+                statement.setDouble(4, levelInfo.getBestTime());
+
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                ret = 0;
+            }
+        }
+
+        String sqlQueryPlayCount = "UPDATE api.levels SET playcount=? WHERE (levelid=?) AND (playcount < ?);";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQueryPlayCount)) {
+            statement.setInt(1, levelInfo.getPlayCount());
+            statement.setString(2, levelInfo.getId());
+            statement.setInt(3, levelInfo.getPlayCount());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            ret = 0;
+        }
+
+        String sqlQueryTags = "UPDATE api.levels SET tags=? WHERE levelid=?;";
+        if (levelInfo.getTags().size() != 0) {
+            //update tags
+            try (PreparedStatement statement = connection.prepareStatement(sqlQueryTags)) {
+                statement.setArray(1, connection.createArrayOf("text", levelInfo.getTags().toArray()));
+                statement.setString(2, levelInfo.getId());
+
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                ret = 0;
+            }
+        }
+
+        String sqlQueryDifficulty = "UPDATE api.levels SET difficulty=? WHERE levelid=?;";
+        if (levelInfo.getDifficulty() != Difficulty.NONE.ordinal()) {
+            //update difficulty
+            try (PreparedStatement statement = connection.prepareStatement(sqlQueryDifficulty)) {
+                statement.setInt(1, levelInfo.getDifficulty());
+                statement.setString(2, levelInfo.getId());
+
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                ret = 0;
+            }
+        }
+
+        //update files
+        String sqlQueryFiles = "UPDATE api.levels SET tmx=? WHERE levelid=?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQueryFiles)) {
+            File tmxFile = new File(levelInfo.getId() + ".tmx");
+            statement.setBinaryStream(1, new FileInputStream(tmxFile), (int) tmxFile.length());
+            statement.setString(2, levelInfo.getId());
+
+            statement.executeUpdate();
+        } catch (SQLException | FileNotFoundException e) {
+            ret = 0;
+        }
+
+        if (levelInfo.isPublic()) {
+            publishLevel(levelInfo.getId());
+        }
+        return ret;
     }
 
     /**
@@ -483,7 +689,7 @@ public class ServerDBHandler {
     public ArrayList<LevelInfo> getUsersCreatedLevels(String username) {
         ArrayList<LevelInfo> list = new ArrayList<>();
         for (String levelID: getUsersCreatedLevelsIDs(username)) {
-            list.add(getLevelByID(levelID));
+            list.add(getLevelByID(levelID, false));
         }
         return list;
     }
@@ -498,7 +704,7 @@ public class ServerDBHandler {
         int rowsChanged;
 
         //get information about the level we will delete
-        LevelInfo levelInfo = getLevelByID(id);
+        LevelInfo levelInfo = getLevelByID(id, false);
 
         if (levelInfo == null) {
             return -1;
@@ -537,7 +743,7 @@ public class ServerDBHandler {
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             resultSet = statement.executeQuery();
 
-            return resultAsList(resultSet, false);
+            return resultAsList(resultSet, false, false);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -557,7 +763,7 @@ public class ServerDBHandler {
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             resultSet = statement.executeQuery();
 
-            return resultAsList(resultSet, true);
+            return resultAsList(resultSet, true, false);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -608,7 +814,7 @@ public class ServerDBHandler {
             //execute the statement
             resultSet = statement.executeQuery();
 
-            return resultAsList(resultSet, includePrivate);
+            return resultAsList(resultSet, includePrivate, false);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -616,12 +822,13 @@ public class ServerDBHandler {
     }
 
     /**
-     * Retrieves a level from the database using it's id
+     * Retrieves a level from the database using its id
      *
      * @param id id of the level to retrieve
+     * @param downloadLevel determines whether to download the level or just retrieve the info about a level
      * @return level with the matching id
      */
-    public LevelInfo getLevelByID(String id) {
+    public LevelInfo getLevelByID(String id, boolean downloadLevel) {
         ResultSet resultSet;
 
         String sqlQuery = "SELECT * FROM api.levels WHERE levelid=?;";
@@ -630,7 +837,7 @@ public class ServerDBHandler {
             statement.setString(1, id);
             resultSet = statement.executeQuery();
 
-            List<LevelInfo> list = resultAsList(resultSet, true);
+            List<LevelInfo> list = resultAsList(resultSet, true, downloadLevel);
             return list.get(0);
         } catch (Exception e) {
             //e.printStackTrace();
@@ -643,10 +850,11 @@ public class ServerDBHandler {
      *
      * @param resultSet raw resultset
      * @param includePrivate determines whether levels listed as private are searched for
+     * @param downloadLevel determines whether to download the level or just the levelinfo
      * @return a list of LevelInfo objects that match the search
      * @throws SQLException if there's an SQL exception
      */
-    public List<LevelInfo> resultAsList(ResultSet resultSet, boolean includePrivate) throws SQLException {
+    public List<LevelInfo> resultAsList(ResultSet resultSet, boolean includePrivate, boolean downloadLevel) throws SQLException {
         List<LevelInfo> list = new ArrayList<>();
 
         //cycle through results and add it to the list
@@ -658,27 +866,24 @@ public class ServerDBHandler {
             levelInfo.setDifficulty(resultSet.getInt("difficulty"));
             levelInfo.setRating(getLevelAverageRating(levelInfo.getId()));
             levelInfo.setBestTime(resultSet.getFloat("besttime"));
+            levelInfo.setBestTimeUser(resultSet.getString("besttimeuser"));
             levelInfo.setDateDownloaded(resultSet.getDate("datecreated"));
             levelInfo.setDateCreated(resultSet.getDate("datecreated"));
             levelInfo.setPublic(resultSet.getBoolean("public"));
 
-
-            String filename = levelInfo.getId();
-            byte[] tmxBytes = resultSet.getBytes("tmx");
-            try {
-                FileOutputStream fosTmx = new FileOutputStream(new File(filename + ".tmx"));
-                fosTmx.write(tmxBytes);
-                fosTmx.close();
-            } catch (Exception e) {
-                System.out.println("Couldn't save the tmx from the server");
-                e.printStackTrace();
+            if (downloadLevel) {
+                String filename = levelInfo.getId();
+                byte[] tmxBytes = resultSet.getBytes("tmx");
+                try {
+                    FileOutputStream fosTmx = new FileOutputStream(new File(filename + ".tmx"));
+                    fosTmx.write(tmxBytes);
+                    fosTmx.close();
+                    System.out.println("Saved tmx file from server!");
+                } catch (Exception e) {
+                    System.out.println("Couldn't save the tmx from the server");
+                    e.printStackTrace();
+                }
             }
-
-            /*
-            //levelInfo.setTmx(resultSet.getBinaryStream());
-            //levelInfo.setTsx();
-            //levelInfo.setPng();
-             */
 
             ArrayList<Tag> tags = new ArrayList<>();
             Array a = resultSet.getArray("tags");
@@ -777,11 +982,37 @@ public class ServerDBHandler {
         }
     }
 
+    /**
+     * Updates the record time, regardless of whether it is better or worse than current record time
+     *
+     * @param id id of the level
+     * @param time new time to put in the database
+     */
     public void updateRecordTime(String id, double time) {
         String sqlQuery = "UPDATE api.levels SET besttime = ? WHERE levelid = ?;";
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setDouble(1, time);
             statement.setString(2, id);
+            statement.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Updates the record time, regardless of whether it is better or worse than current record time
+     *
+     * @param id id of the level
+     * @param user the user with the new best time
+     * @param time new time to put in the database
+     */
+    public void updateRecordTime(String id, String user, double time) {
+        String sqlQuery = "UPDATE api.levels SET besttime = ?, besttimeuser = ? WHERE levelid = ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setDouble(1, time);
+            statement.setString(2, user);
+            statement.setString(3, id);
             statement.executeUpdate();
 
         } catch (Exception e) {

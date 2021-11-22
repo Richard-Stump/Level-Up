@@ -1,9 +1,4 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
-package com.mygdx.nextlevel.screens;
+package com.mygdx.nextlevel.screens.editor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -16,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.LevelInfo;
@@ -27,11 +21,12 @@ import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
-import org.w3c.dom.Text;
+import com.mygdx.nextlevel.screens.LevelDownloadScreen;
+import com.mygdx.nextlevel.screens.ProfileMainMenu;
 
 import java.util.ArrayList;
 
-public class UserAccountScreen extends LoginScreen implements Screen {
+public class DeleteDownloadedLevelsScreen implements Screen {
     private NextLevel game;
     private Skin skin;
     private TextureAtlas atlas;
@@ -42,7 +37,6 @@ public class UserAccountScreen extends LoginScreen implements Screen {
     private final String titleText = "Level Select";
     private DownloadedLevelsDB dbDownloaded;
     private CreatedLevelsDB dbCreated;
-    private ServerDBHandler dbHandler;
 
     public static final int STAGE_WIDTH = 1920 / 2;
     public static final int STAGE_HEIGHT = 1080 / 2;
@@ -73,15 +67,13 @@ public class UserAccountScreen extends LoginScreen implements Screen {
     public Label rating;
     public Label playCount;
 
-    public String username;
-
     //static vars
     public static int rightColumnWidth = 150;
     public static int topBottomPad = 30;
     public static int leftColumnWidth = 350;
     public static int labelHeight = 25;
 
-    public UserAccountScreen(NextLevel game) {
+    public DeleteDownloadedLevelsScreen(NextLevel game) {
         this.game = game;
         atlas = new TextureAtlas(Gdx.files.internal("skin/uiskin.atlas"));
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
@@ -98,13 +90,10 @@ public class UserAccountScreen extends LoginScreen implements Screen {
         stage = new Stage(viewport, batch);
 
         dbCreated = new CreatedLevelsDB();
-        dbHandler = new ServerDBHandler();
         dbDownloaded = new DownloadedLevelsDB();
         selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";
-        activeDB = "created";
-
-        username = LoginScreen.curAcc;
+        activeDB = "downloaded";
     }
 
     public void show() {
@@ -123,60 +112,35 @@ public class UserAccountScreen extends LoginScreen implements Screen {
         backButton.left();
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new ProfileMainMenu(game));
+                game.setScreen(new LevelDownloadScreen(game));
             }
         });
 
         //screen title
-        activeDBLabel = new Label("Your created levels:", skin);
+        activeDBLabel = new Label("Your downloaded levels:", skin);
+        activeDB = "downloaded";
 
-        final TextButton createdLevelsButton = new TextButton("My Levels", skin);
-        final TextButton downloadedLevelsButton = new TextButton("Downloaded Levels", skin);
-        createdLevelsButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                createdLevelsButton.setColor(Color.GREEN);
-                downloadedLevelsButton.setColor(Color.BLUE);
-                activeDB = "created";
+//        downloadedLevelsButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                downloadedLevelsButton.setColor(Color.GREEN);
+//                createdLevelsButton.setColor(Color.BLUE);
+//                activeDB = "downloaded";
+//
+//                activeDBLabel.setText("Your downloaded levels:");
+//
+//                selectedId = "";
+//                selectedLevel.setText("Select a level");
+//                levelVerticalGroup.clear();
+//                levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
+//            }
+//        });
 
-                activeDBLabel.setText("Your created levels:");
-
-                selectedId = "";
-                selectedLevel.setText("Select a level");
-                levelVerticalGroup.clear();
-                levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
-            }
-        });
-        downloadedLevelsButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                downloadedLevelsButton.setColor(Color.GREEN);
-                createdLevelsButton.setColor(Color.BLUE);
-                activeDB = "downloaded";
-
-                activeDBLabel.setText("Your downloaded levels:");
-
-                selectedId = "";
-                selectedLevel.setText("Select a level");
-                levelVerticalGroup.clear();
-                levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
-            }
-        });
-
-        buttonGroup = new ButtonGroup<>(createdLevelsButton, downloadedLevelsButton);
-        buttonGroup.setChecked("My Levels");
-        buttonGroup.setMinCheckCount(1);
-        buttonGroup.setMaxCheckCount(1);
-        createdLevelsButton.setColor(Color.GREEN);
-        downloadedLevelsButton.setColor(Color.BLUE);
-
-        HorizontalGroup hgButtons = new HorizontalGroup();
-        hgButtons.addActor(createdLevelsButton);
-        hgButtons.addActor(downloadedLevelsButton);
 
         mainTable.add(backButton).height(labelHeight +10).padTop(10).padLeft(5);
         mainTable.add(activeDBLabel).padTop(10).expandX().left().padLeft(5).height(labelHeight);
-        mainTable.add(hgButtons).width(200);
+        //mainTable.add(hgButtons).width(200);
+        mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
 
@@ -209,9 +173,16 @@ public class UserAccountScreen extends LoginScreen implements Screen {
         mainTable.add(selectedLevel).left().padBottom(20).padLeft(5);
         mainTable.add(playButton).width(150).padBottom(20).padLeft(5);
 
+        selectedId = "";
+        selectedLevel.setText("Select a level");
+        levelVerticalGroup.clear();
+        levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
+
         //end
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
+
+        //System.out.println(activeDB);
     }
 
     private Table getSearchSortTable() {
@@ -288,14 +259,7 @@ public class UserAccountScreen extends LoginScreen implements Screen {
         //leftTable.setDebug(true);
 
         //verify database is connected
-        if (activeDB.equals("created")) {
-            if (!dbCreated.isDBActive()) {
-                System.out.println("db is not active");
-                return null;
-            } else {
-                levelInfo = dbCreated.searchByID(id);
-            }
-        } else if (activeDB.equals("downloaded")) {
+        if (activeDB.equals("downloaded")) {
             if (!dbDownloaded.isDBActive()) {
                 System.out.println("db is not active");
                 return null;
@@ -307,25 +271,28 @@ public class UserAccountScreen extends LoginScreen implements Screen {
         }
 
         //adding left column labels
-        levelName = new Label(levelInfo.getTitle(), skin);
-        author = new Label(levelInfo.getAuthor(), skin);
+        if (levelInfo  != null) {
+            levelName = new Label(levelInfo.getTitle(), skin);
+            author = new Label(levelInfo.getAuthor(), skin);
 
-        String difficultyString = Difficulty.values()[levelInfo.getDifficulty()].getDisplayName();
-        difficulty = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
+            String difficultyString = Difficulty.values()[levelInfo.getDifficulty()].getDisplayName();
+            difficulty = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
 
-        difficulty.addListener(selectLevelListener(id));
-        difficulty.addListener(new HoverListener());
-        levelName.addListener(selectLevelListener(id));
-        levelName.addListener(new HoverListener());
-        author.addListener(selectLevelListener(id));
-        author.addListener(new HoverListener());
+            difficulty.addListener(selectLevelListener(id));
+            difficulty.addListener(new HoverListener());
+            levelName.addListener(selectLevelListener(id));
+            levelName.addListener(new HoverListener());
+            author.addListener(selectLevelListener(id));
+            author.addListener(new HoverListener());
 
-        //adding to left table
-        leftTable.add(levelName).width(leftColumnWidth - 10).left().height(labelHeight);
-        leftTable.row();
-        leftTable.add(difficulty).width(leftColumnWidth - 10).left().height(labelHeight);
+            //adding to left table
+            leftTable.add(levelName).width(leftColumnWidth - 10).left().height(labelHeight);
+            leftTable.row();
+            leftTable.add(difficulty).width(leftColumnWidth - 10).left().height(labelHeight);
 
-        return leftTable;
+            return leftTable;
+        }
+        return new Table();
     }
 
     private Table getRightColumn(String id) {
@@ -334,14 +301,7 @@ public class UserAccountScreen extends LoginScreen implements Screen {
         //rightTable.setDebug(true);
 
         //verify database is connected
-        if (activeDB.equals("created")) {
-            if (!dbCreated.isDBActive()) {
-                System.out.println("db is not active");
-                return null;
-            } else {
-                levelInfo = dbCreated.searchByID(id);
-            }
-        } else if (activeDB.equals("downloaded")) {
+        if (activeDB.equals("downloaded")) {
             if (!dbDownloaded.isDBActive()) {
                 System.out.println("db is not active");
                 return null;
@@ -353,20 +313,23 @@ public class UserAccountScreen extends LoginScreen implements Screen {
         }
 
         //right column labels
-        rating = new Label("" + levelInfo.getRating() + "/5", skin);
-        playCount = new Label("" + levelInfo.getPlayCount(), skin);
+        if (levelInfo != null) {
+            rating = new Label("" + levelInfo.getRating() + "/5", skin);
+            playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
-        rating.addListener(selectLevelListener(id));
-        rating.addListener(new HoverListener());
-        playCount.addListener(selectLevelListener(id));
-        playCount.addListener(new HoverListener());
+            rating.addListener(selectLevelListener(id));
+            rating.addListener(new HoverListener());
+            playCount.addListener(selectLevelListener(id));
+            playCount.addListener(new HoverListener());
 
-        //add to right table
-        rightTable.add(rating).width(rightColumnWidth).left().height(labelHeight);
-        rightTable.row();
-        rightTable.add(playCount).width(rightColumnWidth).left().height(labelHeight);
+            //add to right table
+            rightTable.add(rating).width(rightColumnWidth).left().height(labelHeight);
+            rightTable.row();
+            rightTable.add(playCount).width(rightColumnWidth).left().height(labelHeight);
 
-        return rightTable;
+            return rightTable;
+        }
+        return new Table();
     }
 
     private ClickListener selectLevelListener(final String id) {
@@ -375,9 +338,7 @@ public class UserAccountScreen extends LoginScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 //outline the selected level
                 String levelSelectedStr;
-                if (activeDB.equals("created")) {
-                    levelSelectedStr = dbCreated.searchByID(id).getTitle();
-                } else if (activeDB.equals("downloaded")){
+                if (activeDB.equals("downloaded")){
                     levelSelectedStr = dbDownloaded.searchByID(id).getTitle();
                 } else {
                     levelSelectedStr = "error";
@@ -396,9 +357,7 @@ public class UserAccountScreen extends LoginScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //outline the selected level
-                if (activeDB.equals("created")) {
-                    selectedLevel.setText("Level Selected: " + dbCreated.searchByID(id).getTitle());
-                } else if (activeDB.equals("downloaded")) {
+                if (activeDB.equals("downloaded")) {
                     selectedLevel.setText("Level Selected: " + dbDownloaded.searchByID(id).getTitle());
                 }
                 selectedId = id;
@@ -412,12 +371,7 @@ public class UserAccountScreen extends LoginScreen implements Screen {
                         Gdx.input.setInputProcessor(stage);
 
                         if ((Boolean) object) {
-                            if (activeDB.equals("created")) {
-                                dbCreated.removeLevelInfo(id);
-                                ServerDBHandler serverDB = new ServerDBHandler();
-                                serverDB.removeLevel(id);
-                                serverDB.closeConnection();
-                            } else if (activeDB.equals("downloaded")) {
+                            if (activeDB.equals("downloaded")) {
                                 dbDownloaded.removeLevelInfo(id);
                             }
                             levelVerticalGroup.clear();
@@ -426,9 +380,7 @@ public class UserAccountScreen extends LoginScreen implements Screen {
                     }
                 };
 
-                if (activeDB.equals("created")) {
-                    dialog.text("Are you sure you want to delete " + dbCreated.searchByID(id).getTitle() + " from your account?\nThis cannot be undone");
-                } else if (activeDB.equals("downloaded")) {
+                if (activeDB.equals("downloaded")) {
                     dialog.text("Are you sure you want to delete " + dbDownloaded.searchByID(id).getTitle() + " locally?");
                 }
 
@@ -460,11 +412,8 @@ public class UserAccountScreen extends LoginScreen implements Screen {
                 if (selectedId.equals("")) {
                     return;
                 }
-                if (activeDB.equals("created")) {
-                    System.out.println("Should be playing: " + dbCreated.searchByID(selectedId).getTitle());
-                } else if (activeDB.equals("downloaded")) {
-                    System.out.println("Should be playing: " + dbDownloaded.searchByID(selectedId).getTitle());
-                }
+
+                System.out.println("Should be playing: " + dbDownloaded.searchByID(selectedId).getTitle());
                 //TODO: open the game screen with the level that is selected
 
             }
@@ -488,17 +437,16 @@ public class UserAccountScreen extends LoginScreen implements Screen {
         //search all levels and make a list that contains this string in the title or author:
         ArrayList<LevelInfo> ongoingList;
 
-        if (table.equals("created")) {
-            if (!searchBar.getText().equals("")) {
-                ArrayList<LevelInfo> listTitles = new ArrayList<>(dbCreated.searchByTitle(searchBar.getText()));
-                ArrayList<LevelInfo> listAuthors = new ArrayList<>(dbCreated.searchByAuthor(searchBar.getText()));
-
-                ongoingList = new ArrayList<>(dbCreated.combineLists(listTitles, listAuthors));
-            } else {
-                ongoingList = new ArrayList<>(dbCreated.sortByTitle());
-                //ongoingList = new ArrayList<>(dbHandler.getUsersCreatedLevels(username));
-            }
-        } else if (table.equals("downloaded")) {
+//        if (table.equals("created")) {
+//            if (!searchBar.getText().equals("")) {
+//                ArrayList<LevelInfo> listTitles = new ArrayList<>(dbCreated.searchByTitle(searchBar.getText()));
+//                ArrayList<LevelInfo> listAuthors = new ArrayList<>(dbCreated.searchByAuthor(searchBar.getText()));
+//
+//                ongoingList = new ArrayList<>(dbCreated.combineLists(listTitles, listAuthors));
+//            } else {
+//                ongoingList = new ArrayList<>(dbCreated.sortByTitle());
+//            }
+        if (table.equals("downloaded")) {
             if (!searchBar.getText().equals("")) {
                 ArrayList<LevelInfo> listTitles = new ArrayList<>(dbDownloaded.searchByTitle(searchBar.getText()));
                 ArrayList<LevelInfo> listAuthors = new ArrayList<>(dbDownloaded.searchByAuthor(searchBar.getText()));

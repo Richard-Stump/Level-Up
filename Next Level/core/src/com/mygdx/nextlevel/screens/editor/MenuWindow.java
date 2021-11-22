@@ -8,8 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisWindow;
+import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
+import com.mygdx.nextlevel.dbHandlers.LevelsDBController;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.EditLevelScreen;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 /**
@@ -34,8 +38,6 @@ public class MenuWindow extends VisWindow {
 
         saveButton = new TextButton("Save", VisUI.getSkin());
         table.add(saveButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING).fillY();
-        loadButton = new TextButton("Load", VisUI.getSkin());
-        table.add(loadButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING).fillY();
         levelSettingsButton = new TextButton("Level\nSettings", VisUI.getSkin());
         table.add(levelSettingsButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING);
 
@@ -46,42 +48,24 @@ public class MenuWindow extends VisWindow {
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (lev.saveName == null)
-                    finalStage.addActor(new SaveAsDialog(level, stage));
-                else {
-                    try {
-                        lev.exportTo(lev.saveName);
-                    } catch (FileNotFoundException e) {
-                        stage.addActor(new MessageDialog("Could not open + \"" + lev.saveName + "\"to save the level"));
-                    }
-                }
-            }
-        });
+                try {
+                    File file = level.exportTo(level.info.getId() + ".tmx");
+                    String name2 = file.getName();
 
-        loadButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                stage.addActor(new LoadDialog(level, stage));
+                    ServerDBHandler handler = new ServerDBHandler();
+                    handler.updateLevel(level.info);
+                } catch (FileNotFoundException e) {
+                    stage.addActor(new MessageDialog("Could not open + \"" + lev.saveName + "\"to save the level"));
+                }
             }
         });
 
         add(table).fill();
 
-        int numButtons = 3;
+        int numButtons = 2;
         float width = 50 + BUTTON_WIDTH * numButtons + BUTTON_PADDING * numButtons;
         float x = EditLevelScreen.STAGE_WIDTH - width;
         float y = EditLevelScreen.STAGE_HEIGHT;
-
-        /*
-        levelInfoButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                //((Game)Gdx.app.getApplicationListener()).setScreen(new EditLevelInfoMenuScreen(game));
-            }
-        });
-
-
-         */
         setSize(width, 150);
         setPosition(x, y);
     }

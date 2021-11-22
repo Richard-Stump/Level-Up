@@ -82,7 +82,7 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         TextButton playButton = new TextButton("Play", skin);
         TextButton createLevelButton = new TextButton("Create Level", skin);
         TextButton selectLevelButton = new TextButton("Select Level", skin);
-        TextButton editLevelButton = new TextButton("Edit Level", skin);
+        TextButton editLevelButton = new TextButton("My Levels", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
         TextButton logoutButton = new TextButton("Logout", skin);
         TextButton exitButton = new TextButton("Exit", skin);
@@ -164,7 +164,7 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         selectLevelButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new LevelSelectionScreen(game));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new LevelDownloadScreen(game));
             }
         });
         selectLevelButton.addListener(new HoverListener());
@@ -191,9 +191,10 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         editLevelButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new EditLevelSelectionScreen(game));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new MyLevelsScreen(game));
             }
         });
+        editLevelButton.addListener(new HoverListener());
         logoutButton.addListener(new HoverListener());
         exitButton.addListener(new ClickListener(){
             @Override

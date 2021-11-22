@@ -14,14 +14,12 @@ public class LevelInfo {
     private String author;
     private List<Tag> tags;
     private double bestTime;
+    private String bestTimeUser;
     private float rating;
     private int difficulty;
     private int playCount;
     private Date dateDownloaded;
     private Date dateCreated;
-    private String tmx;
-    //private File tsx;
-    //private File png;
     private boolean isPublic;
 
     /**
@@ -38,9 +36,6 @@ public class LevelInfo {
         this.rating = 0;
         this.difficulty = Difficulty.NONE.ordinal();
         this.playCount = 0;
-        this.tmx = null;
-        //this.tsx = null;
-        //this.png = null;
         isPublic = false;
     }
 
@@ -54,13 +49,11 @@ public class LevelInfo {
         this(id);
         this.title = title;
         this.author = author;
+        this.bestTimeUser = author;
     }
 
     public LevelInfo(String id, String title, String author, String tmx) {
         this(id, title, author);
-        this.tmx = tmx;
-        //this.tsx = tsx;
-        //this.png = png;
     }
 
     /**
@@ -165,20 +158,9 @@ public class LevelInfo {
         return id;
     }
 
-    public String getTmx() {
-        return tmx;
+    public String getBestTimeUser() {
+        return bestTimeUser;
     }
-
-    /*
-    public File getTsx() {
-        return tsx;
-    }
-
-    public File getPng() {
-        return png;
-    }
-
-     */
 
     public boolean isPublic() {
         return isPublic;
@@ -224,20 +206,9 @@ public class LevelInfo {
         this.tags = tags;
     }
 
-    public void setTmx(String tmx) {
-        this.tmx = tmx;
+    public void setBestTimeUser(String newBestUser) {
+        this.bestTimeUser = newBestUser;
     }
-
-    /*
-    public void setTsx(File tsx) {
-        this.tsx = tsx;
-    }
-
-    public void setPng(File png) {
-        this.png = png;
-    }
-
-     */
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;

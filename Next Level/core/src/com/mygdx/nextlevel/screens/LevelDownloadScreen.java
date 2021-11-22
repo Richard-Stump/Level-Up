@@ -5,6 +5,7 @@
 
 package com.mygdx.nextlevel.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -27,6 +28,7 @@ import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
+import com.mygdx.nextlevel.screens.editor.DeleteDownloadedLevelsScreen;
 
 import java.util.ArrayList;
 
@@ -52,7 +54,7 @@ public class LevelDownloadScreen implements Screen {
     private VerticalGroup levelVerticalGroup;
 
     public TextButton searchButton;
-    public TextButton downloadButton;
+    public TextButton downloadAndPlayButton;
 
     //search parameters:
     private TextField searchBar;
@@ -117,22 +119,33 @@ public class LevelDownloadScreen implements Screen {
         backButton.left();
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LevelSelectionScreen(game));
+                game.setScreen(new MainMenuScreen(game));
             }
         });
 
         //screen title
-        Label levelSelectLabel = new Label("Download Levels:", skin);
+        Label levelSelectLabel = new Label("Public Levels:", skin);
 
         //current user overview
         //HorizontalGroup userInfo = new HorizontalGroup();
-        Label usernameLabel = new Label(LoginScreen.getCurAcc(), skin);
+        //Label usernameLabel = new Label(LoginScreen.getCurAcc(), skin);
         //userInfo.addActor(usernameLabel);
         //add stuff here for user info
 
+        final TextButton downloadedLevelsButton = new TextButton("Delete Downloaded Levels", skin);
+        downloadedLevelsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new DeleteDownloadedLevelsScreen(game));
+            }
+        });
+        downloadedLevelsButton.addListener(new HoverListener());
+
         mainTable.add(backButton).height(labelHeight +10).padTop(10).padLeft(5);
         mainTable.add(levelSelectLabel).expandX().left().padLeft(5).padTop(10);
-        mainTable.add(usernameLabel).width(200).padTop(10);
+        //mainTable.add(usernameLabel).width(200).padTop(10);
+        //TODO: add tab to downloaded level deletion screen here
+        mainTable.add(downloadedLevelsButton);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
 
@@ -154,19 +167,24 @@ public class LevelDownloadScreen implements Screen {
 
         //row 3: empty placeholder, currently selected level, play button
 
-        downloadButton = new TextButton("Download", skin);
-        downloadButton.addListener(downloadLevel());
-        downloadButton.setColor(Color.LIGHT_GRAY);
+        downloadAndPlayButton = new TextButton("Play", skin);
+        downloadAndPlayButton.addListener(downloadLevel());
+        downloadAndPlayButton.addListener(new HoverListener());
+        downloadAndPlayButton.setColor(Color.LIGHT_GRAY);
 
         mainTable.add();
         mainTable.add(selectedLevel).left().padBottom(20).padLeft(5);
-        mainTable.add(downloadButton).width(200).padBottom(20).padLeft(5);
+        mainTable.add(downloadAndPlayButton).width(200).padBottom(20).padLeft(5);
 
         //end
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
     }
 
+    /**
+     * Gets the search table that will hold all the search parameters that the user can use
+     * @return
+     */
     private Table getSearchSortTable() {
         final Table table = new Table();
         Label searchLabel = new Label("Search:", skin);
@@ -249,7 +267,7 @@ public class LevelDownloadScreen implements Screen {
             System.out.println("db is not active");
             return null;
         } else {
-            levelInfo = dbServer.getLevelByID(id);
+            levelInfo = dbServer.getLevelByID(id, false);
         }
 
         //adding left column labels
@@ -288,7 +306,7 @@ public class LevelDownloadScreen implements Screen {
             System.out.println("db is not active");
             return null;
         } else {
-            levelInfo = dbServer.getLevelByID(id);
+            levelInfo = dbServer.getLevelByID(id, false);
             //TODO: get the number of users that have rated the level, currently having an issue with db
             //numRaters = dbServer.getRatingCount(id);
         }
@@ -315,17 +333,17 @@ public class LevelDownloadScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //outline the selected level
-                selectedLevel.setText("Level Selected: " + dbServer.getLevelByID(id).getTitle());
+                selectedLevel.setText("Level Selected: " + dbServer.getLevelByID(id, false).getTitle());
                 selectedId = id;
 
                 if ((dbDownloaded.searchByID(id) != null) || (dbCreated.searchByID(id) != null)) {
-                    downloadButton.setTouchable(Touchable.disabled);
-                    downloadButton.setText("Already Downloaded");
-                    downloadButton.setColor(Color.RED);
+                    downloadAndPlayButton.setTouchable(Touchable.disabled);
+                    downloadAndPlayButton.setText("Play");
+                    downloadAndPlayButton.setColor(Color.RED);
                 } else {
-                    downloadButton.setTouchable(Touchable.enabled);
-                    downloadButton.setText("Download");
-                    downloadButton.setColor(Color.GREEN);
+                    downloadAndPlayButton.setTouchable(Touchable.enabled);
+                    downloadAndPlayButton.setText("Download and Play");
+                    downloadAndPlayButton.setColor(Color.GREEN);
                 }
             }
         };
@@ -335,16 +353,20 @@ public class LevelDownloadScreen implements Screen {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                //TODO: if the level is already downloaded directly go to play
+
                 if (selectedId.equals("")) {
                     return;
                 }
-                LevelInfo levelInfo = dbServer.getLevelByID(selectedId);
+                LevelInfo levelInfo = dbServer.getLevelByID(selectedId, true);
                 System.out.println("Should be downloading: " + levelInfo.getTitle());
                 dbDownloaded.addLevelInfo(levelInfo);
 
-                downloadButton.setTouchable(Touchable.disabled);
-                downloadButton.setText("Downloaded");
-                downloadButton.setColor(Color.RED);
+                downloadAndPlayButton.setTouchable(Touchable.disabled);
+                downloadAndPlayButton.setText("Play");
+                downloadAndPlayButton.setColor(Color.RED);
+
+                //TODO: after downloading set screen to level to play
             }
         };
     }
@@ -353,9 +375,9 @@ public class LevelDownloadScreen implements Screen {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                downloadButton.setTouchable(Touchable.enabled);
-                downloadButton.setText("Download");
-                downloadButton.setColor(Color.LIGHT_GRAY);
+                downloadAndPlayButton.setTouchable(Touchable.enabled);
+                downloadAndPlayButton.setText("Play");
+                downloadAndPlayButton.setColor(Color.LIGHT_GRAY);
 
                 selectedId = "";
                 selectedLevel.setText("Select a level");

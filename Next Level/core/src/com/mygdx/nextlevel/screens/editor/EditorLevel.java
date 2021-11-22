@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 
@@ -21,6 +22,8 @@ public class EditorLevel {
     public ArrayList<Tag>   tags;
 
     private int oldWidth, oldHeight;
+
+    public LevelInfo info;
 
     @Property(displayName="Level Width") public int width;
     @Property(displayName="Level Height") public int height;
@@ -162,6 +165,8 @@ public class EditorLevel {
         map = new int[width][height];
         this.width = width;
         this.height = height;
+        this.oldWidth = width;
+        this.oldHeight = height;
 
         for(int y = height - 1; y >= 0; y--) {
             for(int x = 0; x < width; x++) {
@@ -175,7 +180,6 @@ public class EditorLevel {
         }
 
         MapObjects objects = tiledMap.getLayers().get("Tile Layer 1").getObjects();
-
 
         return;
     }

@@ -5,6 +5,7 @@ import com.mygdx.nextlevel.dbUtil.DBConnection;
 import com.mygdx.nextlevel.enums.Tag;
 
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,12 +114,6 @@ public class LevelsDBController {
             statement.setInt(7, levelInfo.getPlayCount());
             statement.setDate(8, levelInfo.getDateDownloaded());
 
-            //statement.setBinaryStream(9, new FileInputStream(levelInfo.getTmx()), (int) levelInfo.getTmx().length());
-            //statement.setBinaryStream(10, new FileInputStream(levelInfo.getTsx()), (int) levelInfo.getTsx().length());
-            //statement.setBinaryStream(11, new FileInputStream(levelInfo.getPng()), (int) levelInfo.getPng().length());
-
-
-            //statement.setString(9, levelInfo.getTags().toString());
             String tagString = "";
             if (levelInfo.getTags().size() > 0) {
                 for (Tag tag : levelInfo.getTags()) {
@@ -212,6 +207,13 @@ public class LevelsDBController {
 
             rowsChanged = statement.executeUpdate();
             if (rowsChanged == 1) {
+                //delete the file
+                File tmxFile = new File(id + ".tmx");
+                File tsxFile = new File(id + ".tsx");
+                File pngFile = new File(id + ".png");
+                tmxFile.delete();
+                tsxFile.delete();
+                pngFile.delete();
                 return 1;
             }
             return -1;
