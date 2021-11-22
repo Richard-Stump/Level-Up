@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 
@@ -21,6 +22,8 @@ public class EditorLevel {
     public ArrayList<Tag>   tags;
 
     private int oldWidth, oldHeight;
+
+    public LevelInfo info;
 
     @Property(displayName="Level Width") public int width;
     @Property(displayName="Level Height") public int height;

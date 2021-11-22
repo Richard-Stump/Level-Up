@@ -666,7 +666,7 @@ public class ServerDBHandler {
             String filename = levelInfo.getId();
             byte[] tmxBytes = resultSet.getBytes("tmx");
             try {
-                FileOutputStream fosTmx = new FileOutputStream(new File(filename + ".tmx"));
+                FileOutputStream fosTmx = new FileOutputStream(filename + ".tmx");
                 fosTmx.write(tmxBytes);
                 fosTmx.close();
             } catch (Exception e) {
