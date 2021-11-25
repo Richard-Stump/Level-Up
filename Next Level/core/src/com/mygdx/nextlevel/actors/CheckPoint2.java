@@ -6,20 +6,22 @@ import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
+import java.util.ArrayList;
+
 public class CheckPoint2 extends Actor2 {
     protected boolean activated = false;
     protected Player2 player;
-    protected Texture regularTexture;
     protected BoxCollider collider;
+    protected ArrayList<Texture> textures;
 
-    public CheckPoint2(GameScreen2 screen, Texture texture, float x, float y, Player2 player) {
+    public CheckPoint2(GameScreen2 screen, ArrayList<Texture> textures, float x, float y, Player2 player) {
         super(screen, x, y, 1, 1);
         this.player = player;
-        this.regularTexture = texture;
+        this.textures = textures;
 
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(1.0f, 1.0f), false, true, CollisionGroups.ACTOR, CollisionGroups.ACTOR);
 
-        setRegion(regularTexture);
+        setRegion(textures.get(0));
     }
 
     @Override
@@ -28,13 +30,13 @@ public class CheckPoint2 extends Actor2 {
             activated = true;
             player.addLife();
             player.setRespawnLocation(getPosition());
-            setRegion(new Texture("checkpoint2.jpg"));
+            setRegion(textures.get(1));
         }
     }
 
     public void reset() {
         activated = false;
-        setRegion(regularTexture);
+        setRegion(textures.get(0));
     }
 
     public boolean isActivated() {

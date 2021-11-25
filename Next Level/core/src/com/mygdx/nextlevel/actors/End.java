@@ -22,7 +22,7 @@ public class End extends Actor2 {
     @Override
     public void onTrigger(Actor2 other, BoxCollider.Side side) {
         if (other instanceof Player2) {
-//            player.setWin(true);
+            player.setWin(true);
             player.checkConditions(player.getConditions());
             if (player.getKillCondition() && player.getCoinCondition() && player.getNoKillCondition() && player.getJewel() && player.getTimeCondition()) {
                 player.setWin(true);

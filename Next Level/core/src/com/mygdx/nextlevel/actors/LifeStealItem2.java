@@ -5,9 +5,9 @@ import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class LifeStealItem2 extends Item2 {
     public LifeStealItem2() {}
-    public LifeStealItem2(GameScreen2 screen, float x, float y) {
+    public LifeStealItem2(GameScreen2 screen, float x, float y, String texture) {
         super(screen, x, y);
-        screen.itemToName.put(this, "lifesteal-mushroom.png");
-        setRegion(new Texture("lifesteal-mushroom.png"));
+        screen.itemToName.put(this, texture);
+        setRegion(new Texture(texture));
     }
 }
