@@ -213,10 +213,10 @@ public class GameScreen2 extends Timer implements Screen {
 //        actors.add(new Coin(this, 13, 5, false));
 //        actors.add(new Coin(this, 16, 5, false));
 //        actors.add(new Coin(this, 19, 5, false));
-        actors.add(new CoinStatic(this, new Texture("coin.png"), 10, 5));
-        actors.add(new CoinStatic(this, new Texture("coin.png"), 13, 5));
-        actors.add(new CoinStatic(this, new Texture("coin.png"), 16, 5));
-        actors.add(new CoinStatic(this, new Texture("coin.png"), 19, 5));
+        actors.add(new CoinStatic(this, new Texture("coin.png"), 10, 5, player));
+        actors.add(new CoinStatic(this, new Texture("coin.png"), 13, 5, player));
+        actors.add(new CoinStatic(this, new Texture("coin.png"), 16, 5, player));
+        actors.add(new CoinStatic(this, new Texture("coin.png"), 19, 5, player));
 //        actors.add(new Jewel(this, new Texture("jewel.png"), 2, 1));
         actors.add(player);
 
@@ -409,13 +409,16 @@ public class GameScreen2 extends Timer implements Screen {
                     actors.add((Block2) c.newInstance(this, new Texture("badlogic.jpg"), i.x +0.5f, i.y + 0.5f, true, ItemIndex.COIN.value, true));
                 }
                 else if (i.type.equals(CoinStatic.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
-                    actors.add((CoinStatic) c.newInstance(this, new Texture("badlogic.jpg"), i.x +0.25f, i.y+0.25f));
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class, Player2.class);
+                    actors.add((CoinStatic) c.newInstance(this, new Texture("coin.png"), i.x +0.25f, i.y+0.25f, player));
+                } else if (i.type.equals(Coin.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Player2.class);
+                    actors.add((Coin) c.newInstance(this, i.x +0.25f, i.y+0.25f, player));
                 }
                 else if (i.type.equals(Jewel.class)) {
 //                    System.out.println("Jewel in spawn actors");
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
-                    actors.add((Jewel) c.newInstance(this, new Texture("badlogic.jpg"), i.x, i.y));
+                    actors.add((Jewel) c.newInstance(this, new Texture("jewel.png"), i.x, i.y));
                 }
 //                else if (i.type.equals(CoinStatic.class)) {
 //                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
@@ -423,7 +426,7 @@ public class GameScreen2 extends Timer implements Screen {
 //                }
                 else if (i.type.equals(Enemy2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class,float.class, float.class, Enemy2.Action.class, Player2.class);
-                    actors.add((Enemy2) c.newInstance(this, new Texture("badlogic.jpg"), i.x, i.y, Enemy2.Action.SHOOT, player));
+                    actors.add((Enemy2) c.newInstance(this, new Texture("enemy.jpg"), i.x, i.y, Enemy2.Action.SHOOT, player));
                 } else if (i.type.equals(BlueFire.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Player2.class);
                     actors.add((BlueFire) c.newInstance(this, i.x, i.y, player));

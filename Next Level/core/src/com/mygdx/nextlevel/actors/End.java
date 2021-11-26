@@ -20,11 +20,16 @@ public class End extends Actor2 {
     }
 
     @Override
-    public void onTrigger(Actor2 other, BoxCollider.Side side) {
+    public void onCollision(Actor2 other, BoxCollider.Side side) {
         if (other instanceof Player2) {
 //            player.setWin(true);
             player.checkConditions(player.getConditions());
-            if (player.getKillCondition() && player.getCoinCondition() && player.getNoKillCondition() && player.getJewel() && player.getTimeCondition()) {
+            System.out.println("Kill condition: " + player.getKillCondition());
+            System.out.println("Coin condition: " + player.getCoinCondition());
+            System.out.println("NoKill condition: " + player.getNoKillCondition());
+            System.out.println("Jewel condition: " + player.getJewelCondition());
+            System.out.println("Kill condition: " + player.getTimeCondition());
+            if (player.getKillCondition() && player.getCoinCondition() && player.getNoKillCondition() && player.getJewelCondition() && player.getTimeCondition()) {
                 player.setWin(true);
             }
         }

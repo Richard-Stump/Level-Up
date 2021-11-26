@@ -10,8 +10,8 @@ public class Coin extends Item2 {
 
     }
 
-    public Coin(GameScreen2 screen, float x, float y) {
-        super(screen, x, y);
+    public Coin(GameScreen2 screen, Texture texture, float x, float y, Player2 player) {
+        super(screen, x, y, player);
         screen.itemToName.put(this, "coin.png");
         setRegion(new Texture("coin.png"));
     }

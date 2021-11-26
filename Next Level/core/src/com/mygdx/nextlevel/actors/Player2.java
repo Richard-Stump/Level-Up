@@ -384,10 +384,13 @@ public class Player2 extends Actor2 {
             if (heldItem == null)
                 heldItem = (Item2) other;
         }
-        if (other instanceof Coin || other instanceof CoinStatic) {
-            coin++;
-//            System.out.println(coin);
-        }
+//        if ((other instanceof CoinStatic || other instanceof Coin)) {
+//            coin++;
+////            System.out.println(coin);
+//        }
+//        if ((other instanceof Coin && other.active)) {
+//            coin++;
+//        }
     }
 
     public void onTrigger(Actor2 other, Side side) {
@@ -401,7 +404,19 @@ public class Player2 extends Actor2 {
 //            coin++;
 ////            System.out.println(coin);
 //        }
-        if (other instanceof End) {
+//        if (other instanceof End) {
+//            if (other instanceof Player2) {
+////            player.setWin(true);
+//                checkConditions(getConditions());
+//                System.out.println("Kill condition: " + getKillCondition());
+//                System.out.println("Coin condition: " + getCoinCondition());
+//                System.out.println("NoKill condition: " + getNoKillCondition());
+//                System.out.println("Jewel condition: " + getJewelCondition());
+//                System.out.println("Kill condition: " + getTimeCondition());
+//                if (getKillCondition() && getCoinCondition() && getNoKillCondition() && getJewelCondition() && getTimeCondition()) {
+//                    setWin(true);
+//                }
+//            }
 //                checkConditions(conditions);
 //            //Todo: replace coin == ? to a preset number in the level
 //            if (condition == 1 && coin == 5) {
@@ -435,7 +450,7 @@ public class Player2 extends Actor2 {
 //            }
 
 
-        }
+//        }
     }
 
 //    public void invulernableFunc() {
@@ -478,6 +493,10 @@ public class Player2 extends Actor2 {
     }
     public int getCoins() {
         return this.coin;
+    }
+
+    public void setCoins(int num) {
+        this.coin = num;
     }
 
     public void setFail(boolean set) {
@@ -534,47 +553,45 @@ public class Player2 extends Actor2 {
     }
 
     public void checkConditions(ArrayList<Integer> conditions) {
-        while (!win && !fail) {
-            if (conditions.contains(1)) {
-                coinConditionMet = false;
-                if (coin == 5) {
-                    coinConditionMet = true;
-                }
-            } else {
+        if (conditions.contains(1)) {
+            coinConditionMet = false;
+            if (coin == 5) {
                 coinConditionMet = true;
             }
-            if (conditions.contains(2)) {
-                killEnemyConditionMet = false;
-                if (enemiesKilled == 1) {
-                    killEnemyConditionMet = true;
-                }
-            } else  {
+        } else {
+            coinConditionMet = true;
+        }
+        if (conditions.contains(2)) {
+            killEnemyConditionMet = false;
+            if (enemiesKilled == 1) {
                 killEnemyConditionMet = true;
             }
-            if (conditions.contains(3)) {
-                killNoEnemyConditionMet = false;
-                if (enemiesKilled == 0) {
-                    killNoEnemyConditionMet = true;
-                }
-            } else {
+        } else  {
+            killEnemyConditionMet = true;
+        }
+        if (conditions.contains(3)) {
+            killNoEnemyConditionMet = false;
+            if (enemiesKilled == 0) {
                 killNoEnemyConditionMet = true;
             }
-            if (conditions.contains(4)) {
-                jewelConditionMet = false;
-                if (jewel) {
-                    jewelConditionMet = true;
-                }
-            } else {
+        } else {
+            killNoEnemyConditionMet = true;
+        }
+        if (conditions.contains(4)) {
+            jewelConditionMet = false;
+            if (jewel) {
                 jewelConditionMet = true;
             }
-            if (conditions.contains(5)) {
-                timeLimitConditionMet = false;
-                if (!getFail()) {
-                    timeLimitConditionMet = true;
-                }
-            } else {
+        } else {
+            jewelConditionMet = true;
+        }
+        if (conditions.contains(5)) {
+            timeLimitConditionMet = false;
+            if (!getFail()) {
                 timeLimitConditionMet = true;
             }
+        } else {
+            timeLimitConditionMet = true;
         }
     }
 

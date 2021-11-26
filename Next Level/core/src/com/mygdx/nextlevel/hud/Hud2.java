@@ -22,6 +22,7 @@ import com.mygdx.nextlevel.actors.Player;
 import com.mygdx.nextlevel.actors.Player2;
 import com.mygdx.nextlevel.screens.ErrorMessageScreen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Hud2 {
@@ -53,6 +54,7 @@ public class Hud2 {
     Label jewelLabel;
     Image jewelImg;
     private int condition = -1;
+    ArrayList<Integer> conditionList;
 
     public Hud2(SpriteBatch spriteBatch, Player2 player) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
@@ -91,14 +93,26 @@ public class Hud2 {
 
         jewelLabel = new Label("JEWEL", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         jewelImg = new Image(new Texture("x.png"));
+        conditionList = player.getConditions();
 
 
 
         table.add(livesLabel).expandX().padTop(10);
         table.add(playerLabel).expandX().padTop(10);
         table.add(worldLabel).expandX().padTop(10);
-        table.add(timeLabel).expandX().padTop(10);
+        if (conditionList.contains(5)) {
+            table.add(timeLabel).expandX().padTop(10);
+        }
         table.add(itemLabel).expandX().padTop(10);
+        if (conditionList.contains(1)) {
+            table.add(coinLabel).expandX().padTop(10);
+        }
+        if (conditionList.contains(2) || conditionList.contains(3)) {
+            table.add(enemyLabel).expandX().padTop(10);
+        }
+        if (conditionList.contains(4)) {
+            table.add(jewelLabel).expandX().padTop(10);
+        }
 //        if (player.getCondition() == 1) {
 //            table.add(coinLabel).expandX().padTop(10);
 //        } else if (player.getCondition() == 2 || player.getCondition() == 3) {
@@ -114,8 +128,22 @@ public class Hud2 {
         table.add(numLivesLabel).expandX();
         table.add(scoreLabel).expandX();
         table.add(levelLabel).expandX();
-        table.add(countdownLabel).expandX();
+        if (conditionList.contains(5)) {
+            table.add(countdownLabel).expandX();
+        }
         table.add(itemImg).width(25).height(25).expandX();
+        if (conditionList.contains(1)) {
+            table.add(numCoinLabel).expandX();
+        }
+        if (conditionList.contains(2)) {
+            table.add(numEnemyLabel).expandX();
+        }
+        if (conditionList.contains(3)) {
+            table.add(killNoEnemy).expandX();
+        }
+        if (conditionList.contains(4)) {
+            table.add(jewelImg).width(25).height(25).expandX();
+        }
 //        if (player.getCondition() == 1) {
 //            table.add(numCoinLabel).expandX();
 //        } else if (player.getCondition() == 2) {
@@ -140,13 +168,15 @@ public class Hud2 {
     }
 
     public void update(float delta, Player2 player, HashMap<Item2, String> map) {
-        time += delta;
-        if (time >= 1) {
-            worldTimer--;
-            countdownLabel.setText(String.format("%03d", worldTimer));
-            time = 0;
-            if (worldTimer == 0 && !player.getWin() && player.getConditions().contains(5)) {
-                player.setFail(true);
+        if (conditionList.contains(5)) {
+            time += delta;
+            if (time >= 1) {
+                worldTimer--;
+                countdownLabel.setText(String.format("%03d", worldTimer));
+                time = 0;
+                if (worldTimer == 0 && !player.getWin() && player.getConditions().contains(5)) {
+                    player.setFail(true);
+                }
             }
         }
         numLivesLabel.setText(String.format("%d", player.getLives()));
@@ -167,6 +197,24 @@ public class Hud2 {
 //            numCoinLabel.setText(String.format("%d/%d", player.getCoins(), 5));
 //            numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), 1));
 //        }
+        if (conditionList.contains(1)) {
+            //Todo: fix set number of coins to number of coins in the creator wants
+            numCoinLabel.setText(String.format("%d/%d", player.getCoins(), 5));
+        }
+        if (conditionList.contains(2)) {
+            //Todo: fix set number of enemies to number creator wants
+            numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), 1));
+        }
+        if (conditionList.contains(3)) {
+            killNoEnemy.setText(String.format("%d", player.getEnemiesKilled()));
+        }
+        if (conditionList.contains(4)) {
+            if (player.getJewel()) {
+                jewelImg.setDrawable(new TextureRegionDrawable(new Texture("jewel.png")));
+            } else {
+                jewelImg.setDrawable(new TextureRegionDrawable(new Texture("x.png")));
+            }
+        }
         if (player.getHeldItem() != null) {
             itemImg.setDrawable(new TextureRegionDrawable(new Texture(map.get(player.getHeldItem()))));
         } else {
