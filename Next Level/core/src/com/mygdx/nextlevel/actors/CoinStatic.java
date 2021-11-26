@@ -36,9 +36,6 @@ public class CoinStatic extends Actor2 {
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         if(other instanceof Player2) {
             screen.queueActorDespawn(this);
-            int coins = player.getCoins();
-            coins++;
-            player.setCoins(coins);
         }
     }
 

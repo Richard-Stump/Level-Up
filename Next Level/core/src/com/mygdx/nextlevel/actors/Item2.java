@@ -50,11 +50,11 @@ public class Item2 extends Actor2 {
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         if(other instanceof Player2) {
             screen.queueActorDespawn(this);
-            if (this instanceof Coin) {
-                int coins = player.getCoins();
-                coins++;
-                player.setCoins(coins);
-            }
+//            if (this instanceof Coin) {
+//                int coins = player.getCoins();
+//                coins++;
+//                player.setCoins(coins);
+//            }
         }
     }
 
