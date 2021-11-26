@@ -7,6 +7,7 @@ import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -18,13 +19,13 @@ public class Block2 extends Actor2 {
     protected boolean breakable;
     protected BoxCollider collider;
     protected int itemIndex = 0;
-    protected Texture regularTexture;
+    protected ArrayList<Texture> blockTextures;
 
     ArrayList<Class> items = new ArrayList<>();
 
-    public Block2(GameScreen2 screen, Texture texture , float x, float y, boolean spawnItem, int index, boolean breakable) {
+    public Block2(GameScreen2 screen, ArrayList<Texture> blockTextures, float x, float y, boolean spawnItem, int index, boolean breakable) {
         super(screen, x, y, 1, 1);
-        this.regularTexture = texture;
+        this.blockTextures = blockTextures;
 
         this.spawnItem = spawnItem;
         this.spawned = false;
@@ -54,19 +55,11 @@ public class Block2 extends Actor2 {
                 false,
                 (short) (CollisionGroups.ACTOR | CollisionGroups.ITEM | CollisionGroups.WORLD), CollisionGroups.BLOCK
         );
-
-//        if (spawnItem && this.breakable) {
-//            setRegion(new Texture("Block.png"));
-//        } else if (spawnItem) {
-//            setRegion(new Texture("item-block.png"));
-//        } else {
-//            setRegion(new Texture("Block.png"));
-//        }
-        setRegion(regularTexture);
+        setRegion(blockTextures.get(0));
     }
 
-    public Block2(GameScreen2 screen, Texture texture, float x, float y, boolean spawnItem, boolean breakable) {
-        this(screen, texture, x, y, spawnItem, -1, breakable);
+    public Block2(GameScreen2 screen, ArrayList<Texture> blockTextures, float x, float y, boolean spawnItem, boolean breakable) {
+        this(screen, blockTextures, x, y, spawnItem, -1, breakable);
     }
 
     public void reset() {
@@ -81,7 +74,7 @@ public class Block2 extends Actor2 {
 //        } else {
 //            setRegion(new Texture(regularTexture));
 //        }
-        setRegion(regularTexture);
+        setRegion(blockTextures.get(0));
     }
 
     public void update(float delta) {
@@ -103,7 +96,7 @@ public class Block2 extends Actor2 {
                 screen.queueActorSpawn(pos.x, pos.y + 1.0f, itemClass);
                 screen.blockList.add(this);
                 spawned = true;
-                setRegion(new Texture("used-item-block.jpg"));
+                setRegion(blockTextures.get(1));
             }
             if (breakable && spawnItem) {
                 Vector2 pos = collider.getPosition();

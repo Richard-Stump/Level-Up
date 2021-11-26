@@ -5,9 +5,9 @@ import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class StarItem2 extends Item2 {
     public StarItem2(){}
-    public StarItem2(GameScreen2 screen, float x, float y) {
+    public StarItem2(GameScreen2 screen, float x, float y, String texture) {
         super(screen, x, y);
-        screen.itemToName.put(this, "star.jpg");
-        setRegion(new Texture("star.jpg"));
+        screen.itemToName.put(this, texture);
+        setRegion(new Texture(texture));
     }
 }

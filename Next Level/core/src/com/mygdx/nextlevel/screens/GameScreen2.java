@@ -18,6 +18,7 @@ import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.hud.Hud2;
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -113,6 +114,17 @@ public class GameScreen2 extends Timer implements Screen {
     public ArrayList<Actor2> blockList;     //The list of all item blocks that need to be reset
     public ArrayList<Actor2> checkpointList;//The list of all checkpoints in the game screen
 
+    //Textures for all actors within the game
+    public ArrayList<Texture> playerTextures;
+    public ArrayList<Texture> itemBlockTextures;
+    public ArrayList<Texture> coinBlockTextures;
+    public ArrayList<String> itemTextures;
+    public ArrayList<Texture> checkpointTextures;
+    public Texture enemyTexture;
+    public Texture endTexture;
+    public Texture coinTexture;
+    public Texture blockTexture;
+
     /**
      * Initialize the game screen
      * @param game The screen that created this screen
@@ -142,6 +154,12 @@ public class GameScreen2 extends Timer implements Screen {
         itemsList = new ArrayList<>();
         blockList = new ArrayList<>();
         checkpointList = new ArrayList<>();
+
+        playerTextures = new ArrayList<>();
+        itemTextures = new ArrayList<>();
+        itemBlockTextures = new ArrayList<>();
+        coinBlockTextures = new ArrayList<>();
+        checkpointTextures = new ArrayList<>();
 
         //create tilemap
         tm = new TileMap();
@@ -186,29 +204,57 @@ public class GameScreen2 extends Timer implements Screen {
         }
          */
 
-        //TODO on classes that can create multiple texture (Player, Checkpoint, Block (Items)) pass in textures as arraylist
-        //TODO have the index of the array list correspond with the texture (block/item or baseTexture/updateTexture)
-        ArrayList<Texture> playerTexture = new ArrayList<>();
-        playerTexture.add(PlayerIndex.DEFAULT.value, new Texture("goomba.png"));
-        playerTexture.add(PlayerIndex.POWERUP.value, new Texture("paragoomba.png"));
-        playerTexture.add(PlayerIndex.STAR.value, new Texture("stargoomba.png"));
-        playerTexture.add(PlayerIndex.FIRE.value, new Texture("firegoomba.png"));
-        playerTexture.add(PlayerIndex.LIFESTEAL.value, new Texture("lifesteal-goomba.png"));
-//        player = new Player2(this, new Texture("goomba.png"), 1.0f, 1.0f);
-        player = new Player2(this, playerTexture, 1.0f, 1.0f);
-        actors.add(new Enemy2(this,new Texture("enemy.jpg"), 16, 2, Enemy2.Action.SHOOT, player));
-        actors.add(new CheckPoint2(this, new Texture("checkpoint.png"), 10.0f, 1.0f, player));
-        actors.add(new End(this, new Texture("end.jpeg"), 30, 1, player));
-        actors.add(new Block2(this,new Texture("item-block.png"), 7, 4, true, ItemIndex.ALL.value, false));
-        actors.add(new Block2(this, new Texture("item-block.png"), 10, 4, true, ItemIndex.SLOW.value, false));
-        actors.add(new Block2(this, new Texture("item-block.png"), 13, 4, true, ItemIndex.SPEED.value, false));
-        actors.add(new Block2(this, new Texture("item-block.png"), 16, 4, true, ItemIndex.LIFE.value, false));
-        actors.add(new Block2(this, new Texture("item-block.png"), 19, 4, true, ItemIndex.MUSHROOM.value, false));
-        actors.add(new Block2(this, new Texture("item-block.png"), 22, 4, true, ItemIndex.STAR.value, false));
-        actors.add(new Block2(this, new Texture("item-block.png"), 25, 4, true, ItemIndex.FIREFLOWER.value, false));
-        actors.add(new Block2(this, new Texture("item-block.png"), 28, 4, true, ItemIndex.LIFESTEAL.value, false));
-        actors.add(new Block2(this, new Texture("jewel.png"), 29, 4, true, ItemIndex.COIN.value, true));
-        actors.add(new Block2(this, new Texture("Block.png"), 30, 4, false,false));
+        //Player Textures
+        playerTextures.add(PlayerIndex.DEFAULT.value, new Texture("goomba.png"));
+        playerTextures.add(PlayerIndex.POWERUP.value, new Texture("paragoomba.png"));
+        playerTextures.add(PlayerIndex.STAR.value, new Texture("stargoomba.png"));
+        playerTextures.add(PlayerIndex.FIRE.value, new Texture("firegoomba.png"));
+        playerTextures.add(PlayerIndex.LIFESTEAL.value, new Texture("lifesteal-goomba.png"));
+
+        //Item Textures
+        itemTextures.add(ItemIndex.SLOW.value, "slow-mushroom.png");
+        itemTextures.add(ItemIndex.SPEED.value, "speeditem.png");
+        itemTextures.add(ItemIndex.LIFE.value, "1up-mushroom.jpeg");
+        itemTextures.add(ItemIndex.MUSHROOM.value, "mushroom.jpeg");
+        itemTextures.add(ItemIndex.STAR.value, "star.jpg");
+        itemTextures.add(ItemIndex.FIREFLOWER.value, "fireflower.png");
+        itemTextures.add(ItemIndex.LIFESTEAL.value,"lifesteal-mushroom.png");
+        itemTextures.add(ItemIndex.COIN.value,"coin.png"); //FIXME (may want to get out of list)
+
+        //Coin Texture
+        coinTexture = new Texture("coin.png");
+
+        //Block Texture
+        itemBlockTextures.add(BlockIndex.DEFAULT.value, new Texture("item-block.png"));
+        itemBlockTextures.add(BlockIndex.EMPTY.value, new Texture("used-item-block.jpg"));
+        coinBlockTextures.add(BlockIndex.DEFAULT.value, new Texture("Block.png"));
+        coinBlockTextures.add(BlockIndex.EMPTY.value, new Texture("used-item-block.jpg"));
+        blockTexture = new Texture("Block.png");
+
+        //Enemy Texture
+        enemyTexture = new Texture("enemy.jpg");
+
+        //Checkpoint Textures
+        checkpointTextures.add(CheckpointIndex.DEFAULT.value, new Texture("checkpoint.png"));
+        checkpointTextures.add(CheckpointIndex.TRIGGERED.value, new Texture("checkpoint2.jpg"));
+
+        //End Texture
+        endTexture = new Texture("end.jpeg");
+
+        player = new Player2(this, playerTextures, 1.0f, 1.0f);
+        actors.add(new Enemy2(this,enemyTexture, 16, 2, Enemy2.Action.SHOOT, player));
+        actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
+        actors.add(new End(this, endTexture, 30, 1, player));
+        actors.add(new Block2(this,itemBlockTextures, 7, 4, true, ItemIndex.ALL.value, false));
+        actors.add(new Block2(this, itemBlockTextures, 10, 4, true, ItemIndex.SLOW.value, false));
+        actors.add(new Block2(this, itemBlockTextures, 13, 4, true, ItemIndex.SPEED.value, false));
+        actors.add(new Block2(this, itemBlockTextures, 16, 4, true, ItemIndex.LIFE.value, false));
+        actors.add(new Block2(this, itemBlockTextures, 19, 4, true, ItemIndex.MUSHROOM.value, false));
+        actors.add(new Block2(this, itemBlockTextures, 22, 4, true, ItemIndex.STAR.value, false));
+        actors.add(new Block2(this, itemBlockTextures, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
+        actors.add(new Block2(this, itemBlockTextures, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
+        actors.add(new Block2(this, coinBlockTextures, 29, 4, true, ItemIndex.COIN.value, true));
+        actors.add(new Block2(this, coinBlockTextures, 30, 4, false,false));
 //        actors.add(new Coin(this, 10, 5, false));
 //        actors.add(new Coin(this, 13, 5, false));
 //        actors.add(new Coin(this, 16, 5, false));
@@ -217,6 +263,10 @@ public class GameScreen2 extends Timer implements Screen {
         actors.add(new CoinStatic(this, new Texture("coin.png"), 13, 5, player));
         actors.add(new CoinStatic(this, new Texture("coin.png"), 16, 5, player));
         actors.add(new CoinStatic(this, new Texture("coin.png"), 19, 5, player));
+//        actors.add(new CoinStatic(this, coinTexture, 10, 5));
+//        actors.add(new CoinStatic(this, coinTexture, 13, 5));
+//        actors.add(new CoinStatic(this, coinTexture, 16, 5));
+//        actors.add(new CoinStatic(this, coinTexture, 19, 5));
 //        actors.add(new Jewel(this, new Texture("jewel.png"), 2, 1));
         actors.add(player);
 
@@ -405,8 +455,8 @@ public class GameScreen2 extends Timer implements Screen {
                 ActorSpawnInfo i =  spawnQueue.remove();
                 Constructor<?> c;
                 if (i.type.equals(Block2.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class, boolean.class, int.class, boolean.class);
-                    actors.add((Block2) c.newInstance(this, new Texture("badlogic.jpg"), i.x +0.5f, i.y + 0.5f, true, ItemIndex.COIN.value, true));
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, ArrayList.class, float.class, float.class, boolean.class, int.class, boolean.class);
+                    actors.add((Block2) c.newInstance(this, coinBlockTextures, i.x +0.5f, i.y + 0.5f, true, ItemIndex.COIN.value, true));
                 }
                 else if (i.type.equals(CoinStatic.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class, Player2.class);
@@ -414,6 +464,8 @@ public class GameScreen2 extends Timer implements Screen {
                 } else if (i.type.equals(Coin.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Player2.class);
                     actors.add((Coin) c.newInstance(this, i.x +0.25f, i.y+0.25f, player));
+//                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
+//                    actors.add((CoinStatic) c.newInstance(this, coinTexture, i.x +0.25f, i.y+0.25f));
                 }
                 else if (i.type.equals(Jewel.class)) {
 //                    System.out.println("Jewel in spawn actors");
@@ -427,9 +479,29 @@ public class GameScreen2 extends Timer implements Screen {
                 else if (i.type.equals(Enemy2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class,float.class, float.class, Enemy2.Action.class, Player2.class);
                     actors.add((Enemy2) c.newInstance(this, new Texture("enemy.jpg"), i.x, i.y, Enemy2.Action.SHOOT, player));
+//                    actors.add((Enemy2) c.newInstance(this, enemyTexture, i.x, i.y, Enemy2.Action.SHOOT, player));
                 } else if (i.type.equals(BlueFire.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Player2.class);
                     actors.add((BlueFire) c.newInstance(this, i.x, i.y, player));
+                } else if (i.type.getSuperclass().equals(Item2.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, String.class);
+                    if (i.type.equals(SlowItem2.class)) {
+                        actors.add((SlowItem2) c.newInstance(this, i.x, i.y, itemTextures.get(ItemIndex.SLOW.value)));
+                    } else if (i.type.equals(SpeedItem2.class)) {
+                        actors.add((SpeedItem2) c.newInstance(this, i.x, i.y, itemTextures.get(ItemIndex.SPEED.value)));
+                    } else if (i.type.equals(StarItem2.class)) {
+                        actors.add((StarItem2) c.newInstance(this, i.x, i.y, itemTextures.get(ItemIndex.STAR.value)));
+                    } else if (i.type.equals(MushroomItem2.class)) {
+                        actors.add((MushroomItem2) c.newInstance(this, i.x, i.y, itemTextures.get(ItemIndex.MUSHROOM.value)));
+                    } else if (i.type.equals(LifeItem2.class)) {
+                        actors.add((LifeItem2) c.newInstance(this, i.x, i.y, itemTextures.get(ItemIndex.LIFE.value)));
+                    } else if (i.type.equals(FireFlowerItem2.class)) {
+                        actors.add((FireFlowerItem2) c.newInstance(this, i.x, i.y, itemTextures.get(ItemIndex.FIREFLOWER.value)));
+                    } else if (i.type.equals(LifeStealItem2.class)) {
+                        actors.add((LifeStealItem2) c.newInstance(this, i.x, i.y, itemTextures.get(ItemIndex.LIFESTEAL.value)));
+                    } else if (i.type.equals(Coin.class)) {
+                        actors.add((Coin) c.newInstance(this, i.x, i.y, itemTextures.get(ItemIndex.COIN.value)));
+                    }
                 }
                 else {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
