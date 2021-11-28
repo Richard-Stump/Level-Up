@@ -8,14 +8,17 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.ErrorDialog;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
@@ -73,7 +76,7 @@ public class MyLevelsScreen2 implements Screen {
     //static vars
     public static int rightColumnWidth = 50;
     public static int topBottomPad = 30;
-    public static int leftColumnWidth = 350;
+    public static int leftColumnWidth = 320;
     public static int labelHeight = 25;
 
     public MyLevelsScreen2(NextLevel game) {
@@ -118,7 +121,7 @@ public class MyLevelsScreen2 implements Screen {
         backButton.left();
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new ProfileMainMenu(game));
+                game.setScreen(new MainMenuScreen(game));
             }
         });
 
@@ -235,7 +238,7 @@ public class MyLevelsScreen2 implements Screen {
 
     private Table getLevelTable(ArrayList<LevelInfo> levels) {
         Table infoTable = new Table();
-        infoTable.setDebug(true);
+        //infoTable.setDebug(true);
 
         for (LevelInfo levelInfo: levels) {
             String id = levelInfo.getId();
@@ -253,10 +256,17 @@ public class MyLevelsScreen2 implements Screen {
             editButton.addListener(new HoverListener());
             infoTable.add(editButton).padBottom(10).padLeft(5);
 
+            TextButton.TextButtonStyle toggleStyle = skin.get("toggle", TextButton.TextButtonStyle.class);
+
             TextButton publishButton = new TextButton("Publish", skin);
+            if (levelInfo.isPublic()) {
+                publishButton.setText("Unpublish");
+            }
             //TODO: create listener for publish
+            publishButton.addListener(publishLevelListener(levelInfo, id, publishButton));
+           // publishButton.addListener(publishListener(levelInfo, id));
             publishButton.addListener(new HoverListener());
-            infoTable.add(publishButton).padBottom(10).padLeft(5);
+            infoTable.add(publishButton).padBottom(10).padLeft(5).width(90);
 
             infoTable.row();
 
@@ -267,7 +277,7 @@ public class MyLevelsScreen2 implements Screen {
             infoTable.row();
         }
 
-        
+
 
         return infoTable;
     }
@@ -392,13 +402,42 @@ public class MyLevelsScreen2 implements Screen {
         };
     }
 
-    private ClickListener publishLevelListener(final LevelInfo level) {
+//    private ChangeListener publishListener(final LevelInfo levelInfo, final String id) {
+//        return new ChangeListener() {
+//            @Override
+//            public void changed(ChangeEvent event, Actor actor) {
+//                if (levelInfo.isPublic()) {
+//                    ErrorDialog unpublishLevelDialog = new ErrorDialog(skin, "Level is already published. " +
+//                            "Are you sure you want to unpublish the level? ", stage);
+//                } else {
+//                    ErrorDialog publishLevelDialog = new ErrorDialog(skin, "Are you sure you want to publish?", stage);
+//                }
+//            }
+//        };
+//    }
+
+    private ClickListener publishLevelListener(final LevelInfo level, final String id, final TextButton publishButton) {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Im in publish level listener");
+                selectedLevel.setText("Level Selected: " + dbCreated.searchByID(id).getTitle());
                 //check if level is published
                 //if yes, show dialog that states that it is already published
-                //if no, are you sure you want to publish, then success or fail dialog
+                if (level.isPublic()) {
+                    ErrorDialog unpublicLevelDialog = new ErrorDialog(skin, "Level is already published. Are you " +
+                            "sure you want to unpublish " + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
+                            "Unpublish", id, publishButton, level);
+//                    publishButton.setText("Publish");
+//                    level.setPublic(false);
+                } else {
+                    //if no, are you sure you want to publish, then success or fail dialog
+                    ErrorDialog publishLevelDialog = new ErrorDialog(skin, "Are you sure you want to publish "
+                            + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
+                            "Publish", id, publishButton, level);
+                    //publishButton.setText("Unpublish");
+                    //level.setPublic(true);
+                }
             }
         };
     }
