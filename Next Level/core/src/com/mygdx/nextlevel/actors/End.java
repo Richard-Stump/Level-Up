@@ -5,7 +5,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
+import com.mygdx.nextlevel.screens.editor.Placeable;
 
+@Placeable(
+        group = "Stage",
+        displayName = "Finish",
+        defaultTexture =  "end.jpeg"
+)
 public class End extends Actor2 {
     protected Player2 player;
     protected BoxCollider collider;

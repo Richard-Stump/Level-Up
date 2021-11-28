@@ -6,7 +6,13 @@ import com.kotcrab.vis.ui.widget.CollapsibleWidget;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
+import com.mygdx.nextlevel.screens.editor.Placeable;
 
+@Placeable(
+        group = "Enemies",
+        displayName = "Enemy",
+        defaultTexture = "enemy.jpg"
+)
 public class Enemy2 extends Actor2 {
     protected BoxCollider boxCollider;
     BoxCollider playerCollider;

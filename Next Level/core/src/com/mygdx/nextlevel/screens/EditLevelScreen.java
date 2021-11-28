@@ -13,11 +13,13 @@ import com.kotcrab.vis.ui.widget.*;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.screens.editor.*;
+import org.reflections.Reflections;
 //import jdk.internal.org.jline.reader.Editor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Set;
 
 /* TODO: Make it so that the object TabbedPane always aligns to the left.
  */
@@ -37,12 +39,15 @@ public class EditLevelScreen implements Screen {
     private Viewport viewport;
     private int screenWidth, screenHeight;
     private EditorLevel level;
+    private ObjectSelectionWindow win3;
 
     private LevelView levelView;
     private AssetSelectorWindow win;
 
     private ArrayList<Texture> tiles;
     private ArrayList<Texture> actorTextures;
+
+    private ArrayList<PlaceableObject> placeableObjects;
 
     private final Color backgroundColor = new Color(0.1f, 0.1f, 0.1f,1.0f);
 
@@ -102,8 +107,12 @@ public class EditLevelScreen implements Screen {
         batch = game.batch;
         stage = new Stage(viewport, batch);
 
+        placeableObjects = new ArrayList<>();
+
         loadTiles();
         loadActors();
+        loadPlaceableObjects();
+
         levelView = new LevelView(this, level, STAGE_WIDTH, STAGE_HEIGHT);
 
         // For some reason the tabbed pane won't work with the other skin.
@@ -140,9 +149,12 @@ public class EditLevelScreen implements Screen {
         });
 
         win = new AssetSelectorWindow(tiles, actorTextures);
-        stage.addActor(win);
+        //stage.addActor(win);
         MenuWindow win2 = new MenuWindow(level, stage);
         stage.addActor(win2);
+
+        win3 = new ObjectSelectionWindow(placeableObjects);
+        stage.addActor(win3);
 
         backButton.setPosition(0.0f, STAGE_HEIGHT - backButton.getHeight());
         stage.addActor(backButton);
@@ -226,6 +238,18 @@ public class EditLevelScreen implements Screen {
 
         for(String name : actorNames) {
             actorTextures.add(new Texture(name));
+        }
+    }
+
+    public void loadPlaceableObjects() {
+        Reflections reflections = new Reflections("com.mygdx.nextlevel");
+
+        placeableObjects.clear();
+
+        Set<Class<? extends Object>> classes = reflections.getTypesAnnotatedWith(Placeable.class);
+
+        for(Class clazz : classes) {
+            placeableObjects.add(new PlaceableObject(clazz));
         }
     }
 

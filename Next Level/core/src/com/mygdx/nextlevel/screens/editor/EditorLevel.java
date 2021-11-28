@@ -117,6 +117,15 @@ public class EditorLevel {
         fileWriter.print("height=\"" + Integer.toString(height) + "\" ");
         fileWriter.println("tilewidth=\"32\" tileheight=\"32\" infinite=\"0\">");
         fileWriter.println("<tileset firstgid=\"1\" source=\"test2.tsx\"/>");
+        fileWriter.println("<properties>");
+
+        fileWriter.println("<property name=\"collectCoins\" type=\"bool\" value=\"" + collectCoins + "\"/>");
+        fileWriter.println("<property name=\"beatTimeLimit\" type=\"bool\" value=\"" + beatTimeLimit + "\"/>");
+        fileWriter.println("<property name=\"killAllEnemies\" type=\"bool\" value=\"" + killAllEnemies + "\"/>");
+        fileWriter.println("<property name=\"killNoEnemies\" type=\"bool\" value=\"" + killNoEnemies + "\"/>");
+        fileWriter.println("<property name=\"keepJewel\" type=\"bool\" value=\"" + keepJewel + "\"/>");
+
+        fileWriter.println("</properties>");
         fileWriter.print("<layer id=\"1\" name=\"Tile Layer 1\" ");
         fileWriter.print("width=\"" + Integer.toString(width) + "\" ");
         fileWriter.println("height=\"" + Integer.toString(height) + "\">");
