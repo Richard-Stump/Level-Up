@@ -235,34 +235,39 @@ public class MyLevelsScreen2 implements Screen {
 
     private Table getLevelTable(ArrayList<LevelInfo> levels) {
         Table infoTable = new Table();
-        //infoTable.setDebug(true);
+        infoTable.setDebug(true);
 
         for (LevelInfo levelInfo: levels) {
             String id = levelInfo.getId();
-            infoTable.add(getLeftColumn(id)).padTop(15).padLeft(5);
-            infoTable.add(getRightColumn(id)).padTop(15);
+            infoTable.add(getLeftColumn(id)).padLeft(5);
+            infoTable.add(getRightColumn(id));
 
             TextButton deleteButton = new TextButton("Delete", skin);
             deleteButton.addListener(deleteLevelListener(id));
             deleteButton.addListener(new HoverListener());
-            infoTable.add(deleteButton).padBottom(15);
+            infoTable.add(deleteButton).padBottom(10);
 
             TextButton editButton = new TextButton("Edit", skin);
             //TODO: create listener for edit
             editButton.addListener(editLevelListener(id));
             editButton.addListener(new HoverListener());
-            infoTable.add(editButton).padBottom(15).padLeft(5);
+            infoTable.add(editButton).padBottom(10).padLeft(5);
 
             TextButton publishButton = new TextButton("Publish", skin);
             //TODO: create listener for publish
             publishButton.addListener(new HoverListener());
-            infoTable.add(publishButton).padBottom(15).padLeft(5);
+            infoTable.add(publishButton).padBottom(10).padLeft(5);
 
             infoTable.row();
 
-//            infoTable.add(new Image(new Texture(Gdx.files.internal("horzline.png"))));
-//            infoTable.row();
+            Image line = new Image(new Texture(Gdx.files.internal("horzline.png")));
+//            line.setHeight(100);
+//            line.setWidth(500);
+            infoTable.add(line).colspan(5);
+            infoTable.row();
         }
+
+        
 
         return infoTable;
     }
