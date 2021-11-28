@@ -8,10 +8,16 @@ import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
+import com.mygdx.nextlevel.screens.editor.Placeable;
 import com.sun.tools.javac.comp.Check;
 
 import java.util.ArrayList;
 
+@Placeable(
+        group = "Stage",
+        defaultTexture = "goomba.png",
+        displayName = "Player"
+)
 public class Player2 extends Actor2 {
     protected Vector2 worldSpawn;
     protected Vector2 respawnPosition;  //Position that the player respawns in

@@ -5,9 +5,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
+import com.mygdx.nextlevel.screens.editor.Placeable;
 
 import java.util.ArrayList;
 
+@Placeable(
+        defaultTexture = "checkpoint.png",
+        displayName = "Checkpoint",
+        group = "Stage"
+)
 public class CheckPoint2 extends Actor2 {
     protected boolean activated = false;
     protected Player2 player;
