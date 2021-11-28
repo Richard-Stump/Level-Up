@@ -71,11 +71,11 @@ public class TestRunner {
         for (Failure failure: resultFinish.getFailures()) {
             System.out.println(failure.toString());
         }
-        numTests = resultFinish.getRunCount();
-        numPassed = numTests -  resultFinish.getFailureCount();
+        numTests += resultFinish.getRunCount();
+        numPassed += numTests -  resultFinish.getFailureCount();
         System.out.println("FinishingTest - Passed: " + numPassed + "/" + numTests);
-        totalPassed += numPassed;
-        totalTests += numTests;
+        totalPassed = numPassed;
+        totalTests = numTests;
         System.out.println();
 
         System.out.println("Item tests:");

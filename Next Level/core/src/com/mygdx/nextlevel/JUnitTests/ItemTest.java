@@ -22,9 +22,9 @@ public class ItemTest {
     public void init() {
 //        System.out.println("Here");
 //        screen = new GameScreen2();
-//        System.out.println("Here2");
+        System.out.println("Here2");
         player = new Player2();
-//        System.out.println("Here3");
+        System.out.println("Here3");
         mushroom = new MushroomItem2();
         lifeSteal = new LifeStealItem2();
         slow = new SlowItem2();

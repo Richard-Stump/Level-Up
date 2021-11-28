@@ -537,9 +537,10 @@ public class GameScreen2 extends Timer implements Screen {
                     itemsList.remove(a);
                 }
                 if (a.getClass().equals(Coin.class) || a.getClass().equals(CoinStatic.class)) {
-                    int coins = player.getCoins();
-                    coins++;
-                    player.setCoins(coins);
+//                    int coins = player.getCoins();
+//                    coins++;
+//                    player.setCoins(coins);
+                    player.incCoins();
                 }
                 a.dispose();
                 actors.remove(a);

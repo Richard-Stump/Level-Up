@@ -332,7 +332,7 @@ public class Player2 extends Actor2 {
                 screen.setShouldReset(true);
         }
         if (other instanceof Enemy2 && side == Side.BOTTOM || other instanceof Enemy2 && (side == Side.RIGHT || side == Side.LEFT) && starItem) {
-            enemiesKilled++;
+            incEnemiesKilled();
 //            if (condition == 3 && enemiesKilled > 0) {
 //                fail = true;
 //            }
@@ -499,6 +499,10 @@ public class Player2 extends Actor2 {
         this.coin = num;
     }
 
+    public void incCoins() {
+        this.coin++;
+    }
+
     public void setFail(boolean set) {
         fail = set;
     }
@@ -544,6 +548,9 @@ public class Player2 extends Actor2 {
 
     public int getEnemiesKilled() {
         return this.enemiesKilled;
+    }
+    public void incEnemiesKilled() {
+        this.enemiesKilled++;
     }
     public void setRespawnLocation(Vector2 pos) { respawnPosition = new Vector2(pos.x, pos.y); }
     public void dispose() { boxCollider.dispose(); }
