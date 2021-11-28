@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -21,6 +22,7 @@ import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -69,7 +71,7 @@ public class MyLevelsScreen2 implements Screen {
     public String username;
 
     //static vars
-    public static int rightColumnWidth = 150;
+    public static int rightColumnWidth = 50;
     public static int topBottomPad = 30;
     public static int leftColumnWidth = 350;
     public static int labelHeight = 25;
@@ -233,19 +235,39 @@ public class MyLevelsScreen2 implements Screen {
 
     private Table getLevelTable(ArrayList<LevelInfo> levels) {
         Table infoTable = new Table();
-        //infoTable.setDebug(true);
+        infoTable.setDebug(true);
 
         for (LevelInfo levelInfo: levels) {
             String id = levelInfo.getId();
-            infoTable.add(getLeftColumn(id)).padTop(topBottomPad).padLeft(5);
-            infoTable.add(getRightColumn(id)).padTop(5);
+            infoTable.add(getLeftColumn(id)).padLeft(5);
+            infoTable.add(getRightColumn(id));
 
             TextButton deleteButton = new TextButton("Delete", skin);
             deleteButton.addListener(deleteLevelListener(id));
-            infoTable.add(deleteButton).width(80).padBottom(15);
+            deleteButton.addListener(new HoverListener());
+            infoTable.add(deleteButton).padBottom(10);
+
+            TextButton editButton = new TextButton("Edit", skin);
+            //TODO: create listener for edit
+            editButton.addListener(editLevelListener(id));
+            editButton.addListener(new HoverListener());
+            infoTable.add(editButton).padBottom(10).padLeft(5);
+
+            TextButton publishButton = new TextButton("Publish", skin);
+            //TODO: create listener for publish
+            publishButton.addListener(new HoverListener());
+            infoTable.add(publishButton).padBottom(10).padLeft(5);
 
             infoTable.row();
+
+            Image line = new Image(new Texture(Gdx.files.internal("horzline.png")));
+//            line.setHeight(100);
+//            line.setWidth(500);
+            infoTable.add(line).colspan(5);
+            infoTable.row();
         }
+
+        
 
         return infoTable;
     }
@@ -294,9 +316,9 @@ public class MyLevelsScreen2 implements Screen {
         author.addListener(new HoverListener());
 
         //adding to left table
-        leftTable.add(levelName).width(leftColumnWidth - 10).left().height(labelHeight);
+        leftTable.add(levelName).width(leftColumnWidth - 20).left().height(labelHeight);
         leftTable.row();
-        leftTable.add(difficulty).width(leftColumnWidth - 10).left().height(labelHeight);
+        leftTable.add(difficulty).width(leftColumnWidth - 20).left().height(labelHeight);
 
         return leftTable;
     }
@@ -357,6 +379,26 @@ public class MyLevelsScreen2 implements Screen {
                 }
                 selectedLevel.setText("Level Selected: " + levelSelectedStr);
                 selectedId = id;
+            }
+        };
+    }
+
+    private ClickListener editLevelListener(final String id) {
+        return new ClickListener() {
+          @Override
+          public void clicked(InputEvent event, float x, float y) {
+              //TODO: set to edit screen with the given level
+          }
+        };
+    }
+
+    private ClickListener publishLevelListener(final LevelInfo level) {
+        return new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //check if level is published
+                //if yes, show dialog that states that it is already published
+                //if no, are you sure you want to publish, then success or fail dialog
             }
         };
     }
