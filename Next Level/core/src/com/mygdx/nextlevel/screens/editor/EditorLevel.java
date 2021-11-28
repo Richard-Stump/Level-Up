@@ -124,6 +124,8 @@ public class EditorLevel {
         fileWriter.println("<property name=\"killAllEnemies\" type=\"bool\" value=\"" + killAllEnemies + "\"/>");
         fileWriter.println("<property name=\"killNoEnemies\" type=\"bool\" value=\"" + killNoEnemies + "\"/>");
         fileWriter.println("<property name=\"keepJewel\" type=\"bool\" value=\"" + keepJewel + "\"/>");
+        fileWriter.println("<property name=\"gravity\" type=\"float\" value=\"" + gravity + "\"/>");
+        fileWriter.println("<property name=\"timeLimit\" type=\"float\" value=\"" + timeLimit + "\"/>");
 
         fileWriter.println("</properties>");
         fileWriter.print("<layer id=\"1\" name=\"Tile Layer 1\" ");
