@@ -36,12 +36,18 @@ public class TileMap extends ApplicationAdapter{
     MapProperties tiledMapProperties;
     TiledMapRenderer tiledMapRenderer;
     TiledMapTileLayer layer;
+    public static ArrayList<Integer> conditionList = new ArrayList<>();
 
     //Tile Map Properties
     int mapWidth;
     int mapHeight;
     int tilePixelWidth;
     int tilePixelHeight;
+    boolean collectCoin;
+    boolean beatTimeLimit;
+    boolean killAllEnemies;
+    boolean killNoEnemies;
+    boolean keepJewel;
 
     //Pixel Properties
     int mapPixelWidth;
@@ -52,12 +58,39 @@ public class TileMap extends ApplicationAdapter{
     float yAxis = 0;
 
     public void create () {
-        tiledMap = new TmxMapLoader().load("test3.tmx");
+//        tiledMap = new TmxMapLoader().load("test3.tmx");
+        tiledMap = new TmxMapLoader().load("jchen3_tdhhgdqhj.tmx");
         tiledMapProperties = tiledMap.getProperties();
         layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
 
         mapWidth = tiledMapProperties.get("width", Integer.class);
         mapHeight = tiledMapProperties.get("height", Integer.class);
+
+        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
+        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
+        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
+        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
+        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
+
+        if (collectCoin) {
+            conditionList.add(1);
+        }
+        if (beatTimeLimit) {
+            conditionList.add(5);
+        }
+        if (killAllEnemies) {
+            conditionList.add(2);
+        }
+        if (killNoEnemies) {
+            conditionList.add(3);
+        }
+        if (keepJewel) {
+            conditionList.add(4);
+        }
+
+        for (int i = 0; i < conditionList.size(); i++) {
+            System.out.println(conditionList.get(i));
+        }
 
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1.0f/32.0f);
     }
