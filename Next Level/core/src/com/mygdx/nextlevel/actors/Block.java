@@ -14,6 +14,7 @@ public class Block extends Actor {
     short collision; //If collisions are enabled on the block
     Item item;
 
+
     public Block(Texture texture, World world, Vector2 position, float density, float restitution, short breakableSides, boolean itemBlock) {
         this.world = world;
         this.sprite = new Sprite(texture);

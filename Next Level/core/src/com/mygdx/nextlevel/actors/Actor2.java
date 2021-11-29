@@ -27,6 +27,7 @@ import com.mygdx.nextlevel.screens.GameScreen2;
 public class Actor2 extends Sprite implements Disposable {
     protected GameScreen2 screen;
     boolean active;
+
     public Actor2() {
 
     }

@@ -28,7 +28,6 @@ import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
-import com.mygdx.nextlevel.screens.editor.DeleteDownloadedLevelsScreen;
 
 import java.util.ArrayList;
 
