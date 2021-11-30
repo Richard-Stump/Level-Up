@@ -18,9 +18,20 @@ import java.text.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * A window that allows the user to select which object they want to place in the level editor.
+ *
+ * This class constructs a window with tabs from a list of objects that can be placed in the level.
+ * The objects are sorted into tabs based upon what group they are in.
+ */
 public class ObjectSelectionWindow extends VisWindow {
     protected TabbedPane pane;
 
+    /**
+     * Construct the window
+     *
+     * @param objects A list of objects that the user can place in the editor
+     */
     public ObjectSelectionWindow(ArrayList<PlaceableObject> objects) {
         super("Objects");
 
@@ -61,6 +72,13 @@ public class ObjectSelectionWindow extends VisWindow {
         setPosition(0, -50);
     }
 
+    /**
+     * Construct a hashmap of array lists, where each key is a group and each value is a list of objects belonging
+     * to that group.
+     *
+     * @param objects List of objects to sort into groups
+     * @return HashMap of the objects sorted into groups
+     */
     protected HashMap<String, ArrayList<PlaceableObject>> groupObjects(ArrayList<PlaceableObject> objects) {
         HashMap<String, ArrayList<PlaceableObject>> groups = new HashMap<>();
 
@@ -78,6 +96,11 @@ public class ObjectSelectionWindow extends VisWindow {
         return groups;
     }
 
+    /**
+     * Gets the currently selected PlaceableObject
+     *
+     * @return the currently selected PlaceableObject
+     */
     public PlaceableObject getCurrentSelection() {
         ObjectSelectionTab tab = (ObjectSelectionTab) pane.getActiveTab();
 
@@ -85,6 +108,9 @@ public class ObjectSelectionWindow extends VisWindow {
     }
 }
 
+/**
+ * A tab representing a group of placeable objects. Each tab is titled the group's name.
+ */
 class ObjectSelectionTab extends Tab {
     protected String groupName;
     protected ArrayList<PlaceableObject> objects;
@@ -96,6 +122,11 @@ class ObjectSelectionTab extends Tab {
 
     protected final int BUTTONS_PER_ROW = 2;
 
+    /**
+     * Construct the tab from the group's name, and a list of objects belonging to that group
+     * @param groupName The name of the group
+     * @param objects A list of objects that belong in this group
+     */
     public ObjectSelectionTab(String groupName, ArrayList<PlaceableObject> objects) {
         super(false, false);
         this.groupName = groupName;

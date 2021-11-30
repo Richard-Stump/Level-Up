@@ -1,5 +1,6 @@
 package com.mygdx.nextlevel.screens.editor;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -15,8 +16,18 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class EditorLevel {
-    public int map[][];
-    public ArrayList<EditorActor> actors;
+    //This class represents and object that has been placed in the level's map
+    private class PlacedObject<T> {
+        PlaceableObject placeableObject;
+        T               object;
+
+        public PlacedObject(PlaceableObject po, T o) {
+            this.placeableObject = po;
+            this.object = o;
+        }
+    }
+
+    protected PlacedObject objects[][];
 
     public String           saveName;
     public ArrayList<Tag>   tags;
@@ -50,15 +61,7 @@ public class EditorLevel {
         this.difficulty = null;
         this.tags = null;
 
-        map = new int[width][height];
-
-        for(int y = 0; y < height; y++) {
-            for(int x = 0; x < width; x++) {
-                map[x][y] = NONE;
-            }
-        }
-
-        this.actors = new ArrayList<EditorActor>();
+        objects = new PlacedObject[width][height];
     }
 
     public EditorLevel(String name, int width, int height) {
@@ -67,28 +70,30 @@ public class EditorLevel {
         this.name = name;
     }
 
+    public void placeObject(int x, int y, PlaceableObject po, Object o) {
+        objects[x][y] = new PlacedObject(po, po.clazz.cast(o));
+    }
+
     public void updateFromProperties() {
         resize(width, height);
     }
 
-    public void setTile(int x, int y, int tileId) {
-        map[x][y] = tileId;
+    public Texture getTexture(int x, int y) {
+        if(objects[x][y] != null)
+            return objects[x][y].placeableObject.texture;
+        else
+            return null;
     }
 
-    public void placeActor(float x, float y, int actorId) {
-        actors.add(new EditorActor(x, y, actorId));
-     }
-
     public void resize(int width, int height) {
-        int[][] newMap = new int[width][height];
+        PlacedObject[][] newObjects = new PlacedObject[width][height];
 
         //clear the new map
         for(int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if(x < this.oldWidth && y < this.oldHeight)
-                    newMap[x][y] = map[x][y];
-                else
-                    newMap[x][y] = NONE;
+                if(x < this.oldWidth && y < this.oldHeight) {
+                    newObjects[x][y] = objects[x][y];
+                }
             }
         }
 
@@ -96,7 +101,7 @@ public class EditorLevel {
         this.oldHeight = height;
         this.width = width;
         this.height = height;
-        this.map = newMap;
+        this.objects = newObjects;
     }
 
     /*
@@ -135,10 +140,6 @@ public class EditorLevel {
 
         for(int y = height - 1; y >= 0; y--) {
             for(int x = 0; x < width; x++) {
-                if(y == 0 && x == width - 1)
-                    fileWriter.print(Integer.toString(map[x][y] + 1));
-                else
-                    fileWriter.print(Integer.toString(map[x][y] + 1) + ",");
             }
 
             fileWriter.println();
@@ -150,14 +151,6 @@ public class EditorLevel {
 
         fileWriter.flush();
         return file;
-    }
-
-    public void clearMap() {
-        for(int y = 0; y < height; y++) {
-            for(int x = 0; x < width; x++) {
-                map[x][y] = NONE;
-            }
-        }
     }
 
     public void importFrom(File file) {
@@ -173,7 +166,6 @@ public class EditorLevel {
         height = tiledMapProperties.get("height", Integer.class);
         name = filename.substring(0, filename.lastIndexOf(".tmx"));
 
-        map = new int[width][height];
         this.width = width;
         this.height = height;
         this.oldWidth = width;
@@ -182,15 +174,8 @@ public class EditorLevel {
         for(int y = height - 1; y >= 0; y--) {
             for(int x = 0; x < width; x++) {
                 TiledMapTileLayer.Cell cell = layer.getCell(x, y);
-
-                if(cell != null)
-                    map[x][y] = layer.getCell(x,y).getTile().getId() - 1;
-                else
-                    map[x][y] = NONE;
             }
         }
-
-        MapObjects objects = tiledMap.getLayers().get("Tile Layer 1").getObjects();
 
         return;
     }

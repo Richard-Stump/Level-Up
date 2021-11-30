@@ -27,6 +27,9 @@ public class Block2 extends Actor2 {
 
     ArrayList<Class> items = new ArrayList<>();
 
+    //This is here for use by the level editor
+    public Block2() {}
+
     public Block2(GameScreen2 screen, ArrayList<Texture> blockTextures, float x, float y, boolean spawnItem, int index, boolean breakable) {
         super(screen, x, y, 1, 1);
         this.blockTextures = blockTextures;

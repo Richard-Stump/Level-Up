@@ -1,5 +1,9 @@
 package com.mygdx.nextlevel.dbHandlers;
 
+import com.mygdx.nextlevel.LevelInfo;
+import com.mygdx.nextlevel.screens.LoginScreen;
+
+import java.util.ArrayList;
 import java.util.Random;
 
 public class CreatedLevelsDB extends LevelsDBController {
@@ -70,6 +74,27 @@ public class CreatedLevelsDB extends LevelsDBController {
             return null;
         }
         return generatedString;
+    }
+
+    /**
+     * Updates local created database to contain what the server has
+     *
+     * @return the number of levels added
+     */
+    public int updateCreatedDatabase() {
+        ServerDBHandler dbServer = new ServerDBHandler();
+        int oldSize = sortByTitle().size();
+
+        for (LevelInfo levelInfo: sortByTitle()) {
+            removeLevelInfo(levelInfo.getId());
+        }
+
+        ArrayList<LevelInfo> list = dbServer.getUsersCreatedLevels(LoginScreen.getCurAcc());
+
+        for (LevelInfo levelInfo: list) {
+            addLevelInfo(levelInfo);
+        }
+        return list.size() - oldSize;
     }
 
 }

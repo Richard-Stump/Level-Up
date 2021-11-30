@@ -509,7 +509,13 @@ public class ServerDBHandler {
                 return 0;
             }
 
-            return statement2.executeUpdate();
+            int ret = statement2.executeUpdate();
+
+            CreatedLevelsDB createdLevelsDB = new CreatedLevelsDB();
+            createdLevelsDB.updateCreatedDatabase();
+            createdLevelsDB.closeConnection();
+
+            return ret;
         } catch (Exception e) {
             //e.printStackTrace();
             return 0;
@@ -612,6 +618,11 @@ public class ServerDBHandler {
         if (levelInfo.isPublic()) {
             publishLevel(levelInfo.getId());
         }
+
+        CreatedLevelsDB createdDB = new CreatedLevelsDB();
+        createdDB.updateCreatedDatabase();
+        createdDB.closeConnection();
+
         return ret;
     }
 

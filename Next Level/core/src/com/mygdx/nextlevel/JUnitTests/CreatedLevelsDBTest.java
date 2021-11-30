@@ -2,6 +2,7 @@ package com.mygdx.nextlevel.JUnitTests;
 
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
+import com.mygdx.nextlevel.screens.LoginScreen;
 import org.junit.*;
 
 import java.util.List;
@@ -71,6 +72,8 @@ public class CreatedLevelsDBTest {
         int expected = 1;
 
         //test if result is what we expect
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("testIsUniqueIDEmptyDB", expected, actual);
         assertEquals(expected, actual);
     }
 
@@ -89,6 +92,21 @@ public class CreatedLevelsDBTest {
         int expected = 0;
 
         //test if result is what we expect
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("testIsUniqueID0", expected, actual);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testUpdateCreatedDatabase() {
+        LoginScreen.curAcc = "reeves34";
+        db.updateCreatedDatabase();
+
+        for (LevelInfo levelInfo: db.sortByTitle()) {
+            System.out.printf("id: %s\n", levelInfo.getId());
+        }
+        TestOutputHelper.clearResult();
+        TestOutputHelper.setResult("testUpdateCreatedDatabase", true, true);
+        assertEquals(true, true);
     }
 }

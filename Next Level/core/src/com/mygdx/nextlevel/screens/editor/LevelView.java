@@ -23,8 +23,7 @@ public class LevelView extends Widget {
     protected Vector2 panStart;
     protected EditorLevel editorLevel;
     private InputListener inputListener;
-    private ArrayList<Texture> tiles;
-    private ArrayList<Texture> actorTextures;
+    private ArrayList<PlaceableObject> placeableObjects;
     private int dragButton;
 
     private EditLevelScreen screen;
@@ -42,12 +41,13 @@ public class LevelView extends Widget {
         this(screenWidth, screenHeight);
 
         this.screen = screen;
-        this.tiles = screen.getTiles();
-        this.actorTextures = screen.getActorTextures();
 
         this.editorLevel = editorLevel;
 
         panStart = new Vector2(0.0f,0.0f);
+
+        //A list of objects that are placeable in the map.
+        this.placeableObjects = screen.getPlaceableObjects();
 
         scale = 32.0f;
         centerLevel();
@@ -177,8 +177,7 @@ public class LevelView extends Widget {
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch,parentAlpha);
 
-        drawTiles(batch);
-        drawActors(batch);
+        drawObjects(batch);
 
         //The batch must be shut off before rendering the grid because batches don't
         //play well with shape renderers
@@ -189,10 +188,6 @@ public class LevelView extends Widget {
 
         //Reactivate the batch.
         batch.begin();
-    }
-
-    protected float clamp(float val, float low, float high) {
-        return Math.max(Math.min(val, high), low);
     }
 
     protected void drawGrid() {
@@ -218,45 +213,20 @@ public class LevelView extends Widget {
     }
 
     /**
-     * Draws the tiles of the level attached to the widget
-     * @param batch The sprite batch to use for rendering
+     * Renders the objects placed in the map to the screen.
+     * @param batch
      */
-    protected void drawTiles(Batch batch) {
-        //Calculate what tile position the bottom-left and top-right corners
-        //of the screen are in. This is so that only tiles in view are drawn
-        Vector2 bottomLeft = screenToWorld(0.0f, 0.0f);
-        Vector2 topRight = screenToWorld(getWidth(), getHeight());
+    protected void drawObjects(Batch batch) {
+        for(int y = 0; y < editorLevel.height; y++) {
+            for(int x = 0; x < editorLevel.width; x++) {
+                Texture t = editorLevel.getTexture(x, y);
 
-        //If the two positions are outside the level's tile map, clamp them
-        bottomLeft.x = clamp(bottomLeft.x, 0, editorLevel.width);
-        bottomLeft.y = clamp(bottomLeft.y, 0, editorLevel.height);
-        topRight.x = clamp(topRight.x + 1, 0, editorLevel.width);
-        topRight.y = clamp(topRight.y + 1, 0, editorLevel.height);
+                if(t != null) {
+                    Vector2 sp = worldToScreen(x, y);
 
-        for(int yi = (int)bottomLeft.y; yi < (int)topRight.y; yi++) {
-            for(int xi = (int)bottomLeft.x; xi < (int)topRight.x; xi++) {
-                int tileNumber = editorLevel.map[xi][yi];
-
-                if(tileNumber != EditorLevel.NONE) {
-                    Vector2 tileScreenPos = worldToScreen(xi, yi);
-
-                    Texture tex = tiles.get(tileNumber);
-
-                    batch.draw(tex, tileScreenPos.x, tileScreenPos.y, scale, scale);
+                    batch.draw(t, sp.x, sp.y, scale, scale);
                 }
             }
-        }
-    }
-
-    /**
-     * Draws all of the actors listed in the attached level
-     * @param batch Rendering Batch to use
-     */
-    protected void drawActors(Batch batch) {
-        for(EditorActor a : editorLevel.actors) {
-            Vector2 actorScreenPos = worldToScreen(a.x, a.y);
-
-            batch.draw(actorTextures.get(a.actorId), actorScreenPos.x, actorScreenPos.y, scale, scale);
         }
     }
 
@@ -269,20 +239,13 @@ public class LevelView extends Widget {
         if (!coordinatesInMap(x, y))
             return;
 
-        AssetSelectorWindow selWin = screen.getSelectorWindow();
-
         boolean shift = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
 
-        //Placement rules are different depending on whether the object being placed
-        //is an actor or a tile
-        if (selWin.getCurrentTabTitle().equals("Tiles")) {
-            int index = selWin.getSelectionIndex();
-            editorLevel.setTile((int)x, (int)y, shift ? EditorLevel.NONE : index);
-        }
-        else if (selWin.getCurrentTabTitle().equals("Actors")) {
-            int index = selWin.getSelectionIndex();
-            editorLevel.placeActor(x, y, index);
-        }
+        //Get the object that we are to place
+        Object object = screen.getObjectToPlace();
+        PlaceableObject placeable = screen.getPlaceableToPlace();
+
+        editorLevel.placeObject((int)x, (int)y, placeable, object);
     }
 
     /**

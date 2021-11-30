@@ -26,6 +26,7 @@ import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 import org.w3c.dom.Text;
+import java.util.List;
 
 import java.util.ArrayList;
 
@@ -154,7 +155,10 @@ public class MyLevelsScreen2 implements Screen {
         mainTable.row();
 
         //set up level information section
-        Table infoTable = getLevelTable(new ArrayList<>(dbCreated.sortByTitle()));
+        List<LevelInfo> levelInfoList = dbCreated.sortByTitle();
+        ArrayList<LevelInfo> levelInfoArrayList = new ArrayList<>(levelInfoList);
+
+        Table infoTable = getLevelTable(levelInfoArrayList);
         levelVerticalGroup = new VerticalGroup();
         levelVerticalGroup.addActor(infoTable);
         levelVerticalGroup.padRight(50);
@@ -276,8 +280,6 @@ public class MyLevelsScreen2 implements Screen {
             infoTable.add(line).colspan(5);
             infoTable.row();
         }
-
-
 
         return infoTable;
     }

@@ -1,4 +1,4 @@
-package com.mygdx.nextlevel.screens.editor;
+package com.mygdx.nextlevel.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -90,6 +90,7 @@ public class DeleteDownloadedLevelsScreen implements Screen {
         stage = new Stage(viewport, batch);
 
         dbCreated = new CreatedLevelsDB();
+        dbCreated.updateCreatedDatabase();
         dbDownloaded = new DownloadedLevelsDB();
         selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";

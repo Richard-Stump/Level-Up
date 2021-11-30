@@ -9,15 +9,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.viewport.*;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.*;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.screens.editor.*;
 import org.reflections.Reflections;
-//import jdk.internal.org.jline.reader.Editor;
-
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -42,8 +39,6 @@ public class EditLevelScreen implements Screen {
     private ObjectSelectionWindow win3;
 
     private LevelView levelView;
-    private AssetSelectorWindow win;
-
     private ArrayList<Texture> tiles;
     private ArrayList<Texture> actorTextures;
 
@@ -109,8 +104,6 @@ public class EditLevelScreen implements Screen {
 
         placeableObjects = new ArrayList<>();
 
-        loadTiles();
-        loadActors();
         loadPlaceableObjects();
 
         levelView = new LevelView(this, level, STAGE_WIDTH, STAGE_HEIGHT);
@@ -148,8 +141,6 @@ public class EditLevelScreen implements Screen {
             }
         });
 
-        win = new AssetSelectorWindow(tiles, actorTextures);
-        //stage.addActor(win);
         MenuWindow win2 = new MenuWindow(level, stage);
         stage.addActor(win2);
 
@@ -199,48 +190,6 @@ public class EditLevelScreen implements Screen {
         VisUI.dispose();
     }
 
-    /**
-     * Loads the list of tiles into a list for the level editor
-     */
-    public void loadTiles() {
-        tiles = new ArrayList<Texture>();
-
-        ArrayList<String> tileNames = new ArrayList<String>() {{
-            add("block.png");
-            add("checkpoint.png");
-            add("flag.png");
-            add("item-block.png");
-            add("pipe.png");
-            add("tile1.png");
-            add("tile2.png");
-            add("used-item-block.png");
-        }};
-
-        for(String name : tileNames) {
-            tiles.add(new Texture(name));
-        }
-    }
-
-    /**
-     * Loads the list of actors for use in the level editor
-     */
-    public void loadActors() {
-        ArrayList<String> actorNames = new ArrayList<String>() {{
-            add("badlogic.jpg");
-            add("enemy.jpg");
-            add("goomba.png");
-            add("mushroom.jpeg");
-            add("goomba.png");
-            add("paragoomba.png");
-        }};
-
-        actorTextures = new ArrayList<Texture>();
-
-        for(String name : actorNames) {
-            actorTextures.add(new Texture(name));
-        }
-    }
-
     public void loadPlaceableObjects() {
         Reflections reflections = new Reflections("com.mygdx.nextlevel");
 
@@ -253,20 +202,37 @@ public class EditLevelScreen implements Screen {
         }
     }
 
-    public ArrayList<Texture> getTiles() {
-        return tiles;
+    public Object getObjectToPlace() {
+        PlaceableObject po = getPlaceableToPlace();
+
+        try {
+            Constructor constructor = po.clazz.getConstructor();
+            Object o = constructor.newInstance();
+
+            return o;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
-    public ArrayList<Texture> getActorTextures() {
-        return actorTextures;
-    }
-
-    public AssetSelectorWindow getSelectorWindow() {
-        return win;
+    public PlaceableObject getPlaceableToPlace() {
+        return win3.getCurrentSelection();
     }
 
     public void setScrollFocus(Actor actor) {
         stage.setScrollFocus(actor);
+    }
+
+    public ArrayList<PlaceableObject> getPlaceableObjects() {
+        return placeableObjects;
     }
 
     public Stage getStage() { return stage; }
