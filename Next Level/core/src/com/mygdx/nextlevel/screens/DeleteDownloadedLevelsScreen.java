@@ -90,6 +90,7 @@ public class DeleteDownloadedLevelsScreen implements Screen {
         stage = new Stage(viewport, batch);
 
         dbCreated = new CreatedLevelsDB();
+        dbCreated.updateCreatedDatabase();
         dbDownloaded = new DownloadedLevelsDB();
         selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";
