@@ -60,7 +60,7 @@ public class Hud2 {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
-        worldTimer = 10;
+        worldTimer = 50;
         time = 0;
         score = 0;
 //        condition = player.getCondition();

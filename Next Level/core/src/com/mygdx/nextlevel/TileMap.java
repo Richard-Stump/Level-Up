@@ -48,6 +48,7 @@ public class TileMap extends ApplicationAdapter{
     boolean killAllEnemies;
     boolean killNoEnemies;
     boolean keepJewel;
+    float timeLimit;
 
     //Pixel Properties
     int mapPixelWidth;
@@ -59,7 +60,7 @@ public class TileMap extends ApplicationAdapter{
 
     public void create () {
 //        tiledMap = new TmxMapLoader().load("test3.tmx");
-        tiledMap = new TmxMapLoader().load("jchen3_tdhhgdqhj.tmx");
+        tiledMap = new TmxMapLoader().load("jchen3_ckqa.tmx");
         tiledMapProperties = tiledMap.getProperties();
         layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
 
@@ -71,6 +72,7 @@ public class TileMap extends ApplicationAdapter{
         killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
         killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
         keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
+        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
 
         if (collectCoin) {
             conditionList.add(1);
@@ -90,6 +92,11 @@ public class TileMap extends ApplicationAdapter{
 
         for (int i = 0; i < conditionList.size(); i++) {
             System.out.println(conditionList.get(i));
+        }
+        if (conditionList.contains(5)) {
+            System.out.println(timeLimit);
+        } else  {
+            System.out.println("No time limit");
         }
 
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1.0f/32.0f);
