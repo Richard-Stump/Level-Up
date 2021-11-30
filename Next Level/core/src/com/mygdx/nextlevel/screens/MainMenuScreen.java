@@ -151,6 +151,7 @@ public class MainMenuScreen extends LoginScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game));
+//                ((Game)Gdx.app.getApplicationListener()).setScreen(new LevelDownloadScreen(game));
             }
         });
         playButton.addListener(new HoverListener());
