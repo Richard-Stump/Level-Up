@@ -18,12 +18,12 @@ public class PlaceableObject {
      *
      * @param clazz
      */
-    public PlaceableObject(Class clazz) {
+    public PlaceableObject(Class clazz, String textureName) {
         Placeable pa = (Placeable)clazz.getDeclaredAnnotation(Placeable.class);
         this.name = pa.displayName().equals("__DEFAULT__") ? clazz.getName() : pa.displayName();
         this.group = pa.group().equals("__DEFAULT__") ? "Actors" : pa.group();
 
         this.clazz = clazz;
-        this.texture = new Texture(pa.defaultTexture());
+        this.texture = new Texture(textureName);
     }
 }

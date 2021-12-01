@@ -198,7 +198,13 @@ public class EditLevelScreen implements Screen {
         Set<Class<? extends Object>> classes = reflections.getTypesAnnotatedWith(Placeable.class);
 
         for(Class clazz : classes) {
-            placeableObjects.add(new PlaceableObject(clazz));
+
+            Placeable pa = (Placeable)clazz.getDeclaredAnnotation(Placeable.class);
+
+            for(String textureName : pa.textures()) {
+                placeableObjects.add(new PlaceableObject(clazz, textureName));
+            }
+
         }
     }
 

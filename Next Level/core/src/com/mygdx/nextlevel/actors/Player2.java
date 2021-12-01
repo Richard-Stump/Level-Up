@@ -15,8 +15,8 @@ import java.util.ArrayList;
 
 @Placeable(
         group = "Stage",
-        defaultTexture = "goomba.png",
-        displayName = "Player"
+        displayName = "Player",
+        textures = {"goomba.png" }
 )
 public class Player2 extends Actor2 {
     protected Vector2 worldSpawn;
@@ -63,6 +63,7 @@ public class Player2 extends Actor2 {
     private float starTime = 0f;
     private float fireFlowerTime = 0f;
     private float invulerableTime = 0f;
+    private float fireTimer = 0.5f;
     private ArrayList<Integer> conditions;
 
     private double record = 25.00;
@@ -105,7 +106,7 @@ public class Player2 extends Actor2 {
                 new Vector2(x, y),
                 new Vector2(0.8f, 0.8f),
                 true,
-                (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR);
+                (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.BLOCK | CollisionGroups.ENEMY), CollisionGroups.ACTOR);
         worldSpawn = new Vector2(boxCollider.getPosition());
         respawnPosition = worldSpawn;
         lifeCount = 3;
@@ -297,6 +298,13 @@ public class Player2 extends Actor2 {
                         screen.queueActorSpawn(getX() - 1, getY(), Fire2.class);
                     }
                     fireSpawn = true;
+                    fireTimer = 0;
+                } else {
+                    if (fireTimer >= 1.5f) {
+                        fireSpawn = false;
+                    } else {
+                        fireTimer += 0.1f;
+                    }
                 }
             }
         }

@@ -10,7 +10,7 @@ import com.mygdx.nextlevel.screens.editor.Placeable;
 import java.util.ArrayList;
 
 @Placeable(
-        defaultTexture = "checkpoint.png",
+        textures = { "checkpoint.png" },
         displayName = "Checkpoint",
         group = "Stage"
 )
@@ -35,7 +35,7 @@ public class CheckPoint2 extends Actor2 {
         if(other instanceof Player2 && !activated) {
             activated = true;
             player.addLife();
-            player.setRespawnLocation(getPosition());
+            player.setRespawnLocation(new Vector2(getPosition().x + 0.5f, getPosition().y + 0.5f));
             setRegion(textures.get(1));
         }
     }

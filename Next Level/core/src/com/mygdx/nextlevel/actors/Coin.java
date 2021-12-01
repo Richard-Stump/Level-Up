@@ -6,17 +6,9 @@ import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.screens.GameScreen2;
 
 public class Coin extends Item2 {
-    public Coin() {
-
-    }
-
-    public Coin(GameScreen2 screen, Texture texture, float x, float y, Player2 player) {
-        super(screen, x, y, player);
-        screen.itemToName.put(this, "coin.png");
-        setRegion(new Texture("coin.png"));
-//    public Coin(GameScreen2 screen, float x, float y, String texture) {
-//        super(screen, x, y);
-//        screen.itemToName.put(this, texture);
-//        setRegion(new Texture(texture));
+    public Coin(GameScreen2 screen, float x, float y, String texture) {
+        super(screen, x, y);
+        screen.itemToName.put(this, texture);
+        setRegion(new Texture(texture));
     }
 }

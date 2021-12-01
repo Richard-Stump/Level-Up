@@ -11,11 +11,11 @@ public class Fire2 extends Actor2 {
     Boolean inital;
     float ogX;
 
-    public Fire2(GameScreen2 screen, float x, float y) {
+    public Fire2(GameScreen2 screen, float x, float y, Texture texture) {
         super(screen, x, y, 1, 1);
         ogX = x;
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true, (short) (CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.FIRE);
-        setRegion(new Texture("fireball.png"));
+        setRegion(texture);
         inital = true;
     }
 
@@ -37,9 +37,8 @@ public class Fire2 extends Actor2 {
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
-        if(other instanceof Enemy2) {
+        if(other instanceof Enemy2 || other instanceof DeathBlock || other instanceof PushBlock) {
             screen.queueActorDespawn(this);
-            screen.getPlayer().setfireSpawn(false);
         }
     }
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.mygdx.nextlevel.actors.Actor;
 import com.mygdx.nextlevel.actors.Actor2;
+import com.mygdx.nextlevel.actors.PushBlock;
 
 import java.util.ArrayList;
 
@@ -143,7 +144,6 @@ public class BoxCollider {
         fixtureDef.filter.categoryBits = category; //I am a ...
         fixture = body.createFixture(fixtureDef);
         fixture.setUserData(this);
-
         mainShape.dispose();
 
         // Set up the edge fixtures for sensing. They should not provide any mass, density, or restitution.
@@ -225,5 +225,9 @@ public class BoxCollider {
     public void dispose() {
         body.getWorld().destroyBody(body);
         body.setUserData(null);
+    }
+
+    public void setStatic() {
+        body.setType(BodyType.StaticBody);
     }
 }

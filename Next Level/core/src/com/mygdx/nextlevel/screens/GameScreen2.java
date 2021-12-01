@@ -37,6 +37,7 @@ import java.util.LinkedList;
  * actors/colliders in the collision handling methods will cause crashes.
  */
 public class GameScreen2 extends Timer implements Screen {
+
     /**
      * Enums to the screen in which specify what item goes into the block
      */
@@ -105,6 +106,9 @@ public class GameScreen2 extends Timer implements Screen {
 
     }
 
+    public String tileMapName;              //The name of the tilemap
+    PushBlock pb;
+
     ArrayList<Actor2> actors;               //The list of actors currently in play
     LinkedList<ActorSpawnInfo> spawnQueue;  //List of actors to spawn in the next frame
     LinkedList<Actor2> despawnQueue;        //List of actors to destroy in the next frame
@@ -113,6 +117,7 @@ public class GameScreen2 extends Timer implements Screen {
     public ArrayList<Actor2> itemsList;     //The list of all items that are currently in the game screen
     public ArrayList<Actor2> blockList;     //The list of all item blocks that need to be reset
     public ArrayList<Actor2> checkpointList;//The list of all checkpoints in the game screen
+    public ArrayList<Actor2> fireList;      //The list of all fire that is in the game
 
     //Textures for all actors within the game
     public ArrayList<Texture> playerTextures;
@@ -124,51 +129,58 @@ public class GameScreen2 extends Timer implements Screen {
     public Texture endTexture;
     public Texture coinTexture;
     public Texture blockTexture;
+    public Texture jewelTexture;
+    public Texture playerFireTexture;
+    public Texture enemyFireTexture;
 
     /**
      * Initialize the game screen
      * @param game The screen that created this screen
      */
-    public GameScreen2(NextLevel game) {
-        this.game = game;
+//    public GameScreen2(NextLevel game, String levelInfo) {
+     public GameScreen2(NextLevel game, String levelInfo) {
+         this.game = game;
 
-        //Used to display where the colliders are on the screen
-        box2dRenderer = new Box2DDebugRenderer();
+         //Used to display where the colliders are on the screen
+         box2dRenderer = new Box2DDebugRenderer();
 
-        //Initialize a camera to view the world. Specify how many tiles are viewable vertically, and then
-        //use the screen's aspect ratio to calculate how many tiles to view along the x access to keep tiles square.
-        //This camera converts the world coordinates into screen coordinates when rendering, so actors don't need to
-        //worry about the screen's size.
-        float numTilesVisibleY = 15.0f;
-        float aspect = (float)Gdx.graphics.getWidth() / (float)Gdx.graphics.getHeight();
-        camera = new OrthographicCamera(numTilesVisibleY * aspect, numTilesVisibleY);
-        camera.translate(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f);
-        camera.update();
+         //Initialize a camera to view the world. Specify how many tiles are viewable vertically, and then
+         //use the screen's aspect ratio to calculate how many tiles to view along the x access to keep tiles square.
+         //This camera converts the world coordinates into screen coordinates when rendering, so actors don't need to
+         //worry about the screen's size.
+         float numTilesVisibleY = 15.0f;
+         float aspect = (float)Gdx.graphics.getWidth() / (float)Gdx.graphics.getHeight();
+         camera = new OrthographicCamera(numTilesVisibleY * aspect, numTilesVisibleY);
+         camera.translate(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f);
+         camera.update();
 
-        //Lists to keep track of actors and their states
-        actors = new ArrayList<>();
-        spawnQueue = new LinkedList<>();
-        despawnQueue = new LinkedList<>();
+         //Lists to keep track of actors and their states
+         actors = new ArrayList<>();
+         spawnQueue = new LinkedList<>();
+         despawnQueue = new LinkedList<>();
 
-        despawnedActors = new ArrayList<>();
-        itemsList = new ArrayList<>();
-        blockList = new ArrayList<>();
-        checkpointList = new ArrayList<>();
+         despawnedActors = new ArrayList<>();
+         itemsList = new ArrayList<>();
+         blockList = new ArrayList<>();
+         checkpointList = new ArrayList<>();
+         fireList = new ArrayList<>();
 
-        playerTextures = new ArrayList<>();
-        itemTextures = new ArrayList<>();
-        itemBlockTextures = new ArrayList<>();
-        coinBlockTextures = new ArrayList<>();
-        checkpointTextures = new ArrayList<>();
+         playerTextures = new ArrayList<>();
+         itemTextures = new ArrayList<>();
+         itemBlockTextures = new ArrayList<>();
+         coinBlockTextures = new ArrayList<>();
+         checkpointTextures = new ArrayList<>();
 
-        //create tilemap
-        tm = new TileMap();
-        tm.create();
+         //Create and load tilemap
+         tileMapName = levelInfo + ".tmx";
+         tileMapName = "jchen3_ckqa.tmx"; //TODO remove
+         tileMapName = "test3.tmx"; //TODO remove
+         tm = new TileMap(tileMapName);
 
-        //setup the initial map
-        init();
+         //setup the initial map
+         init();
 
-        start = getStartTime();
+         start = getStartTime();
     }
 
     /**
@@ -183,26 +195,22 @@ public class GameScreen2 extends Timer implements Screen {
      * Initial state of the game world. This is used when the world is being set up.
      */
     private void init() {
+        //Initialize the collision manager
         CollisionManager.init();
-
-        //Initialize the collision manager and create the floor
-        CollisionManager.init();
-        floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false, CollisionGroups.ALL, CollisionGroups.WORLD);
-        new DeathBlock(this, tm.getMapWidth());
 
         //Clear all the queues
         actors.clear();
         spawnQueue.clear();
         despawnQueue.clear();
 
-        //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
-        //TODO add interface with DB in which if the file is not in data base then go to default skin
-        /*
-        Texture texture = new Texture(Gdx.files.internal(db.getProfilePic(textureValue)));
-        if (texture == null) {
-            //TODO Get default value from the database.
+        //Create floor and world ends
+        floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false, CollisionGroups.ALL, CollisionGroups.WORLD);
+        new DeathBlock(this, tm.getMapWidth());
+
+        pb = new PushBlock(this, tm);
+        if (tm.getAutoScroll()) {
+            actors.add(pb);
         }
-         */
 
         //Player Textures
         playerTextures.add(PlayerIndex.DEFAULT.value, new Texture("goomba.png"));
@@ -219,7 +227,7 @@ public class GameScreen2 extends Timer implements Screen {
         itemTextures.add(ItemIndex.STAR.value, "star.jpg");
         itemTextures.add(ItemIndex.FIREFLOWER.value, "fireflower.png");
         itemTextures.add(ItemIndex.LIFESTEAL.value,"lifesteal-mushroom.png");
-        itemTextures.add(ItemIndex.COIN.value,"coin.png"); //FIXME (may want to get out of list)
+        itemTextures.add(ItemIndex.COIN.value,"coin.png");
 
         //Coin Texture
         coinTexture = new Texture("coin.png");
@@ -241,8 +249,16 @@ public class GameScreen2 extends Timer implements Screen {
         //End Texture
         endTexture = new Texture("end.jpeg");
 
+        //Jewel Texture
+        jewelTexture = new Texture("jewel.png");
+
+        //Fire Textures
+        enemyFireTexture = new Texture("blue-fire.png");
+        playerFireTexture = new Texture("fireball.png");
+
         player = new Player2(this, playerTextures, 1.0f, 1.0f);
-        actors.add(new Enemy2(this,enemyTexture, 16, 2, Enemy2.Action.SHOOT, player));
+//        actors.add(new Enemy2(this,enemyTexture, 16, 2, Enemy2.Action.SHOOT, player));
+        actors.add(new Enemy2(this, enemyTexture, 16, 2, Enemy2.Action.DEFAULT, player));
         actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
         actors.add(new End(this, endTexture, 30, 1, player));
         actors.add(new Block2(this,itemBlockTextures, 7, 4, true, ItemIndex.ALL.value, false));
@@ -255,19 +271,15 @@ public class GameScreen2 extends Timer implements Screen {
         actors.add(new Block2(this, itemBlockTextures, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
         actors.add(new Block2(this, coinBlockTextures, 29, 4, true, ItemIndex.COIN.value, true));
         actors.add(new Block2(this, coinBlockTextures, 30, 4, false,false));
-//        actors.add(new Coin(this, 10, 5, false));
-//        actors.add(new Coin(this, 13, 5, false));
-//        actors.add(new Coin(this, 16, 5, false));
-//        actors.add(new Coin(this, 19, 5, false));
-        actors.add(new CoinStatic(this, coinTexture, 10, 5, player));
-        actors.add(new CoinStatic(this, coinTexture, 13, 5, player));
-        actors.add(new CoinStatic(this, coinTexture, 16, 5, player));
-        actors.add(new CoinStatic(this, coinTexture, 19, 5, player));
+        actors.add(new CoinStatic(this, coinTexture, 10, 5));
+        actors.add(new CoinStatic(this, coinTexture, 13, 5));
+        actors.add(new CoinStatic(this, coinTexture, 16, 5));
+        actors.add(new CoinStatic(this, coinTexture, 19, 5));
 //        actors.add(new CoinStatic(this, coinTexture, 10, 5));
 //        actors.add(new CoinStatic(this, coinTexture, 13, 5));
 //        actors.add(new CoinStatic(this, coinTexture, 16, 5));
 //        actors.add(new CoinStatic(this, coinTexture, 19, 5));
-//        actors.add(new Jewel(this, new Texture("jewel.png"), 2, 1));
+//        actors.add(new Jewel(this, jewelTexture, 2, 1));
         actors.add(player);
 
         hud = new Hud2(game.batch, player);
@@ -310,15 +322,23 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Despawn all items that are currently on the game screen
         despawnQueue.addAll(itemsList);
+        despawnQueue.addAll(fireList);
 
         //Clear Queues used to reset
         itemsList.clear();
         blockList.clear();
+        fireList.clear();
         despawnedActors.clear();
 
         hud = new Hud2(game.batch, player);
 
         shouldReset = false;
+
+        tm.render(camera, player, true);
+//        if (tm.getAutoScroll()) { //TODO update camera when it is being reset
+//            pb.updatePosition(new Vector2(tm.getxAxis() - tm.getScreenWidth()/2f , pb.getPosition().y));
+//            pb.updatePosition(new Vector2(3 , pb.getPosition().y));
+//        }
     }
 
     /**
@@ -346,6 +366,8 @@ public class GameScreen2 extends Timer implements Screen {
 
             if (o instanceof Item2) { //If this is an item
                 itemsList.remove(o);
+            } else if (o instanceof Fire2 || o instanceof BlueFire) {
+                fireList.remove(o);
             } else if (o instanceof Block2 && ((Block2) o ).isSpawnItem() && ((Block2) o).isBreakable()) {
                 blockList.add(o);
             } else if (o instanceof Block2 && ((Block2) o).isSpawnItem()) {
@@ -429,14 +451,15 @@ public class GameScreen2 extends Timer implements Screen {
     public void render(float delta) {
         update(delta);
         ScreenUtils.clear(Color.WHITE);
-        tm.render(camera, player);
+        tm.render(camera, player, false);
 
         SpriteBatch batch = game.batch;
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
 
         for(Actor2 a : actors) {
-            a.draw(batch);
+            if (!a.getClass().equals(PushBlock.class))
+                a.draw(batch);
         }
 
         hud.render(batch);
@@ -458,32 +481,24 @@ public class GameScreen2 extends Timer implements Screen {
                 if (i.type.equals(Block2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, ArrayList.class, float.class, float.class, boolean.class, int.class, boolean.class);
                     actors.add((Block2) c.newInstance(this, coinBlockTextures, i.x +0.5f, i.y + 0.5f, true, ItemIndex.COIN.value, true));
-                }
-                else if (i.type.equals(CoinStatic.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class, Player2.class);
-                    actors.add((CoinStatic) c.newInstance(this, coinTexture, i.x +0.25f, i.y+0.25f, player));
-                } else if (i.type.equals(Coin.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class, Player2.class);
-                    actors.add((Coin) c.newInstance(this, coinTexture, i.x +0.25f, i.y+0.25f, player));
-//                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
-//                    actors.add((CoinStatic) c.newInstance(this, coinTexture, i.x +0.25f, i.y+0.25f));
-                }
-                else if (i.type.equals(Jewel.class)) {
-//                    System.out.println("Jewel in spawn actors");
+                } else if (i.type.equals(CoinStatic.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
-                    actors.add((Jewel) c.newInstance(this, new Texture("jewel.png"), i.x, i.y));
-                }
-//                else if (i.type.equals(CoinStatic.class)) {
-//                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
-//                    actors.add((Actor2) c.newInstance(this, i.x, i.y));
-//                }
-                else if (i.type.equals(Enemy2.class)) {
+                    actors.add((CoinStatic) c.newInstance(this, coinTexture, i.x +0.25f, i.y+0.25f));
+                } else if (i.type.equals(Coin.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, String.class);
+                    actors.add((Coin) c.newInstance(this, i.x +0.25f, i.y+0.25f, itemTextures.get(ItemIndex.COIN.value)));
+                } else if (i.type.equals(Jewel.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
+                    actors.add((Jewel) c.newInstance(this, jewelTexture, i.x, i.y));
+                } else if (i.type.equals(Enemy2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class,float.class, float.class, Enemy2.Action.class, Player2.class);
                     actors.add((Enemy2) c.newInstance(this, enemyTexture, i.x, i.y, Enemy2.Action.SHOOT, player));
-//                    actors.add((Enemy2) c.newInstance(this, enemyTexture, i.x, i.y, Enemy2.Action.SHOOT, player));
                 } else if (i.type.equals(BlueFire.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Player2.class);
-                    actors.add((BlueFire) c.newInstance(this, i.x, i.y, player));
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Texture.class);
+                    actors.add((BlueFire) c.newInstance(this, i.x, i.y, enemyFireTexture));
+                } else if (i.type.equals(Fire2.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Texture.class);
+                    actors.add((Fire2) c.newInstance(this, i.x, i.y, playerFireTexture));
                 } else if (i.type.getSuperclass().equals(Item2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, String.class);
                     if (i.type.equals(SlowItem2.class)) {
@@ -509,9 +524,11 @@ public class GameScreen2 extends Timer implements Screen {
                     actors.add((Actor2) c.newInstance(this, i.x, i.y));
                 }
 
-                //If statement to check to see if item is in the game
+                //If statement to check to see if item/fire is in the game
                 if (i.type.getSuperclass().equals(Item2.class)) {
                     itemsList.add(actors.get(actors.size() - 1));
+                } else if (i.type.equals(Fire2.class) || i.type.equals(BlueFire.class)) {
+                    fireList.add(actors.get(actors.size() - 1));
                 }
             }
             catch (InvocationTargetException e) {
@@ -577,13 +594,4 @@ public class GameScreen2 extends Timer implements Screen {
     }
 
     public Player2 getPlayer() {return this.player;}
-
-    public boolean getBlueFireDespawn() {
-        for (Actor2 a : despawnQueue) {
-            if (a instanceof BlueFire) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

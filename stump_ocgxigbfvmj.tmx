@@ -9,6 +9,7 @@
 <property name="keepJewel" type="bool" value="false"/>
 <property name="gravity" type="float" value="0.0"/>
 <property name="timeLimit" type="float" value="0"/>
+<property name="autoScroll" type="float" value="false"/>
 </properties>
 <layer id="1" name="Tile Layer 1" width="32" height="32">
 <data encoding="csv">

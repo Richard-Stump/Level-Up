@@ -42,12 +42,15 @@ public class EditorLevel {
     @Property(displayName="Difficulty") public Difficulty difficulty = Difficulty.NONE;
     @Property(displayName="Gravity") public float gravity;
     @Property(displayName="Time Limit") public int timeLimit;
+    @Property(displayName="Auto Scroll") public boolean autoScroll;
 
     @Property(group="Completion Flags", displayName="Collect All Coins") public boolean collectCoins;
     @Property(group="Completion Flags", displayName="Beat The Time Limit") public boolean beatTimeLimit;
     @Property(group="Completion Flags", displayName="Kill All Enemies") public boolean killAllEnemies;
     @Property(group="Completion Flags", displayName="Kill No Enemies") public boolean killNoEnemies;
     @Property(group="Completion Flags", displayName="Keep The Jewel Safe") public boolean keepJewel;
+
+
 
     public static int NONE = -1;
 
@@ -131,6 +134,7 @@ public class EditorLevel {
         fileWriter.println("<property name=\"keepJewel\" type=\"bool\" value=\"" + keepJewel + "\"/>");
         fileWriter.println("<property name=\"gravity\" type=\"float\" value=\"" + gravity + "\"/>");
         fileWriter.println("<property name=\"timeLimit\" type=\"float\" value=\"" + timeLimit + "\"/>");
+        fileWriter.println("<property name=\"autoScroll\" type=\"float\" value=\"" + autoScroll + "\"/>");
 
         fileWriter.println("</properties>");
         fileWriter.print("<layer id=\"1\" name=\"Tile Layer 1\" ");

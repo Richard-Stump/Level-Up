@@ -1,6 +1,5 @@
 package com.mygdx.nextlevel.actors;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionGroups;

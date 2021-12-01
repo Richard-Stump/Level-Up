@@ -455,8 +455,8 @@ public class GameScreen implements Screen, InputProcessor {
 //        fireball.update();
 
         //tilemap loading
-        tm = new TileMap();
-        tm.create();
+//        tm = new TileMap();
+//        tm.create();
 
         //Set position from updated physics
         player.getSprite().setPosition((player.getBody().getPosition().x * PIXELS_TO_METERS) - player.getSprite().getWidth()/2, (player.getBody().getPosition().y * PIXELS_TO_METERS) - player.getSprite().getHeight()/2);

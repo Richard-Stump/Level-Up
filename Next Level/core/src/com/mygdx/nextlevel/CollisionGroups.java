@@ -12,5 +12,6 @@ public class CollisionGroups {
     public static short ITEM = 0b100;
     public static short BLOCK = 0b1000;
     public static short FIRE = 0b10000;
+    public static short ENEMY = 0b100000;
     public static short ALL = 0b01111111;
 }
