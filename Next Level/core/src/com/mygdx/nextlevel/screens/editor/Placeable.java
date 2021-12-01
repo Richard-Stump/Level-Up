@@ -25,7 +25,7 @@ public @interface Placeable {
     public String displayName() default "__DEFAULT__";
 
     /**
-     * What texture to use for the object selector?
+     * What textures to use for the object selector?
      */
-    public String defaultTexture();
+    public String[] textures() default {"__DEFAULT__"};
 }
