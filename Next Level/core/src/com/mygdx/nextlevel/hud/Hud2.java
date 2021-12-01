@@ -34,7 +34,7 @@ public class Hud2 {
 
     public Integer worldTimer;
     public float time;
-    public Integer score;
+    public long score;
 
     Label countdownLabel;
     Label scoreLabel;
@@ -168,6 +168,7 @@ public class Hud2 {
     }
 
     public void update(float delta, Player2 player, HashMap<Item2, String> map) {
+        scoreLabel.setText(String.format("%d", player.getScore()));
         if (conditionList.contains(5)) {
             time += delta;
             if (time >= 1) {
@@ -226,7 +227,7 @@ public class Hud2 {
         return worldTimer;
     }
 
-    public Integer getScore() {
+    public long getScore() {
         return score;
     }
 }

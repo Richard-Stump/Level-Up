@@ -408,15 +408,16 @@ public class GameScreen2 extends Timer implements Screen {
             if (player.getRecordTime() > elapsedTime) {
                 player.setRecordTime(elapsedTime);
             }
+            player.incScore(elapsed / 100000);
 //            System.out.println(String.format("New Record Time: %f", player.getRecordTime()));
 //            System.out.println(elapsedTime);
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
-//            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY"));
+//            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY"));
         }
         if (player.getFail()) {
             //System.out.println("Im here");
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "FAIL", "MainMenuScreen"));
-//            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over..."));
+//            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "FAIL", "MainMenuScreen"));
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over..."));
         }
     }
 

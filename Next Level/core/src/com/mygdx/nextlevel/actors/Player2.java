@@ -26,6 +26,7 @@ public class Player2 extends Actor2 {
 
     protected int lifeCount;
     protected Item2 heldItem;
+    long score;
 
     private boolean canJump = false;
     private boolean respawn = false;
@@ -109,6 +110,7 @@ public class Player2 extends Actor2 {
         respawnPosition = worldSpawn;
         lifeCount = 3;
         coin = 0;
+        score = 0;
 
         //The texture region needs to be set for rendering.
         setRegion(this.textures.get(PlayerIndex.DEFAULT.value));
@@ -320,6 +322,10 @@ public class Player2 extends Actor2 {
 //                invulernableFunc();
             } else {
                 lifeCount--;
+                score -= 200;
+                if (score < 0) {
+                    score = 0;
+                }
                 respawn = true;
             }
 
@@ -339,6 +345,7 @@ public class Player2 extends Actor2 {
         }
         if (other instanceof Enemy2 && side == Side.BOTTOM || other instanceof Enemy2 && (side == Side.RIGHT || side == Side.LEFT) && starItem) {
             incEnemiesKilled();
+            score += 50;
 //            if (condition == 3 && enemiesKilled > 0) {
 //                fail = true;
 //            }
@@ -351,6 +358,10 @@ public class Player2 extends Actor2 {
         if (other instanceof DeathBlock) {
             lifeCount--;
             respawn = true;
+            score -= 200;
+            if (score < 0) {
+                score = 0;
+            }
 
             if(lifeCount < 1) {
                 lifeCount = 3;
@@ -371,24 +382,34 @@ public class Player2 extends Actor2 {
         if(other instanceof SlowItem2) {
             slowItem = true;
             speedItem = false;
+            score += 20;
         } else if (other instanceof SpeedItem2) {
             speedItem = true;
             slowItem = false;
+            score += 20;
         } else if (other instanceof LifeItem2) {
             lifeCount++;
+            score += 20;
         } else if (other instanceof MushroomItem2) {
             powerUp = true;
             mushroomItem = true;
             drawTexture = true;
+            score += 20;
         } else if (other instanceof FireFlowerItem2) {
-            if (heldItem == null)
+            if (heldItem == null) {
                 heldItem = (Item2) other;
+                score += 20;
+            }
         } else if (other instanceof StarItem2) {
-            if (heldItem == null)
+            if (heldItem == null) {
                 heldItem = (Item2) other;
+                score += 20;
+            }
         } else if (other instanceof LifeStealItem2) {
-            if (heldItem == null)
+            if (heldItem == null) {
                 heldItem = (Item2) other;
+                score += 20;
+            }
         }
 //        if ((other instanceof CoinStatic || other instanceof Coin)) {
 //            coin++;
@@ -517,6 +538,13 @@ public class Player2 extends Actor2 {
     }
     public boolean getJewel() {
         return this.jewel;
+    }
+    public long getScore() {
+        return this.score;
+    }
+
+    public void incScore(long score) {
+        this.score += score;
     }
 
     public void setJewel(boolean set) {

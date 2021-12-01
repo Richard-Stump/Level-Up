@@ -55,6 +55,7 @@ public class Item2 extends Actor2 {
 //                coins++;
 //                player.setCoins(coins);
 //            }
+            player.incScore(20);
         }
     }
 

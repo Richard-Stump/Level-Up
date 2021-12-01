@@ -63,7 +63,7 @@ public class LevelSelectionScreen implements Screen {
     public Label difficulty;
 
     //right column
-    public Label rating;
+        public Label rating;
     public Label playCount;
 
     //static vars
@@ -306,7 +306,11 @@ public class LevelSelectionScreen implements Screen {
         }
 
         //right column labels
-        rating = new Label("" + levelInfo.getRating() + "/5", skin);
+        float rate = levelInfo.getRating();
+        if (rate < 0) {
+            rate = 0;
+        }
+        rating = new Label("" + rate + "/5", skin);
         playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
         rating.addListener(selectLevelListener(id));
