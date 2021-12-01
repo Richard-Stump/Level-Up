@@ -42,7 +42,6 @@ public class Item2 extends Actor2 {
                     collider.setVelocity(new Vector2(-2.0f, collider.getVelocity().y));
                 inital = false;
             }
-
             setPosition(collider.getPosition());
         }
     }
@@ -55,7 +54,7 @@ public class Item2 extends Actor2 {
 //                coins++;
 //                player.setCoins(coins);
 //            }
-            player.incScore(20);
+//            player.incScore(20);
         } else if (other instanceof DeathBlock || other instanceof PushBlock) {
             screen.queueActorDespawn(this);
         }

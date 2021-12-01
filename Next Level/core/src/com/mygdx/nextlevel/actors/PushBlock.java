@@ -44,7 +44,10 @@ public class PushBlock extends Actor2 {
     }
 
     public void updatePosition(Vector2 vec) {
+//        Vector2 v = new Vector2();
+//        v.x = vec.x-1f;
         collider.setPosition(vec);
+//        collider.setPosition(v);
         setPosition(collider.getPosition());
     }
 }

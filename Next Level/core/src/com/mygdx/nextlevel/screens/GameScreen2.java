@@ -335,9 +335,12 @@ public class GameScreen2 extends Timer implements Screen {
         shouldReset = false;
 
         tm.render(camera, player, true);
-//        if (tm.getAutoScroll()) { //TODO update camera when it is being reset
-//            pb.updatePosition(new Vector2(tm.getxAxis() - tm.getScreenWidth()/2f , pb.getPosition().y));
+        if (tm.getAutoScroll()) { //TODO update camera when it is being reset
+            pb.updatePosition(new Vector2(tm.getxAxis() - tm.getScreenWidth()/2f , pb.getPosition().y));
 //            pb.updatePosition(new Vector2(3 , pb.getPosition().y));
+        }
+//        if (tm.getAutoScroll()) {
+//            pb.updatePosition(player.getPosition());
 //        }
     }
 
@@ -559,6 +562,7 @@ public class GameScreen2 extends Timer implements Screen {
 //                    coins++;
 //                    player.setCoins(coins);
                     player.incCoins();
+                    player.incScore(20);
                 }
                 a.dispose();
                 actors.remove(a);

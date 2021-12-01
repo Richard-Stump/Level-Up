@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
+import com.mygdx.nextlevel.actors.Player2;
 import com.mygdx.nextlevel.hud.Hud2;
 
 public class GameOverScreen implements Screen {
@@ -30,6 +31,7 @@ public class GameOverScreen implements Screen {
     protected Skin skin;
     private NextLevel game;
     private Hud2 hud;
+    private Player2 player;
 
     public String title;
 
@@ -46,7 +48,7 @@ public class GameOverScreen implements Screen {
     public static int labelBottomPadding = 20;
     public static int buttonWidth = 190;
 
-    public GameOverScreen (NextLevel game, Hud2 hud2, String title) {
+    public GameOverScreen (NextLevel game, Hud2 hud2, String title, Player2 player2) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
@@ -62,6 +64,7 @@ public class GameOverScreen implements Screen {
         this.game = game;
         this.hud = hud2;
         this.title = title;
+        this.player = player2;
     }
 
     @Override
@@ -74,7 +77,8 @@ public class GameOverScreen implements Screen {
         //Label.LabelStyle textStyle = skin.get("subtitle", Label.LabelStyle.class);
 
         titleLabel = new Label(title, titleStyle);
-        scoreLabel = new Label("Score : " + hud.getScore(), titleStyle);
+        System.out.println(player.getScore());
+        scoreLabel = new Label("Score : " + player.getScore(), titleStyle);
         //scoreLabel.scaleBy(.9f);
         timeLabel = new Label("Time Remaining : " + hud.getTime(), titleStyle);
         finishConditionLabel = new Label("Finishing Conditions : ", titleStyle);
