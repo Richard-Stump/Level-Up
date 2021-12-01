@@ -14,8 +14,8 @@ import java.util.Random;
 
 @Placeable(
         group = "Blocks",
-        defaultTexture = "item-block.png",
-        displayName = "Item Block"
+        displayName = "Item Block",
+        textures = { "item-block.png", "block.png" }
 )
 public class Block2 extends Actor2 {
     protected boolean spawnItem;

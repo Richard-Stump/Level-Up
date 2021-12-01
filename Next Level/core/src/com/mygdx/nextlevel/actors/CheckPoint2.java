@@ -10,7 +10,7 @@ import com.mygdx.nextlevel.screens.editor.Placeable;
 import java.util.ArrayList;
 
 @Placeable(
-        defaultTexture = "checkpoint.png",
+        textures = { "checkpoint.png" },
         displayName = "Checkpoint",
         group = "Stage"
 )

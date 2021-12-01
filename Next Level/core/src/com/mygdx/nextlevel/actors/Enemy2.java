@@ -11,7 +11,7 @@ import com.mygdx.nextlevel.screens.editor.Placeable;
 @Placeable(
         group = "Enemies",
         displayName = "Enemy",
-        defaultTexture = "enemy.jpg"
+        textures = { "enemy.jpg" }
 )
 public class Enemy2 extends Actor2 {
     protected BoxCollider boxCollider;
