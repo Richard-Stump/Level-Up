@@ -335,13 +335,11 @@ public class GameScreen2 extends Timer implements Screen {
         shouldReset = false;
 
         tm.render(camera, player, true);
-        if (tm.getAutoScroll()) { //TODO update camera when it is being reset
-            pb.updatePosition(new Vector2(tm.getxAxis() - tm.getScreenWidth()/2f , pb.getPosition().y));
-//            pb.updatePosition(new Vector2(3 , pb.getPosition().y));
+
+        if (tm.getAutoScroll()) {
+            pb.getCollider().dispose();
+            pb.createBoxCollider(tm.getxAxis() - tm.getScreenWidth()/2f);
         }
-//        if (tm.getAutoScroll()) {
-//            pb.updatePosition(player.getPosition());
-//        }
     }
 
     /**
@@ -437,12 +435,12 @@ public class GameScreen2 extends Timer implements Screen {
 //            System.out.println(String.format("New Record Time: %f", player.getRecordTime()));
 //            System.out.println(elapsedTime);
 //            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY"));
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player));
         }
         if (player.getFail()) {
             //System.out.println("Im here");
 //            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "FAIL", "MainMenuScreen"));
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over..."));
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over...", player));
         }
     }
 
