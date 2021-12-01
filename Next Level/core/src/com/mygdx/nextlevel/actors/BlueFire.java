@@ -53,7 +53,7 @@ public class BlueFire extends Actor2 {
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
-        if(other instanceof Player2) {
+        if(other instanceof Player2 || other instanceof DeathBlock || other instanceof PushBlock) {
             screen.queueActorDespawn(this);
 //            screen.getPlayer().setfireSpawn(false);
         }

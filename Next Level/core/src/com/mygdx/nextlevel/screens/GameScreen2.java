@@ -168,7 +168,7 @@ public class GameScreen2 extends Timer implements Screen {
          //Create and load tilemap
          tileMapName = levelInfo + ".tmx";
          tileMapName = "jchen3_ckqa.tmx"; //TODO remove
-         tileMapName = "test3.tmx";
+         tileMapName = "test3.tmx"; //TODO remove
          tm = new TileMap(tileMapName);
 
          //setup the initial map
@@ -189,26 +189,26 @@ public class GameScreen2 extends Timer implements Screen {
      * Initial state of the game world. This is used when the world is being set up.
      */
     private void init() {
+        //Initialize the collision manager
         CollisionManager.init();
-
-        //Initialize the collision manager and create the floor
-        CollisionManager.init();
-        floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false, CollisionGroups.ALL, CollisionGroups.WORLD);
-        new DeathBlock(this, tm.getMapWidth());
 
         //Clear all the queues
         actors.clear();
         spawnQueue.clear();
         despawnQueue.clear();
 
-        //Create all the actors for the test scene. This should be replaced with tilemap/level loading code.
-        //TODO add interface with DB in which if the file is not in data base then go to default skin
-        /*
-        Texture texture = new Texture(Gdx.files.internal(db.getProfilePic(textureValue)));
-        if (texture == null) {
-            //TODO Get default value from the database.
+        //Create floor and world ends
+        floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false, CollisionGroups.ALL, CollisionGroups.WORLD);
+        new DeathBlock(this, tm.getMapWidth());
+
+        //FIXME fix issue with pushblock in autoscroll mode, player glitches through
+        if (tm.getAutoScroll()) {
+            actors.add(new PushBlock(this, tm));
+        } else {
+            new PushBlock(this, tm);
         }
-         */
+
+
 
         //Player Textures
         playerTextures.add(PlayerIndex.DEFAULT.value, new Texture("goomba.png"));
@@ -225,7 +225,7 @@ public class GameScreen2 extends Timer implements Screen {
         itemTextures.add(ItemIndex.STAR.value, "star.jpg");
         itemTextures.add(ItemIndex.FIREFLOWER.value, "fireflower.png");
         itemTextures.add(ItemIndex.LIFESTEAL.value,"lifesteal-mushroom.png");
-        itemTextures.add(ItemIndex.COIN.value,"coin.png"); //FIXME (may want to get out of list)
+        itemTextures.add(ItemIndex.COIN.value,"coin.png");
 
         //Coin Texture
         coinTexture = new Texture("coin.png");
@@ -264,14 +264,10 @@ public class GameScreen2 extends Timer implements Screen {
         actors.add(new Block2(this, itemBlockTextures, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
         actors.add(new Block2(this, coinBlockTextures, 29, 4, true, ItemIndex.COIN.value, true));
         actors.add(new Block2(this, coinBlockTextures, 30, 4, false,false));
-//        actors.add(new Coin(this, 10, 5, false));
-//        actors.add(new Coin(this, 13, 5, false));
-//        actors.add(new Coin(this, 16, 5, false));
-//        actors.add(new Coin(this, 19, 5, false));
-        actors.add(new CoinStatic(this, coinTexture, 10, 5, player));
-        actors.add(new CoinStatic(this, coinTexture, 13, 5, player));
-        actors.add(new CoinStatic(this, coinTexture, 16, 5, player));
-        actors.add(new CoinStatic(this, coinTexture, 19, 5, player));
+        actors.add(new CoinStatic(this, coinTexture, 10, 5));
+        actors.add(new CoinStatic(this, coinTexture, 13, 5));
+        actors.add(new CoinStatic(this, coinTexture, 16, 5));
+        actors.add(new CoinStatic(this, coinTexture, 19, 5));
 //        actors.add(new CoinStatic(this, coinTexture, 10, 5));
 //        actors.add(new CoinStatic(this, coinTexture, 13, 5));
 //        actors.add(new CoinStatic(this, coinTexture, 16, 5));
@@ -444,7 +440,8 @@ public class GameScreen2 extends Timer implements Screen {
         batch.setProjectionMatrix(camera.combined);
 
         for(Actor2 a : actors) {
-            a.draw(batch);
+            if (!a.getClass().equals(PushBlock.class))
+                a.draw(batch);
         }
 
         hud.render(batch);
@@ -471,13 +468,9 @@ public class GameScreen2 extends Timer implements Screen {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class, Player2.class);
                     actors.add((CoinStatic) c.newInstance(this, coinTexture, i.x +0.25f, i.y+0.25f, player));
                 } else if (i.type.equals(Coin.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class, Player2.class);
-                    actors.add((Coin) c.newInstance(this, coinTexture, i.x +0.25f, i.y+0.25f, player));
-//                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
-//                    actors.add((CoinStatic) c.newInstance(this, coinTexture, i.x +0.25f, i.y+0.25f));
-                }
-                else if (i.type.equals(Jewel.class)) {
-//                    System.out.println("Jewel in spawn actors");
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, String.class);
+                    actors.add((Coin) c.newInstance(this, i.x +0.25f, i.y+0.25f, itemTextures.get(ItemIndex.COIN.value)));
+                } else if (i.type.equals(Jewel.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
                     actors.add((Jewel) c.newInstance(this, jewelTexture, i.x, i.y));
                 }

@@ -37,7 +37,7 @@ public class Fire2 extends Actor2 {
     }
 
     public void onCollision(Actor2 other, BoxCollider.Side side) {
-        if(other instanceof Enemy2) {
+        if(other instanceof Enemy2 || other instanceof DeathBlock || other instanceof PushBlock) {
             screen.queueActorDespawn(this);
             screen.getPlayer().setfireSpawn(false);
         }

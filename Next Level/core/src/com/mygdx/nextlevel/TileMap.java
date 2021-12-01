@@ -41,8 +41,6 @@ public class TileMap extends ApplicationAdapter{
     //Tile Map Properties
     int mapWidth;
     int mapHeight;
-    int tilePixelWidth;
-    int tilePixelHeight;
     boolean collectCoin;
     boolean beatTimeLimit;
     boolean killAllEnemies;
@@ -75,6 +73,7 @@ public class TileMap extends ApplicationAdapter{
 //        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
 //        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
 //        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
+        autoScroll = true;
 
         if (collectCoin) {
             conditionList.add(1);
@@ -148,4 +147,8 @@ public class TileMap extends ApplicationAdapter{
     }
 
     public int getMapWidth() { return mapWidth; }
+    public int getMapHeight() { return mapHeight; }
+    public float getxAxis() { return xAxis; }
+    public boolean getAutoScroll() { return autoScroll; }
+    public float getScreenWidth() { return screenWidth; }
 }

@@ -55,6 +55,8 @@ public class Item2 extends Actor2 {
 //                coins++;
 //                player.setCoins(coins);
 //            }
+        } else if (other instanceof DeathBlock || other instanceof PushBlock) {
+            screen.queueActorDespawn(this);
         }
     }
 

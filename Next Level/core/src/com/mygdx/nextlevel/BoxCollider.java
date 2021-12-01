@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.mygdx.nextlevel.actors.Actor;
 import com.mygdx.nextlevel.actors.Actor2;
+import com.mygdx.nextlevel.actors.PushBlock;
 
 import java.util.ArrayList;
 
