@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.EditLevelScreen;
 import com.mygdx.nextlevel.screens.LoginScreen;
 import com.mygdx.nextlevel.screens.MainMenuScreen;
@@ -21,8 +22,14 @@ public class RichardLauncher {
 
         config.width = 960;
         config.height = 500;
+        ServerDBHandler db = new ServerDBHandler();
 
-        new LwjglApplication(new RichardGame(), config);
+        if (db.isDBActive()) {
+            new LwjglApplication(new RichardGame(), config);
+        } else {
+            System.out.println();
+            System.out.println("Please connect to the internet");
+        }
     }
 }
 
