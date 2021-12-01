@@ -73,7 +73,7 @@ public class TileMap extends ApplicationAdapter{
 //        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
 //        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
 //        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
-//        autoScroll = true;
+        autoScroll = true;
 
         if (collectCoin) {
             conditionList.add(1);
@@ -133,7 +133,7 @@ public class TileMap extends ApplicationAdapter{
             } else if (mapWidth - xAxis <= screenWidth/2f) {
                 xAxis = mapWidth - screenWidth/2f;
             } else {
-                xAxis += 0.025f;
+                xAxis += 0.0162f;
             }
         } else {
             if (player.getX() <= screenWidth/2f) { //Incase player moves back

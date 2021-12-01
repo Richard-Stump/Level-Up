@@ -105,7 +105,7 @@ public class Player2 extends Actor2 {
                 new Vector2(x, y),
                 new Vector2(0.8f, 0.8f),
                 true,
-                (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR);
+                (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.BLOCK | CollisionGroups.ENEMY), CollisionGroups.ACTOR);
         worldSpawn = new Vector2(boxCollider.getPosition());
         respawnPosition = worldSpawn;
         lifeCount = 3;

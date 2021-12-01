@@ -37,6 +37,7 @@ import java.util.LinkedList;
  * actors/colliders in the collision handling methods will cause crashes.
  */
 public class GameScreen2 extends Timer implements Screen {
+
     /**
      * Enums to the screen in which specify what item goes into the block
      */
@@ -106,6 +107,7 @@ public class GameScreen2 extends Timer implements Screen {
     }
 
     public String tileMapName;              //The name of the tilemap
+    PushBlock pb;
 
     ArrayList<Actor2> actors;               //The list of actors currently in play
     LinkedList<ActorSpawnInfo> spawnQueue;  //List of actors to spawn in the next frame
@@ -205,11 +207,9 @@ public class GameScreen2 extends Timer implements Screen {
         floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false, CollisionGroups.ALL, CollisionGroups.WORLD);
         new DeathBlock(this, tm.getMapWidth());
 
-        //FIXME fix issue with pushblock in autoscroll mode, player glitches through
+        pb = new PushBlock(this, tm);
         if (tm.getAutoScroll()) {
-            actors.add(new PushBlock(this, tm));
-        } else {
-            new PushBlock(this, tm);
+            actors.add(pb);
         }
 
         //Player Textures
@@ -257,7 +257,8 @@ public class GameScreen2 extends Timer implements Screen {
         playerFireTexture = new Texture("fireball.png");
 
         player = new Player2(this, playerTextures, 1.0f, 1.0f);
-        actors.add(new Enemy2(this,enemyTexture, 16, 2, Enemy2.Action.SHOOT, player));
+//        actors.add(new Enemy2(this,enemyTexture, 16, 2, Enemy2.Action.SHOOT, player));
+        actors.add(new Enemy2(this, enemyTexture, 16, 2, Enemy2.Action.DEFAULT, player));
         actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
         actors.add(new End(this, endTexture, 30, 1, player));
         actors.add(new Block2(this,itemBlockTextures, 7, 4, true, ItemIndex.ALL.value, false));
@@ -334,6 +335,10 @@ public class GameScreen2 extends Timer implements Screen {
         shouldReset = false;
 
         tm.render(camera, player, true);
+//        if (tm.getAutoScroll()) { //TODO update camera when it is being reset
+//            pb.updatePosition(new Vector2(tm.getxAxis() - tm.getScreenWidth()/2f , pb.getPosition().y));
+//            pb.updatePosition(new Vector2(3 , pb.getPosition().y));
+//        }
     }
 
     /**
@@ -518,7 +523,7 @@ public class GameScreen2 extends Timer implements Screen {
                     actors.add((Actor2) c.newInstance(this, i.x, i.y));
                 }
 
-                //If statement to check to see if item is in the game
+                //If statement to check to see if item/fire is in the game
                 if (i.type.getSuperclass().equals(Item2.class)) {
                     itemsList.add(actors.get(actors.size() - 1));
                 } else if (i.type.equals(Fire2.class) || i.type.equals(BlueFire.class)) {
@@ -588,13 +593,4 @@ public class GameScreen2 extends Timer implements Screen {
     }
 
     public Player2 getPlayer() {return this.player;}
-
-    public boolean getBlueFireDespawn() {
-        for (Actor2 a : despawnQueue) {
-            if (a instanceof BlueFire) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

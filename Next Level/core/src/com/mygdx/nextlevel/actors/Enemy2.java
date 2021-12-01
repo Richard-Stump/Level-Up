@@ -38,7 +38,8 @@ public class Enemy2 extends Actor2 {
                 new Vector2(x, y),
                 new Vector2(0.8f, 0.8f),
                 true,
-                (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR
+                (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.BLOCK),
+                CollisionGroups.ENEMY
         );
         playerCollider = player.getBoxCollider();
         this.player = player;
