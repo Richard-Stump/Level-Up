@@ -208,8 +208,6 @@ public class GameScreen2 extends Timer implements Screen {
             new PushBlock(this, tm);
         }
 
-
-
         //Player Textures
         playerTextures.add(PlayerIndex.DEFAULT.value, new Texture("goomba.png"));
         playerTextures.add(PlayerIndex.POWERUP.value, new Texture("paragoomba.png"));
@@ -324,6 +322,8 @@ public class GameScreen2 extends Timer implements Screen {
         hud = new Hud2(game.batch, player);
 
         shouldReset = false;
+
+        tm.render(camera, player, true);
     }
 
     /**
@@ -433,7 +433,7 @@ public class GameScreen2 extends Timer implements Screen {
     public void render(float delta) {
         update(delta);
         ScreenUtils.clear(Color.WHITE);
-        tm.render(camera, player);
+        tm.render(camera, player, false);
 
         SpriteBatch batch = game.batch;
         batch.begin();
@@ -463,22 +463,16 @@ public class GameScreen2 extends Timer implements Screen {
                 if (i.type.equals(Block2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, ArrayList.class, float.class, float.class, boolean.class, int.class, boolean.class);
                     actors.add((Block2) c.newInstance(this, coinBlockTextures, i.x +0.5f, i.y + 0.5f, true, ItemIndex.COIN.value, true));
-                }
-                else if (i.type.equals(CoinStatic.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class, Player2.class);
-                    actors.add((CoinStatic) c.newInstance(this, coinTexture, i.x +0.25f, i.y+0.25f, player));
+                } else if (i.type.equals(CoinStatic.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
+                    actors.add((CoinStatic) c.newInstance(this, coinTexture, i.x +0.25f, i.y+0.25f));
                 } else if (i.type.equals(Coin.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, String.class);
                     actors.add((Coin) c.newInstance(this, i.x +0.25f, i.y+0.25f, itemTextures.get(ItemIndex.COIN.value)));
                 } else if (i.type.equals(Jewel.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
                     actors.add((Jewel) c.newInstance(this, jewelTexture, i.x, i.y));
-                }
-//                else if (i.type.equals(CoinStatic.class)) {
-//                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
-//                    actors.add((Actor2) c.newInstance(this, i.x, i.y));
-//                }
-                else if (i.type.equals(Enemy2.class)) {
+                } else if (i.type.equals(Enemy2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class,float.class, float.class, Enemy2.Action.class, Player2.class);
                     actors.add((Enemy2) c.newInstance(this, enemyTexture, i.x, i.y, Enemy2.Action.SHOOT, player));
 //                    actors.add((Enemy2) c.newInstance(this, enemyTexture, i.x, i.y, Enemy2.Action.SHOOT, player));

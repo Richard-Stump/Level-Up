@@ -116,13 +116,21 @@ public class TileMap extends ApplicationAdapter{
         }
     }
 
-    public void render (OrthographicCamera camera, Player2 player) {
+    public void render (OrthographicCamera camera, Player2 player, boolean reset) {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (autoScroll) {
-            if (mapWidth - xAxis <= screenWidth/2f) {
+            if (reset) {
+                if (player.getX() <= screenWidth/2f) { //Incase player moves back
+                    xAxis = screenWidth/2f;
+                } else if (mapWidth - player.getX() <= screenWidth/2f) {
+                    xAxis = mapWidth - screenWidth/2f;
+                } else {
+                    xAxis = player.getX();
+                }
+            } else if (mapWidth - xAxis <= screenWidth/2f) {
                 xAxis = mapWidth - screenWidth/2f;
             } else {
                 xAxis += 0.025f;
