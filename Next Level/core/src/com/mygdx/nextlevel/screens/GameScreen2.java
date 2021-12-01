@@ -105,6 +105,8 @@ public class GameScreen2 extends Timer implements Screen {
 
     }
 
+    public String tileMapName;              //The name of the tilemap
+
     ArrayList<Actor2> actors;               //The list of actors currently in play
     LinkedList<ActorSpawnInfo> spawnQueue;  //List of actors to spawn in the next frame
     LinkedList<Actor2> despawnQueue;        //List of actors to destroy in the next frame
@@ -124,51 +126,55 @@ public class GameScreen2 extends Timer implements Screen {
     public Texture endTexture;
     public Texture coinTexture;
     public Texture blockTexture;
+    public Texture jewelTexture;
 
     /**
      * Initialize the game screen
      * @param game The screen that created this screen
      */
-    public GameScreen2(NextLevel game) {
-        this.game = game;
+//    public GameScreen2(NextLevel game, String levelInfo) {
+     public GameScreen2(NextLevel game, String levelInfo) {
+         this.game = game;
 
-        //Used to display where the colliders are on the screen
-        box2dRenderer = new Box2DDebugRenderer();
+         //Used to display where the colliders are on the screen
+         box2dRenderer = new Box2DDebugRenderer();
 
-        //Initialize a camera to view the world. Specify how many tiles are viewable vertically, and then
-        //use the screen's aspect ratio to calculate how many tiles to view along the x access to keep tiles square.
-        //This camera converts the world coordinates into screen coordinates when rendering, so actors don't need to
-        //worry about the screen's size.
-        float numTilesVisibleY = 15.0f;
-        float aspect = (float)Gdx.graphics.getWidth() / (float)Gdx.graphics.getHeight();
-        camera = new OrthographicCamera(numTilesVisibleY * aspect, numTilesVisibleY);
-        camera.translate(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f);
-        camera.update();
+         //Initialize a camera to view the world. Specify how many tiles are viewable vertically, and then
+         //use the screen's aspect ratio to calculate how many tiles to view along the x access to keep tiles square.
+         //This camera converts the world coordinates into screen coordinates when rendering, so actors don't need to
+         //worry about the screen's size.
+         float numTilesVisibleY = 15.0f;
+         float aspect = (float)Gdx.graphics.getWidth() / (float)Gdx.graphics.getHeight();
+         camera = new OrthographicCamera(numTilesVisibleY * aspect, numTilesVisibleY);
+         camera.translate(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f);
+         camera.update();
 
-        //Lists to keep track of actors and their states
-        actors = new ArrayList<>();
-        spawnQueue = new LinkedList<>();
-        despawnQueue = new LinkedList<>();
+         //Lists to keep track of actors and their states
+         actors = new ArrayList<>();
+         spawnQueue = new LinkedList<>();
+         despawnQueue = new LinkedList<>();
 
-        despawnedActors = new ArrayList<>();
-        itemsList = new ArrayList<>();
-        blockList = new ArrayList<>();
-        checkpointList = new ArrayList<>();
+         despawnedActors = new ArrayList<>();
+         itemsList = new ArrayList<>();
+         blockList = new ArrayList<>();
+         checkpointList = new ArrayList<>();
 
-        playerTextures = new ArrayList<>();
-        itemTextures = new ArrayList<>();
-        itemBlockTextures = new ArrayList<>();
-        coinBlockTextures = new ArrayList<>();
-        checkpointTextures = new ArrayList<>();
+         playerTextures = new ArrayList<>();
+         itemTextures = new ArrayList<>();
+         itemBlockTextures = new ArrayList<>();
+         coinBlockTextures = new ArrayList<>();
+         checkpointTextures = new ArrayList<>();
 
-        //create tilemap
-        tm = new TileMap();
-        tm.create();
+         //Create and load tilemap
+         tileMapName = levelInfo + ".tmx";
+         tileMapName = "jchen3_ckqa.tmx"; //TODO remove
+         tileMapName = "test3.tmx";
+         tm = new TileMap(tileMapName);
 
-        //setup the initial map
-        init();
+         //setup the initial map
+         init();
 
-        start = getStartTime();
+         start = getStartTime();
     }
 
     /**
@@ -241,6 +247,9 @@ public class GameScreen2 extends Timer implements Screen {
         //End Texture
         endTexture = new Texture("end.jpeg");
 
+        //Jewel Texture
+        jewelTexture = new Texture("jewel.png");
+
         player = new Player2(this, playerTextures, 1.0f, 1.0f);
         actors.add(new Enemy2(this,enemyTexture, 16, 2, Enemy2.Action.SHOOT, player));
         actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
@@ -267,7 +276,7 @@ public class GameScreen2 extends Timer implements Screen {
 //        actors.add(new CoinStatic(this, coinTexture, 13, 5));
 //        actors.add(new CoinStatic(this, coinTexture, 16, 5));
 //        actors.add(new CoinStatic(this, coinTexture, 19, 5));
-//        actors.add(new Jewel(this, new Texture("jewel.png"), 2, 1));
+//        actors.add(new Jewel(this, jewelTexture, 2, 1));
         actors.add(player);
 
         hud = new Hud2(game.batch, player);
@@ -470,7 +479,7 @@ public class GameScreen2 extends Timer implements Screen {
                 else if (i.type.equals(Jewel.class)) {
 //                    System.out.println("Jewel in spawn actors");
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
-                    actors.add((Jewel) c.newInstance(this, new Texture("jewel.png"), i.x, i.y));
+                    actors.add((Jewel) c.newInstance(this, jewelTexture, i.x, i.y));
                 }
 //                else if (i.type.equals(CoinStatic.class)) {
 //                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);

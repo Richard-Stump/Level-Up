@@ -48,31 +48,33 @@ public class TileMap extends ApplicationAdapter{
     boolean killAllEnemies;
     boolean killNoEnemies;
     boolean keepJewel;
+    boolean autoScroll;
     float timeLimit;
 
-    //Pixel Properties
-    int mapPixelWidth;
-    int mapPixelHeight;
-
     //Camera Position
-    float xAxis = 0;
-    float yAxis = 0;
+    float xAxis;
+    float yAxis;
+    float screenWidth;
 
-    public void create () {
-//        tiledMap = new TmxMapLoader().load("test3.tmx");
-        tiledMap = new TmxMapLoader().load("jchen3_ckqa.tmx");
+    public TileMap(String filename) {
+        tiledMap = new TmxMapLoader().load(filename);
         tiledMapProperties = tiledMap.getProperties();
         layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
 
         mapWidth = tiledMapProperties.get("width", Integer.class);
         mapHeight = tiledMapProperties.get("height", Integer.class);
 
-        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
-        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
-        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
-        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
-        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
-        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
+        screenWidth = Gdx.graphics.getWidth()/32f;
+        xAxis = screenWidth/2f;
+        yAxis = screenWidth/2f/32f;
+
+//        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
+//        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
+//        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
+//        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
+//        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
+//        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
+//        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
 
         if (collectCoin) {
             conditionList.add(1);
@@ -90,8 +92,8 @@ public class TileMap extends ApplicationAdapter{
             conditionList.add(4);
         }
 
-        for (int i = 0; i < conditionList.size(); i++) {
-            System.out.println(conditionList.get(i));
+        for (Integer integer : conditionList) {
+            System.out.println(integer);
         }
         if (conditionList.contains(5)) {
             System.out.println(timeLimit);
@@ -120,13 +122,20 @@ public class TileMap extends ApplicationAdapter{
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        float screenWidth = Gdx.graphics.getWidth()/32f;
-        if (player.getX() <= screenWidth/2f) {
-            xAxis = screenWidth/2f;
-        } else if (mapWidth - player.getX() <= screenWidth/2f) {
-            xAxis = mapWidth - screenWidth/2f;
+        if (autoScroll) {
+            if (mapWidth - xAxis <= screenWidth/2f) {
+                xAxis = mapWidth - screenWidth/2f;
+            } else {
+                xAxis += 0.025f;
+            }
         } else {
-            xAxis = player.getX();
+            if (player.getX() <= screenWidth/2f) { //Incase player moves back
+                xAxis = screenWidth/2f;
+            } else if (mapWidth - player.getX() <= screenWidth/2f) {
+                xAxis = mapWidth - screenWidth/2f;
+            } else {
+                xAxis = player.getX();
+            }
         }
         yAxis = Gdx.graphics.getHeight()/2f/32f;
 

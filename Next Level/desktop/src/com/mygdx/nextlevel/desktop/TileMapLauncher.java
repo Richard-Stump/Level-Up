@@ -21,7 +21,7 @@ public class TileMapLauncher {
         config.width = 1600;
         config.height = 800;
         try {
-            new LwjglApplication(new TileMap(), config);
+            new LwjglApplication(new TileMap(""), config);
         } catch (Exception e){
             e.printStackTrace();
         }
