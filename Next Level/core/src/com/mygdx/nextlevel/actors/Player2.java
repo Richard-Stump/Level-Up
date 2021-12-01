@@ -62,6 +62,7 @@ public class Player2 extends Actor2 {
     private float starTime = 0f;
     private float fireFlowerTime = 0f;
     private float invulerableTime = 0f;
+    private float fireTimer = 0.5f;
     private ArrayList<Integer> conditions;
 
     private double record = 25.00;
@@ -295,6 +296,13 @@ public class Player2 extends Actor2 {
                         screen.queueActorSpawn(getX() - 1, getY(), Fire2.class);
                     }
                     fireSpawn = true;
+                    fireTimer = 0;
+                } else {
+                    if (fireTimer >= 1.5f) {
+                        fireSpawn = false;
+                    } else {
+                        fireTimer += 0.1f;
+                    }
                 }
             }
         }

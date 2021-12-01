@@ -73,7 +73,7 @@ public class TileMap extends ApplicationAdapter{
 //        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
 //        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
 //        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
-        autoScroll = true;
+//        autoScroll = true;
 
         if (collectCoin) {
             conditionList.add(1);

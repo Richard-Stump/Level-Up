@@ -13,30 +13,18 @@ public class BlueFire extends Actor2 {
     BoxCollider playerCollider;
     protected boolean initial;
 
-    public BlueFire(GameScreen2 screen, float x, float y, Player2 player) {
+    public BlueFire(GameScreen2 screen, float x, float y, Texture texture) {
         super(screen, x, y, 1, 1);
         ogX = x;
-        this.player = player;
-        playerCollider = player.getBoxCollider();
+        playerCollider = screen.getPlayer().getBoxCollider();
         initial = true;
-//        collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true);
 
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), true, (short) (CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.FIRE);
 
-        setRegion(new Texture("blue-fire.png"));
+        setRegion(texture);
     }
 
-//    public void update(float delta) {
-//        if (playerCollider.getPosition().x > collider.getPosition().x) {
-//            collider.setVelocity(new Vector2(5.0f, collider.getVelocity().y));
-//        } else {
-//            collider.setVelocity(new Vector2(-3.0f, collider.getVelocity().y));
-//        }
-//        setRegion(new Texture("blue-fire.png"));
-//    }
-
     public void update(float delta) {
-//        setPosition(collider.getPosition());
         if (initial) {
             if (playerCollider.getPosition().x > collider.getPosition().x) {
                 collider.setVelocity(new Vector2(4.0f, collider.getVelocity().y));
@@ -55,7 +43,6 @@ public class BlueFire extends Actor2 {
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         if(other instanceof Player2 || other instanceof DeathBlock || other instanceof PushBlock) {
             screen.queueActorDespawn(this);
-//            screen.getPlayer().setfireSpawn(false);
         }
     }
 

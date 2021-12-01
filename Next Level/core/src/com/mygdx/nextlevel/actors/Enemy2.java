@@ -24,6 +24,7 @@ public class Enemy2 extends Actor2 {
     protected final static float timeTillTurn = 2.0f;
     Enemy2.Action action;
     boolean fireSpawn = false;
+    float fireTimer = 0;
     Player2 player;
 
     public enum Action {
@@ -110,16 +111,28 @@ public class Enemy2 extends Actor2 {
 //            }
 
             if (playerCollider.getPosition().x > boxCollider.getPosition().x) {
-//                System.out.println("Shoot right");
                 if (!fireSpawn) {
                     screen.queueActorSpawn(getX() + 1, getY(), BlueFire.class);
                     fireSpawn = true;
+                    fireTimer = 0;
+                } else {
+                    if (fireTimer >= 16f) {
+                        fireSpawn = false;
+                    } else {
+                        fireTimer += 0.1f;
+                    }
                 }
             } else {
-//                System.out.println("Shoot left");
                 if (!fireSpawn) {
                     screen.queueActorSpawn(getX() - 1, getY(), BlueFire.class);
                     fireSpawn = true;
+                    fireTimer = 0;
+                } else {
+                    if (fireTimer >= 16f) {
+                        fireSpawn = false;
+                    } else {
+                        fireTimer += 0.1f;
+                    }
                 }
             }
         }

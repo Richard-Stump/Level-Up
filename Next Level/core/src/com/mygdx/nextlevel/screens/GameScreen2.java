@@ -115,6 +115,7 @@ public class GameScreen2 extends Timer implements Screen {
     public ArrayList<Actor2> itemsList;     //The list of all items that are currently in the game screen
     public ArrayList<Actor2> blockList;     //The list of all item blocks that need to be reset
     public ArrayList<Actor2> checkpointList;//The list of all checkpoints in the game screen
+    public ArrayList<Actor2> fireList;      //The list of all fire that is in the game
 
     //Textures for all actors within the game
     public ArrayList<Texture> playerTextures;
@@ -127,6 +128,8 @@ public class GameScreen2 extends Timer implements Screen {
     public Texture coinTexture;
     public Texture blockTexture;
     public Texture jewelTexture;
+    public Texture playerFireTexture;
+    public Texture enemyFireTexture;
 
     /**
      * Initialize the game screen
@@ -158,6 +161,7 @@ public class GameScreen2 extends Timer implements Screen {
          itemsList = new ArrayList<>();
          blockList = new ArrayList<>();
          checkpointList = new ArrayList<>();
+         fireList = new ArrayList<>();
 
          playerTextures = new ArrayList<>();
          itemTextures = new ArrayList<>();
@@ -248,6 +252,10 @@ public class GameScreen2 extends Timer implements Screen {
         //Jewel Texture
         jewelTexture = new Texture("jewel.png");
 
+        //Fire Textures
+        enemyFireTexture = new Texture("blue-fire.png");
+        playerFireTexture = new Texture("fireball.png");
+
         player = new Player2(this, playerTextures, 1.0f, 1.0f);
         actors.add(new Enemy2(this,enemyTexture, 16, 2, Enemy2.Action.SHOOT, player));
         actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
@@ -313,10 +321,12 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Despawn all items that are currently on the game screen
         despawnQueue.addAll(itemsList);
+        despawnQueue.addAll(fireList);
 
         //Clear Queues used to reset
         itemsList.clear();
         blockList.clear();
+        fireList.clear();
         despawnedActors.clear();
 
         hud = new Hud2(game.batch, player);
@@ -351,6 +361,8 @@ public class GameScreen2 extends Timer implements Screen {
 
             if (o instanceof Item2) { //If this is an item
                 itemsList.remove(o);
+            } else if (o instanceof Fire2 || o instanceof BlueFire) {
+                fireList.remove(o);
             } else if (o instanceof Block2 && ((Block2) o ).isSpawnItem() && ((Block2) o).isBreakable()) {
                 blockList.add(o);
             } else if (o instanceof Block2 && ((Block2) o).isSpawnItem()) {
@@ -475,10 +487,12 @@ public class GameScreen2 extends Timer implements Screen {
                 } else if (i.type.equals(Enemy2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class,float.class, float.class, Enemy2.Action.class, Player2.class);
                     actors.add((Enemy2) c.newInstance(this, enemyTexture, i.x, i.y, Enemy2.Action.SHOOT, player));
-//                    actors.add((Enemy2) c.newInstance(this, enemyTexture, i.x, i.y, Enemy2.Action.SHOOT, player));
                 } else if (i.type.equals(BlueFire.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Player2.class);
-                    actors.add((BlueFire) c.newInstance(this, i.x, i.y, player));
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Texture.class);
+                    actors.add((BlueFire) c.newInstance(this, i.x, i.y, enemyFireTexture));
+                } else if (i.type.equals(Fire2.class)) {
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Texture.class);
+                    actors.add((Fire2) c.newInstance(this, i.x, i.y, playerFireTexture));
                 } else if (i.type.getSuperclass().equals(Item2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, String.class);
                     if (i.type.equals(SlowItem2.class)) {
@@ -507,6 +521,8 @@ public class GameScreen2 extends Timer implements Screen {
                 //If statement to check to see if item is in the game
                 if (i.type.getSuperclass().equals(Item2.class)) {
                     itemsList.add(actors.get(actors.size() - 1));
+                } else if (i.type.equals(Fire2.class) || i.type.equals(BlueFire.class)) {
+                    fireList.add(actors.get(actors.size() - 1));
                 }
             }
             catch (InvocationTargetException e) {
