@@ -230,4 +230,6 @@ public class BoxCollider {
     public void setStatic() {
         body.setType(BodyType.StaticBody);
     }
+    public void setKinematic() { body.setType(BodyType.KinematicBody); }
+    public Fixture getFixture() { return body.getFixtureList().get(0); }
 }

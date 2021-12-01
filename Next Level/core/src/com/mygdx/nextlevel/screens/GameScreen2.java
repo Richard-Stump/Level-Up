@@ -335,10 +335,10 @@ public class GameScreen2 extends Timer implements Screen {
         shouldReset = false;
 
         tm.render(camera, player, true);
-//        if (tm.getAutoScroll()) { //TODO update camera when it is being reset
-//            pb.updatePosition(new Vector2(tm.getxAxis() - tm.getScreenWidth()/2f , pb.getPosition().y));
-//            pb.updatePosition(new Vector2(3 , pb.getPosition().y));
-//        }
+        if (tm.getAutoScroll()) {
+            pb.getCollider().dispose();
+            pb.createBoxCollider(tm.getxAxis() - tm.getScreenWidth()/2f);
+        }
     }
 
     /**
