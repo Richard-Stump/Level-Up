@@ -76,7 +76,7 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
 
         System.out.println("current pic: " + profilePic);
 
-        //playerPic.scaleBy(3f);
+        playerPic.scaleBy(.02f);
 
         Label usernameLabel = new Label(username, skin);
 

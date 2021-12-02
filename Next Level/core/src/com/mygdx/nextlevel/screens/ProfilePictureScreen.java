@@ -70,10 +70,21 @@ public class ProfilePictureScreen extends LoginScreen implements Screen {
         Label title = new Label("Profile Picture Selection", titleStyle);
 
         Image pic1 = new Image(new Texture(Gdx.files.internal("userIcon.png")));
-        Image pic2 = new Image(new Texture(Gdx.files.internal("smash-mario.jpeg")));
-        Image pic3 = new Image(new Texture(Gdx.files.internal("odyssey-mario.jpeg")));
-        Image pic4 = new Image(new Texture(Gdx.files.internal("mario.jpeg")));
-        Image pic5 = new Image(new Texture(Gdx.files.internal("buildImg.jpg")));
+//        pic1.setSize(1f, 1f);
+        Image pic2 = new Image(new Texture(Gdx.files.internal("hero.png")));
+//        pic2.setSize(1f, 1f);
+        Image pic3 = new Image(new Texture(Gdx.files.internal("fire-hero.png")));
+//        pic3.setSize(1f, 1f);
+        Image pic4 = new Image(new Texture(Gdx.files.internal("life-steal-hero.png")));
+//        pic4.setSize(1f, 1f);
+        Image pic5 = new Image(new Texture(Gdx.files.internal("star-hero.png")));
+//        pic5.setSize(1f, 1f);
+        Image pic6 = new Image(new Texture(Gdx.files.internal("enemy.jpg")));
+//        pic6.setSize(1f, 1f);
+        Image pic7 = new Image(new Texture(Gdx.files.internal("enemy_jump.png")));
+//        pic7.setSize(1f, 1f);
+        Image pic8 = new Image(new Texture(Gdx.files.internal("enemy_shoot.png")));
+//        pic8.setSize(1f, 1f);
 
         //pic1.scaleBy(-.5f);
 
@@ -100,35 +111,59 @@ public class ProfilePictureScreen extends LoginScreen implements Screen {
 
         pic2.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                selectedPic = "smash-mario.jpeg";
-                selectedPicLabel.setText("Selected Profile Pic: Smash Mario");
+                selectedPic = "hero.png";
+                selectedPicLabel.setText("Selected Profile Pic: Hero");
             }
         });
         pic2.addListener(new HoverListener());
 
         pic3.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                selectedPic = "odyssey-mario.jpeg";
-                selectedPicLabel.setText("Selected Profile Pic: Odyssey Mario");
+                selectedPic = "fire-hero.png";
+                selectedPicLabel.setText("Selected Profile Pic: Fire Hero");
             }
         });
         pic3.addListener(new HoverListener());
 
         pic4.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                selectedPic = "mario.jpeg";
-                selectedPicLabel.setText("Selected Profile Pic: Mario");
+                selectedPic = "life-steal-hero.png";
+                selectedPicLabel.setText("Selected Profile Pic: Life Steal Hero");
             }
         });
         pic4.addListener(new HoverListener());
 
         pic5.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                selectedPic = "buildImg.jpg";
-                selectedPicLabel.setText("Selected Profile Pic: Building Icon");
+                selectedPic = "star-hero.png";
+                selectedPicLabel.setText("Selected Profile Pic: Star Hero");
             }
         });
         pic5.addListener(new HoverListener());
+
+        pic6.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                selectedPic = "enemy.jpg";
+                selectedPicLabel.setText("Selected Profile Pic: Enemy");
+            }
+        });
+        pic6.addListener(new HoverListener());
+
+        pic7.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                selectedPic = "enemy_jump.png";
+                selectedPicLabel.setText("Selected Profile Pic: Jumping Enemy");
+            }
+        });
+        pic7.addListener(new HoverListener());
+
+        pic8.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                selectedPic = "enemy_shoot.png";
+                selectedPicLabel.setText("Selected Profile Pic: Fire Enemy");
+            }
+        });
+        pic8.addListener(new HoverListener());
 
         applyButton.addListener(setProfilePicListener());
         applyButton.addListener(new HoverListener());
@@ -154,6 +189,10 @@ public class ProfilePictureScreen extends LoginScreen implements Screen {
         mainTable.add(new Label("", skin));
         mainTable.add(pic4).padBottom(10);
         mainTable.add(pic5).padBottom(10);
+        mainTable.add(pic6).padBottom(10);
+        mainTable.row();
+        mainTable.add(pic7).padBottom(10);
+        mainTable.add(pic8).padBottom(10);
         mainTable.row();
         mainTable.add(new Label("", skin));
         mainTable.add(selectedPicLabel).width(200);

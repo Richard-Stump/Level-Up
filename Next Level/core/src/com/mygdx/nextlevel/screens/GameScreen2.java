@@ -260,8 +260,8 @@ public class GameScreen2 extends Timer implements Screen {
 
 
         player = new Player2(this, playerTextures, 1.0f, 1.0f);
-        actors.add(new Enemy2(this,enemyJumpTexture, 16, 2, Enemy2.Action.JUMP, player));
-//        actors.add(new Enemy2(this,enemyShootTexture, 16, 2, Enemy2.Action.SHOOT, player));
+//        actors.add(new Enemy2(this,enemyJumpTexture, 16, 2, Enemy2.Action.JUMP, player));
+        actors.add(new Enemy2(this,enemyShootTexture, 16, 2, Enemy2.Action.SHOOT, player));
 //        actors.add(new Enemy2(this, enemyTexture, 16, 2, Enemy2.Action.DEFAULT, player));
         actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
         actors.add(new End(this, endTexture, 30, 1, player));
