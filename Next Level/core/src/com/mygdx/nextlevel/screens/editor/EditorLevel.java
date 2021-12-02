@@ -137,19 +137,20 @@ public class EditorLevel {
         fileWriter.print("width=\"" + Integer.toString(width) + "\" ");
         fileWriter.print("height=\"" + Integer.toString(height) + "\" ");
         fileWriter.println("tilewidth=\"32\" tileheight=\"32\" infinite=\"0\">");
-        fileWriter.println("<tileset firstgid=\"1\" source=\"test2.tsx\"/>");
+        fileWriter.println(" <tileset firstgid=\"1\" source=\"test2.tsx\"/>");
 
         //Write all of the properties that belong to the actual map itself. Not every property needs to be written,
         //So this has to be done manually.
-        fileWriter.println("<properties>");
-        fileWriter.println("<property name=\"collectCoins\" type=\"bool\" value=\"" + collectCoins + "\"/>");
-        fileWriter.println("<property name=\"beatTimeLimit\" type=\"bool\" value=\"" + beatTimeLimit + "\"/>");
-        fileWriter.println("<property name=\"killAllEnemies\" type=\"bool\" value=\"" + killAllEnemies + "\"/>");
-        fileWriter.println("<property name=\"killNoEnemies\" type=\"bool\" value=\"" + killNoEnemies + "\"/>");
-        fileWriter.println("<property name=\"keepJewel\" type=\"bool\" value=\"" + keepJewel + "\"/>");
-        fileWriter.println("<property name=\"gravity\" type=\"float\" value=\"" + gravity + "\"/>");
-        fileWriter.println("<property name=\"timeLimit\" type=\"float\" value=\"" + timeLimit + "\"/>");
-        fileWriter.println("<property name=\"autoScroll\" type=\"float\" value=\"" + autoScroll + "\"/>");
+        fileWriter.println(" <properties>");
+        fileWriter.println("  <property name=\"collectCoins\" type=\"bool\" value=\"" + collectCoins + "\"/>");
+        fileWriter.println("  <property name=\"beatTimeLimit\" type=\"bool\" value=\"" + beatTimeLimit + "\"/>");
+        fileWriter.println("  <property name=\"killAllEnemies\" type=\"bool\" value=\"" + killAllEnemies + "\"/>");
+        fileWriter.println("  <property name=\"killNoEnemies\" type=\"bool\" value=\"" + killNoEnemies + "\"/>");
+        fileWriter.println("  <property name=\"keepJewel\" type=\"bool\" value=\"" + keepJewel + "\"/>");
+        fileWriter.println("  <property name=\"gravity\" type=\"float\" value=\"" + gravity + "\"/>");
+        fileWriter.println("  <property name=\"timeLimit\" type=\"int\" value=\"" + timeLimit + "\"/>");
+        fileWriter.println("  <property name=\"autoScroll\" type=\"float\" value=\"" + autoScroll + "\"/>");
+        fileWriter.println(" </properties>");
 
         writeObjects(fileWriter);
 
@@ -165,7 +166,7 @@ public class EditorLevel {
      * @param fileWriter The PrintWriter to use to write the data
      */
     private void writeObjects(PrintWriter fileWriter) {
-        fileWriter.println("<objectgroup id=\"2\" name=\"Object Layer 1\">");
+        fileWriter.println(" <objectgroup id=\"2\" name=\"Object Layer 1\">");
 
         //Loop through each of the placed objects in the map, and if they're not null, write them to the file
         //Give each object a unique id.
@@ -178,7 +179,7 @@ public class EditorLevel {
             }
         }
 
-        fileWriter.println("</objectgroup>");
+        fileWriter.println(" </objectgroup>");
     }
 
     /**
@@ -190,7 +191,7 @@ public class EditorLevel {
      * @param po            The Placed object to write to the file
      */
     private void writeObject(int x, int y, int id, PrintWriter fileWriter, PlacedObject po) {
-        fileWriter.println("<object id=\"" + id + "\" " +
+        fileWriter.println("  <object id=\"" + id + "\" " +
                 "name=\"" + po.object.getClass().getSimpleName() + "\" " +
                 "x=\"" + x + "\" " +
                 "y=\"" + y + "\" " +
@@ -199,7 +200,7 @@ public class EditorLevel {
 
         writeObjectProperties(fileWriter, po);
 
-        fileWriter.println("</object>");
+        fileWriter.println("  </object>");
     }
 
     /**
@@ -208,7 +209,7 @@ public class EditorLevel {
      * @param po            The PlacedObject to write
      */
     private void writeObjectProperties(PrintWriter fileWriter, PlacedObject po) {
-        fileWriter.println("<properties>");
+        fileWriter.println("   <properties>");
 
         Object obj = po.object;
 
@@ -219,11 +220,19 @@ public class EditorLevel {
             Property property = (Property)field.getDeclaredAnnotation(Property.class);
 
             if(property != null) {
-                writeProperty(fileWriter, property, field, obj);
+                //extract the value of the field from the passed object
+                Object value;
+                try {
+                    value = field.get(obj);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                writeProperty(fileWriter, property, field, value);
             }
         }
 
-        fileWriter.println("</properties>");
+        fileWriter.println("   </properties>");
     }
 
     /**
@@ -231,20 +240,11 @@ public class EditorLevel {
      * @param fileWriter The FileWriter to use for writing
      * @param property   The Property annotation of the property to write
      * @param field      The actual field containing the data to write
-     * @param object     The object that the field belongs to
+     * @param value      The value of the property
      */
-    private void writeProperty(PrintWriter fileWriter, Property property, Field field, Object object) {
-        //extract the value of the field from the passed object
-        Object value;
-        try {
-            value = field.get(object);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return;
-        }
-
+    private void writeProperty(PrintWriter fileWriter, Property property, Field field, Object value) {
         Class fieldType = field.getType();
-        fileWriter.print("<property name=\"" + field.getName() + "\" ");
+        fileWriter.print("    <property name=\"" + field.getName() + "\" ");
 
         //The actual text written to the file depends on the file type of the property
         if(fieldType.equals(Integer.TYPE)) {
