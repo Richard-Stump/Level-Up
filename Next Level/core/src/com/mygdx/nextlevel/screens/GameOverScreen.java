@@ -67,6 +67,21 @@ public class GameOverScreen implements Screen {
         this.player = player2;
     }
 
+    public GameOverScreen() {
+        atlas = new TextureAtlas("skin/uiskin.atlas");
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
+
+        batch = game.batch;
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(960, 500, camera);
+        viewport.apply();
+
+        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
+        camera.update();
+
+        stage = new Stage(viewport, batch);
+    }
+
     @Override
     public void show() {
         //Stage should control input:
@@ -105,6 +120,8 @@ public class GameOverScreen implements Screen {
         tryAgainButton.addListener(new HoverListener());
 
         Table mainTable = new Table();
+
+        mainTable.setSkin(skin);
         //mainTable.setDebug(true);
         mainTable.add(title).colspan(2).width(labelWidth + 100).padBottom(labelBottomPadding + 20);
         mainTable.row();

@@ -35,6 +35,7 @@ public class ErrorDialog {
                 if (object.equals(1)) {
                     errorDialog.hide();
                 } else if (object.equals(2)) {
+                    System.out.println("obj = 2");
                     if ((buttonOpRight.compareTo("Publish")) == 0) {
                         dbHandler.publishLevel(id);
                         button.setText("Unpublish");

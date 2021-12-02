@@ -5,10 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.mygdx.nextlevel.screens.LevelSelectionScreen;
-import com.mygdx.nextlevel.screens.LoginScreen;
-import com.mygdx.nextlevel.screens.MainMenuScreen;
-import com.mygdx.nextlevel.screens.RegisterScreen;
+import com.mygdx.nextlevel.screens.*;
 
 public class NextLevel extends Game {
 	public SpriteBatch batch;
