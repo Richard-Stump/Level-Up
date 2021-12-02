@@ -214,8 +214,8 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Player Textures
         playerTextures.add(PlayerIndex.DEFAULT.value, new Texture("hero.png"));
-        playerTextures.add(PlayerIndex.POWERUP.value, new Texture("paragoomba.png"));
-        playerTextures.add(PlayerIndex.STAR.value, new Texture("stargoomba.png"));
+        playerTextures.add(PlayerIndex.POWERUP.value, new Texture("powerup.png"));
+        playerTextures.add(PlayerIndex.STAR.value, new Texture("star-hero.png"));
         playerTextures.add(PlayerIndex.FIRE.value, new Texture("fire-hero.png"));
         playerTextures.add(PlayerIndex.LIFESTEAL.value, new Texture("life-steal-hero.png"));
 
@@ -246,7 +246,7 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Checkpoint Textures
         checkpointTextures.add(CheckpointIndex.DEFAULT.value, new Texture("checkpoint.png"));
-        checkpointTextures.add(CheckpointIndex.TRIGGERED.value, new Texture("checkpoint2.jpg"));
+        checkpointTextures.add(CheckpointIndex.TRIGGERED.value, new Texture("checkpoint2.png"));
 
         //End Texture
         endTexture = new Texture("end.jpeg");
