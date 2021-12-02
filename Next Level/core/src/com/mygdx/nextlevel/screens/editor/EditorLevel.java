@@ -50,10 +50,6 @@ public class EditorLevel {
     @Property(group="Completion Flags", displayName="Kill No Enemies") public boolean killNoEnemies;
     @Property(group="Completion Flags", displayName="Keep The Jewel Safe") public boolean keepJewel;
 
-
-
-    public static int NONE = -1;
-
     //creates an empty tile map
     public EditorLevel(int width, int height) {
         this.width = width;
@@ -75,6 +71,10 @@ public class EditorLevel {
 
     public void placeObject(int x, int y, PlaceableObject po, Object o) {
         objects[x][y] = new PlacedObject(po, po.clazz.cast(o));
+    }
+
+    public void clearObject(int x, int y) {
+        objects[x][y] = null;
     }
 
     public void updateFromProperties() {

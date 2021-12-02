@@ -245,7 +245,10 @@ public class LevelView extends Widget {
         Object object = screen.getObjectToPlace();
         PlaceableObject placeable = screen.getPlaceableToPlace();
 
-        editorLevel.placeObject((int)x, (int)y, placeable, object);
+        if(shift)
+            editorLevel.clearObject((int)x, (int)y);
+        else
+            editorLevel.placeObject((int)x, (int)y, placeable, object);
     }
 
     /**
