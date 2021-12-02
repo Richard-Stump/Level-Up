@@ -573,6 +573,7 @@ public class GameScreen2 extends Timer implements Screen {
             while (!despawnQueue.isEmpty()) {
                 Actor2 a = despawnQueue.remove();
                 if (a.getClass().equals(Item2.class)) {
+                    player.incScore(20);
                     itemsList.remove(a);
                 }
                 if (a.getClass().equals(Coin.class) || a.getClass().equals(CoinStatic.class)) {
