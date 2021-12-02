@@ -105,11 +105,25 @@ public class TileMap extends ApplicationAdapter{
 
     public void loadObjects(GameScreen2 screen, ArrayList<Actor2> actors){
         //TODO are we going to have object layer for certain actor groups (PLayer | Enemy | block | items)
+        //TODO have tile maps show different layers
+        //TODO Item Texture (add all to item texture list)
+        //TODO Fire Textures (add to player/enemy fire)
+        //TODO Player Textures (add all to player texture list)
+        //TODO Coin texture (add to coin texutre)
+        //TODO Jewel texture (add to Jewel texutre)
+        //TODO Enemy Textures (add all to enemy texture list)
+        //TODO Block Textures (add to itemblocktextures & coin block texture list along with block texture)
+        //TODO Checkpoint Textures (add all to Checkpoint texture list)
+        //TODO End texture (add to End texutre)
+
+
+
         MapLayer objectLayer = tiledMap.getLayers().get("Object Layer 1");
         int i = 0;
         //FIXME work texture
         for(MapObject object : objectLayer.getObjects()){
-            if(object instanceof TextureMapObject && i != 0) {
+//            if(object instanceof TextureMapObject && i != 0) {
+            if(object instanceof TextureMapObject) {
                 TextureMapObject mapObject = (TextureMapObject) object;
                 ArrayList<Texture> test = new ArrayList<>();
                 float x = (float) object.getProperties().get("x");
