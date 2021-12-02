@@ -92,19 +92,22 @@ public class ServerDBHandler {
     }
 
     /**
-     * Remove a user from the database
-     * TODO: also remove all the user's levels
+     * Remove a user from the database, as well as all of their levels
      * If you just want to deactivate a user (and keep all the levels they uploaded), see deactivate below
      *
      * @param username username to remove
      */
     public void removeUser(String username) {
         String sqlQuery = "DELETE FROM api.users WHERE username = ?;";
+        String sqlQuery2 = "DELETE FROM api.levels WHERE author = ?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setString(1, username);
-
             statement.executeUpdate();
+
+            PreparedStatement statement1 = connection.prepareStatement(sqlQuery2);
+            statement1.setString(1, username);
+            statement1.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Most likely, you do not have the permissions to remove a user from the users table.");
             e.printStackTrace();
@@ -956,7 +959,11 @@ public class ServerDBHandler {
      * @return number of people that rated the level
      */
     public int getRatingCount(String id) {
-        return getLevelRatings(id).size();
+        ArrayList<Double> ratings = getLevelRatings(id);
+        if (ratings == null) {
+            return 0;
+        }
+        return ratings.size();
     }
 
     /**

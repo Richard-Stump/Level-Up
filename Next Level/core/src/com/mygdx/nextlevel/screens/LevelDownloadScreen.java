@@ -306,8 +306,7 @@ public class LevelDownloadScreen implements Screen {
             return null;
         } else {
             levelInfo = dbServer.getLevelByID(id, false);
-            //TODO: get the number of users that have rated the level, currently having an issue with db
-            //numRaters = dbServer.getRatingCount(id);
+            numRaters = dbServer.getRatingCount(id);
         }
 
         //right column labels
