@@ -283,7 +283,6 @@ public class Player2 extends Actor2 {
                 fireFlowerItem = true;
             } else if (heldItem instanceof LifeStealItem2) {
                 lifeStealItem = true;
-                powerUp = true;
             }
             heldItem = null;
         }
@@ -407,15 +406,30 @@ public class Player2 extends Actor2 {
             if (heldItem == null) {
                 heldItem = (Item2) other;
                 score += 20;
+            } else {
+                powerUp = true;
+                mushroomItem = true;
+                drawTexture = true;
+                score += 20;
             }
         } else if (other instanceof StarItem2) {
             if (heldItem == null) {
                 heldItem = (Item2) other;
                 score += 20;
+            } else {
+                powerUp = true;
+                mushroomItem = true;
+                drawTexture = true;
+                score += 20;
             }
         } else if (other instanceof LifeStealItem2) {
             if (heldItem == null) {
                 heldItem = (Item2) other;
+                score += 20;
+            } else {
+                powerUp = true;
+                mushroomItem = true;
+                drawTexture = true;
                 score += 20;
             }
         }
