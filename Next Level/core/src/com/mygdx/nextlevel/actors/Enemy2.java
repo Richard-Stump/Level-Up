@@ -40,6 +40,10 @@ public class Enemy2 extends Actor2 {
         Action(final int newValue) { value = newValue; }
     }
 
+
+    //for use by the level editor
+    public Enemy2() {}
+
     public Enemy2(GameScreen2 screen, ArrayList<Texture> textures, float x, float y, Enemy2.Action action, Player2 player) {
         super(screen, x, y, 0.8f, 0.8f);
         boxCollider = new BoxCollider(
