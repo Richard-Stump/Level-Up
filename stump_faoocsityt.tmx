@@ -11,7 +11,21 @@
 <property name="timeLimit" type="float" value="0"/>
 <property name="autoScroll" type="float" value="false"/>
 <objectgroup id="2" name="Object Layer 1">
-<object id="1" name="Block2" x="0" y="0" 
+<object id="1" name="Player2" x="0" y="0" >
+<properties>
+<property name="strTest" type="string" value="Testing"/>
+<property name="difficulty" type="string" value="HARD"/>
+<property name="defaultMoveSpeed" type="float" value="12.0"/>
+<property name="defaultJump" type="float" value="13.0"/>
+</properties>
+</object>
+<object id="1" name="Player2" x="31" y="31" >
+<properties>
+<property name="strTest" type="string" value="Testing"/>
+<property name="difficulty" type="string" value="HARD"/>
+<property name="defaultMoveSpeed" type="float" value="12.0"/>
+<property name="defaultJump" type="float" value="13.0"/>
+</properties>
 </object>
 </objectgroup>
 </map>

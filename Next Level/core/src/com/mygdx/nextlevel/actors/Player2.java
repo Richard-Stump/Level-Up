@@ -7,8 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.CollisionGroups;
+import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.screens.GameScreen2;
 import com.mygdx.nextlevel.screens.editor.Placeable;
+import com.mygdx.nextlevel.screens.editor.Property;
 import com.sun.tools.javac.comp.Check;
 
 import java.util.ArrayList;
@@ -72,6 +74,10 @@ public class Player2 extends Actor2 {
 //    private int condition = 5;
 //    private int condition2 = 2;
 
+    @Property(group="Test", displayName = "Test String") public String strTest = "Testing";
+    @Property(group="Test", displayName = "Test Enum")  public Difficulty difficulty = Difficulty.HARD;
+    @Property(group="Movement", displayName="Default Speed") public float defaultMoveSpeed = 12.0f;
+    @Property(group="Movement", displayName="Default Jump") public float defaultJump = 13.0f;
 
 
     //Fire Timer
