@@ -66,6 +66,9 @@ public class Hud2 {
         tm = new TileMap(tileMapName);
 //        worldTimer = 50;
         worldTimer = tm.getTimeLimit();
+        if (worldTimer <= 0) {
+            worldTimer = 300;
+        }
         time = 0;
         score = 0;
 //        condition = player.getCondition();
@@ -77,7 +80,7 @@ public class Hud2 {
         table.top();
         table.setFillParent(true); //table is the size of the stage
 
-        countdownLabel = new Label(String.format("%03f", worldTimer), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
+        countdownLabel = new Label(String.format("%.00f", worldTimer), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         scoreLabel = new Label(String.format("%06d", score), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         levelLabel = new Label("1-1", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
@@ -178,7 +181,7 @@ public class Hud2 {
             time += delta;
             if (time >= 1) {
                 worldTimer--;
-                countdownLabel.setText(String.format("%03f", worldTimer));
+                countdownLabel.setText(String.format("%.00f", worldTimer));
                 time = 0;
                 if (worldTimer == 0 && !player.getWin() && player.getConditions().contains(5)) {
                     player.setFail(true);
