@@ -32,7 +32,7 @@ public class CoinStatic extends Actor2 {
         if(other instanceof Player2 || other instanceof PushBlock) {
             screen.queueActorDespawn(this);
 //            player.incScore(20);
-            screen.getPlayer().incScore(20);
+//            screen.getPlayer().incScore(20);
         }
     }
 
