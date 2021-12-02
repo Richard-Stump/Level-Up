@@ -110,6 +110,9 @@ public class TileMap extends ApplicationAdapter{
             //TODO Will add actors into the game from TileMap
             if(object instanceof TextureMapObject && i !=0) {
                 TextureMapObject mapObject = (TextureMapObject) object;
+                ArrayList<Texture> test = new ArrayList<>();
+                test.add(mapObject.getTextureRegion().getTexture());
+                actors.add(new Block2(screen, test, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
 //                actors.add(new Block2(screen, new Texture("coin.png"),mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
             }
             i++;

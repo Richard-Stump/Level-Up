@@ -288,6 +288,8 @@ public class GameScreen2 extends Timer implements Screen {
 //        actors.add(new Jewel(this, jewelTexture, 2, 1));
         actors.add(player);
 
+        tm.loadObjects(this, actors);
+
         hud = new Hud2(game.batch, player);
 
         //Add all checkpoints into checkpointlist
