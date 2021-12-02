@@ -538,6 +538,7 @@ public class ServerDBHandler {
             return -1;
         }
 
+        //if the title is different, update it
         if ((!levelInfo.getTitle().equals("")) && (levelInfo.getTitle() != null)) {
             String sqlQueryTitle = "UPDATE api.levels SET title=? WHERE levelid=?;";
 
@@ -551,7 +552,8 @@ public class ServerDBHandler {
             }
         }
 
-        if ((levelInfo.getAuthor() != null) && (!levelInfo.getAuthor().equals(""))) {
+        //if the record time is different, update it if needed
+        if ((levelInfo.getBestTimeUser() != null) && (!levelInfo.getBestTimeUser().equals(""))) {
             String sqlQueryBestTime = "UPDATE api.levels SET besttimeuser=?, besttime=? WHERE (levelid=?) AND (besttime > ?);";
             //update metadata (play count, ratings, record time, record time user)
             try (PreparedStatement statement = connection.prepareStatement(sqlQueryBestTime)) {
@@ -566,6 +568,7 @@ public class ServerDBHandler {
             }
         }
 
+        //update playcount if needed
         String sqlQueryPlayCount = "UPDATE api.levels SET playcount=? WHERE (levelid=?) AND (playcount < ?);";
         try (PreparedStatement statement = connection.prepareStatement(sqlQueryPlayCount)) {
             statement.setInt(1, levelInfo.getPlayCount());
@@ -577,6 +580,7 @@ public class ServerDBHandler {
             ret = 0;
         }
 
+        //update tags if they were changed
         String sqlQueryTags = "UPDATE api.levels SET tags=? WHERE levelid=?;";
         if (levelInfo.getTags().size() != 0) {
             //update tags
@@ -590,6 +594,7 @@ public class ServerDBHandler {
             }
         }
 
+        //update difficulty if it changed
         String sqlQueryDifficulty = "UPDATE api.levels SET difficulty=? WHERE levelid=?;";
         if (levelInfo.getDifficulty() != Difficulty.NONE.ordinal()) {
             //update difficulty

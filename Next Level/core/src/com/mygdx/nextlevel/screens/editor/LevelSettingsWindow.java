@@ -6,6 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
+import com.mygdx.nextlevel.LevelInfo;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.EditLevelScreen;
 
 public class LevelSettingsWindow extends VisWindow {
@@ -34,6 +36,13 @@ public class LevelSettingsWindow extends VisWindow {
                 propertyTable.updateObjectProperties();
                 level.updateFromProperties();
                 close();
+
+                //TODO: update the level.info object to reflect the changes so we can update the entry in the database
+
+                ServerDBHandler dbServer = new ServerDBHandler();
+                dbServer.updateLevel(level.info);
+                dbServer.closeConnection();
+
                 stage.setScrollFocus(previousScrollFocus);
             }
         });
