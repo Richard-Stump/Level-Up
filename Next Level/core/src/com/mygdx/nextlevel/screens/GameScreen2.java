@@ -175,8 +175,6 @@ public class GameScreen2 extends Timer implements Screen {
 
          //Create and load tilemap
          tileMapName = levelInfo + ".tmx";
-         tileMapName = "jchen3_ckqa.tmx"; //TODO remove
-         tileMapName = "test3.tmx"; //TODO remove
          tm = new TileMap(tileMapName);
 
          //setup the initial map

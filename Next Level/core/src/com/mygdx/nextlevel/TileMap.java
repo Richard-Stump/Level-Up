@@ -104,16 +104,23 @@ public class TileMap extends ApplicationAdapter{
     }
 
     public void loadObjects(GameScreen2 screen, ArrayList<Actor2> actors){
+        //TODO are we going to have object layer for certain actor groups (PLayer | Enemy | block | items)
         MapLayer objectLayer = tiledMap.getLayers().get("Object Layer 1");
         int i = 0;
+        //FIXME work texture
         for(MapObject object : objectLayer.getObjects()){
-            //TODO Will add actors into the game from TileMap
-            if(object instanceof TextureMapObject && i !=0) {
+            if(object instanceof TextureMapObject && i != 0) {
                 TextureMapObject mapObject = (TextureMapObject) object;
                 ArrayList<Texture> test = new ArrayList<>();
-                test.add(mapObject.getTextureRegion().getTexture());
+                float x = (float) object.getProperties().get("x");
+                float y = (float) object.getProperties().get("y");
+                float width = (float) object.getProperties().get("width");
+                float height = (float) object.getProperties().get("height");
+                mapObject.getTextureRegion().setRegion(x, y, width, height);
+                Texture texture = mapObject.getTextureRegion().getTexture();
+                mapObject.getTextureRegion().setRegion(mapObject.getTextureRegion().getRegionX() + x, mapObject.getTextureRegion().getRegionY() + y, width, height);
+                test.add(texture);
                 actors.add(new Block2(screen, test, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
-//                actors.add(new Block2(screen, new Texture("coin.png"),mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
             }
             i++;
         }
