@@ -132,6 +132,8 @@ public class GameScreen2 extends Timer implements Screen {
     public Texture jewelTexture;
     public Texture playerFireTexture;
     public Texture enemyFireTexture;
+    public Texture enemyShootTexture;
+    public Texture enemyJumpTexture;
 
     /**
      * Initialize the game screen
@@ -213,11 +215,11 @@ public class GameScreen2 extends Timer implements Screen {
         }
 
         //Player Textures
-        playerTextures.add(PlayerIndex.DEFAULT.value, new Texture("goomba.png"));
+        playerTextures.add(PlayerIndex.DEFAULT.value, new Texture("hero.png"));
         playerTextures.add(PlayerIndex.POWERUP.value, new Texture("paragoomba.png"));
         playerTextures.add(PlayerIndex.STAR.value, new Texture("stargoomba.png"));
-        playerTextures.add(PlayerIndex.FIRE.value, new Texture("firegoomba.png"));
-        playerTextures.add(PlayerIndex.LIFESTEAL.value, new Texture("lifesteal-goomba.png"));
+        playerTextures.add(PlayerIndex.FIRE.value, new Texture("fire-hero.png"));
+        playerTextures.add(PlayerIndex.LIFESTEAL.value, new Texture("life-steal-hero.png"));
 
         //Item Textures
         itemTextures.add(ItemIndex.SLOW.value, "slow-mushroom.png");
@@ -241,6 +243,8 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Enemy Texture
         enemyTexture = new Texture("enemy.jpg");
+        enemyShootTexture = new Texture("enemy_shoot.png");
+        enemyJumpTexture = new Texture("enemy_jump.png");
 
         //Checkpoint Textures
         checkpointTextures.add(CheckpointIndex.DEFAULT.value, new Texture("checkpoint.png"));
@@ -256,9 +260,11 @@ public class GameScreen2 extends Timer implements Screen {
         enemyFireTexture = new Texture("blue-fire.png");
         playerFireTexture = new Texture("fireball.png");
 
+
         player = new Player2(this, playerTextures, 1.0f, 1.0f);
-//        actors.add(new Enemy2(this,enemyTexture, 16, 2, Enemy2.Action.SHOOT, player));
-        actors.add(new Enemy2(this, enemyTexture, 16, 2, Enemy2.Action.DEFAULT, player));
+        actors.add(new Enemy2(this,enemyJumpTexture, 16, 2, Enemy2.Action.JUMP, player));
+//        actors.add(new Enemy2(this,enemyShootTexture, 16, 2, Enemy2.Action.SHOOT, player));
+//        actors.add(new Enemy2(this, enemyTexture, 16, 2, Enemy2.Action.DEFAULT, player));
         actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
         actors.add(new End(this, endTexture, 30, 1, player));
         actors.add(new Block2(this,itemBlockTextures, 7, 4, true, ItemIndex.ALL.value, false));

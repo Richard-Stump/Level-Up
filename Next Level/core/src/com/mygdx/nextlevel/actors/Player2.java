@@ -16,7 +16,7 @@ import java.util.ArrayList;
 @Placeable(
         group = "Stage",
         displayName = "Player",
-        textures = {"goomba.png" }
+        textures = {"hero.png" }
 )
 public class Player2 extends Actor2 {
     protected Vector2 worldSpawn;
