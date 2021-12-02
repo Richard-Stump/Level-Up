@@ -55,6 +55,12 @@ public class GameScreen2 extends Timer implements Screen {
 
         PlayerIndex(final int newValue) { value = newValue; }
     }
+    public enum EnemyIndex {
+        DEFAULT(0), JUMP(1), SHOOT(2);
+        private final int value;
+
+        EnemyIndex(final int newValue) { value = newValue; }
+    }
     public enum BlockIndex {
         DEFAULT(0), EMPTY(1);
         private final int value;
@@ -119,22 +125,21 @@ public class GameScreen2 extends Timer implements Screen {
     public ArrayList<Actor2> blockList;     //The list of all item blocks that need to be reset
     public ArrayList<Actor2> checkpointList;//The list of all checkpoints in the game screen
     public ArrayList<Actor2> fireList;      //The list of all fire that is in the game
+    public ArrayList<Enemy2.Action> enemyList; //The list of all enemies actions that die in the game
 
     //Textures for all actors within the game
     public ArrayList<Texture> playerTextures;
+    public ArrayList<Texture> enemyTextures;
     public ArrayList<Texture> itemBlockTextures;
     public ArrayList<Texture> coinBlockTextures;
     public ArrayList<String> itemTextures;
     public ArrayList<Texture> checkpointTextures;
-    public Texture enemyTexture;
     public Texture endTexture;
     public Texture coinTexture;
     public Texture blockTexture;
     public Texture jewelTexture;
     public Texture playerFireTexture;
     public Texture enemyFireTexture;
-    public Texture enemyShootTexture;
-    public Texture enemyJumpTexture;
 
     /**
      * Initialize the game screen
@@ -167,8 +172,10 @@ public class GameScreen2 extends Timer implements Screen {
          blockList = new ArrayList<>();
          checkpointList = new ArrayList<>();
          fireList = new ArrayList<>();
+         enemyList = new ArrayList<>();
 
          playerTextures = new ArrayList<>();
+         enemyTextures = new ArrayList<>();
          itemTextures = new ArrayList<>();
          itemBlockTextures = new ArrayList<>();
          coinBlockTextures = new ArrayList<>();
@@ -242,9 +249,9 @@ public class GameScreen2 extends Timer implements Screen {
         blockTexture = new Texture("Block.png");
 
         //Enemy Texture
-        enemyTexture = new Texture("enemy.jpg");
-        enemyShootTexture = new Texture("enemy_shoot.png");
-        enemyJumpTexture = new Texture("enemy_jump.png");
+        enemyTextures.add(EnemyIndex.DEFAULT.value, new Texture("enemy.jpg"));
+        enemyTextures.add(EnemyIndex.JUMP.value, new Texture("enemy_jump.png"));
+        enemyTextures.add(EnemyIndex.SHOOT.value, new Texture("enemy_shoot.png"));
 
         //Checkpoint Textures
         checkpointTextures.add(CheckpointIndex.DEFAULT.value, new Texture("checkpoint.png"));
@@ -262,11 +269,7 @@ public class GameScreen2 extends Timer implements Screen {
 
 
         player = new Player2(this, playerTextures, 1.0f, 1.0f);
-//        actors.add(new Enemy2(this,enemyJumpTexture, 16, 2, Enemy2.Action.JUMP, player));
-//        actors.add(new Enemy2(this,enemyShootTexture, 16, 2, Enemy2.Action.SHOOT, player));
-        actors.add(new Enemy2(this, enemyJumpTexture, 16, 2, Enemy2.Action.JUMP, player));
-//        actors.add(new Enemy2(this,enemyShootTexture, 16, 2, Enemy2.Action.SHOOT, player));
-//        actors.add(new Enemy2(this, enemyTexture, 16, 2, Enemy2.Action.DEFAULT, player));
+        actors.add(new Enemy2(this, enemyTextures, 16, 2, Enemy2.Action.JUMP, player));
         actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
         actors.add(new End(this, endTexture, 30, 1, player));
         actors.add(new Block2(this,itemBlockTextures, 7, 4, true, ItemIndex.ALL.value, false));
@@ -386,6 +389,9 @@ public class GameScreen2 extends Timer implements Screen {
                 blockList.add(o);
             } else if (o instanceof Block2 && ((Block2) o).isSpawnItem()) {
                 blockList.add(o);
+            } else if (o instanceof Enemy2) {
+                enemyList.add(((Enemy2) o).getAction());
+                despawnedActors.add(o);
             }
 //            else if (o instanceof Jewel) {
 //                System.out.println("Spawn jewel");
@@ -505,8 +511,9 @@ public class GameScreen2 extends Timer implements Screen {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
                     actors.add((Jewel) c.newInstance(this, jewelTexture, i.x, i.y));
                 } else if (i.type.equals(Enemy2.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class,float.class, float.class, Enemy2.Action.class, Player2.class);
-                    actors.add((Enemy2) c.newInstance(this, enemyTexture, i.x, i.y, Enemy2.Action.SHOOT, player));
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, ArrayList.class,float.class, float.class, Enemy2.Action.class, Player2.class);
+                    actors.add((Enemy2) c.newInstance(this, enemyTextures, i.x, i.y, enemyList.get(0), player));
+                    enemyList.remove(0);
                 } else if (i.type.equals(BlueFire.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, Texture.class);
                     actors.add((BlueFire) c.newInstance(this, i.x, i.y, enemyFireTexture));

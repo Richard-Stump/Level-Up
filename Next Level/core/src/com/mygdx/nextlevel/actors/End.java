@@ -16,6 +16,9 @@ public class End extends Actor2 {
     protected Player2 player;
     protected BoxCollider collider;
 
+    //for use by the level editor
+    public End() {}
+
     public End(GameScreen2 screen, Texture texture, float x, float y, Player2 player) {
         super(screen, x, y, 1, 1);
         this.player = player;

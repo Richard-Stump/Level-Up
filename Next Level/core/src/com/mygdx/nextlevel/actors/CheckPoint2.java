@@ -20,6 +20,9 @@ public class CheckPoint2 extends Actor2 {
     protected BoxCollider collider;
     protected ArrayList<Texture> textures;
 
+    //for use by the level editor
+    public CheckPoint2() {}
+
     public CheckPoint2(GameScreen2 screen, ArrayList<Texture> textures, float x, float y, Player2 player) {
         super(screen, x, y, 1, 1);
         this.player = player;

@@ -8,6 +8,8 @@ import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 import com.mygdx.nextlevel.screens.editor.Placeable;
 
+import java.util.ArrayList;
+
 @Placeable(
         group = "Enemies",
         displayName = "Enemy",
@@ -27,11 +29,22 @@ public class Enemy2 extends Actor2 {
     float fireTimer = 0;
     Player2 player;
 
+//    public enum Action {
+//        DEFAULT, JUMP, SHOOT;
+//    }
+
     public enum Action {
-        DEFAULT, JUMP, SHOOT;
+        DEFAULT(0), JUMP(1), SHOOT(2);
+        private final int value;
+
+        Action(final int newValue) { value = newValue; }
     }
 
-    public Enemy2(GameScreen2 screen, Texture texture, float x, float y, Enemy2.Action action, Player2 player) {
+
+    //for use by the level editor
+    public Enemy2() {}
+
+    public Enemy2(GameScreen2 screen, ArrayList<Texture> textures, float x, float y, Enemy2.Action action, Player2 player) {
         super(screen, x, y, 0.8f, 0.8f);
         boxCollider = new BoxCollider(
                 this,
@@ -45,7 +58,7 @@ public class Enemy2 extends Actor2 {
         this.player = player;
         this.action = action;
         turnTimer = timeTillTurn;
-        setRegion(texture);
+        setRegion(textures.get(action.value));
     }
 
     public void update(float delta) {
@@ -158,6 +171,8 @@ public class Enemy2 extends Actor2 {
             jump = true;
         }
     }
+
+    public Enemy2.Action getAction() { return this.action; }
 
     public void dispose() {
         boxCollider.dispose();

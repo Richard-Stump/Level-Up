@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class EditorLevel {
@@ -119,6 +120,12 @@ public class EditorLevel {
      *  - "Object Layer #"  Stores the object
      */
 
+    /**
+     * Export the map to a given file in the TMX file format
+     * @param filename Name of the file to write to
+     * @return         The file object used to write the file
+     * @throws FileNotFoundException
+     */
     public File exportTo(String filename) throws FileNotFoundException {
         File file = new File(filename);
 
@@ -130,17 +137,20 @@ public class EditorLevel {
         fileWriter.print("width=\"" + Integer.toString(width) + "\" ");
         fileWriter.print("height=\"" + Integer.toString(height) + "\" ");
         fileWriter.println("tilewidth=\"32\" tileheight=\"32\" infinite=\"0\">");
-        fileWriter.println("<tileset firstgid=\"1\" source=\"test2.tsx\"/>");
-        fileWriter.println("<properties>");
+        fileWriter.println(" <tileset firstgid=\"1\" source=\"test2.tsx\"/>");
 
-        fileWriter.println("<property name=\"collectCoins\" type=\"bool\" value=\"" + collectCoins + "\"/>");
-        fileWriter.println("<property name=\"beatTimeLimit\" type=\"bool\" value=\"" + beatTimeLimit + "\"/>");
-        fileWriter.println("<property name=\"killAllEnemies\" type=\"bool\" value=\"" + killAllEnemies + "\"/>");
-        fileWriter.println("<property name=\"killNoEnemies\" type=\"bool\" value=\"" + killNoEnemies + "\"/>");
-        fileWriter.println("<property name=\"keepJewel\" type=\"bool\" value=\"" + keepJewel + "\"/>");
-        fileWriter.println("<property name=\"gravity\" type=\"float\" value=\"" + gravity + "\"/>");
-        fileWriter.println("<property name=\"timeLimit\" type=\"float\" value=\"" + timeLimit + "\"/>");
-        fileWriter.println("<property name=\"autoScroll\" type=\"float\" value=\"" + autoScroll + "\"/>");
+        //Write all of the properties that belong to the actual map itself. Not every property needs to be written,
+        //So this has to be done manually.
+        fileWriter.println(" <properties>");
+        fileWriter.println("  <property name=\"collectCoins\" type=\"bool\" value=\"" + collectCoins + "\"/>");
+        fileWriter.println("  <property name=\"beatTimeLimit\" type=\"bool\" value=\"" + beatTimeLimit + "\"/>");
+        fileWriter.println("  <property name=\"killAllEnemies\" type=\"bool\" value=\"" + killAllEnemies + "\"/>");
+        fileWriter.println("  <property name=\"killNoEnemies\" type=\"bool\" value=\"" + killNoEnemies + "\"/>");
+        fileWriter.println("  <property name=\"keepJewel\" type=\"bool\" value=\"" + keepJewel + "\"/>");
+        fileWriter.println("  <property name=\"gravity\" type=\"float\" value=\"" + gravity + "\"/>");
+        fileWriter.println("  <property name=\"timeLimit\" type=\"int\" value=\"" + timeLimit + "\"/>");
+        fileWriter.println("  <property name=\"autoScroll\" type=\"float\" value=\"" + autoScroll + "\"/>");
+        fileWriter.println(" </properties>");
 
         writeObjects(fileWriter);
 
@@ -151,9 +161,15 @@ public class EditorLevel {
         return file;
     }
 
+    /**
+     * Write all the objects in the tilemap to the TMX file.
+     * @param fileWriter The PrintWriter to use to write the data
+     */
     private void writeObjects(PrintWriter fileWriter) {
-        fileWriter.println("<objectgroup id=\"2\" name=\"Object Layer 1\">");
+        fileWriter.println(" <objectgroup id=\"2\" name=\"Object Layer 1\">");
 
+        //Loop through each of the placed objects in the map, and if they're not null, write them to the file
+        //Give each object a unique id.
         int id = 1;
         for(int y = 0; y < height; y++) {
             for(int x = 0; x < width; x++) {
@@ -163,11 +179,19 @@ public class EditorLevel {
             }
         }
 
-        fileWriter.println("</objectgroup>");
+        fileWriter.println(" </objectgroup>");
     }
 
+    /**
+     * Writes a given object to the TMX file.
+     * @param x             The X coordinate, in tiles, where the object is located
+     * @param y             The Y coordinate, in tiles, where the object is located
+     * @param id            The id of the object. Each object should get a unique id
+     * @param fileWriter    The PrintWriter to use for writing
+     * @param po            The Placed object to write to the file
+     */
     private void writeObject(int x, int y, int id, PrintWriter fileWriter, PlacedObject po) {
-        fileWriter.println("<object id=\"" + id + "\" " +
+        fileWriter.println("  <object id=\"" + id + "\" " +
                 "name=\"" + po.object.getClass().getSimpleName() + "\" " +
                 "x=\"" + x + "\" " +
                 "y=\"" + y + "\" " +
@@ -176,18 +200,76 @@ public class EditorLevel {
 
         writeObjectProperties(fileWriter, po);
 
-        fileWriter.println("</object>");
+        fileWriter.println("  </object>");
     }
 
+    /**
+     * Writes all the properties for a placed object to the TMX file
+     * @param fileWriter    FileWriter to use
+     * @param po            The PlacedObject to write
+     */
     private void writeObjectProperties(PrintWriter fileWriter, PlacedObject po) {
-        //TODO: Implement
+        fileWriter.println("   <properties>");
+
+        Object obj = po.object;
+
+        //loop through all the fields in the class and write the ones that are marked with the
+        //@Property annotation
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for(Field field : fields) {
+            Property property = (Property)field.getDeclaredAnnotation(Property.class);
+
+            if(property != null) {
+                //extract the value of the field from the passed object
+                Object value;
+                try {
+                    value = field.get(obj);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                writeProperty(fileWriter, property, field, value);
+            }
+        }
+
+        fileWriter.println("   </properties>");
     }
 
+    /**
+     * Writes a single property of an object to the TMX file.
+     * @param fileWriter The FileWriter to use for writing
+     * @param property   The Property annotation of the property to write
+     * @param field      The actual field containing the data to write
+     * @param value      The value of the property
+     */
+    private void writeProperty(PrintWriter fileWriter, Property property, Field field, Object value) {
+        Class fieldType = field.getType();
+        fileWriter.print("    <property name=\"" + field.getName() + "\" ");
+
+        //The actual text written to the file depends on the file type of the property
+        if(fieldType.equals(Integer.TYPE)) {
+            fileWriter.println("type=\"int\" value=\"" + value.toString() + "\"/>");
+        }
+        else if (fieldType.equals(Boolean.TYPE)) {
+            fileWriter.println("type=\"bool\" value=\"" + value.toString() + "\"/>");
+        }
+        else if (fieldType.equals(Float.TYPE)) {
+            fileWriter.println("type=\"float\" value=\"" + value.toString() + "\"/>");
+        }
+        else if (fieldType.equals(String.class)) {
+            fileWriter.println("type=\"string\" value=\"" + value + "\"/>");
+        }
+        else if (fieldType.isEnum()) {
+            fileWriter.println("type=\"string\" value=\"" + value.toString() + "\"/>");
+        }
+
+    }
 
     public void importFrom(File file) {
         importFrom(file.getName());
     }
 
+    ///TODO: ReWrite
     public void importFrom(String filename) {
         TiledMap tiledMap = new TmxMapLoader().load(filename);
         MapProperties tiledMapProperties = tiledMap.getProperties();
