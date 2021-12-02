@@ -12,6 +12,7 @@ import com.mygdx.nextlevel.enums.Tag;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
@@ -77,8 +78,13 @@ public class EditorLevel {
         objects[x][y] = null;
     }
 
+    /**
+     * This updates the level data based on how the properties in the class are set
+     */
     public void updateFromProperties() {
         resize(width, height);
+
+        info.setDifficulty(difficulty.ordinal());
     }
 
     public Texture getTexture(int x, int y) {
@@ -136,26 +142,47 @@ public class EditorLevel {
         fileWriter.println("<property name=\"timeLimit\" type=\"float\" value=\"" + timeLimit + "\"/>");
         fileWriter.println("<property name=\"autoScroll\" type=\"float\" value=\"" + autoScroll + "\"/>");
 
-        fileWriter.println("</properties>");
-        fileWriter.print("<layer id=\"1\" name=\"Tile Layer 1\" ");
-        fileWriter.print("width=\"" + Integer.toString(width) + "\" ");
-        fileWriter.println("height=\"" + Integer.toString(height) + "\">");
-        fileWriter.println("<data encoding=\"csv\">");
+        writeObjects(fileWriter);
 
-        for(int y = height - 1; y >= 0; y--) {
-            for(int x = 0; x < width; x++) {
-            }
-
-            fileWriter.println();
-        }
-
-        fileWriter.println("</data>");
-        fileWriter.println("</layer>");
         fileWriter.println("</map>");
 
         fileWriter.flush();
+
         return file;
     }
+
+    private void writeObjects(PrintWriter fileWriter) {
+        fileWriter.println("<objectgroup id=\"2\" name=\"Object Layer 1\">");
+
+        int id = 1;
+        for(int y = 0; y < height; y++) {
+            for(int x = 0; x < width; x++) {
+                PlacedObject po = objects[x][y];
+                if(po != null && po.object != null)
+                    writeObject(x, y, id, fileWriter, po);
+            }
+        }
+
+        fileWriter.println("</objectgroup>");
+    }
+
+    private void writeObject(int x, int y, int id, PrintWriter fileWriter, PlacedObject po) {
+        fileWriter.println("<object id=\"" + id + "\" " +
+                "name=\"" + po.object.getClass().getSimpleName() + "\" " +
+                "x=\"" + x + "\" " +
+                "y=\"" + y + "\" " +
+                ">"
+        );
+
+        writeObjectProperties(fileWriter, po);
+
+        fileWriter.println("</object>");
+    }
+
+    private void writeObjectProperties(PrintWriter fileWriter, PlacedObject po) {
+        //TODO: Implement
+    }
+
 
     public void importFrom(File file) {
         importFrom(file.getName());
