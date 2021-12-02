@@ -395,8 +395,8 @@ public class Player2 extends Actor2 {
             slowItem = false;
             score += 20;
         } else if (other instanceof LifeItem2) {
-            lifeCount++;
-            score += 20;
+//            lifeCount++;
+//            score += 20;
         } else if (other instanceof MushroomItem2) {
             powerUp = true;
             mushroomItem = true;

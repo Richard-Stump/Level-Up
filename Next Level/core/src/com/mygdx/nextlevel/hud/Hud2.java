@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.TileMap;
 import com.mygdx.nextlevel.actors.Item;
 import com.mygdx.nextlevel.actors.Item2;
 import com.mygdx.nextlevel.actors.Player;
@@ -32,7 +33,7 @@ public class Hud2 {
     private TextureAtlas atlas;
     protected Skin skin;
 
-    public Integer worldTimer;
+    public float worldTimer;
     public float time;
     public long score;
 
@@ -53,14 +54,18 @@ public class Hud2 {
     Image itemImg;
     Label jewelLabel;
     Image jewelImg;
+    String tileMapName;
+    TileMap tm;
     private int condition = -1;
     ArrayList<Integer> conditionList;
 
-    public Hud2(SpriteBatch spriteBatch, Player2 player) {
+    public Hud2(SpriteBatch spriteBatch, Player2 player, String levelInfo) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
-
-        worldTimer = 50;
+        tileMapName = levelInfo + ".tmx";
+        tm = new TileMap(tileMapName);
+//        worldTimer = 50;
+        worldTimer = tm.getTimeLimit();
         time = 0;
         score = 0;
 //        condition = player.getCondition();
@@ -72,7 +77,7 @@ public class Hud2 {
         table.top();
         table.setFillParent(true); //table is the size of the stage
 
-        countdownLabel = new Label(String.format("%03d", worldTimer), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
+        countdownLabel = new Label(String.format("%03f", worldTimer), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         scoreLabel = new Label(String.format("%06d", score), new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         levelLabel = new Label("1-1", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
@@ -173,7 +178,7 @@ public class Hud2 {
             time += delta;
             if (time >= 1) {
                 worldTimer--;
-                countdownLabel.setText(String.format("%03d", worldTimer));
+                countdownLabel.setText(String.format("%03f", worldTimer));
                 time = 0;
                 if (worldTimer == 0 && !player.getWin() && player.getConditions().contains(5)) {
                     player.setFail(true);
@@ -223,7 +228,7 @@ public class Hud2 {
         }
     }
 
-    public Integer getTime() {
+    public float getTime() {
         return worldTimer;
     }
 

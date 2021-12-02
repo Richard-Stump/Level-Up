@@ -81,6 +81,7 @@ public class GameScreen2 extends Timer implements Screen {
 
     long start;
     long end;
+    public ArrayList<Integer> conditionList;
 
     public HashMap<Item2, String> itemToName = new HashMap<>();
 
@@ -176,6 +177,7 @@ public class GameScreen2 extends Timer implements Screen {
          //Create and load tilemap
          tileMapName = levelInfo + ".tmx";
          tm = new TileMap(tileMapName);
+         conditionList = tm.getConditionList();
 
          //setup the initial map
          init();
@@ -290,7 +292,7 @@ public class GameScreen2 extends Timer implements Screen {
 
         tm.loadObjects(this, actors);
 
-        hud = new Hud2(game.batch, player);
+        hud = new Hud2(game.batch, player, tileMapName.substring(0, tileMapName.length()-4));
 
         //Add all checkpoints into checkpointlist
         for (Actor2 actor : actors) {
@@ -338,7 +340,7 @@ public class GameScreen2 extends Timer implements Screen {
         fireList.clear();
         despawnedActors.clear();
 
-        hud = new Hud2(game.batch, player);
+        hud = new Hud2(game.batch, player, tileMapName.substring(0, tileMapName.length()-4));
 
         shouldReset = false;
 
@@ -374,6 +376,9 @@ public class GameScreen2 extends Timer implements Screen {
             despawnQueue.add(o);
 
             if (o instanceof Item2) { //If this is an item
+                if (o instanceof LifeItem2) {
+                    player.addLife();
+                }
                 itemsList.remove(o);
             } else if (o instanceof Fire2 || o instanceof BlueFire) {
                 fireList.remove(o);

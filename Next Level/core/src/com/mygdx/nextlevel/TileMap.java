@@ -169,4 +169,11 @@ public class TileMap extends ApplicationAdapter{
     public float getxAxis() { return xAxis; }
     public boolean getAutoScroll() { return autoScroll; }
     public float getScreenWidth() { return screenWidth; }
+
+    public ArrayList<Integer> getConditionList() {
+        return conditionList;
+    }
+    public float getTimeLimit() {
+        return timeLimit;
+    }
 }
