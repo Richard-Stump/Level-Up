@@ -64,6 +64,7 @@ public class LevelsDBController {
                 "dateDownloaded DATE," +
                 "tags TEXT," +
                 "dateCreated DATE," +
+                "public BOOLEAN," +
                 "tmx BLOB," +
                 "tsx BLOB," +
                 "png BLOB);";
@@ -101,8 +102,8 @@ public class LevelsDBController {
         }
 
         String sqlQuery = "INSERT INTO " + tableName + " (id, title, author, bestTime, rating, " +
-                "difficulty, playCount, dateDownloaded, tags, dateCreated)" +
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                "difficulty, playCount, dateDownloaded, tags, dateCreated, public)" +
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setString(1, levelInfo.getId());
@@ -125,6 +126,8 @@ public class LevelsDBController {
             statement.setString(9, tagString);
 
             statement.setDate(10, levelInfo.getDateCreated());
+
+            statement.setBoolean(11, levelInfo.isPublic());
 
             //will return the number of rows affected
             rowsChanged = statement.executeUpdate();
@@ -584,6 +587,7 @@ public class LevelsDBController {
             levelInfo.setBestTime(resultSet.getFloat("bestTime"));
             levelInfo.setDateDownloaded(resultSet.getDate("dateDownloaded"));
             levelInfo.setDateCreated(resultSet.getDate("dateCreated"));
+            levelInfo.setPublic(resultSet.getBoolean("public"));
 
             ArrayList<Tag> tags = new ArrayList<>();
             String tagString = resultSet.getString("tags");
