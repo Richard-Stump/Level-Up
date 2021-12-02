@@ -316,9 +316,9 @@ public class Player2 extends Actor2 {
     public void onCollision(Actor2 other, BoxCollider.Side side) {
         //Check if player collides with enemy
         Vector2 pos = boxCollider.getPosition();
-        if (other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) && invulernable) {
+        if (other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT || side == Side.TOP) && invulernable) {
             //do nothing
-        } else if((other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT) && !starItem && !invulernable) || other instanceof BlueFire) {
+        } else if((other instanceof Enemy2 && (side == Side.LEFT || side == Side.RIGHT || side == Side.TOP) && !starItem && !invulernable) || other instanceof BlueFire) {
             if (jewel) {
                 jewel = false;
                 screen.queueActorSpawn(pos.x, pos.y + 1.0f, Jewel.class);
