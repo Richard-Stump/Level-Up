@@ -118,11 +118,9 @@ public class TileMap extends ApplicationAdapter{
 
 
 
-        MapLayer objectLayer = tiledMap.getLayers().get("Object Layer 1");
-        int i = 0;
-        //FIXME work texture
+        MapLayer objectLayer = tiledMap.getLayers().get("Item Block");
+        //FIXME Create one for each actor
         for(MapObject object : objectLayer.getObjects()){
-//            if(object instanceof TextureMapObject && i != 0) {
             if(object instanceof TextureMapObject) {
                 TextureMapObject mapObject = (TextureMapObject) object;
                 ArrayList<Texture> test = new ArrayList<>();
@@ -136,7 +134,24 @@ public class TileMap extends ApplicationAdapter{
                 test.add(texture);
                 actors.add(new Block2(screen, test, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
             }
-            i++;
+        }
+
+        objectLayer = tiledMap.getLayers().get("Coin Block");
+        //FIXME work texture
+        for(MapObject object : objectLayer.getObjects()){
+            if(object instanceof TextureMapObject) {
+                TextureMapObject mapObject = (TextureMapObject) object;
+                ArrayList<Texture> test = new ArrayList<>();
+                float x = (float) object.getProperties().get("x");
+                float y = (float) object.getProperties().get("y");
+                float width = (float) object.getProperties().get("width");
+                float height = (float) object.getProperties().get("height");
+                mapObject.getTextureRegion().setRegion(x, y, width, height);
+                Texture texture = mapObject.getTextureRegion().getTexture();
+                mapObject.getTextureRegion().setRegion(mapObject.getTextureRegion().getRegionX() + x, mapObject.getTextureRegion().getRegionY() + y, width, height);
+                test.add(texture);
+                actors.add(new Block2(screen, test, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
+            }
         }
     }
 
