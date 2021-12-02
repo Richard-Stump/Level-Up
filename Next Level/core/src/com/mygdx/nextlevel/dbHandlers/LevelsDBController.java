@@ -138,11 +138,7 @@ public class LevelsDBController {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } /*catch (FileNotFoundException e) {
-            System.out.println("No file was found that is associated with this levelInfo object");
-            e.printStackTrace();
         }
-        */
         return -1;
     }
 

@@ -27,7 +27,6 @@ public class ServerDBTest {
 
     @BeforeClass
     public static void populateDatabase() {
-        //TODO: save old database, and put in a sample database
         //also probably not a good idea to run when application is in production...
 
         //put in temporary account

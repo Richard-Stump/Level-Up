@@ -245,9 +245,6 @@ public class ChangePasswordScreen extends LoginScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 isInfoCorrect = true;
 
-                //TODO: update database and if error send message if successful send message
-                // send back to main screen or ?
-                //game.setScreen(new MainMenuScreen(game));
                 oldPassword = oldPasswordField.getText();
                 newPassword = newPasswordField.getText();
                 verifyNewPassword = verifyNewPasswordField.getText();

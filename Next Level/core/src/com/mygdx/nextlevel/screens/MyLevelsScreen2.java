@@ -39,7 +39,6 @@ public class MyLevelsScreen2 implements Screen {
     private Viewport viewport;
     private Stage stage;
     private final String titleText = "Level Select";
-    private DownloadedLevelsDB dbDownloaded;
     private CreatedLevelsDB dbCreated;
     private ServerDBHandler dbHandler;
 
@@ -98,7 +97,6 @@ public class MyLevelsScreen2 implements Screen {
 
         dbCreated = new CreatedLevelsDB();
         dbHandler = new ServerDBHandler();
-        dbDownloaded = new DownloadedLevelsDB();
         selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";
         activeDB = "created";
@@ -129,25 +127,6 @@ public class MyLevelsScreen2 implements Screen {
         //screen title
         activeDBLabel = new Label("Your created levels:", skin);
 
-//        final TextButton createdLevelsButton = new TextButton("My Levels", skin);
-//        final TextButton downloadedLevelsButton = new TextButton("Downloaded Levels", skin);
-//        createdLevelsButton.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                createdLevelsButton.setColor(Color.GREEN);
-//                downloadedLevelsButton.setColor(Color.BLUE);
-//                activeDB = "created";
-//
-//                activeDBLabel.setText("Your created levels:");
-//
-//                selectedId = "";
-//                selectedLevel.setText("Select a level");
-//                levelVerticalGroup.clear();
-//                levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
-//            }
-//        });
-
-
         mainTable.add(backButton).height(labelHeight +10).padTop(10).padLeft(5);
         mainTable.add(activeDBLabel).padTop(10).expandX().left().padLeft(5).height(labelHeight);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
@@ -168,9 +147,6 @@ public class MyLevelsScreen2 implements Screen {
 
         scrollPane = new ScrollPane(levelVerticalGroup, skin);
         scrollPane.setForceScroll(false, true);
-
-//        levelVerticalGroup.clear();
-//        levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
 
         //make the sorting and search thing on right side
         Table searchSortGroup = getSearchSortTable();
@@ -271,15 +247,12 @@ public class MyLevelsScreen2 implements Screen {
             }
             //TODO: create listener for publish
             publishButton.addListener(publishLevelListener(levelInfo, id, publishButton));
-           // publishButton.addListener(publishListener(levelInfo, id));
             publishButton.addListener(new HoverListener());
             infoTable.add(publishButton).padBottom(10).padLeft(5).width(90);
 
             infoTable.row();
 
             Image line = new Image(new Texture(Gdx.files.internal("horzline.png")));
-//            line.setHeight(100);
-//            line.setWidth(500);
             infoTable.add(line).colspan(5);
             infoTable.row();
         }
@@ -305,13 +278,6 @@ public class MyLevelsScreen2 implements Screen {
             } else {
                 levelInfo = dbCreated.searchByID(id);
             }
-//        } else if (activeDB.equals("downloaded")) {
-//            if (!dbDownloaded.isDBActive()) {
-//                System.out.println("db is not active");
-//                return null;
-//            } else {
-//                levelInfo = dbDownloaded.searchByID(id);
-//            }
         } else {
             return null;
         }
@@ -351,13 +317,6 @@ public class MyLevelsScreen2 implements Screen {
             } else {
                 levelInfo = dbCreated.searchByID(id);
             }
-//        } else if (activeDB.equals("downloaded")) {
-//            if (!dbDownloaded.isDBActive()) {
-//                System.out.println("db is not active");
-//                return null;
-//            } else {
-//                levelInfo = dbDownloaded.searchByID(id);
-//            }
         } else {
             return null;
         }
@@ -391,8 +350,6 @@ public class MyLevelsScreen2 implements Screen {
                 String levelSelectedStr;
                 if (activeDB.equals("created")) {
                     levelSelectedStr = dbCreated.searchByID(id).getTitle();
-//                } else if (activeDB.equals("downloaded")){
-//                    levelSelectedStr = dbDownloaded.searchByID(id).getTitle();
                 } else {
                     levelSelectedStr = "error";
                 }
@@ -411,20 +368,6 @@ public class MyLevelsScreen2 implements Screen {
         };
     }
 
-//    private ChangeListener publishListener(final LevelInfo levelInfo, final String id) {
-//        return new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent event, Actor actor) {
-//                if (levelInfo.isPublic()) {
-//                    ErrorDialog unpublishLevelDialog = new ErrorDialog(skin, "Level is already published. " +
-//                            "Are you sure you want to unpublish the level? ", stage);
-//                } else {
-//                    ErrorDialog publishLevelDialog = new ErrorDialog(skin, "Are you sure you want to publish?", stage);
-//                }
-//            }
-//        };
-//    }
-
     private ClickListener publishLevelListener(final LevelInfo level, final String id, final TextButton publishButton) {
         return new ClickListener() {
             @Override
@@ -437,15 +380,11 @@ public class MyLevelsScreen2 implements Screen {
                     ErrorDialog unpublicLevelDialog = new ErrorDialog(skin, "Level is already published. Are you " +
                             "sure you want to unpublish " + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
                             "Unpublish", id, publishButton, level);
-//                    publishButton.setText("Publish");
-//                    level.setPublic(false);
                 } else {
                     //if no, are you sure you want to publish, then success or fail dialog
                     ErrorDialog publishLevelDialog = new ErrorDialog(skin, "Are you sure you want to publish "
                             + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
                             "Publish", id, publishButton, level);
-                    //publishButton.setText("Unpublish");
-                    //level.setPublic(true);
                 }
             }
         };
@@ -462,9 +401,6 @@ public class MyLevelsScreen2 implements Screen {
                 if (activeDB.equals("created")) {
                     selectedLevel.setText("Level Selected: " + dbCreated.searchByID(id).getTitle());
                 }
-//                } else if (activeDB.equals("downloaded")) {
-//                    selectedLevel.setText("Level Selected: " + dbDownloaded.searchByID(id).getTitle());
-//                }
                 selectedId = id;
                 isDeleting = true;
 
@@ -481,8 +417,6 @@ public class MyLevelsScreen2 implements Screen {
                                 ServerDBHandler serverDB = new ServerDBHandler();
                                 serverDB.removeLevel(id);
                                 serverDB.closeConnection();
-//                            } else if (activeDB.equals("downloaded")) {
-//                                dbDownloaded.removeLevelInfo(id);
                             }
                             levelVerticalGroup.clear();
                             levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
@@ -493,9 +427,6 @@ public class MyLevelsScreen2 implements Screen {
                 if (activeDB.equals("created")) {
                     dialog.text("Are you sure you want to delete " + dbCreated.searchByID(id).getTitle() + " from your account?\nThis cannot be undone");
                 }
-//                } else if (activeDB.equals("downloaded")) {
-//                    dialog.text("Are you sure you want to delete " + dbDownloaded.searchByID(id).getTitle() + " locally?");
-//                }
 
                 dialog.button("Delete", true);
                 dialog.button("Cancel", false);
@@ -510,8 +441,6 @@ public class MyLevelsScreen2 implements Screen {
                 delStage = new Stage(viewport, batch);
 
                 Gdx.input.setInputProcessor(delStage);
-
-                //delStage.addActor(dialog);
 
                 dialog.show(delStage);
             }
@@ -528,9 +457,6 @@ public class MyLevelsScreen2 implements Screen {
                 if (activeDB.equals("created")) {
                     System.out.println("Should be playing: " + dbCreated.searchByID(selectedId).getTitle());
                 }
-//                } else if (activeDB.equals("downloaded")) {
-//                    System.out.println("Should be playing: " + dbDownloaded.searchByID(selectedId).getTitle());
-//                }
                 //TODO: open the game screen with the level that is selected
 
             }
@@ -564,15 +490,6 @@ public class MyLevelsScreen2 implements Screen {
                 ongoingList = new ArrayList<>(dbCreated.sortByTitle());
                 //ongoingList = new ArrayList<>(dbHandler.getUsersCreatedLevels(username));
             }
-//        } else if (table.equals("downloaded")) {
-//            if (!searchBar.getText().equals("")) {
-//                ArrayList<LevelInfo> listTitles = new ArrayList<>(dbDownloaded.searchByTitle(searchBar.getText()));
-//                ArrayList<LevelInfo> listAuthors = new ArrayList<>(dbDownloaded.searchByAuthor(searchBar.getText()));
-//
-//                ongoingList = new ArrayList<>(dbDownloaded.combineLists(listTitles, listAuthors));
-//            } else {
-//                ongoingList = new ArrayList<>(dbDownloaded.sortByTitle());
-//            }
         } else {
             return null;
         }
