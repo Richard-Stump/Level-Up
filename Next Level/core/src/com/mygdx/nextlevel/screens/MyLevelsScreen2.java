@@ -375,6 +375,7 @@ public class MyLevelsScreen2 implements Screen {
     }
 
     private ClickListener editLevelListener(final String id) {
+        final Screen screen = this;
         return new ClickListener() {
           @Override
           public void clicked(InputEvent event, float x, float y) {
@@ -382,7 +383,7 @@ public class MyLevelsScreen2 implements Screen {
 
               LevelInfo info = handler.getLevelByID(id, true);
               if (info.isPublic()) {
-                  ErrorDialog errorDialog = new ErrorDialog(skin, "Unable to edit public level, please delete.", stage);
+                  ErrorDialog errorDialog = new ErrorDialog(skin, stage, ErrorDialog.Type.EDIT_ERROR, game, screen, info, null);
               } else {
                   game.setScreen(new EditLevelScreen(game, info));
               }
@@ -400,7 +401,7 @@ public class MyLevelsScreen2 implements Screen {
                 selectedLevel.setText("Level Selected: " + dbCreated.searchByID(id).getTitle());
 
                 ErrorDialog.Type type = level.isPublic() ? ErrorDialog.Type.UNPUBLISH : ErrorDialog.Type.PUBLISH;
-                ErrorDialog publishDialog = new ErrorDialog(skin, stage, type, game, screen, level);
+                ErrorDialog publishDialog = new ErrorDialog(skin, stage, type, game, screen, level, publishButton);
 
             }
         };
