@@ -42,11 +42,14 @@ public class GameOverScreen implements Screen {
 
     public TextButton mainMenuButton;
     public TextButton tryAgainButton;
+    public TextButton okButton;
 
     //static vars
     public static int labelWidth = 300;
     public static int labelBottomPadding = 20;
     public static int buttonWidth = 190;
+
+    boolean showRating = false;
 
     public GameOverScreen (NextLevel game, Hud2 hud2, String title, Player2 player2) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
@@ -65,6 +68,12 @@ public class GameOverScreen implements Screen {
         this.hud = hud2;
         this.title = title;
         this.player = player2;
+
+        if (title.equals("VICTORY")) {
+            showRating = true;
+        } else {
+            showRating = false;
+        }
     }
 
     public GameOverScreen() {
@@ -99,6 +108,7 @@ public class GameOverScreen implements Screen {
         finishConditionLabel = new Label("Finishing Conditions : ", titleStyle);
         mainMenuButton = new TextButton("Main Menu", skin);
         tryAgainButton = new TextButton("Try Again", skin);
+        okButton = new TextButton("Ok", skin);
 
         mainMenuButton.addListener(new ClickListener() {
             @Override
@@ -119,6 +129,16 @@ public class GameOverScreen implements Screen {
         });
         tryAgainButton.addListener(new HoverListener());
 
+        okButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+                //TODO: set screen to restart current level
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new RateScreen(game));
+            }
+        });
+        okButton.addListener(new HoverListener());
+
         Table mainTable = new Table();
 
         mainTable.setSkin(skin);
@@ -131,9 +151,12 @@ public class GameOverScreen implements Screen {
         mainTable.row();
 //        mainTable.add(finishConditionLabel).left().padRight(10).colspan(2).width(labelWidth).padBottom(labelBottomPadding + 20);
 //        mainTable.row();
-        mainTable.add(mainMenuButton).width(buttonWidth).right().padRight(5);
-        mainTable.add(tryAgainButton).width(buttonWidth).left().padLeft(5);
-
+        if (showRating) {
+            mainTable.add(okButton).width(buttonWidth);
+        } else {
+            mainTable.add(mainMenuButton).width(buttonWidth).right().padRight(5);
+            mainTable.add(tryAgainButton).width(buttonWidth).left().padLeft(5);
+        }
         //Set table to fill stage
         mainTable.setFillParent(true);
 
