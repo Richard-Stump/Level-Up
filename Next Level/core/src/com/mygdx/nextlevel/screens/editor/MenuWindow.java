@@ -10,7 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisWindow;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.Util.ErrorDialog;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.LevelsDBController;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
@@ -90,6 +92,20 @@ public class MenuWindow extends VisWindow {
                 } catch (FileNotFoundException e) {
                     stage.addActor(new MessageDialog("Could not open + \"" + lev.saveName + "\"to save the level"));
                 }
+            }
+        });
+
+        publishButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ErrorDialog dialog = new ErrorDialog(VisUI.getSkin(),
+                        stage,
+                        ErrorDialog.Type.PUBLISH,
+                        screen.getGame(),
+                        screen,
+                        level.info,
+                        new TextButton("I AM A DUMMY, DO NOT DELETE ME", VisUI.getSkin()) // Jank
+                        );
             }
         });
 

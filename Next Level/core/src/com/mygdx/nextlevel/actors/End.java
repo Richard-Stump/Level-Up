@@ -10,7 +10,7 @@ import com.mygdx.nextlevel.screens.editor.Placeable;
 @Placeable(
         group = "Stage",
         displayName = "Finish",
-        textures = { "end.jpeg" }
+        textures = { "flag.png" }
 )
 public class End extends Actor2 {
     protected Player2 player;

@@ -246,7 +246,7 @@ public class MyLevelsScreen2 implements Screen {
 
             TextButton publishButton = new TextButton("Publish", skin);
             if (levelInfo.isPublic()) {
-                publishButton.setText("Published");
+                publishButton.setText("Unpublish");
             }
             //TODO: create listener for publish
             publishButton.addListener(publishLevelListener(levelInfo, id, publishButton));
