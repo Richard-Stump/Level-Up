@@ -104,11 +104,6 @@ public class MyLevelsScreen2 implements Screen {
         activeDB = "created";
 
         username = LoginScreen.curAcc;
-    }
-
-    public void show() {
-        Gdx.input.setInputProcessor(stage);
-        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
 
         //start new layout
         mainTable = new Table();
@@ -175,6 +170,12 @@ public class MyLevelsScreen2 implements Screen {
         //end
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
+    }
+
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+
     }
 
     private Table getSearchSortTable() {
@@ -476,6 +477,8 @@ public class MyLevelsScreen2 implements Screen {
     }
 
     private ClickListener playLevel() {
+        final Screen screen = this;
+
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -490,7 +493,7 @@ public class MyLevelsScreen2 implements Screen {
 
 
                 ((Game)Gdx.app.getApplicationListener()).setScreen(
-                        new GameScreen2(game, dbCreated.searchByID(selectedId).getId(), GameScreen2.Mode.PLAY, null)
+                        new GameScreen2(game, dbCreated.searchByID(selectedId).getId(), GameScreen2.Mode.PLAY, screen)
                 );
             }
         };

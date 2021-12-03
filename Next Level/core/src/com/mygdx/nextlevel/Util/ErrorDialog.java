@@ -108,6 +108,26 @@ public class ErrorDialog {
         }, 0.1f);
     }
 
+    public ErrorDialog(String title, final Screen nextScreen, final NextLevel game, Skin skin, String message, final Stage stage) {
+        this.errorMessage = message;
+
+        this.errorDialog = new Dialog(title, skin) {
+            protected void result(Object object) {
+                System.out.println("Option: " + object);
+                if ((Boolean) object) {
+                    game.setScreen(nextScreen);
+                } else {
+                    Timer.schedule(new Timer.Task() {
+                        @Override
+                        public void run() {
+                            errorDialog.show(stage);
+                        }
+                    }, 0.5f);
+                }
+            }
+        };
+    }
+
     public ErrorDialog(String title, final String nextScreen, final NextLevel game, Skin skin, String message, final Stage stage) {
         this.errorMessage = message;
 

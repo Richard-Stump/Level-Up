@@ -194,7 +194,7 @@ public class GameScreen2 extends Timer implements Screen {
      *
      * @param game The screen that created this screen
      */
-    public GameScreen2(NextLevel game, String levelInfo) {
+    private GameScreen2(NextLevel game, String levelInfo) {
         this.game = game;
         this.levelInfo = levelInfo;
 
@@ -784,22 +784,13 @@ public class GameScreen2 extends Timer implements Screen {
 
     @Override
     public void dispose() {
-//<<<<<<< Updated upstream
-////        this.skin.dispose();
-////        this.atlas.dispose();
-//    }
-//    public boolean getPaused() {
-//        return paused;
-//    }
-//    public void setPaused(boolean set) {
-//        paused = set;
-//=======
-//
-//>>>>>>> Stashed changes
+
     }
+
     public boolean getPaused() {
         return paused;
     }
+
     public void setPaused(boolean set) {
         paused = set;
     }
@@ -815,13 +806,8 @@ public class GameScreen2 extends Timer implements Screen {
     public TileMap getTileMap() {
         return this.tm;
     }
+
+    public Mode getMode() { return mode; }
+
+    public Screen getPrevScreen() { return prevScreen; }
 }
-//<<<<<<< Updated upstream
-//    public void resetGameMenu() {
-//        menu.dispose();
-//        menu = new GameMenuDialog(skin, "Menu", stage, "Resume", "Restart", "Exit", this, this.game);
-//    }
-//}
-//=======
-//}
-//>>>>>>> Stashed changes

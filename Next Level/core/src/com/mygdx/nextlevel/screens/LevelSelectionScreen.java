@@ -348,6 +348,8 @@ public class LevelSelectionScreen implements Screen {
     }
 
     private ClickListener playLevel() {
+        final Screen screen = this;
+
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -362,7 +364,7 @@ public class LevelSelectionScreen implements Screen {
 //                System.out.println("Should be playing: " + levelInfo.getTitle());
                 //TODO: open the game screen with the level that is selected
                 System.out.println(levelInfo.getId());
-                new GameScreen2(game, levelInfo.getId(), GameScreen2.Mode.PLAY, null);
+                new GameScreen2(game, levelInfo.getId(), GameScreen2.Mode.PLAY, screen);
             }
         };
     }

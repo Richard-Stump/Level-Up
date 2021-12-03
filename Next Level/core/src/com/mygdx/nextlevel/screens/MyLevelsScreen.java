@@ -57,13 +57,6 @@ public class MyLevelsScreen implements Screen {
         stage = new Stage(viewport, batch);
         this.game = game;
         this.username = LoginScreen.getCurAcc();
-    }
-
-    @Override
-    public void show() {
-        //Setup i/o for the screen.
-        Gdx.input.setInputProcessor(stage);
-        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
 
         Label.LabelStyle titleStyle = skin.get("title-plain", Label.LabelStyle.class);
         Table mainTable = new Table();
@@ -111,6 +104,15 @@ public class MyLevelsScreen implements Screen {
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
         stage.addActor(backButton);
+    }
+
+    @Override
+    public void show() {
+        //Setup i/o for the screen.
+        Gdx.input.setInputProcessor(stage);
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+
+
     }
 
     public Table addLevelTable(final LevelInfo level, Drawable background, Label.LabelStyle titleStyle) {
