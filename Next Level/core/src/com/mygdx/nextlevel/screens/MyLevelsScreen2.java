@@ -97,6 +97,7 @@ public class MyLevelsScreen2 implements Screen {
 
         dbCreated = new CreatedLevelsDB();
         dbServer = new ServerDBHandler();
+        dbCreated.updateCreatedDatabase();
         selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";
         activeDB = "created";
