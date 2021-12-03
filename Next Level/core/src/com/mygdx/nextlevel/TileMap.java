@@ -40,6 +40,19 @@ public class TileMap extends ApplicationAdapter{
     TiledMapRenderer tiledMapRenderer;
     public static ArrayList<Integer> conditionList = new ArrayList<>();
 
+    //for test cases
+    public static TiledMap tmTest;
+    public static MapProperties tmProperties;
+    public static ArrayList<Integer> conditionListTest = new ArrayList<>();
+    public static boolean collectCoinTest;
+    public static boolean beatTimeLimitTest;
+    public static boolean killAllEnemiesTest;
+    public static boolean killNoEnemiesTest;
+    public static boolean keepJewelTest;
+    public static boolean autoScrollTest;
+    public static float timeLimitTest;
+    public static float gravityTest;
+
     //Tile Map Properties
     int mapWidth;
     int mapHeight;
@@ -58,6 +71,8 @@ public class TileMap extends ApplicationAdapter{
     float screenWidth;
     float screenHeight;
 
+    public TileMap(){}
+
     public TileMap(String filename) {
         tiledMap = new TmxMapLoader2().load(filename);
         tiledMapProperties = tiledMap.getProperties();
@@ -75,9 +90,11 @@ public class TileMap extends ApplicationAdapter{
         killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
         killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
         keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
+
         timeLimit = tiledMapProperties.get("timeLimit", Integer.class);
         autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
         gravity = tiledMapProperties.get("gravity", Float.class);
+
 
         if (collectCoin) {
             conditionList.add(1);
@@ -262,5 +279,46 @@ public class TileMap extends ApplicationAdapter{
     }
     public float getGravity() {
         return gravity;
+    }
+
+
+
+    static public void createTMX() {
+        tmTest = new TmxMapLoader2().load("stump_tprkjymj.tmx");
+        tmProperties = tmTest.getProperties();
+        collectCoinTest = tmProperties.get("collectCoins", Boolean.class);
+        beatTimeLimitTest = tmProperties.get("beatTimeLimit", Boolean.class);
+        killAllEnemiesTest = tmProperties.get("killAllEnemies", Boolean.class);
+        killNoEnemiesTest = tmProperties.get("killNoEnemies", Boolean.class);
+        keepJewelTest = tmProperties.get("keepJewel", Boolean.class);
+        timeLimitTest = tmProperties.get("timeLimit", Float.class);
+        gravityTest = tmProperties.get("gravity", Float.class);
+        if (collectCoinTest) {
+            conditionListTest.add(1);
+        }
+        if (beatTimeLimitTest) {
+            conditionListTest.add(5);
+        }
+        if (killAllEnemiesTest) {
+            conditionListTest.add(2);
+        }
+        if (killNoEnemiesTest) {
+            conditionListTest.add(3);
+        }
+        if (keepJewelTest) {
+            conditionListTest.add(4);
+        }
+    }
+
+    static public ArrayList<Integer> getConditionListTest() {
+        return conditionListTest;
+    }
+
+    static public float getTimeLimitTest1() {
+        return timeLimitTest;
+    }
+
+    static public float getGravityTest1() {
+        return gravityTest;
     }
 }
