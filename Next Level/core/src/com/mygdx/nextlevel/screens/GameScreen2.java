@@ -357,6 +357,12 @@ public class GameScreen2 extends Timer implements Screen {
         }
 
         shouldReset = false;
+        tm.render(camera, player, true);
+        pb.getCollider().dispose();
+        pb.createBoxCollider(tm.getxAxis() - tm.getScreenWidth()/2f);
+        if (!tm.getAutoScroll()) {
+            pb.getCollider().setStatic();
+        }
     }
 
     /**
