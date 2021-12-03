@@ -21,12 +21,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Asset;
-import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.dbHandlers.AssetHandler;
-import com.mygdx.nextlevel.enums.Difficulty;
-import com.mygdx.nextlevel.enums.Tag;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,9 +44,9 @@ public class AssetDownloadScreen implements Screen {
     public static final int STAGE_HEIGHT = 1080 / 2;
 
     private String selectedId;
-    private Label selectedLevel;
+    private Label selectedAsset;
     private Table mainTable;
-    private VerticalGroup levelVerticalGroup;
+    private VerticalGroup assetVerticalGroup;
 
     public TextButton searchButton;
     public TextButton downloadButton;
@@ -85,7 +82,7 @@ public class AssetDownloadScreen implements Screen {
         stage = new Stage(viewport, batch);
 
         dbAssets = new AssetHandler();
-        selectedLevel = new Label("Asset Selected: none", skin);
+        selectedAsset = new Label("Asset Selected: none", skin);
         selectedId = "";
     }
 
@@ -110,15 +107,8 @@ public class AssetDownloadScreen implements Screen {
         });
 
         //screen title
-        Label levelSelectLabel = new Label("All Assets:", skin);
+        Label assetSelectLabel = new Label("All Assets:", skin);
 
-        //current user overview
-        //HorizontalGroup userInfo = new HorizontalGroup();
-        //Label usernameLabel = new Label(LoginScreen.getCurAcc(), skin);
-        //userInfo.addActor(usernameLabel);
-        //add stuff here for user info
-
-        //TODO: delete downloaded assets
         final TextButton downloadedAssetsButton = new TextButton("Delete Downloaded Assets", skin);
         downloadedAssetsButton.addListener(new ClickListener() {
             @Override
@@ -129,18 +119,18 @@ public class AssetDownloadScreen implements Screen {
         downloadedAssetsButton.addListener(new HoverListener());
 
         mainTable.add(backButton).height(labelHeight +10).padTop(10).padLeft(5);
-        mainTable.add(levelSelectLabel).expandX().left().padLeft(5).padTop(10);
+        mainTable.add(assetSelectLabel).expandX().left().padLeft(5).padTop(10);
         //mainTable.add(usernameLabel).width(200).padTop(10);
         mainTable.add(downloadedAssetsButton);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
 
-        //set up level information section
+        //set up asset information section
         Table infoTable = getAssetTable(new ArrayList<>(dbAssets.sortAllByTitle()));
-        levelVerticalGroup = new VerticalGroup();
-        levelVerticalGroup.addActor(infoTable);
+        assetVerticalGroup = new VerticalGroup();
+        assetVerticalGroup.addActor(infoTable);
 
-        scrollPane = new ScrollPane(levelVerticalGroup, skin);
+        scrollPane = new ScrollPane(assetVerticalGroup, skin);
         scrollPane.setForceScroll(true, true);
 
         //make the sorting and search thing on right side
@@ -151,15 +141,15 @@ public class AssetDownloadScreen implements Screen {
         mainTable.add(searchSortGroup).top().padLeft(5);
         mainTable.row();
 
-        //row 3: empty placeholder, currently selected level, play button
+        //row 3: empty placeholder, currently selected asset, play button
 
         downloadButton = new TextButton("Play", skin);
-        downloadButton.addListener(downloadLevel());
+        downloadButton.addListener(downloadAsset());
         downloadButton.addListener(new HoverListener());
         downloadButton.setColor(Color.LIGHT_GRAY);
 
         mainTable.add();
-        mainTable.add(selectedLevel).left().padBottom(20).padLeft(5);
+        mainTable.add(selectedAsset).left().padBottom(20).padLeft(5);
         mainTable.add(downloadButton).width(200).padBottom(20).padLeft(5);
 
         //end
@@ -176,8 +166,6 @@ public class AssetDownloadScreen implements Screen {
         Label searchLabel = new Label("Search:", skin);
         searchBar = new TextField("", skin);
         searchBar.setMessageText("By Asset Name, Author");
-        
-        //table.setDebug(true);
 
         searchButton = new TextButton("Search", skin);
         searchButton.addListener(searchButton());
@@ -188,13 +176,11 @@ public class AssetDownloadScreen implements Screen {
         table.row();
 
         table.add(searchButton).padTop(20).width(200);
-        //table.row();
         return table;
     }
 
     private Table getAssetTable(ArrayList<Asset> assets) {
         Table infoTable = new Table();
-        //infoTable.setDebug(true);
 
         for (Asset asset: assets) {
             String id = asset.getAssetID();
@@ -207,14 +193,13 @@ public class AssetDownloadScreen implements Screen {
     }
 
     /**
-     * Groups title, author, difficulty, and tags into one VerticalGroup
-     * @param id id of level
+     * Groups title and author into one VerticalGroup
+     * @param id id of asset
      * @return VerticalGroup
      */
     private Table getLeftColumn(String id) {
         Table leftTable = new Table();
         Asset asset;
-        //leftTable.setDebug(true);
 
         //verify database is connected
         if (dbAssets == null) {
@@ -246,6 +231,7 @@ public class AssetDownloadScreen implements Screen {
         Asset asset;
         //rightTable.setDebug(true);
 
+        //TODO: show image?
         //verify database is connected
         if (dbAssets == null) {
             System.out.println("db is not active");
@@ -261,11 +247,10 @@ public class AssetDownloadScreen implements Screen {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //outline the selected level
-                selectedLevel.setText("Asset Selected: " + dbAssets.searchByID(id).name);
+                //outline the selected asset
+                selectedAsset.setText("Asset Selected: " + dbAssets.searchByID(id).name);
                 selectedId = id;
 
-                //TODO: check if the file is downloaded
                 File file = new File(id);
                 if (file.exists()) {
                     //file is already downloaded
@@ -282,12 +267,10 @@ public class AssetDownloadScreen implements Screen {
         };
     }
 
-    private ClickListener downloadLevel() {
+    private ClickListener downloadAsset() {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //TODO: if the level is already downloaded directly go to play
-
                 if (selectedId.equals("")) {
                     return;
                 }
@@ -311,9 +294,9 @@ public class AssetDownloadScreen implements Screen {
                 downloadButton.setColor(Color.LIGHT_GRAY);
 
                 selectedId = "";
-                selectedLevel.setText("Select an asset");
+                selectedAsset.setText("Select an asset");
 
-                //search all levels and make a list that contains this string in the title or author:
+                //search all assets and make a list that contains this string in the title or author:
                 ArrayList<Asset> list;
                 if (!searchBar.getText().equals("")) {
                     ArrayList<Asset> listTitles = new ArrayList<>(dbAssets.searchByName(searchBar.getText()));
@@ -326,10 +309,10 @@ public class AssetDownloadScreen implements Screen {
                 System.out.println("after searching titles and authors: " + list.size());
 
                 //redo the table
-                levelVerticalGroup.clear();
+                assetVerticalGroup.clear();
                 Table refreshTable;
                 refreshTable = getAssetTable(list);
-                levelVerticalGroup.addActor(refreshTable);
+                assetVerticalGroup.addActor(refreshTable);
             }
         };
     }
@@ -339,8 +322,8 @@ public class AssetDownloadScreen implements Screen {
      * Can probably be optimized
      * Use: multiple search parameters at the same time
      *
-     * @param list1 LevelInfo list to combine
-     * @param list2 LevelInfo list
+     * @param list1 Asset list to combine
+     * @param list2 Asset list
      * @return combined list
      */
     public List<Asset> combineLists(List<Asset> list1, List<Asset> list2) {

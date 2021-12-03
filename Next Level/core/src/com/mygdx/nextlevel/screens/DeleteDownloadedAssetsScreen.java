@@ -12,16 +12,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.nextlevel.LevelInfo;
+import com.mygdx.nextlevel.Asset;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
-import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
-import com.mygdx.nextlevel.dbHandlers.DownloadedLevelsDB;
-import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
-import com.mygdx.nextlevel.enums.Difficulty;
-import com.mygdx.nextlevel.enums.Tag;
+import com.mygdx.nextlevel.dbHandlers.AssetHandler;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class DeleteDownloadedAssetsScreen implements Screen {
     private NextLevel game;
@@ -31,38 +30,27 @@ public class DeleteDownloadedAssetsScreen implements Screen {
     private OrthographicCamera camera;
     private Viewport viewport;
     private Stage stage;
-    private DownloadedLevelsDB dbDownloaded;
-    private CreatedLevelsDB dbCreated;
-    private ServerDBHandler dbServer;
+    private AssetHandler dbAssets;
 
     public static final int STAGE_WIDTH = 1920 / 2;
     public static final int STAGE_HEIGHT = 1080 / 2;
 
     private String selectedId;
-    private Label selectedLevel;
+    private Label selectedAsset;
     private Table mainTable;
-    private VerticalGroup levelVerticalGroup;
+    private VerticalGroup assetVerticalGroup;
 
     public TextButton searchButton;
 
     //search parameters:
     private TextField searchBar;
-    private SelectBox<Difficulty> difficultyDropdown;
-    private ArrayList<CheckBox> tagCheckBoxes;
     private ScrollPane scrollPane;
 
-    private ButtonGroup<TextButton> buttonGroup;
-    private String activeDB;
-    private Label activeDBLabel;
-
     //left column
-    public Label levelName;
-    public Label author;
-    public Label difficulty;
+    public Label assetName;
+    public Label assetAuthor;
 
-    //right column
-    public Label rating;
-    public Label playCount;
+    public Label assetsLabel;
 
     //static vars
     public static int rightColumnWidth = 150;
@@ -86,13 +74,9 @@ public class DeleteDownloadedAssetsScreen implements Screen {
 
         stage = new Stage(viewport, batch);
 
-        dbCreated = new CreatedLevelsDB();
-        dbCreated.updateCreatedDatabase();
-        dbDownloaded = new DownloadedLevelsDB();
-        dbServer = new ServerDBHandler();
-        selectedLevel = new Label("Level Selected: none", skin);
+        dbAssets = new AssetHandler();
+        selectedAsset = new Label("Asset Selected: none", skin);
         selectedId = "";
-        activeDB = "downloaded";
     }
 
     public void show() {
@@ -111,48 +95,30 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         backButton.left();
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LevelDownloadScreen(game));
+                game.setScreen(new AssetDownloadScreen(game));
             }
         });
 
         //screen title
-        activeDBLabel = new Label("Your downloaded levels:", skin);
-        activeDB = "downloaded";
-
-//        downloadedLevelsButton.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                downloadedLevelsButton.setColor(Color.GREEN);
-//                createdLevelsButton.setColor(Color.BLUE);
-//                activeDB = "downloaded";
-//
-//                activeDBLabel.setText("Your downloaded levels:");
-//
-//                selectedId = "";
-//                selectedLevel.setText("Select a level");
-//                levelVerticalGroup.clear();
-//                levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
-//            }
-//        });
-
+        assetsLabel = new Label("Your downloaded assets:", skin);
 
         mainTable.add(backButton).height(labelHeight +10).padTop(10).padLeft(5);
-        mainTable.add(activeDBLabel).padTop(10).expandX().left().padLeft(5).height(labelHeight);
+        mainTable.add(assetsLabel).padTop(10).expandX().left().padLeft(5).height(labelHeight);
         //mainTable.add(hgButtons).width(200);
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
 
-        //set up level information section
-        Table infoTable = getLevelTable(new ArrayList<>(dbCreated.sortByTitle()));
-        levelVerticalGroup = new VerticalGroup();
-        levelVerticalGroup.addActor(infoTable);
-        levelVerticalGroup.padRight(50);
+        //set up asset information section
+        Table infoTable = getAssetTable(new ArrayList<>(dbAssets.sortAllByTitle()));
+        assetVerticalGroup = new VerticalGroup();
+        assetVerticalGroup.addActor(infoTable);
+        assetVerticalGroup.padRight(50);
 
-        levelVerticalGroup.padBottom(30);
-        levelVerticalGroup.top();
+        assetVerticalGroup.padBottom(30);
+        assetVerticalGroup.top();
 
-        scrollPane = new ScrollPane(levelVerticalGroup, skin);
+        scrollPane = new ScrollPane(assetVerticalGroup, skin);
         scrollPane.setForceScroll(false, true);
 
         //make the sorting and search thing on right side
@@ -163,19 +129,15 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         mainTable.add(searchSortGroup).top().padLeft(5);
         mainTable.row();
 
-        //row 3: empty placeholder, currently selected level, play button
-
-        TextButton playButton = new TextButton("Play", skin);
-        playButton.addListener(playLevel());
+        //row 3: empty placeholder, currently selected asset, play button
 
         mainTable.add();
-        mainTable.add(selectedLevel).left().padBottom(20).padLeft(5);
-        mainTable.add(playButton).width(150).padBottom(20).padLeft(5);
+        mainTable.add(selectedAsset).left().padBottom(20).padLeft(5);
 
         selectedId = "";
-        selectedLevel.setText("Select a level");
-        levelVerticalGroup.clear();
-        levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
+        selectedAsset.setText("Select an asset");
+        assetVerticalGroup.clear();
+        assetVerticalGroup.addActor(getRefreshedAssetList());
 
         //end
         mainTable.setFillParent(true);
@@ -188,21 +150,7 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         final Table table = new Table();
         Label searchLabel = new Label("Search:", skin);
         searchBar = new TextField("", skin);
-        searchBar.setMessageText("By Level Name");
-
-        Label diffLabel = new Label("Difficulty:", skin);
-        difficultyDropdown = new SelectBox<>(skin);
-        difficultyDropdown.setItems(Difficulty.class.getEnumConstants());
-
-        Label tagLabel = new Label("Tags:", skin);
-        tagCheckBoxes = new ArrayList<>();
-        for (Tag t: Tag.values()) {
-            if (!t.equals(Tag.NONE)) {
-                tagCheckBoxes.add(new CheckBox(t.toString(), skin));
-            }
-        }
-
-        //TODO: add search by (star) rating
+        searchBar.setMessageText("By Asset Name, Author");
 
         searchButton = new TextButton("Search", skin);
         searchButton.addListener(searchButton());
@@ -211,34 +159,21 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         table.row();
         table.add(searchBar).padBottom(10).width(200);
         table.row();
-        table.add(diffLabel);
-        table.row();
-        table.add(difficultyDropdown).padBottom(10).width(150);
-        table.row();
-        table.add(tagLabel).height(labelHeight);
-        table.row();
 
-        for (CheckBox cb: tagCheckBoxes) {
-            table.add(cb).height(labelHeight);
-            table.row();
-        }
-
-        table.add(searchButton).padTop(20).width(150);
-        table.row();
+        table.add(searchButton).padTop(20).width(200);
         return table;
     }
 
-    private Table getLevelTable(ArrayList<LevelInfo> levels) {
+    private Table getAssetTable(ArrayList<Asset> assets) {
         Table infoTable = new Table();
-        //infoTable.setDebug(true);
 
-        for (LevelInfo levelInfo: levels) {
-            String id = levelInfo.getId();
+        for (Asset asset: assets) {
+            String id = asset.getAssetID();
             infoTable.add(getLeftColumn(id)).padTop(topBottomPad).padLeft(5);
             infoTable.add(getRightColumn(id)).padTop(5);
 
             TextButton deleteButton = new TextButton("Delete", skin);
-            deleteButton.addListener(deleteLevelListener(id));
+            deleteButton.addListener(deleteAssetListener(id));
             deleteButton.addListener(new HoverListener());
             infoTable.add(deleteButton).width(80).padBottom(15);
 
@@ -249,119 +184,63 @@ public class DeleteDownloadedAssetsScreen implements Screen {
     }
 
     /**
-     * Groups title, author, difficulty, and tags into one VerticalGroup
-     * @param id id of level
+     * Groups title and author into one VerticalGroup
+     * @param id id of asset
      * @return VerticalGroup
      */
     private Table getLeftColumn(String id) {
         Table leftTable = new Table();
-        LevelInfo levelInfo;
-        //leftTable.setDebug(true);
+        Asset asset;
 
         //verify database is connected
-        if (activeDB.equals("downloaded")) {
-            if (!dbDownloaded.isDBActive()) {
-                System.out.println("db is not active");
-                return null;
-            } else {
-                levelInfo = dbDownloaded.searchByID(id);
-            }
-        } else {
+        if (dbAssets == null) {
+            System.out.println("db is not active");
             return null;
+        } else {
+            asset = dbAssets.searchByID(id);
         }
 
         //adding left column labels
-        if (levelInfo  != null) {
-            levelName = new Label(levelInfo.getTitle(), skin);
-            author = new Label(levelInfo.getAuthor(), skin);
-            //System.out.println(levelInfo.getAuthor());
+        assetName = new Label(asset.name, skin);
+        assetAuthor = new Label(asset.author, skin);
 
-            String difficultyString = Difficulty.values()[levelInfo.getDifficulty()].getDisplayName();
-            difficulty = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
+        assetName.addListener(selectAssetListener(id));
+        assetName.addListener(new HoverListener());
+        assetAuthor.addListener(selectAssetListener(id));
+        assetAuthor.addListener(new HoverListener());
 
-            difficulty.addListener(selectLevelListener(id));
-            difficulty.addListener(new HoverListener());
-            levelName.addListener(selectLevelListener(id));
-            levelName.addListener(new HoverListener());
-            author.addListener(selectLevelListener(id));
-            author.addListener(new HoverListener());
+        //adding to left table
+        leftTable.add(assetName).width(leftColumnWidth - 10).left().height(labelHeight);
+        leftTable.row();
+        leftTable.add(assetAuthor).width(leftColumnWidth - 10).left().height(labelHeight);
 
-            //adding to left table
-            leftTable.add(levelName).width(leftColumnWidth - 10).left().height(labelHeight);
-            leftTable.row();
-            leftTable.add(author).width(leftColumnWidth - 10).left().height(labelHeight);
-            leftTable.row();
-            leftTable.add(difficulty).width(leftColumnWidth - 10).left().height(labelHeight);
-
-            return leftTable;
-        }
-        return new Table();
+        return leftTable;
     }
 
     private Table getRightColumn(String id) {
         Table rightTable = new Table();
-        LevelInfo levelInfo;
+        Asset asset;
         //rightTable.setDebug(true);
 
-        int numRaters = 0;
-
+        //TODO: show image?
         //verify database is connected
-        if (activeDB.equals("downloaded")) {
-            if (!dbDownloaded.isDBActive()) {
-                System.out.println("db is not active");
-                return null;
-            } else {
-                levelInfo = dbDownloaded.searchByID(id);
-            }
-        } else {
-            return null;
-        }
-
-        if (!dbServer.isDBActive()) {
+        if (dbAssets == null) {
             System.out.println("db is not active");
             return null;
         } else {
-            numRaters = dbServer.getRatingCount(id);
+            asset = dbAssets.searchByID(id);
         }
 
-        //right column labels
-        if (levelInfo != null) {
-            float rateInt = levelInfo.getRating();
-            if (rateInt < 0) {
-                rating = new Label("Rating: NA/5  [#" + numRaters + "]", skin);
-            } else {
-                //right column labels
-                rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
-            }
-            playCount = new Label("" + levelInfo.getPlayCount(), skin);
-
-            rating.addListener(selectLevelListener(id));
-            rating.addListener(new HoverListener());
-            playCount.addListener(selectLevelListener(id));
-            playCount.addListener(new HoverListener());
-
-            //add to right table
-            rightTable.add(rating).width(rightColumnWidth).left().height(labelHeight);
-            rightTable.row();
-            rightTable.add(playCount).width(rightColumnWidth).left().height(labelHeight);
-
-            return rightTable;
-        }
-        return new Table();
+        return rightTable;
     }
 
-    private ClickListener selectLevelListener(final String id) {
+    private ClickListener selectAssetListener(final String id) {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //outline the selected level
-                String levelSelectedStr;
-                if (activeDB.equals("downloaded")){
-                    levelSelectedStr = dbDownloaded.searchByID(id).getTitle();
-                } else {
-                    levelSelectedStr = "error";
-                }
-                selectedLevel.setText("Level Selected: " + levelSelectedStr);
+                //outline the selected asset
+                String assetSelectedStr = dbAssets.searchByID(id).name;
+                selectedAsset.setText("Asset Selected: " + assetSelectedStr);
                 selectedId = id;
             }
         };
@@ -370,70 +249,50 @@ public class DeleteDownloadedAssetsScreen implements Screen {
     private Stage delStage;
     private boolean isDeleting = false;
 
-    private ClickListener deleteLevelListener(final String id) {
+    private ClickListener deleteAssetListener(final String id) {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //outline the selected level
-                if (activeDB.equals("downloaded")) {
-                    selectedLevel.setText("Level Selected: " + dbDownloaded.searchByID(id).getTitle());
-                }
+                //outline the selected asset
+                selectedAsset.setText("Asset Selected: " + dbAssets.searchByID(id).name);
+
                 selectedId = id;
                 isDeleting = true;
 
                 //make the user confirm their decision:
-                Dialog dialog = new Dialog("Delete Level", skin) {
+                Dialog dialog = new Dialog("Delete Asset", skin) {
                     @Override
                     protected void result(Object object) {
                         System.out.println("result: " + object);
                         Gdx.input.setInputProcessor(stage);
 
                         if ((Boolean) object) {
-                            if (activeDB.equals("downloaded")) {
-                                dbDownloaded.removeLevelInfo(id);
-                            }
-                            levelVerticalGroup.clear();
-                            levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
+                            dbAssets.removeAsset(id);
+                            assetVerticalGroup.clear();
+                            assetVerticalGroup.addActor(getRefreshedAssetList());
                         }
                     }
                 };
 
-                if (activeDB.equals("downloaded")) {
-                    dialog.text("Are you sure you want to delete " + dbDownloaded.searchByID(id).getTitle() + " locally?");
-                }
+                dialog.text("Are you sure you want to delete " + dbAssets.searchByID(id).name + " locally?");
 
                 dialog.button("Delete", true);
                 dialog.button("Cancel", false);
 
-                OrthographicCamera delCamera = new OrthographicCamera(500, 500);
-                delCamera.position.set(delCamera.viewportWidth / 2.0F, delCamera.viewportHeight / 2.0F, 0.0F);
-                delCamera.update();
+                //OrthographicCamera delCamera = new OrthographicCamera(500, 500);
+                //delCamera.position.set(delCamera.viewportWidth / 2.0F, delCamera.viewportHeight / 2.0F, 0.0F);
+                //delCamera.update();
 
-                Viewport delViewport = new StretchViewport(500, 500, delCamera);
-                delViewport.apply();
+                //Viewport delViewport = new StretchViewport(500, 500, delCamera);
+                //delViewport.apply();
 
-                delStage = new Stage(viewport, batch);
+                //delStage = new Stage(viewport, batch);
 
-                Gdx.input.setInputProcessor(delStage);
+                //Gdx.input.setInputProcessor(delStage);
 
                 //delStage.addActor(dialog);
 
-                dialog.show(delStage);
-            }
-        };
-    }
-
-    private ClickListener playLevel() {
-        return new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (selectedId.equals("")) {
-                    return;
-                }
-
-                System.out.println("Should be playing: " + dbDownloaded.searchByID(selectedId).getTitle());
-                //TODO: open the game screen with the level that is selected
-
+                dialog.show(stage);
             }
         };
     }
@@ -443,90 +302,70 @@ public class DeleteDownloadedAssetsScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 selectedId = "";
-                selectedLevel.setText("Select a level");
+                selectedAsset.setText("Select an asset");
 
-                levelVerticalGroup.clear();
-                levelVerticalGroup.addActor(getRefreshedLevelList(activeDB));
+                assetVerticalGroup.clear();
+                assetVerticalGroup.addActor(getRefreshedAssetList());
             }
         };
     }
 
-    private Table getRefreshedLevelList(String table) {
-        //search all levels and make a list that contains this string in the title or author:
-        ArrayList<LevelInfo> ongoingList;
+    private Table getRefreshedAssetList() {
+        //search all assets and make a list that contains this string in the title or author:
+        ArrayList<Asset> ongoingList;
 
-//        if (table.equals("created")) {
-//            if (!searchBar.getText().equals("")) {
-//                ArrayList<LevelInfo> listTitles = new ArrayList<>(dbCreated.searchByTitle(searchBar.getText()));
-//                ArrayList<LevelInfo> listAuthors = new ArrayList<>(dbCreated.searchByAuthor(searchBar.getText()));
-//
-//                ongoingList = new ArrayList<>(dbCreated.combineLists(listTitles, listAuthors));
-//            } else {
-//                ongoingList = new ArrayList<>(dbCreated.sortByTitle());
-//            }
-        if (table.equals("downloaded")) {
-            if (!searchBar.getText().equals("")) {
-                ArrayList<LevelInfo> listTitles = new ArrayList<>(dbDownloaded.searchByTitle(searchBar.getText()));
-                ArrayList<LevelInfo> listAuthors = new ArrayList<>(dbDownloaded.searchByAuthor(searchBar.getText()));
+        if (!searchBar.getText().equals("")) {
+            ArrayList<Asset> listTitles = new ArrayList<>(dbAssets.searchByName(searchBar.getText()));
+            ArrayList<Asset> listAuthors = new ArrayList<>(dbAssets.searchByAuthor(searchBar.getText()));
 
-                ongoingList = new ArrayList<>(dbDownloaded.combineLists(listTitles, listAuthors));
-            } else {
-                ongoingList = new ArrayList<>(dbDownloaded.sortByTitle());
-            }
+            ongoingList = new ArrayList<>(combineLists(listTitles, listAuthors));
         } else {
-            return null;
+            ongoingList = new ArrayList<>(dbAssets.sortAllByTitle());
         }
 
-        System.out.println("after searching titles and authors: " + ongoingList.size());
-
-        ArrayList<Tag> searchTags = new ArrayList<>();
-        for (CheckBox cb: tagCheckBoxes) {
-            if (cb.isChecked()) {
-                searchTags.add(Tag.valueOf(cb.getLabel().getText().toString()));
+        //check if we have the file already
+        ArrayList<Asset> finalList = new ArrayList<>();
+        for (Asset asset: ongoingList) {
+            File f = new File(asset.getAssetID());
+            if (f.exists()) {
+                finalList.add(asset);
             }
         }
 
-        ArrayList<LevelInfo> newList = new ArrayList<>();
-        //filter out the ones that don't have at least one of these tags
-        if (searchTags.size() != 0) {
-            for (LevelInfo level : ongoingList) {
-                ArrayList<Tag> tags = new ArrayList<>(level.getTags());
-                boolean hasAtLeastOne = false;
-                for (Tag levelTag : tags) {
-                    for (Tag sTag : searchTags) {
-                        //for each tag that the level has, if it matches one of the tags the user searched for, add it
-                        if (levelTag.equals(sTag)) {
-                            hasAtLeastOne = true;
-                            break;
-                        }
-                    }
-                }
-                if (hasAtLeastOne) {
-                    newList.add(level);
-                }
-            }
-            ongoingList.clear();
-            ongoingList = new ArrayList<>(newList);
-        }
-        System.out.println("after filtering tags: " + ongoingList.size());
-
-        //search the list and only keep those that have this difficulty:
-        ArrayList<LevelInfo> finalList = new ArrayList<>();
-        if (!difficultyDropdown.getSelected().equals(Difficulty.NONE)) {
-            for (LevelInfo level : ongoingList) {
-                if (level.getDifficulty() == difficultyDropdown.getSelected().ordinal()) {
-                    finalList.add(level);
-                }
-            }
-        } else {
-            finalList = new ArrayList<>(ongoingList);
-        }
-
-        System.out.println("after filtering difficulty: " + finalList.size());
+        System.out.println("after searching titles and authors: " + finalList.size());
 
         Table refreshTable;
-        refreshTable = getLevelTable(finalList);
+        refreshTable = getAssetTable(finalList);
         return refreshTable;
+    }
+
+    /**
+     * Combines 2 lists, with no repeats
+     * Can probably be optimized
+     * Use: multiple search parameters at the same time
+     *
+     * @param list1 Asset list to combine
+     * @param list2 Asset list
+     * @return combined list
+     */
+    public List<Asset> combineLists(List<Asset> list1, List<Asset> list2) {
+        Objects.requireNonNull(list1, "List may not be null");
+        Objects.requireNonNull(list2, "List may not be null");
+
+        ArrayList<Asset> combined = new ArrayList<>(list1);
+
+        for (Asset assetToAdd: list2) {
+            boolean isInList = false;
+            for (Asset assetInList: combined) {
+                if (assetToAdd.getAssetID() == assetInList.getAssetID()) {
+                    isInList = true;
+                }
+            }
+            if (!isInList) {
+                combined.add(assetToAdd);
+            }
+        }
+        return combined;
     }
 
 
@@ -536,10 +375,13 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         this.stage.act();
         this.stage.draw();
 
+        /*
         if (isDeleting) {
             delStage.act();
             delStage.draw();
         }
+
+         */
     }
 
     public void resize(int width, int height) {

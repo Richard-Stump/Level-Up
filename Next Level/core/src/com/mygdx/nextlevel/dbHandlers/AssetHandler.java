@@ -165,18 +165,29 @@ public class AssetHandler {
      * @param id
      */
     public void downloadAsset(String id) {
+        String sqlQuery = "SELECT file FROM api.assets WHERE assetid=?;";
 
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            resultSet.next();
+
+            byte[] assetBytes = resultSet.getBytes("file");
+
+            try {
+                FileOutputStream fosAsset = new FileOutputStream(new File(id));
+                fosAsset.write(assetBytes);
+                fosAsset.close();
+                System.out.println("Saved asset file from server!");
+            } catch (Exception e) {
+                System.out.println("Couldn't save the asset from the server");
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-
-    /**
-     * Download the image
-     *
-     * @param id
-     */
-    private void downloadImage(String id) {
-
-    }
-
 
     /**
      * Upload an asset to the server database
@@ -258,9 +269,18 @@ public class AssetHandler {
     /**
      * Remove an asset from the server database
      *
-     * @param id
+     * @param id id of asset to remove
      */
     public void removeAsset(String id) {
-
+        File file = new File(id);
+        if (file.exists()) {
+            if (file.delete()) {
+                System.out.printf("%s deleted successfully\n", id);
+            } else {
+                System.out.printf("Could not delete %s\n, id");
+            }
+        } else {
+            System.out.printf("%s was not detected as a file\n", id);
+        }
     }
 }
