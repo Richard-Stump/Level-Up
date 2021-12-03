@@ -530,7 +530,7 @@ public class GameScreen2 extends Timer implements Screen {
 //            System.out.println(String.format("New Record Time: %f", player.getRecordTime()));
 //            System.out.println(elapsedTime);
          // ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player, levelInfo));
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player, levelInfo, elapsedTime));
         }
         if (player.getFail()) {
             //System.out.println("Im here");
@@ -588,6 +588,7 @@ public class GameScreen2 extends Timer implements Screen {
 //            batch.end();
         } else {
             update(delta);
+            Gdx.input.setInputProcessor(null);
             tm.render(camera, player, false);
 
             SpriteBatch batch = game.batch;
