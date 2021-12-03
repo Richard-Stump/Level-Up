@@ -79,6 +79,7 @@ public class PublishMessageScreen implements Screen {
             }
         });
         table.add(button).center();
+        table.padTop(200.0f);
 
         stage.addActor(table);
     }

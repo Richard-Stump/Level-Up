@@ -44,6 +44,7 @@ public class ErrorDialog {
                         dbHandler.getLevelByID(levelInfo.getId(), true);
                         game.setScreen(new GameScreen2(game, levelInfo.getId(), GameScreen2.Mode.PUBLISH, prevScreen));
                         button.setText("Unpublish");
+                        levelInfo.setPublic(true);
                     }
                     else if (object.equals(2)) {
                         errorDialog.hide();
@@ -71,6 +72,7 @@ public class ErrorDialog {
                     if(object.equals(1)) {
                         dbHandler.unpublishLevel(levelInfo.getId());
                         button.setText("Publish");
+                        levelInfo.setPublic(false);
                     }
                     else if (object.equals(2)) {
                         errorDialog.hide();
