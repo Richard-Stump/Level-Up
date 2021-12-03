@@ -1,5 +1,7 @@
 package com.mygdx.nextlevel.screens.editor;
 
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -8,10 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisWindow;
+import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.LevelsDBController;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.EditLevelScreen;
+import com.mygdx.nextlevel.screens.GameScreen2;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,16 +30,18 @@ public class MenuWindow extends VisWindow {
     Button publishButton;
 
     EditorLevel level;
+    EditLevelScreen screen;
 
     final float BUTTON_WIDTH = 160.0f;
     final float BUTTON_PADDING = 10.0f;
 
-    public MenuWindow(final EditorLevel level, final Stage stage) {
+    public MenuWindow(EditLevelScreen screen, final EditorLevel level, final Stage stage) {
         super("Menu:");
 
         setMovable(false);
 
         this.level = level;
+        this.screen = screen;
 
         VisTable table = new VisTable();
 
@@ -61,6 +67,27 @@ public class MenuWindow extends VisWindow {
 
                     ServerDBHandler handler = new ServerDBHandler();
                     handler.updateLevel(level.info);
+                } catch (FileNotFoundException e) {
+                    stage.addActor(new MessageDialog("Could not open + \"" + lev.saveName + "\"to save the level"));
+                }
+            }
+        });
+
+        testButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                try {
+                    File file = level.exportTo(level.info.getId() + ".tmx");
+                    String name2 = file.getName();
+
+                    ServerDBHandler handler = new ServerDBHandler();
+                    handler.updateLevel(level.info);
+
+
+                    NextLevel game = screen.getGame();
+                    CreatedLevelsDB dbCreated = new CreatedLevelsDB();
+                    game.setScreen(new GameScreen2(game, level.info.getId()));
+
                 } catch (FileNotFoundException e) {
                     stage.addActor(new MessageDialog("Could not open + \"" + lev.saveName + "\"to save the level"));
                 }
