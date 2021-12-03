@@ -193,13 +193,6 @@
    <properties>
    </properties>
   </object>
-  <object id="1" name="Block2" x="15" y="3" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-    <property name="spawnItem" type="bool" value="false"/>
-    <property name="itemIndex" type="int" value="0"/>
-   </properties>
-  </object>
   <object id="1" name="basicBlock3" x="22" y="3" >
    <properties>
    </properties>
@@ -228,25 +221,11 @@
    <properties>
    </properties>
   </object>
-  <object id="1" name="Block2" x="5" y="4" >
+  <object id="1" name="Block2" x="8" y="4" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
-    <property name="spawnItem" type="bool" value="false"/>
-    <property name="itemIndex" type="int" value="0"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="11" y="4" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-    <property name="spawnItem" type="bool" value="false"/>
-    <property name="itemIndex" type="int" value="0"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="12" y="4" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-    <property name="spawnItem" type="bool" value="false"/>
-    <property name="itemIndex" type="int" value="0"/>
+    <property name="spawnItem" type="bool" value="true"/>
+    <property name="itemIndex" type="int" value="2"/>
    </properties>
   </object>
   <object id="1" name="basicBlock3" x="22" y="4" >

@@ -205,8 +205,8 @@ public class TileMap extends ApplicationAdapter{
                                 screen.itemBlockTextures,
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE),
-                                false,
-                                GameScreen2.ItemIndex.NONE.getValue(),
+                                true,
+                                GameScreen2.ItemIndex.ALL.getValue(),
                                 mapObject.getProperties().get("breakable", Boolean.TYPE)));
                         break;
                     case ("Enemy2"): //FIXME (Wait for other properties)
