@@ -560,16 +560,13 @@ public class GameScreen2 extends Timer implements Screen {
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-//<<<<<<< Updated upstream
 ////            escaped = !escaped;
 //            paused = true;
-//=======
 //            //TODO: go back to screen
 ////            System.out.println("Escape");
 ////            escaped = !escaped;
-////            paused = true;
+//            paused = true;
 ////            System.out.println(getPaused());
-//>>>>>>> Stashed changes
 //            escaped = true;
         }
         update(delta);
