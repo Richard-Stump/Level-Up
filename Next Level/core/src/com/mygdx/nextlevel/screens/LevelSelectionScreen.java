@@ -63,7 +63,7 @@ public class LevelSelectionScreen implements Screen {
     public Label difficulty;
 
     //right column
-    public Label rating;
+        public Label rating;
     public Label playCount;
 
     //static vars

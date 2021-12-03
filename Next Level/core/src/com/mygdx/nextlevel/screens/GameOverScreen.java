@@ -21,6 +21,7 @@ import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.TileMap;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.actors.Player2;
+import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.hud.Hud2;
 
@@ -58,12 +59,14 @@ public class GameOverScreen implements Screen {
     public String levelid;
     public double time;
     ServerDBHandler db;
+    CreatedLevelsDB createdLevelsDB;
 
     public GameOverScreen (NextLevel game, Hud2 hud2, String title, Player2 player2, String levelInfo) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
         this.levelInfo = levelInfo;
         db = new ServerDBHandler();
+        createdLevelsDB = new CreatedLevelsDB();
         batch = game.batch;
         camera = new OrthographicCamera();
         viewport = new FitViewport(960, 500, camera);
@@ -79,7 +82,10 @@ public class GameOverScreen implements Screen {
         this.player = player2;
         this.levelid = levelInfo;
 
-        if (title.equals("VICTORY")) {
+        System.out.println(levelid);
+        System.out.println(db.getLevelByID(levelid, false).isPublic());
+
+        if ((title.equals("VICTORY")) && (db.getLevelByID(levelid, false).isPublic())) {
             showRating = true;
         } else {
             showRating = false;
@@ -107,7 +113,7 @@ public class GameOverScreen implements Screen {
         this.levelid = levelInfo;
         this.time = time;
 
-        if (title.equals("VICTORY")) {
+        if ((title.equals("VICTORY")) && (db.getLevelByID(levelid, false).isPublic())) {
             showRating = true;
         } else {
             showRating = false;

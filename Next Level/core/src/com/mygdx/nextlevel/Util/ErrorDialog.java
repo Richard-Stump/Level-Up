@@ -65,16 +65,17 @@ public class ErrorDialog {
             errorDialog.button("Cancel", 2);
         }
         else if (type == Type.UNPUBLISH) {
-            this.errorMessage = "Are you sure you want to unpublish your level?";
+            this.errorMessage = "Please delete level if you want to make your level not public.";
 
-            this.errorDialog = new Dialog("Unpublish Level", skin){
+            this.errorDialog = new Dialog("Published Level", skin){
                 protected void result(Object object) {
-                    if(object.equals(1)) {
-                        dbHandler.unpublishLevel(levelInfo.getId());
-                        button.setText("Publish");
-                        levelInfo.setPublic(false);
-                    }
-                    else if (object.equals(2)) {
+//                    if(object.equals(1)) {
+//                        dbHandler.unpublishLevel(levelInfo.getId());
+//                        //button.setText("Publish");
+//                        //levelInfo.setPublic(false);
+//                    }
+//                    else
+                    if (object.equals(2)) {
                         errorDialog.hide();
                     }
                     else {
@@ -89,8 +90,8 @@ public class ErrorDialog {
             };
 
             errorDialog.text(errorMessage);
-            errorDialog.button("Yes", 1);
-            errorDialog.button("No", 2);
+            //errorDialog.button("Yes", 1);
+            errorDialog.button("Ok", 2);
         }
         else if(type == Type.EDIT_ERROR) {
             this.errorDialog = new Dialog("Unpublish Level", skin){
@@ -108,8 +109,8 @@ public class ErrorDialog {
                     }
                 }
             };
-            errorDialog.text("You must unpublish your level before you can edit it");
-            errorDialog.button("Okay", 1);
+            errorDialog.text("You cannot edit a published level. Please delete level.");
+            errorDialog.button("Ok", 1);
         }
 
         errorDialog.setMovable(false);
