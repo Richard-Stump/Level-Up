@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 @Placeable(
         group = "Blocks",
-        displayName = "Basic Block 3",
+        displayName = "Dirt",
         textures = { "dirt.png" }
 )
 public class basicBlock3 extends Actor2 {

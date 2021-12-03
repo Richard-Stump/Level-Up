@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -23,6 +24,103 @@ public class ErrorDialog {
     private CreatedLevelsDB dbCreated;
     private ServerDBHandler dbHandler;
 
+    public enum Type {
+        PUBLISH,
+        UNPUBLISH,
+        EDIT_ERROR
+    }
+
+    public ErrorDialog(Skin skin, final Stage stage, Type type, NextLevel game, Screen prevScreen, LevelInfo levelInfo, TextButton button) {
+        dbHandler = new ServerDBHandler();
+        dbCreated = new CreatedLevelsDB();
+
+        if(type == Type.PUBLISH) {
+            this.errorMessage = "You have to beat your level before you publish it";
+
+            this.errorDialog = new Dialog("Publish Level", skin){
+                protected void result(Object object) {
+                    if(object.equals(1)) {
+                        //download the level first.
+                        dbHandler.getLevelByID(levelInfo.getId(), true);
+                        game.setScreen(new GameScreen2(game, levelInfo.getId(), GameScreen2.Mode.PUBLISH, prevScreen));
+                        button.setText("Unpublish");
+                        levelInfo.setPublic(true);
+                    }
+                    else if (object.equals(2)) {
+                        errorDialog.hide();
+                    }
+                    else {
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                errorDialog.show(stage);
+                            }
+                        }, 0.5f);
+                    }
+                }
+            };
+
+            errorDialog.text(errorMessage);
+            errorDialog.button("Play", 1);
+            errorDialog.button("Cancel", 2);
+        }
+        else if (type == Type.UNPUBLISH) {
+            this.errorMessage = "Are you sure you want to unpublish your level?";
+
+            this.errorDialog = new Dialog("Unpublish Level", skin){
+                protected void result(Object object) {
+                    if(object.equals(1)) {
+                        dbHandler.unpublishLevel(levelInfo.getId());
+                        button.setText("Publish");
+                        levelInfo.setPublic(false);
+                    }
+                    else if (object.equals(2)) {
+                        errorDialog.hide();
+                    }
+                    else {
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                errorDialog.show(stage);
+                            }
+                        }, 0.5f);
+                    }
+                }
+            };
+
+            errorDialog.text(errorMessage);
+            errorDialog.button("Yes", 1);
+            errorDialog.button("No", 2);
+        }
+        else if(type == Type.EDIT_ERROR) {
+            this.errorDialog = new Dialog("Unpublish Level", skin){
+                protected void result(Object object) {
+                    if(object.equals(1)) {
+                        errorDialog.hide();
+                    }
+                    else {
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                errorDialog.show(stage);
+                            }
+                        }, 0.5f);
+                    }
+                }
+            };
+            errorDialog.text("You must unpublish your level before you can edit it");
+            errorDialog.button("Okay", 1);
+        }
+
+        errorDialog.setMovable(false);
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                errorDialog.show(stage);
+            }
+        }, 0.1f);
+    }
+
     public ErrorDialog(Skin skin, String message, final Stage stage, String buttonOpLeft, final String buttonOpRight,
                        final String id, final TextButton button, final LevelInfo levelInfo, final NextLevel game) {
         dbCreated = new CreatedLevelsDB();
@@ -38,7 +136,7 @@ public class ErrorDialog {
                     System.out.println("obj = 2");
                     if ((buttonOpRight.compareTo("Publish")) == 0) {
                         dbHandler.publishLevel(id);
-                        //button.setText("Unpublish");
+                        button.setText("Published");
                         //button.setDisabled(true);
                         levelInfo.setPublic(true);
                         dbHandler.updateLevel(levelInfo);
@@ -108,6 +206,26 @@ public class ErrorDialog {
         }, 0.1f);
     }
 
+    public ErrorDialog(String title, final Screen nextScreen, final NextLevel game, Skin skin, String message, final Stage stage) {
+        this.errorMessage = message;
+
+        this.errorDialog = new Dialog(title, skin) {
+            protected void result(Object object) {
+                System.out.println("Option: " + object);
+                if ((Boolean) object) {
+                    game.setScreen(nextScreen);
+                } else {
+                    Timer.schedule(new Timer.Task() {
+                        @Override
+                        public void run() {
+                            errorDialog.show(stage);
+                        }
+                    }, 0.5f);
+                }
+            }
+        };
+    }
+
     public ErrorDialog(String title, final String nextScreen, final NextLevel game, Skin skin, String message, final Stage stage) {
         this.errorMessage = message;
 
@@ -138,8 +256,8 @@ public class ErrorDialog {
                             game.setScreen(new LevelDownloadScreen(game));
                             break;
                         default:
+                            errorDialog.hide();
                             break;
-                        //errorDialog.hide();
                     }
                 } else {
                     Timer.schedule(new Timer.Task() {

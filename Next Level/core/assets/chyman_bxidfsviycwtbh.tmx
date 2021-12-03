@@ -13,17 +13,7 @@
   <property name="backgroundColor" type="string" value="Blue"/>
  </properties>
  <objectgroup id="2" name="Player Layer">
-  <object id="1" name="Player2" x="10" y="17" >
-   <properties>
-    <property name="defaultMoveSpeed" type="float" value="12.0"/>
-    <property name="defaultJump" type="float" value="13.0"/>
-   </properties>
-  </object>
  </objectgroup>
  <objectgroup id="3" name="Object Layer 1">
-  <object id="1" name="basicBlock2" x="10" y="16" >
-   <properties>
-   </properties>
-  </object>
  </objectgroup>
 </map>

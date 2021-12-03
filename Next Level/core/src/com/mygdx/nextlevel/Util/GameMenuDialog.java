@@ -37,8 +37,16 @@ public class GameMenuDialog extends GameScreen2 {
 //                    screen.setPaused(false);
                 } else if (object.equals(3)) {
                     System.out.println("Exit");
+
+                    game.setScreen(screen.getPrevScreen());
+
+                    //if(screen.getMode() == Mode.TEST || screen.getMode() == Mode.PUBLISH) {
+                    //    game.setScreen(screen.getPrevScreen());
+                    //}
+
 //                    screen.setPaused(false);
-                    ErrorDialog dialog = new ErrorDialog("Exitting", "LevelDownloadScreen", game, skin, "", stage);
+                    //ErrorDialog dialog = new ErrorDialog("Exitting", "LevelDownloadScreen", game, skin, "", stage);
+
                 }
                 else {
                     Timer.schedule(new Timer.Task() {

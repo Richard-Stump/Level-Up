@@ -144,12 +144,19 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
                 });
                 fd.setVisible(true);
                 String filename = fd.getFile();
-                String dir = fd.getDirectory();
+                String dir;
                 if (filename == null) {
                     System.out.println("Canceled");
                     return;
                 } else {
+                    dir = fd.getDirectory();
                     System.out.printf("File '%s' was selected from directory %s\n", filename, dir);
+                }
+
+                String extens = filename.substring(filename.indexOf('.'));
+                if (!(extens.equals(".jpg") || extens.equals(".jpeg") || extens.equals(".png"))) {
+                    errorPopup();
+                    return;
                 }
 
                 TextField nameTF = new TextField("", skin);
@@ -275,6 +282,23 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
 
         //Add table to stage
         stage.addActor(mainTable);
+    }
+
+    private Dialog errorPopup() {
+        Dialog dialog = new Dialog("Name", skin, "dialog") {
+            @Override
+            protected void result(Object object) {
+                System.out.println("result: " + object);
+
+            }
+        };
+
+        dialog.text("Please upload a jpg, jpeg, or png file.");
+
+        dialog.button("OK", true);
+        dialog.key(Input.Keys.ENTER, true);
+        dialog.show(stage);
+        return dialog;
     }
 
     @Override

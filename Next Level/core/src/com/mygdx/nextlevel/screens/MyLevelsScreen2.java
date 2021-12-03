@@ -75,10 +75,10 @@ public class MyLevelsScreen2 implements Screen {
     public String username;
 
     //static vars
-    public static int rightColumnWidth = 120;
+    public static int rightColumnWidth = 140;
     public static int topBottomPad = 30;
     public static int leftColumnWidth = 200;
-    public static int labelHeight = 25;
+    public static int labelHeight = 30;
 
     public MyLevelsScreen2(NextLevel game) {
         this.game = game;
@@ -104,11 +104,6 @@ public class MyLevelsScreen2 implements Screen {
         activeDB = "created";
 
         username = LoginScreen.curAcc;
-    }
-
-    public void show() {
-        Gdx.input.setInputProcessor(stage);
-        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
 
         //start new layout
         mainTable = new Table();
@@ -177,6 +172,12 @@ public class MyLevelsScreen2 implements Screen {
         stage.addActor(mainTable);
     }
 
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+
+    }
+
     private Table getSearchSortTable() {
         final Table table = new Table();
         Label searchLabel = new Label("Search:", skin);
@@ -227,8 +228,8 @@ public class MyLevelsScreen2 implements Screen {
 
         for (LevelInfo levelInfo: levels) {
             String id = levelInfo.getId();
-            infoTable.add(getLeftColumn(id)).padLeft(5);
-            infoTable.add(getRightColumn(id));
+            infoTable.add(getLeftColumn(id)).padLeft(5).padTop(10);
+            infoTable.add(getRightColumn(id)).padTop(10);
 
             TextButton deleteButton = new TextButton("Delete", skin);
             deleteButton.addListener(deleteLevelListener(id));
@@ -255,7 +256,7 @@ public class MyLevelsScreen2 implements Screen {
             infoTable.row();
 
             Image line = new Image(new Texture(Gdx.files.internal("horzline.png")));
-            infoTable.add(line).colspan(5);
+            //infoTable.add(line).colspan(5);
             infoTable.row();
         }
 
@@ -374,6 +375,7 @@ public class MyLevelsScreen2 implements Screen {
     }
 
     private ClickListener editLevelListener(final String id) {
+        final Screen screen = this;
         return new ClickListener() {
           @Override
           public void clicked(InputEvent event, float x, float y) {
@@ -381,7 +383,7 @@ public class MyLevelsScreen2 implements Screen {
 
               LevelInfo info = handler.getLevelByID(id, true);
               if (info.isPublic()) {
-                  ErrorDialog errorDialog = new ErrorDialog(skin, "Unable to edit public level, please delete.", stage);
+                  ErrorDialog errorDialog = new ErrorDialog(skin, stage, ErrorDialog.Type.EDIT_ERROR, game, screen, info, null);
               } else {
                   game.setScreen(new EditLevelScreen(game, info));
               }
@@ -390,30 +392,17 @@ public class MyLevelsScreen2 implements Screen {
     }
 
     private ClickListener publishLevelListener(final LevelInfo level, final String id, final TextButton publishButton) {
+        final Screen screen = this;
+
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Im in publish level listener");
                 selectedLevel.setText("Level Selected: " + dbCreated.searchByID(id).getTitle());
-                //check if level is published
-                //if yes, show dialog that states that it is already published
-                if (level.getPlayCount() > 0) {
-                    if (level.isPublic()) {
-//                        ErrorDialog unpublishLevelDialog = new ErrorDialog(skin, "Level is already published. Are you " +
-//                                "sure you want to unpublish " + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
-//                                "Unpublish", id, publishButton, level,game);
-                        ErrorDialog dialog = new ErrorDialog(skin, "Please delete level if you want to unpublish.", stage);
 
-                    } else {
-                        //if no, are you sure you want to publish, then success or fail dialog
-                        ErrorDialog publishLevelDialog = new ErrorDialog(skin, "Are you sure you want to publish "
-                                + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
-                                "Publish", id, publishButton, level,game);
-                    }
-                } else {
-                    ErrorDialog dialog = new ErrorDialog(skin, "You must complete the level in order to publish!", stage);
-                    dbServer.updateLevel(level);
-                }
+                ErrorDialog.Type type = level.isPublic() ? ErrorDialog.Type.UNPUBLISH : ErrorDialog.Type.PUBLISH;
+                ErrorDialog publishDialog = new ErrorDialog(skin, stage, type, game, screen, level, publishButton);
+
             }
         };
     }
@@ -476,6 +465,8 @@ public class MyLevelsScreen2 implements Screen {
     }
 
     private ClickListener playLevel() {
+        final Screen screen = this;
+
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -490,7 +481,7 @@ public class MyLevelsScreen2 implements Screen {
 
 
                 ((Game)Gdx.app.getApplicationListener()).setScreen(
-                        new GameScreen2(game, dbCreated.searchByID(selectedId).getId(), GameScreen2.Mode.PLAY, null)
+                        new GameScreen2(game, dbCreated.searchByID(selectedId).getId(), GameScreen2.Mode.PLAY, screen)
                 );
             }
         };
