@@ -4,7 +4,6 @@ public class Asset {
     private String assetID;
     public String name;
     public String author;
-    public String filename;
 
     public Asset(String name, String author) {
         this.name = name;

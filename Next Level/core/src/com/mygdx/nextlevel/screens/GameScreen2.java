@@ -161,8 +161,6 @@ public class GameScreen2 extends Timer implements Screen {
     private TextureAtlas atlas;
     protected Skin skin;
 
-    public String levelInfo;
-
     /**
      * Initialize the game screen
      * @param game The screen that created this screen

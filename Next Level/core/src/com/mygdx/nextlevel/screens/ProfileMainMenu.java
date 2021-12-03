@@ -2,7 +2,9 @@ package com.mygdx.nextlevel.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,12 +14,25 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.nextlevel.Asset;
 import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.Util.HoverListener;
+import com.mygdx.nextlevel.dbHandlers.AssetHandler;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class ProfileMainMenu extends LoginScreen implements Screen {
     public SpriteBatch batch;
@@ -83,6 +98,7 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         TextButton changeProfilePicButton = new TextButton("Change Profile Picture", skin);
         TextButton changePasswordButton = new TextButton("Change Password", skin);
         TextButton deleteLevelsButton = new TextButton("Delete Levels", skin);
+        TextButton uploadAssetButton = new TextButton("Upload Asset", skin);
 
         //TODO: rewire the buttons
         backButton.addListener(new ClickListener() {
@@ -112,6 +128,74 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
             }
         });
         changeProfilePicButton.addListener(new HoverListener());
+        uploadAssetButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                FileDialog fd = new FileDialog(new JFrame(), "Choose an asset", FileDialog.LOAD);
+                fd.setDirectory("C:\\");
+                //fd.setFile("*.png");
+                fd.setVisible(true);
+                String filename = fd.getFile();
+                String dir = fd.getDirectory();
+                if (filename == null) {
+                    System.out.println("Canceled");
+                } else {
+                    System.out.printf("File '%s' was selected from directory %s\n", filename, dir);
+                }
+
+                TextField nameTF = new TextField("", skin);
+
+                Dialog dialog = new Dialog("Name", skin, "dialog") {
+                    @Override
+                    protected void result(Object object) {
+                        System.out.println("result: " + object);
+
+                        if ((Boolean) object) {
+                            AssetHandler assetHandler = new AssetHandler();
+                            Asset asset = new Asset(nameTF.getText(), LoginScreen.getCurAcc());
+                            asset.setAssetID(assetHandler.generateAssetID(asset));
+
+                            //add the extension to the assetID
+                            String extension = filename.substring(filename.indexOf('.'));
+                            asset.setAssetID(asset.getAssetID() + extension);
+
+                            //old asset file
+                            File fAsset = new File(dir + filename);
+
+                            try {
+                                FileInputStream fis = new FileInputStream(fAsset);
+
+                                //copy the asset to a new file in the assets folder using its assetid
+                                FileHandle file = Gdx.files.local(asset.getAssetID());
+
+                                file.write(fis, false);
+                                fis.close();
+                                System.out.printf("asset ID: %s\n", asset.getAssetID());
+
+                                assetHandler.uploadAsset(asset);
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                };
+
+                Table table = dialog.getContentTable();
+                table.row();
+                table.add(new Label("What do you want to name this asset?", skin));
+                table.row();
+                nameTF.setMessageText("Name the Asset");
+                table.add(nameTF);
+
+                dialog.button("Confirm", true);
+                dialog.button("Cancel", false);
+                dialog.key(Input.Keys.ENTER, true);
+                dialog.show(stage);
+            }
+        });
+        uploadAssetButton.addListener(new HoverListener());
 
 
         //vertical groups
@@ -140,6 +224,8 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         buttonTable.add(changePasswordButton).width(buttonWidth).padBottom(bottomPadding);
         buttonTable.row();
         buttonTable.add(deleteLevelsButton).width(buttonWidth).padBottom(bottomPadding);
+        buttonTable.row();
+        buttonTable.add(uploadAssetButton).width(buttonWidth).padBottom(bottomPadding);
 
 //        Table headerTable = new Table();
 //        //headerTable.setDebug(true);
