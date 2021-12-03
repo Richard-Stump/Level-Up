@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -25,17 +26,24 @@ public class ErrorDialog {
 
     public enum Type {
         PUBLISH,
-        UNPUBLISH
+        UNPUBLISH,
+        EDIT_ERROR
     }
 
-    public ErrorDialog(Skin skin, final Stage stage, Type type, NextLevel game, Screen prevScreen, LevelInfo levelInfo) {
+    public ErrorDialog(Skin skin, final Stage stage, Type type, NextLevel game, Screen prevScreen, LevelInfo levelInfo, TextButton button) {
+        dbHandler = new ServerDBHandler();
+        dbCreated = new CreatedLevelsDB();
+
         if(type == Type.PUBLISH) {
             this.errorMessage = "You have to beat your level before you publish it";
 
             this.errorDialog = new Dialog("Publish Level", skin){
                 protected void result(Object object) {
                     if(object.equals(1)) {
+                        //download the level first.
+                        dbHandler.getLevelByID(levelInfo.getId(), true);
                         game.setScreen(new GameScreen2(game, levelInfo.getId(), GameScreen2.Mode.PUBLISH, prevScreen));
+                        button.setText("Unpublish");
                     }
                     else if (object.equals(2)) {
                         errorDialog.hide();
@@ -61,7 +69,8 @@ public class ErrorDialog {
             this.errorDialog = new Dialog("Unpublish Level", skin){
                 protected void result(Object object) {
                     if(object.equals(1)) {
-                        game.setScreen(new GameScreen2(game, levelInfo.getId(), GameScreen2.Mode.PUBLISH, prevScreen));
+                        dbHandler.unpublishLevel(levelInfo.getId());
+                        button.setText("Publish");
                     }
                     else if (object.equals(2)) {
                         errorDialog.hide();
@@ -80,6 +89,25 @@ public class ErrorDialog {
             errorDialog.text(errorMessage);
             errorDialog.button("Yes", 1);
             errorDialog.button("No", 2);
+        }
+        else if(type == Type.EDIT_ERROR) {
+            this.errorDialog = new Dialog("Unpublish Level", skin){
+                protected void result(Object object) {
+                    if(object.equals(1)) {
+                        errorDialog.hide();
+                    }
+                    else {
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                errorDialog.show(stage);
+                            }
+                        }, 0.5f);
+                    }
+                }
+            };
+            errorDialog.text("You must unpublish your level before you can edit it");
+            errorDialog.button("Okay", 1);
         }
 
         errorDialog.setMovable(false);
