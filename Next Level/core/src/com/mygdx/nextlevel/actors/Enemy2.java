@@ -24,13 +24,14 @@ public class Enemy2 extends Actor2 {
     //protected boolean right = true;
     boolean jump = false;
     boolean contactFloor = false;
-    Enemy2.Action action;
+//    Enemy2.Action action;
     boolean fireSpawn = false;
     float fireTimer = 0;
     Player2 player;
 
     @Property(displayName = "Time Before Turning") public float timeTillTurn = 2.0f;
     @Property(displayName = "Face Right") public boolean right = true;
+    @Property(displayName = "Enemy Action") public Enemy2.Action action = Action.DEFAULT;
 
 
 //    public enum Action {

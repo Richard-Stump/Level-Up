@@ -174,15 +174,15 @@ public class TileMap extends ApplicationAdapter{
                 switch (mapObject.getName()) {
                     case ("Block2"): //FIXME (Wait for other properties)
                         /*
-                        if (mapObject.getProperties().get("spawnItem", Boolean.TYPE) && !mapObject.getProperties().get("breakable", Boolean.TYPE)) { //Item Block
+                        if (mapObject.getProperties().get("Can Spawn Item", Boolean.TYPE) && !mapObject.getProperties().get("breakable", Boolean.TYPE)) { //Item Block
                             screen.actors.add(new Block2(screen,
                                     screen.itemBlockTextures,
                                     mapObject.getProperties().get("x", Float.TYPE),
                                     mapObject.getProperties().get("y", Float.TYPE),
                                     true,
-                                    6, //FIXME this will need to be updated
+                                    GameScreen2.ItemIndex.ALL.getValue(), //FIXME this will need to be updated
                                     false));
-                        } else if (mapObject.getProperties().get("spawnItem", Boolean.TYPE) && mapObject.getProperties().get("breakable", Boolean.TYPE)) { //Coin Block
+                        } else if (mapObject.getProperties().get("Can Spawn Item", Boolean.TYPE) && mapObject.getProperties().get("breakable", Boolean.TYPE)) { //Coin Block
                             screen.actors.add(new Block2(screen,
                                     screen.coinBlockTextures,
                                     mapObject.getProperties().get("x", Float.TYPE),
@@ -197,7 +197,7 @@ public class TileMap extends ApplicationAdapter{
                                     mapObject.getProperties().get("x", Float.TYPE),
                                     mapObject.getProperties().get("y", Float.TYPE),
                                     false,
-                                    GameScreen2.ItemIndex.COIN.getValue(),
+                                    GameScreen2.ItemIndex.NONE.getValue(),
                                     false));
                         }
                         */
@@ -214,6 +214,7 @@ public class TileMap extends ApplicationAdapter{
                                 screen.enemyTextures,
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE),
+//                                mapObject.getProperties().get("Enemy Action", Enemy2.Action.class),
                                 Enemy2.Action.DEFAULT, //FIXME need to get property
                                 screen.getPlayer()
                                 ));

@@ -12,8 +12,12 @@ import com.kotcrab.vis.ui.widget.VisWindow;
 import com.kotcrab.vis.ui.widget.tabbedpane.Tab;
 import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPane;
 import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneAdapter;
+import com.mygdx.nextlevel.screens.EditLevelScreen;
+import jdk.internal.org.jline.reader.Editor;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,14 +30,19 @@ import java.util.HashMap;
  */
 public class ObjectSelectionWindow extends VisWindow {
     protected TabbedPane pane;
+    private Object currentObject;
+    private PlaceableObject currentPlaceable;
+    private EditLevelScreen screen;
 
     /**
      * Construct the window
      *
      * @param objects A list of objects that the user can place in the editor
      */
-    public ObjectSelectionWindow(ArrayList<PlaceableObject> objects) {
+    public ObjectSelectionWindow(EditLevelScreen screen, ArrayList<PlaceableObject> objects) {
         super("Objects");
+
+        this.screen = screen;
 
         //Sort the list of objects into groups
         HashMap<String, ArrayList<PlaceableObject>> groups = groupObjects(objects);
@@ -96,15 +105,38 @@ public class ObjectSelectionWindow extends VisWindow {
         return groups;
     }
 
-    /**
-     * Gets the currently selected PlaceableObject
-     *
-     * @return the currently selected PlaceableObject
-     */
-    public PlaceableObject getCurrentSelection() {
+    public void update() {
         ObjectSelectionTab tab = (ObjectSelectionTab) pane.getActiveTab();
+        currentPlaceable = tab.getCurrentSelection();
 
-        return tab.getCurrentSelection();
+        PlaceableObject po = currentPlaceable;
+
+        try {
+            Constructor constructor = po.clazz.getConstructor();
+            currentObject = constructor.newInstance();
+
+            screen.linkToPropWindow(currentObject);
+
+            return;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        currentObject = null;
+    }
+
+    public PlaceableObject getCurrentPlaceable() {
+        return currentPlaceable;
+    }
+
+    public Object getCurrentObject() {
+        return currentObject;
     }
 }
 
