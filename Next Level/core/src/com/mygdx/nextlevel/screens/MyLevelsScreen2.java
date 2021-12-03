@@ -1,5 +1,6 @@
 package com.mygdx.nextlevel.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -476,9 +477,9 @@ public class MyLevelsScreen2 implements Screen {
                 }
                 LevelInfo levelInfo = dbServer.getLevelByID(selectedId, true);
                 System.out.println("Should be downloading: " + levelInfo.getTitle());
-                //TODO: open the game screen with the level that is selected
 
-                new GameScreen2(game, dbCreated.searchByID(selectedId).getId());
+
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, dbCreated.searchByID(selectedId).getId()));
             }
         };
     }

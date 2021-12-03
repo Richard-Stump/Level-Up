@@ -44,12 +44,14 @@ public class GameScreen2 extends Timer implements Screen {
      * Enums to the screen in which specify what item goes into the block
      */
     public enum ItemIndex {
-        SLOW(0), SPEED(1), LIFE(2), MUSHROOM(3), STAR(4), FIREFLOWER(5), LIFESTEAL(6), COIN(7), ALL(8);
+        NONE(-1), SLOW(0), SPEED(1), LIFE(2), MUSHROOM(3), STAR(4), FIREFLOWER(5), LIFESTEAL(6), COIN(7), ALL(8);
         private final int value;
 
         ItemIndex(final int newValue) {
             value = newValue;
         }
+
+        public int getValue() { return this.value; }
     }
     public enum PlayerIndex {
         DEFAULT(0), POWERUP(1), STAR(2), FIRE(3), LIFESTEAL(4);
@@ -134,11 +136,11 @@ public class GameScreen2 extends Timer implements Screen {
     public ArrayList<Texture> enemyTextures;
     public ArrayList<Texture> itemBlockTextures;
     public ArrayList<Texture> coinBlockTextures;
+    public ArrayList<Texture> blockTextures;
     public ArrayList<String> itemTextures;
     public ArrayList<Texture> checkpointTextures;
     public Texture endTexture;
     public Texture coinTexture;
-    public Texture blockTexture;
     public Texture jewelTexture;
     public Texture playerFireTexture;
     public Texture enemyFireTexture;
@@ -189,6 +191,7 @@ public class GameScreen2 extends Timer implements Screen {
          itemTextures = new ArrayList<>();
          itemBlockTextures = new ArrayList<>();
          coinBlockTextures = new ArrayList<>();
+         blockTextures = new ArrayList<>();
          checkpointTextures = new ArrayList<>();
 
          //Create and load tilemap
@@ -224,13 +227,16 @@ public class GameScreen2 extends Timer implements Screen {
         despawnQueue.clear();
 
         //Create floor and world ends
-        floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false, CollisionGroups.ALL, CollisionGroups.WORLD);
         new DeathBlock(this, tm.getMapWidth());
 
+        //Left Side of the screen
         pb = new PushBlock(this, tm);
         if (tm.getAutoScroll()) {
             actors.add(pb);
         }
+
+        ///Right side of the screen
+        new EndBlock(this, tm);
 
         //Player Textures
         playerTextures.add(PlayerIndex.DEFAULT.value, new Texture("hero.png"));
@@ -256,8 +262,7 @@ public class GameScreen2 extends Timer implements Screen {
         itemBlockTextures.add(BlockIndex.DEFAULT.value, new Texture("item-block.png"));
         itemBlockTextures.add(BlockIndex.EMPTY.value, new Texture("used-item-block.jpg"));
         coinBlockTextures.add(BlockIndex.DEFAULT.value, new Texture("Block.png"));
-        coinBlockTextures.add(BlockIndex.EMPTY.value, new Texture("used-item-block.jpg"));
-        blockTexture = new Texture("Block.png");
+        blockTextures.add(new Texture("Block.png"));
 
         //Enemy Texture
         enemyTextures.add(EnemyIndex.DEFAULT.value, new Texture("enemy.jpg"));

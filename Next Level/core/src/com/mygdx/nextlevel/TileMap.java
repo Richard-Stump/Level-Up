@@ -167,24 +167,51 @@ public class TileMap extends ApplicationAdapter{
                 RectangleMapObject mapObject = (RectangleMapObject) object;
                 switch (mapObject.getName()) {
                     case ("Block2"): //FIXME (Wait for other properties)
+                        /*
+                        if (mapObject.getProperties().get("spawnItem", Boolean.TYPE) && !mapObject.getProperties().get("breakable", Boolean.TYPE)) { //Item Block
+                            screen.actors.add(new Block2(screen,
+                                    screen.itemBlockTextures,
+                                    mapObject.getProperties().get("x", Float.TYPE),
+                                    mapObject.getProperties().get("y", Float.TYPE),
+                                    true,
+                                    6, //FIXME this will need to be updated
+                                    false));
+                        } else if (mapObject.getProperties().get("spawnItem", Boolean.TYPE) && mapObject.getProperties().get("breakable", Boolean.TYPE)) { //Coin Block
+                            screen.actors.add(new Block2(screen,
+                                    screen.coinBlockTextures,
+                                    mapObject.getProperties().get("x", Float.TYPE),
+                                    mapObject.getProperties().get("y", Float.TYPE),
+                                    true,
+                                    GameScreen2.ItemIndex.COIN.getValue(),
+                                    true));
+                        } else { //Non Breakable Block
+                            screen.actors.add(new Block2(screen,
+                                    screen.blockTextures,
+                                    mapObject.getProperties().get("x", Float.TYPE),
+                                    mapObject.getProperties().get("y", Float.TYPE),
+                                    false,
+                                    GameScreen2.ItemIndex.COIN.getValue(),
+                                    false));
+                        }
+                        */
                         screen.actors.add(new Block2(screen,
                                 screen.itemBlockTextures,
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE),
                                 false,
-                                false));
+                                GameScreen2.ItemIndex.NONE.getValue(),
+                                mapObject.getProperties().get("breakable", Boolean.TYPE)));
                         break;
                     case ("Enemy2"): //FIXME (Wait for other properties)
-                        System.out.println("enemy");
                         screen.actors.add(new Enemy2(screen,
                                 screen.enemyTextures,
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE),
-                                Enemy2.Action.DEFAULT,
+                                Enemy2.Action.DEFAULT, //FIXME need to get property
                                 screen.getPlayer()
                                 ));
                         break;
-                    case ("End"): //FIXME (Wait for other properties)
+                    case ("End"):
                         screen.actors.add(new End(screen,
                                 screen.endTexture,
                                 mapObject.getProperties().get("x", Float.TYPE),
@@ -192,7 +219,7 @@ public class TileMap extends ApplicationAdapter{
                                 screen.getPlayer()
                                 ));
                         break;
-                    case ("CheckPoint2"): //FIXME (Wait for other properties)
+                    case ("CheckPoint2"):
                         screen.actors.add(new CheckPoint2(screen,
                                 screen.checkpointTextures,
                                 mapObject.getProperties().get("x", Float.TYPE),
@@ -200,21 +227,21 @@ public class TileMap extends ApplicationAdapter{
                                 screen.getPlayer()
                                 ));
                         break;
-                    case ("Jewel"): //FIXME (Wait for other properties)
+                    case ("Jewel"):
                         screen.actors.add(new Jewel(screen,
                                 screen.jewelTexture,
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE)
                                 ));
                         break;
-                    case ("SpikeBlock"): //FIXME (Wait for other properties)
+                    case ("SpikeBlock"):
                         screen.actors.add(new SpikeBlock(screen,
                                 screen.spikeBlockTexture,
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE)
                                 ));
                         break;
-                    case ("CoinStatic"): //FIXME (Wait for other properties)
+                    case ("CoinStatic"):
                         screen.actors.add(new CoinStatic(screen,
                                 screen.coinTexture,
                                 mapObject.getProperties().get("x", Float.TYPE),
