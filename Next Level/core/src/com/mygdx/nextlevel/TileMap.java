@@ -60,7 +60,6 @@ public class TileMap extends ApplicationAdapter{
     public TileMap(String filename) {
         tiledMap = new TmxMapLoader().load(filename);
         tiledMapProperties = tiledMap.getProperties();
-        layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
 
         mapWidth = tiledMapProperties.get("width", Integer.class);
         mapHeight = tiledMapProperties.get("height", Integer.class);
@@ -69,14 +68,14 @@ public class TileMap extends ApplicationAdapter{
         xAxis = screenWidth/2f;
         yAxis = screenWidth/2f/32f;
 
-        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
-        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
-        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
-        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
-        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
-        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
+//        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
+//        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
+//        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
+//        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
+//        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
+//        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
 //        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
-        gravity = tiledMapProperties.get("gravity", Float.class);
+//        gravity = tiledMapProperties.get("gravity", Float.class);
         autoScroll = true;
 
         if (collectCoin) {
@@ -120,10 +119,6 @@ public class TileMap extends ApplicationAdapter{
         //TODO Checkpoint Textures (add all to Checkpoint texture list)
         //TODO End texture (add to End texutre)
 
-
-
-        MapLayer objectLayer = tiledMap.getLayers().get("Item Block");
-        //FIXME Create one for each actor
         MapLayer objectLayer;
 //        objectLayer = tiledMap.getLayers().get("Player");
 //        for(MapObject object : objectLayer.getObjects()) {
@@ -141,32 +136,8 @@ public class TileMap extends ApplicationAdapter{
 
         objectLayer = tiledMap.getLayers().get("Object Layer 1");
         for(MapObject object : objectLayer.getObjects()){
-            if(object instanceof TextureMapObject) {
-                TextureMapObject mapObject = (TextureMapObject) object;
-                ArrayList<Texture> test = new ArrayList<>();
-                float x = (float) object.getProperties().get("x");
-                float y = (float) object.getProperties().get("y");
-                float width = (float) object.getProperties().get("width");
-                float height = (float) object.getProperties().get("height");
-                mapObject.getTextureRegion().setRegion(x, y, width, height);
-                Texture texture = mapObject.getTextureRegion().getTexture();
-                mapObject.getTextureRegion().setRegion(mapObject.getTextureRegion().getRegionX() + x, mapObject.getTextureRegion().getRegionY() + y, width, height);
-                test.add(texture);
-                actors.add(new Block2(screen, test, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
-            System.out.println(object);
             if(object instanceof RectangleMapObject) {
-                System.out.println("test");
                 RectangleMapObject mapObject = (RectangleMapObject) object;
-//                if (((String) mapObject.getProperties().get("name")).equals("Block2")) {
-//                    screen.actors.add(new Block2(screen,
-//                            screen.itemBlockTextures,
-//                            ((float) mapObject.getProperties().get("x"))/32.0f,
-//                            ((float) mapObject.getProperties().get("y"))/32.0f,
-//                            false,
-//                            false));
-//                }
-
-//                switch (mapObject.getProperties().get("name").toString()) {
                 switch (mapObject.getName()) {
                     case ("Block2"): //FIXME (Wait for other properties)
                         screen.actors.add(new Block2(screen,
@@ -202,24 +173,6 @@ public class TileMap extends ApplicationAdapter{
                                 ));
                         break;
                 }
-            }
-        }
-
-        objectLayer = tiledMap.getLayers().get("Coin Block");
-        //FIXME work texture
-        for(MapObject object : objectLayer.getObjects()){
-            if(object instanceof TextureMapObject) {
-                TextureMapObject mapObject = (TextureMapObject) object;
-                ArrayList<Texture> test = new ArrayList<>();
-                float x = (float) object.getProperties().get("x");
-                float y = (float) object.getProperties().get("y");
-                float width = (float) object.getProperties().get("width");
-                float height = (float) object.getProperties().get("height");
-                mapObject.getTextureRegion().setRegion(x, y, width, height);
-                Texture texture = mapObject.getTextureRegion().getTexture();
-                mapObject.getTextureRegion().setRegion(mapObject.getTextureRegion().getRegionX() + x, mapObject.getTextureRegion().getRegionY() + y, width, height);
-                test.add(texture);
-                actors.add(new Block2(screen, test, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
             }
         }
         //Add player to the screen
