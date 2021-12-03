@@ -642,7 +642,7 @@ public class Player2 extends Actor2 {
     public void checkConditions(ArrayList<Integer> conditions) {
         if (conditions.contains(1)) {
             coinConditionMet = false;
-            if (coin == 5) {
+            if (coin == screen.getTileMap().getCoinCount()) {
                 coinConditionMet = true;
             }
         } else {
@@ -650,7 +650,7 @@ public class Player2 extends Actor2 {
         }
         if (conditions.contains(2)) {
             killEnemyConditionMet = false;
-            if (enemiesKilled == 1) {
+            if (enemiesKilled == screen.getTileMap().getEnemyCount()) {
                 killEnemyConditionMet = true;
             }
         } else  {
