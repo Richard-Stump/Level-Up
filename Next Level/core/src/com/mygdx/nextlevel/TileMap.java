@@ -27,6 +27,7 @@ import com.mygdx.nextlevel.actors.Block;
 import com.mygdx.nextlevel.actors.Block2;
 import com.mygdx.nextlevel.actors.Player2;
 import com.mygdx.nextlevel.screens.GameScreen2;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.ArrayList;
 
@@ -48,6 +49,7 @@ public class TileMap extends ApplicationAdapter{
     boolean keepJewel;
     boolean autoScroll;
     float timeLimit;
+    float gravity;
 
     //Camera Position
     float xAxis;
@@ -66,13 +68,14 @@ public class TileMap extends ApplicationAdapter{
         xAxis = screenWidth/2f;
         yAxis = screenWidth/2f/32f;
 
-//        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
-//        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
-//        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
-//        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
-//        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
-//        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
+        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
+        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
+        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
+        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
+        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
+        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
 //        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
+        gravity = tiledMapProperties.get("gravity", Float.class);
         autoScroll = true;
 
         if (collectCoin) {
@@ -204,5 +207,8 @@ public class TileMap extends ApplicationAdapter{
     }
     public float getTimeLimit() {
         return timeLimit;
+    }
+    public float getGravity() {
+        return gravity;
     }
 }
