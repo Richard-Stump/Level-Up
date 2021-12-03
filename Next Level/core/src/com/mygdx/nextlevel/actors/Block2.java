@@ -40,7 +40,7 @@ public class Block2 extends Actor2 {
         this.spawnItem = spawnItem;
         this.spawned = false;
         this.breakable = breakable;
-        if (this.spawnItem && !this.breakable && index != -1) {
+        if (this.spawnItem && index != GameScreen2.ItemIndex.COIN.getValue() && index != -1) {
             //Setup all items
             items.add(SlowItem2.class);
             items.add(SpeedItem2.class);
@@ -51,7 +51,7 @@ public class Block2 extends Actor2 {
             items.add(LifeStealItem2.class);
 
             itemIndex = index;
-        } else if (this.spawnItem && this.breakable) {
+        } else if (this.spawnItem && index == GameScreen2.ItemIndex.COIN.getValue()) {
             items.add(Coin.class);
         }
 //        else {
@@ -66,10 +66,6 @@ public class Block2 extends Actor2 {
                 (short) (CollisionGroups.ACTOR | CollisionGroups.ITEM | CollisionGroups.WORLD), CollisionGroups.BLOCK
         );
         setRegion(blockTextures.get(0));
-    }
-
-    public Block2(GameScreen2 screen, ArrayList<Texture> blockTextures, float x, float y, boolean spawnItem, boolean breakable) {
-        this(screen, blockTextures, x, y, spawnItem, -1, breakable);
     }
 
     public void reset() {

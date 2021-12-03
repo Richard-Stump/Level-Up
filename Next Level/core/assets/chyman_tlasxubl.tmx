@@ -9,7 +9,7 @@
   <property name="keepJewel" type="bool" value="false"/>
   <property name="gravity" type="float" value="0.0"/>
   <property name="timeLimit" type="int" value="0"/>
-  <property name="autoScroll" type="bool" value="false"/>
+  <property name="autoScroll" type="bool" value="true"/>
  </properties>
  <objectgroup id="2" name="Player Layer">
   <object id="1" name="Player2" x="2" y="19" >
