@@ -90,10 +90,11 @@ public class TileMap extends ApplicationAdapter{
         killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
         killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
         keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
-        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
+
+        timeLimit = tiledMapProperties.get("timeLimit", Integer.class);
         autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
         gravity = tiledMapProperties.get("gravity", Float.class);
-        autoScroll = true;
+
 
         if (collectCoin) {
             conditionList.add(1);
@@ -190,6 +191,27 @@ public class TileMap extends ApplicationAdapter{
                                 screen.getPlayer()
                                 ));
                         break;
+                    case ("Jewel"): //FIXME (Wait for other properties)
+                        screen.actors.add(new Jewel(screen,
+                                screen.jewelTexture,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
+                                ));
+                        break;
+                    case ("SpikeBlock"): //FIXME (Wait for other properties)
+                        screen.actors.add(new SpikeBlock(screen,
+                                screen.spikeBlockTexture,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
+                                ));
+                        break;
+                    case ("CoinStatic"): //FIXME (Wait for other properties)
+                        screen.actors.add(new CoinStatic(screen,
+                                screen.coinTexture,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
+                                ));
+                        break;
                 }
             }
         }
@@ -199,7 +221,7 @@ public class TileMap extends ApplicationAdapter{
     }
 
     public void render (OrthographicCamera camera, Player2 player, boolean reset) {
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(135/255f, 206/255f, 235/255f, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
