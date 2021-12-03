@@ -389,7 +389,23 @@ public class Player2 extends Actor2 {
         }
 
         if (other instanceof PushBlock) {
+            lifeCount--;
+            respawn = true;
+            score -= 200;
+            if (score < 0) {
+                score = 0;
+            }
 
+            if(lifeCount < 1) {
+                lifeCount = 3;
+                respawnPosition = worldSpawn;
+
+                for(Actor2 actor : screen.checkpointList) {
+                    ((CheckPoint2) actor).reset();
+                }
+            }
+
+            screen.setShouldReset(true);
         }
 
         if(side == Side.BOTTOM) {

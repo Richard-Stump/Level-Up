@@ -232,4 +232,21 @@ public class BoxCollider {
     }
     public void setKinematic() { body.setType(BodyType.KinematicBody); }
     public Fixture getFixture() { return body.getFixtureList().get(0); }
+    public void setHiddenBox(Vector2 size, short mask, short category) {
+        Vector2 halfSize = size.scl(0.5f);
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(halfSize.x, halfSize.y);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.density = 100.0f;    //How much mass is there per unit of volume
+        fixtureDef.friction = 0.0f;     //How much friction does this object have
+        fixtureDef.restitution = 0.0f;  //How bouncy is this object. None because we don't want our objects to bounce.
+        fixtureDef.shape = shape;
+        fixtureDef.isSensor = false;
+        fixtureDef.filter.maskBits = mask; //I Collide with ...
+        fixtureDef.filter.categoryBits = category; //I am a ...
+        fixture = body.createFixture(fixtureDef);
+        fixture.setUserData(this);
+        shape.dispose();
+    }
 }
