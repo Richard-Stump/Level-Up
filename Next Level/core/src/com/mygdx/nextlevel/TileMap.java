@@ -257,6 +257,27 @@ public class TileMap extends ApplicationAdapter{
                                 ));
                         coinCount++;
                         break;
+                    case ("basicBlock1"):
+                        screen.actors.add(new basicBlock1(screen,
+                                screen.basicBlock1Textures,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
+                                ));
+                        break;
+                    case ("basicBlock2"):
+                        screen.actors.add(new basicBlock2(screen,
+                                screen.basicBlock2Textures,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
+                        ));
+                        break;
+                    case ("basicBlock3"):
+                        screen.actors.add(new basicBlock3(screen,
+                                screen.basicBlock3Textures,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
+                        ));
+                        break;
                 }
             }
         }
