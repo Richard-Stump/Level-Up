@@ -228,20 +228,18 @@ public class DeleteDownloadedAssetsScreen implements Screen {
      */
     private Table getLeftColumn(String id) {
         Table leftTable = new Table();
-        Asset asset;
 
         //verify database is connected
         if (dbAssets == null) {
             System.out.println("db is not active");
             return null;
-        } else {
-            asset = dbAssets.searchByID(id);
         }
 
         //have an image preview
         FileHandle fileHandle = new FileHandle(id);
         Texture texture = new Texture(fileHandle);
         Image preview = new Image(texture);
+        preview.addListener(selectAssetListener(id));
 
         leftTable.add(preview).width(64).height(64).padRight(25);
 
@@ -422,8 +420,9 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         for (Asset assetToAdd: list2) {
             boolean isInList = false;
             for (Asset assetInList: combined) {
-                if (assetToAdd.getAssetID() == assetInList.getAssetID()) {
+                if (assetToAdd.getAssetID().equals(assetInList.getAssetID())) {
                     isInList = true;
+                    break;
                 }
             }
             if (!isInList) {
