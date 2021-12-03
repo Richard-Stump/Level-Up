@@ -128,9 +128,7 @@ public class Player2 extends Actor2 {
         fireFlowerItem = false;
         jewel = false;
         conditions = new ArrayList<>();
-        conditions.add(1);
-        conditions.add(2);
-        conditions.add(5);
+
     }
 
     public void update(float delta) {
@@ -648,21 +646,30 @@ public class Player2 extends Actor2 {
         } else {
             coinConditionMet = true;
         }
-        if (conditions.contains(2)) {
-            killEnemyConditionMet = false;
-            if (enemiesKilled == screen.getTileMap().getEnemyCount()) {
-                killEnemyConditionMet = true;
-            }
-        } else  {
+
+        if (!conditions.contains(2) && !conditions.contains(3)) {
+            killNoEnemyConditionMet = true;
             killEnemyConditionMet = true;
         }
-        if (conditions.contains(3)) {
-            killNoEnemyConditionMet = false;
-            if (enemiesKilled == 0) {
+        else {
+            if (conditions.contains(2)) {
+                killEnemyConditionMet = false;
+                if (enemiesKilled == screen.getTileMap().getEnemyCount()) {
+                    killEnemyConditionMet = true;
+                }
+            } else  {
+                killEnemyConditionMet = true;
+            }
+
+            if (conditions.contains(3)) {
+                killNoEnemyConditionMet = false;
+                if (enemiesKilled == 0) {
+                    killNoEnemyConditionMet = true;
+                }
+            } else {
                 killNoEnemyConditionMet = true;
             }
-        } else {
-            killNoEnemyConditionMet = true;
+
         }
         if (conditions.contains(4)) {
             jewelConditionMet = false;

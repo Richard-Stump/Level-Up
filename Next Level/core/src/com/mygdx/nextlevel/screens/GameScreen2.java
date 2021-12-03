@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
 import com.mygdx.nextlevel.*;
 import com.mygdx.nextlevel.Util.GameMenuDialog;
 import com.mygdx.nextlevel.actors.*;
@@ -117,6 +118,7 @@ public class GameScreen2 extends Timer implements Screen {
     public HashMap<Item2, String> itemToName = new HashMap<>();
 
     private Mode mode = Mode.PLAY;
+    private Screen prevScreen;
     private Screen endScreen;
 
 
@@ -262,6 +264,75 @@ public class GameScreen2 extends Timer implements Screen {
 
         start = getStartTime();
     }
+     public GameScreen2(NextLevel game, String levelInfo, Mode mode, Screen prevScreen) {
+         this.game = game;
+         this.levelInfo = levelInfo;
+
+         this.mode = mode;
+         this.prevScreen = prevScreen;
+         this.endScreen = endScreen;
+         atlas = new TextureAtlas("skin/uiskin.atlas");
+         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
+         //Used to display where the colliders are on the screen
+         box2dRenderer = new Box2DDebugRenderer();
+
+
+         //Initialize a camera to view the world. Specify how many tiles are viewable vertically, and then
+         //use the screen's aspect ratio to calculate how many tiles to view along the x access to keep tiles square.
+         //This camera converts the world coordinates into screen coordinates when rendering, so actors don't need to
+         //worry about the screen's size.
+         float numTilesVisibleY = 15.0f;
+         float aspect = (float)Gdx.graphics.getWidth() / (float)Gdx.graphics.getHeight();
+         camera = new OrthographicCamera(numTilesVisibleY * aspect, numTilesVisibleY);
+         camera.translate(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f);
+         camera.update();
+
+         //Lists to keep track of actors and their states
+         actors = new ArrayList<>();
+         spawnQueue = new LinkedList<>();
+         despawnQueue = new LinkedList<>();
+
+         despawnedActors = new ArrayList<>();
+         itemsList = new ArrayList<>();
+         blockList = new ArrayList<>();
+         checkpointList = new ArrayList<>();
+         fireList = new ArrayList<>();
+         enemyList = new ArrayList<>();
+
+         playerTextures = new ArrayList<>();
+         enemyTextures = new ArrayList<>();
+         itemTextures = new ArrayList<>();
+         itemBlockTextures = new ArrayList<>();
+         coinBlockTextures = new ArrayList<>();
+         blockTextures = new ArrayList<>();
+         checkpointTextures = new ArrayList<>();
+         basicBlock1Textures = new ArrayList<>();
+         basicBlock2Textures = new ArrayList<>();
+         basicBlock3Textures = new ArrayList<>();
+
+         //Create and load tilemap
+         tileMapName = levelInfo + ".tmx";
+         System.out.println(tileMapName);
+         tm = new TileMap(tileMapName);
+         conditionList = tm.getConditionList();
+
+         paused = false;
+         count = 0;
+
+         cameraNew = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+         cameraNew.position.set(cameraNew.viewportWidth, cameraNew.viewportHeight, 0.0F);
+         cameraNew.update();
+         viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), cameraNew);
+         viewport.apply();
+         batch = new SpriteBatch();
+         stage = new Stage(viewport, batch);
+
+         //setup the initial map
+         init();
+
+         start = getStartTime();
+
+    }
 
     /**
      * Sets whether the game's world should be reset before the next frame.
@@ -346,49 +417,6 @@ public class GameScreen2 extends Timer implements Screen {
 
         //SpikeBall Texture
         spikeBlockTexture = new Texture("spike-block.png");
-
-//        player = new Player2(this, playerTextures, 1.0f, 1.0f);
-//        actors.add(new Enemy2(this, enemyTextures, 16, 2, Enemy2.Action.JUMP, player));
-//        actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
-//        actors.add(new End(this, endTexture, 30, 1, player));
-//        actors.add(new Block2(this,itemBlockTextures, 7, 4, true, ItemIndex.ALL.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 10, 4, true, ItemIndex.SLOW.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 13, 4, true, ItemIndex.SPEED.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 16, 4, true, ItemIndex.LIFE.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 19, 4, true, ItemIndex.MUSHROOM.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 22, 4, true, ItemIndex.STAR.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
-//        actors.add(new Block2(this, coinBlockTextures, 29, 4, true, ItemIndex.COIN.value, true));
-//        actors.add(new Block2(this, coinBlockTextures, 30, 4, false,false));
-//        actors.add(new CoinStatic(this, coinTexture, 10, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 13, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 16, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 19, 5));
-//        actors.add(new Enemy2(this, enemyTextures, 16, 2, Enemy2.Action.JUMP, player));
-//        actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
-//        actors.add(new End(this, endTexture, 30, 1, player));
-//        actors.add(new Block2(this,itemBlockTextures, 7, 4, true, ItemIndex.ALL.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 10, 4, true, ItemIndex.SLOW.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 13, 4, true, ItemIndex.SPEED.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 16, 4, true, ItemIndex.LIFE.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 19, 4, true, ItemIndex.MUSHROOM.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 22, 4, true, ItemIndex.STAR.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
-//        actors.add(new Block2(this, coinBlockTextures, 29, 4, true, ItemIndex.COIN.value, true));
-//        actors.add(new Block2(this, coinBlockTextures, 30, 4, false,false));
-//        actors.add(new CoinStatic(this, coinTexture, 10, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 13, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 16, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 19, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 10, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 13, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 16, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 19, 5));
-//        actors.add(new Jewel(this, jewelTexture, 2, 1));
-//        actors.add(player);
-//        actors.add(player);
 
         tm.loadObjects(this, actors);
 
@@ -552,28 +580,37 @@ public class GameScreen2 extends Timer implements Screen {
 
         hud.update(delta, player, itemToName);
         if (player.getWin()) {
-            end = getEndTime();
-//            System.out.println(start);
-//            System.out.println(end);
-//            System.out.println(end-start);
-            long elapsed = end - start;
-            double elapsedTime = (double) elapsed / 1000000000;
-//            System.out.println(String.format("Current Record Time: %f", player.getRecordTime()));
-            if (player.getRecordTime() > elapsedTime) {
-                player.setRecordTime(elapsedTime);
-            }
-            player.incScore(elapsed / 100000);
-//            System.out.println(String.format("New Record Time: %f", player.getRecordTime()));
-//            System.out.println(elapsedTime);
-            System.out.println("In win ");
-            // ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player, levelInfo, elapsedTime));
+            processWin();
         }
         if (player.getFail()) {
-            //System.out.println("Im here");
-//            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "FAIL", "MainMenuScreen"));
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over...", player, levelInfo));
+            processFail();
         }
+    }
+
+    private void processWin() {
+        System.out.println("In win ");
+
+        switch(mode) {
+            case PLAY: //If the player is playing normally, process the win as normal
+                end = getEndTime();
+                long elapsed = end - start;
+                double elapsedTime = (double)elapsed / 1_000_000_000;   //What is this constant for?
+                if(player.getRecordTime() > elapsedTime) {
+                    player.setRecordTime(elapsedTime);
+                }
+                player.incScore(elapsed / 100000);
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player, levelInfo, elapsedTime));
+                break;
+            case PUBLISH:   //If the player is publishing the level, they should be taken to a screen for it
+                break;
+            case TEST:      //If the player is testing, they should go back to the editor when done.
+                ((Game) Gdx.app.getApplicationListener()).setScreen(prevScreen);
+                break;
+        }
+    }
+
+    private void processFail() {
+        ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over...", player, levelInfo));
     }
 
     /**

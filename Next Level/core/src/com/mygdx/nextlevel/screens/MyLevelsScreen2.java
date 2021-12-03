@@ -489,7 +489,9 @@ public class MyLevelsScreen2 implements Screen {
                 System.out.println("Should be downloading: " + levelInfo.getTitle());
 
 
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, dbCreated.searchByID(selectedId).getId()));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(
+                        new GameScreen2(game, dbCreated.searchByID(selectedId).getId(), GameScreen2.Mode.PLAY, null)
+                );
             }
         };
     }

@@ -85,8 +85,7 @@ public class MenuWindow extends VisWindow {
 
 
                     NextLevel game = screen.getGame();
-                    CreatedLevelsDB dbCreated = new CreatedLevelsDB();
-                    game.setScreen(new GameScreen2(game, level.info.getId()));
+                    game.setScreen(new GameScreen2(game, level.info.getId(), GameScreen2.Mode.TEST, screen));
 
                 } catch (FileNotFoundException e) {
                     stage.addActor(new MessageDialog("Could not open + \"" + lev.saveName + "\"to save the level"));

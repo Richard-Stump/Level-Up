@@ -370,7 +370,9 @@ public class LevelDownloadScreen implements Screen {
                 downloadAndPlayButton.setColor(Color.RED);
 
                 //TODO: after downloading set screen to level to play pass the level id
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, dbCreated.searchByID(selectedId).getId()));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(
+                        new GameScreen2(game, dbCreated.searchByID(selectedId).getId(), GameScreen2.Mode.PLAY, null)
+                );
             }
         };
     }
