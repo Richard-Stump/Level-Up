@@ -19,14 +19,16 @@ import java.util.Random;
         textures = { "item-block.png" }
 )
 public class Block2 extends Actor2 {
-    protected boolean spawnItem;
+//    protected boolean spawnItem;
     protected boolean spawned;
    // protected boolean breakable;
     protected BoxCollider collider;
-    protected int itemIndex = 0;
+//    protected int itemIndex = 0;
     protected ArrayList<Texture> blockTextures;
 
     @Property(displayName = "Is Breakable") public boolean breakable;
+    @Property(displayName = "Can Spawn Item") public boolean spawnItem;
+    @Property(displayName = "Item Index") public int itemIndex;
 
     ArrayList<Class> items = new ArrayList<>();
 

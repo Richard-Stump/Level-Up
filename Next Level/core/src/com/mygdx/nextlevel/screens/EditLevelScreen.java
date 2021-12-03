@@ -37,6 +37,7 @@ public class EditLevelScreen implements Screen {
     private int screenWidth, screenHeight;
     private EditorLevel level;
     private ObjectSelectionWindow win3;
+    private PropertyWindow propWindow;
 
     private LevelView levelView;
 
@@ -135,8 +136,11 @@ public class EditLevelScreen implements Screen {
         MenuWindow win2 = new MenuWindow(this, level, stage);
         stage.addActor(win2);
 
-        win3 = new ObjectSelectionWindow(placeableObjects);
+        win3 = new ObjectSelectionWindow(this, placeableObjects);
         stage.addActor(win3);
+
+        propWindow = new PropertyWindow();
+        stage.addActor(propWindow);
 
         backButton.setPosition(0.0f, STAGE_HEIGHT - backButton.getHeight());
         stage.addActor(backButton);
@@ -192,6 +196,10 @@ public class EditLevelScreen implements Screen {
         VisUI.dispose();
     }
 
+    public void linkToPropWindow(Object object) {
+        propWindow.setObject(object);
+    }
+
     public void loadPlaceableObjects() {
         Reflections reflections = new Reflections("com.mygdx.nextlevel");
 
@@ -211,28 +219,11 @@ public class EditLevelScreen implements Screen {
     }
 
     public Object getObjectToPlace() {
-        PlaceableObject po = getPlaceableToPlace();
-
-        try {
-            Constructor constructor = po.clazz.getConstructor();
-            Object o = constructor.newInstance();
-
-            return o;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return win3.getCurrentObject();
     }
 
     public PlaceableObject getPlaceableToPlace() {
-        return win3.getCurrentSelection();
+        return win3.getCurrentPlaceable();
     }
 
     public void setScrollFocus(Actor actor) {
