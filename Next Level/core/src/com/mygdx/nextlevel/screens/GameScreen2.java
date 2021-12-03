@@ -602,6 +602,7 @@ public class GameScreen2 extends Timer implements Screen {
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player, levelInfo, elapsedTime));
                 break;
             case PUBLISH:   //If the player is publishing the level, they should be taken to a screen for it
+                game.setScreen(new PublishMessageScreen(game, levelInfo));
                 break;
             case TEST:      //If the player is testing, they should go back to the editor when done.
                 ((Game) Gdx.app.getApplicationListener()).setScreen(prevScreen);
