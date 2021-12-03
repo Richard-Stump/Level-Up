@@ -1,3 +1,4 @@
+
 package com.mygdx.nextlevel.Util;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -27,19 +28,17 @@ public class GameMenuDialog extends GameScreen2 {
                 System.out.println("Option: " + object);
                 if (object.equals(1)) {
                     System.out.println("Hide menu");
-//                    menuDialog.hide();
+                    menuDialog.hide();
                     screen.setPaused(false);
-                    screen.resetGameMenu();
+                    System.out.println(screen.getPaused());
                 } else if (object.equals(2)) {
                     System.out.println("Restart");
-                    screen.setPaused(false);
-                    screen.getPlayer().resetPlayer();
                     screen.setShouldReset(true);
-                    screen.resetGameMenu();
+//                    screen.setPaused(false);
                 } else if (object.equals(3)) {
                     System.out.println("Exit");
-                    screen.setPaused(false);
-                    game.setScreen(new LoginScreen(game));
+//                    screen.setPaused(false);
+                    ErrorDialog dialog = new ErrorDialog("Exitting", "LevelDownloadScreen", game, skin, "", stage);
                 }
                 else {
                     Timer.schedule(new Timer.Task() {

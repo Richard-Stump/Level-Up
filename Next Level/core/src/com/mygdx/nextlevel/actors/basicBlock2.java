@@ -36,7 +36,7 @@ public class basicBlock2 extends Actor2 {
                 new Vector2(x, y),
                 new Vector2(1, 1),
                 false,
-                (short) (CollisionGroups.ACTOR | CollisionGroups.ITEM | CollisionGroups.WORLD), CollisionGroups.BLOCK
+                (short) (CollisionGroups.ACTOR | CollisionGroups.ITEM | CollisionGroups.WORLD | CollisionGroups.ENEMY), CollisionGroups.BLOCK
         );
         setRegion(blockTextures.get(0));
     }

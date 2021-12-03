@@ -143,11 +143,11 @@ public class GameOverScreen implements Screen {
         scoreLabel = new Label("Score : " + player.getScore(), titleStyle);
         //scoreLabel.scaleBy(.9f);
         timeLabel = new Label("Time Remaining : " + hud.getTime(), titleStyle);
-        timerLabel = new Label("Timer : " + time, titleStyle);
+        timerLabel = new Label(String.format("Timer : %.02f", time), titleStyle);
         if (this.time < db.getRecordTime(levelInfo)) {
             db.updateRecordTime(levelInfo, this.time);
         }
-        recordLabel = new Label("Record : " + db.getRecordTime(levelInfo), titleStyle);
+        recordLabel = new Label(String.format("Record : %.2f", db.getRecordTime(levelInfo)), titleStyle);
 
         finishConditionLabel = new Label("Finishing Conditions : ", titleStyle);
         mainMenuButton = new TextButton("Main Menu", skin);
@@ -168,7 +168,7 @@ public class GameOverScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
                 //TODO: set screen to restart current level
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, levelInfo));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, levelInfo, GameScreen2.Mode.PLAY, null));
             }
         });
         tryAgainButton.addListener(new HoverListener());

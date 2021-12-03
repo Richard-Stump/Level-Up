@@ -310,7 +310,7 @@ public class LevelSelectionScreen implements Screen {
         if (rate < 0) {
             rate = 0;
         }
-        rating = new Label("" + rate + "/5", skin);
+        rating = new Label(String.format("" + "%.2f" + "/5", rate), skin);
         playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
         rating.addListener(selectLevelListener(id));
@@ -362,7 +362,7 @@ public class LevelSelectionScreen implements Screen {
 //                System.out.println("Should be playing: " + levelInfo.getTitle());
                 //TODO: open the game screen with the level that is selected
                 System.out.println(levelInfo.getId());
-                new GameScreen2(game, levelInfo.getId());
+                new GameScreen2(game, levelInfo.getId(), GameScreen2.Mode.PLAY, null);
             }
         };
     }

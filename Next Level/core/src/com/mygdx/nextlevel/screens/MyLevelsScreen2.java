@@ -339,7 +339,7 @@ public class MyLevelsScreen2 implements Screen {
             rating = new Label("Rating: NA/5  [#" + numRaters + "]", skin);
         } else {
             //right column labels
-            rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
+            rating = new Label(String.format("Rating: %.2f" + "/5  [#" + "%d" + "]", levelInfo.getRating(), numRaters), skin);
         }
         playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
@@ -381,7 +381,7 @@ public class MyLevelsScreen2 implements Screen {
 
               LevelInfo info = handler.getLevelByID(id, true);
               if (info.isPublic()) {
-                  ErrorDialog errorDialog = new ErrorDialog(skin, "Please unpublish level first in order to edit", stage);
+                  ErrorDialog errorDialog = new ErrorDialog(skin, "Unable to edit public level, please delete.", stage);
               } else {
                   game.setScreen(new EditLevelScreen(game, info));
               }
@@ -399,9 +399,10 @@ public class MyLevelsScreen2 implements Screen {
                 //if yes, show dialog that states that it is already published
                 if (level.getPlayCount() > 0) {
                     if (level.isPublic()) {
-                        ErrorDialog unpublishLevelDialog = new ErrorDialog(skin, "Level is already published. Are you " +
-                                "sure you want to unpublish " + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
-                                "Unpublish", id, publishButton, level,game);
+//                        ErrorDialog unpublishLevelDialog = new ErrorDialog(skin, "Level is already published. Are you " +
+//                                "sure you want to unpublish " + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
+//                                "Unpublish", id, publishButton, level,game);
+                        ErrorDialog dialog = new ErrorDialog(skin, "Please delete level if you want to unpublish.", stage);
 
                     } else {
                         //if no, are you sure you want to publish, then success or fail dialog
@@ -411,6 +412,7 @@ public class MyLevelsScreen2 implements Screen {
                     }
                 } else {
                     ErrorDialog dialog = new ErrorDialog(skin, "You must complete the level in order to publish!", stage);
+                    dbServer.updateLevel(level);
                 }
             }
         };
@@ -487,7 +489,9 @@ public class MyLevelsScreen2 implements Screen {
                 System.out.println("Should be downloading: " + levelInfo.getTitle());
 
 
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, dbCreated.searchByID(selectedId).getId()));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(
+                        new GameScreen2(game, dbCreated.searchByID(selectedId).getId(), GameScreen2.Mode.PLAY, null)
+                );
             }
         };
     }
