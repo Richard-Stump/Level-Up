@@ -96,6 +96,7 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         TextButton changePasswordButton = new TextButton("Change Password", skin);
         TextButton deleteLevelsButton = new TextButton("Delete Levels", skin);
         TextButton uploadAssetButton = new TextButton("Upload Asset", skin);
+        TextButton removeAssetServerButton = new TextButton("Remove Asset from Server", skin);
 
         //TODO: rewire the buttons
         backButton.addListener(new ClickListener() {
@@ -205,6 +206,14 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         });
         uploadAssetButton.addListener(new HoverListener());
 
+        removeAssetServerButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new DeleteDownloadedAssetsScreen(game, true));
+            }
+        });
+        removeAssetServerButton.addListener(new HoverListener());
+
 
         //vertical groups
 //        VerticalGroup profileGroup = new VerticalGroup();
@@ -234,6 +243,8 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         buttonTable.add(deleteLevelsButton).width(buttonWidth).padBottom(bottomPadding);
         buttonTable.row();
         buttonTable.add(uploadAssetButton).width(buttonWidth).padBottom(bottomPadding);
+        buttonTable.row();
+        buttonTable.add(removeAssetServerButton).width(buttonWidth).padBottom(bottomPadding);
 
 //        Table headerTable = new Table();
 //        //headerTable.setDebug(true);

@@ -58,7 +58,10 @@ public class DeleteDownloadedAssetsScreen implements Screen {
     public static int leftColumnWidth = 350;
     public static int labelHeight = 25;
 
-    public DeleteDownloadedAssetsScreen(NextLevel game) {
+    private boolean serverDelete;
+
+    public DeleteDownloadedAssetsScreen(NextLevel game, boolean serverDelete) {
+        this.serverDelete = serverDelete;
         this.game = game;
         atlas = new TextureAtlas(Gdx.files.internal("skin/uiskin.atlas"));
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
@@ -87,7 +90,7 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         mainTable = new Table();
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
-        //mainTable.setDebug(true);
+        mainTable.setDebug(true);
 
         //row 1: back button, screen title, current user overview
         //back button
@@ -95,12 +98,20 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         backButton.left();
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new AssetDownloadScreen(game));
+                if (serverDelete) {
+                    game.setScreen(new ProfileMainMenu(game));
+                } else {
+                    game.setScreen(new AssetDownloadScreen(game));
+                }
             }
         });
 
         //screen title
-        assetsLabel = new Label("Your downloaded assets:", skin);
+        if (serverDelete) {
+            assetsLabel = new Label("Your assets:", skin);
+        } else {
+            assetsLabel = new Label("Your downloaded assets:", skin);
+        }
 
         mainTable.add(backButton).height(labelHeight +10).padTop(10).padLeft(5);
         mainTable.add(assetsLabel).padTop(10).expandX().left().padLeft(5).height(labelHeight);
@@ -115,7 +126,7 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         assetVerticalGroup.addActor(infoTable);
         assetVerticalGroup.padRight(50);
 
-        assetVerticalGroup.padBottom(30);
+        assetVerticalGroup.padBottom(100);
         assetVerticalGroup.top();
 
         scrollPane = new ScrollPane(assetVerticalGroup, skin);
@@ -267,14 +278,22 @@ public class DeleteDownloadedAssetsScreen implements Screen {
                         Gdx.input.setInputProcessor(stage);
 
                         if ((Boolean) object) {
-                            dbAssets.removeAsset(id);
+                            if (serverDelete) {
+                                dbAssets.removeAssetServer(id);
+                            } else {
+                                dbAssets.removeAssetLocal(id);
+                            }
                             assetVerticalGroup.clear();
                             assetVerticalGroup.addActor(getRefreshedAssetList());
                         }
                     }
                 };
 
-                dialog.text("Are you sure you want to delete " + dbAssets.searchByID(id).name + " locally?");
+                if (serverDelete) {
+                    dialog.text("Are you sure you want to delete " + dbAssets.searchByID(id).name + " from the server?");
+                } else {
+                    dialog.text("Are you sure you want to delete " + dbAssets.searchByID(id).name + " locally?");
+                }
 
                 dialog.button("Delete", true);
                 dialog.button("Cancel", false);

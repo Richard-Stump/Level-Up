@@ -210,6 +210,7 @@ public class AssetHandler {
         }
 
         String sqlQuery = "INSERT INTO api.assets (assetid, name, author, file) VALUES (?, ?, ?, ?);";
+        String sqlQuery2 = "UPDATE api.users SET assetsuploaded = array_append(assetsuploaded, ?) WHERE username=?;";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setString(1, asset.getAssetID());
@@ -220,6 +221,12 @@ public class AssetHandler {
             statement.setBinaryStream(4, new FileInputStream(fAsset), (int)fAsset.length());
 
             statement.executeUpdate();
+
+            //update the users table to correlate who "owns" what assets
+            PreparedStatement statement1 = connection.prepareStatement(sqlQuery2);
+            statement1.setString(1, asset.getAssetID());
+            statement1.setString(2, asset.author);
+            statement1.executeUpdate();
         } catch (SQLException | FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -267,11 +274,11 @@ public class AssetHandler {
     }
 
     /**
-     * Remove an asset from the server database
+     * Remove an asset from the local computer
      *
      * @param id id of asset to remove
      */
-    public void removeAsset(String id) {
+    public void removeAssetLocal(String id) {
         File file = new File(id);
         if (file.exists()) {
             if (file.delete()) {
@@ -281,6 +288,33 @@ public class AssetHandler {
             }
         } else {
             System.out.printf("%s was not detected as a file\n", id);
+        }
+    }
+
+    /**
+     * Remove an asset from the server
+     *
+     * @param id id of the asset to remove
+     */
+    public void removeAssetServer(String id) {
+        Asset asset = searchByID(id);
+
+        String sqlQueryUsers = "UPDATE api.users SET assetsuploaded = array_remove(assetsuploaded, ?) WHERE username=?;";
+        String sqlQueryAssets = "DELETE FROM api.assets WHERE assetid=?;";
+
+        try (PreparedStatement statementUsers = connection.prepareStatement(sqlQueryUsers)) {
+            statementUsers.setString(1, id);
+            statementUsers.setString(2, asset.author);
+            statementUsers.executeUpdate();
+
+            PreparedStatement statementAssets = connection.prepareStatement(sqlQueryAssets);
+            statementAssets.setString(1, id);
+            statementAssets.executeUpdate();
+
+            //also remove it locally
+            removeAssetLocal(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

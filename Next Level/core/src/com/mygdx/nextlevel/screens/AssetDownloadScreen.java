@@ -113,7 +113,7 @@ public class AssetDownloadScreen implements Screen {
         downloadedAssetsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new DeleteDownloadedAssetsScreen(game));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new DeleteDownloadedAssetsScreen(game, false));
             }
         });
         downloadedAssetsButton.addListener(new HoverListener());
@@ -129,6 +129,10 @@ public class AssetDownloadScreen implements Screen {
         Table infoTable = getAssetTable(new ArrayList<>(dbAssets.sortAllByTitle()));
         assetVerticalGroup = new VerticalGroup();
         assetVerticalGroup.addActor(infoTable);
+
+        assetVerticalGroup.padRight(50);
+        assetVerticalGroup.padBottom(100);
+        assetVerticalGroup.top();
 
         scrollPane = new ScrollPane(assetVerticalGroup, skin);
         scrollPane.setForceScroll(true, true);
