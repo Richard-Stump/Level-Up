@@ -562,7 +562,7 @@ public class GameScreen2 extends Timer implements Screen {
 //            stage.addActor(table);
             Gdx.input.setInputProcessor(stage);
             Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
-            tm.render(camera, player, false);
+//            tm.render(camera, player, false);
 
             SpriteBatch batch = game.batch;
             batch.begin();

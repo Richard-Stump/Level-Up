@@ -38,7 +38,7 @@ public class GameMenuDialog extends GameScreen2 {
                 } else if (object.equals(3)) {
                     System.out.println("Exit");
                     screen.setPaused(false);
-                    game.setScreen(new MainMenuScreen(game));
+                    game.setScreen(new LoginScreen(game));
                 }
                 else {
                     Timer.schedule(new Timer.Task() {
