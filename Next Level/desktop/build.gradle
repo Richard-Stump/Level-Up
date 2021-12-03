@@ -1,4 +1,4 @@
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 sourceSets.main.java.srcDirs = [ "src/" ]
 sourceSets.main.resources.srcDirs = ["../core/assets"]
 
@@ -32,6 +32,14 @@ task testEditor(dependsOn: classes, type: JavaExec) {
 
 task testGameScreen2(dependsOn: classes, type: JavaExec) {
     main = "com.mygdx.nextlevel.desktop.GameScreen2Launcher";
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = project.assetsDir
+    ignoreExitValue = true
+}
+
+task runUnitTests(dependsOn: classes, type: JavaExec) {
+    main = "com.mygdx.nextlevel.desktop.TestLauncher";
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir

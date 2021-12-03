@@ -20,7 +20,7 @@ public class SpikeBlock extends Actor2 {
 
     public SpikeBlock() {}
 
-    public SpikeBlock(GameScreen2 screen, float x, float y) {
+    public SpikeBlock(GameScreen2 screen, Texture texture, float x, float y) {
         super(screen, x, y, 1, 1);
 
         collider = new BoxCollider(
@@ -30,6 +30,6 @@ public class SpikeBlock extends Actor2 {
                 false,
                 CollisionGroups.ALL, CollisionGroups.WORLD
         );
-        setRegion(new Texture("spike-block.png"));
+        setRegion(texture);
     }
 }

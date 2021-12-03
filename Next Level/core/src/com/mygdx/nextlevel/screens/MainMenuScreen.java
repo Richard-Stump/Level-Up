@@ -79,23 +79,24 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         //buttonTable.setDebug(true);
 
         //Create buttons
-        TextButton playButton = new TextButton("Play", skin);
+        //TextButton playButton = new TextButton("Play", skin);
         TextButton createLevelButton = new TextButton("Create Level", skin);
-        TextButton selectLevelButton = new TextButton("Select Level", skin);
+        TextButton selectLevelButton = new TextButton("Browse Levels", skin);
         TextButton editLevelButton = new TextButton("My Levels", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
         TextButton logoutButton = new TextButton("Logout", skin);
         TextButton exitButton = new TextButton("Exit", skin);
         //TextButton changePassButton = new TextButton("Change Password", skin);
 
-        buttonTable.add(playButton).colspan(2).width(buttonWidth * 2 + 5).padBottom(10);
+        //buttonTable.add(playButton).colspan(2).width(buttonWidth * 2 + 5).padBottom(10);
+        //buttonTable.row();
+        buttonTable.add(selectLevelButton).width(buttonWidth * 2 + 5).colspan(2).padBottom(10);
+        buttonTable.row();
+        buttonTable.add(createLevelButton).width(buttonWidth * 2 + 5).colspan(2).padBottom(10);
+        buttonTable.row();
+        buttonTable.add(editLevelButton).width(buttonWidth * 2 + 5).colspan(2).padBottom(10);
         buttonTable.row();
         buttonTable.add(tutorialButton).width(buttonWidth * 2 + 5).colspan(2).padBottom(10);
-        buttonTable.row();
-        buttonTable.add(createLevelButton).width(buttonWidth).padBottom(10).padRight(5);
-        buttonTable.add(selectLevelButton).width(buttonWidth).padBottom(10);
-        buttonTable.row();
-        buttonTable.add(editLevelButton).width(buttonWidth).padBottom(10).padRight(5);
         //buttonTable.add(changePassButton).width(buttonWidth);
         buttonTable.row();
         buttonTable.add(new Label("", skin));
@@ -147,20 +148,20 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         mainTable.add(buttonTable);
 
         //Add listeners to buttons
-        playButton.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, "")); //TODO change
-//                ((Game)Gdx.app.getApplicationListener()).setScreen(new LevelDownloadScreen(game));
-            }
-        });
-        playButton.addListener(new HoverListener());
-        createLevelButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new CreateLevelMenuScreen(game));
-            }
-        });
+//        playButton.addListener(new ClickListener(){
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, "test3")); //TODO change
+////                ((Game)Gdx.app.getApplicationListener()).setScreen(new LevelDownloadScreen(game));
+//            }
+//        });
+//        playButton.addListener(new HoverListener());
+//        createLevelButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                ((Game)Gdx.app.getApplicationListener()).setScreen(new CreateLevelMenuScreen(game));
+//            }
+//        });
         createLevelButton.addListener(new HoverListener());
         selectLevelButton.addListener(new ClickListener() {
             @Override

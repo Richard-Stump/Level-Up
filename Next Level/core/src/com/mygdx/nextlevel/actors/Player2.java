@@ -388,6 +388,10 @@ public class Player2 extends Actor2 {
             screen.setShouldReset(true);
         }
 
+        if (other instanceof PushBlock) {
+
+        }
+
         if(side == Side.BOTTOM) {
             canJump = true;
         }

@@ -3,6 +3,7 @@ package com.mygdx.nextlevel;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -40,6 +41,19 @@ public class TileMap extends ApplicationAdapter{
     TiledMapRenderer tiledMapRenderer;
     public static ArrayList<Integer> conditionList = new ArrayList<>();
 
+    //for test cases
+    public static TiledMap tmTest;
+    public static MapProperties tmProperties;
+    public static ArrayList<Integer> conditionListTest = new ArrayList<>();
+    public static boolean collectCoinTest;
+    public static boolean beatTimeLimitTest;
+    public static boolean killAllEnemiesTest;
+    public static boolean killNoEnemiesTest;
+    public static boolean keepJewelTest;
+    public static boolean autoScrollTest;
+    public static float timeLimitTest;
+    public static float gravityTest;
+
     //Tile Map Properties
     int mapWidth;
     int mapHeight;
@@ -58,8 +72,18 @@ public class TileMap extends ApplicationAdapter{
     float screenWidth;
     float screenHeight;
 
+    public TileMap(){}
+
+    public TileMap(String filename, FileHandleResolver resolver) {
+        init(filename, new TmxMapLoader2(resolver));
+    }
+
     public TileMap(String filename) {
-        tiledMap = new TmxMapLoader2().load(filename);
+        init(filename, new TmxMapLoader2());
+    }
+
+    protected void init(String filename, TmxMapLoader2 loader) {
+        tiledMap = loader.load(filename);
         tiledMapProperties = tiledMap.getProperties();
 
         mapWidth = tiledMapProperties.get("width", Integer.class);
@@ -70,15 +94,16 @@ public class TileMap extends ApplicationAdapter{
         xAxis = screenWidth/2f;
         yAxis = screenWidth/2f/32f;
 
-//        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
-//        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
-//        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
-//        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
-//        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
-//        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
-//        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
-//        gravity = tiledMapProperties.get("gravity", Float.class);
-//        autoScroll = true;
+        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
+        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
+        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
+        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
+        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
+
+        timeLimit = tiledMapProperties.get("timeLimit", Integer.class);
+        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
+        gravity = tiledMapProperties.get("gravity", Float.class);
+
 
         if (collectCoin) {
             conditionList.add(1);
@@ -142,24 +167,51 @@ public class TileMap extends ApplicationAdapter{
                 RectangleMapObject mapObject = (RectangleMapObject) object;
                 switch (mapObject.getName()) {
                     case ("Block2"): //FIXME (Wait for other properties)
+                        /*
+                        if (mapObject.getProperties().get("spawnItem", Boolean.TYPE) && !mapObject.getProperties().get("breakable", Boolean.TYPE)) { //Item Block
+                            screen.actors.add(new Block2(screen,
+                                    screen.itemBlockTextures,
+                                    mapObject.getProperties().get("x", Float.TYPE),
+                                    mapObject.getProperties().get("y", Float.TYPE),
+                                    true,
+                                    6, //FIXME this will need to be updated
+                                    false));
+                        } else if (mapObject.getProperties().get("spawnItem", Boolean.TYPE) && mapObject.getProperties().get("breakable", Boolean.TYPE)) { //Coin Block
+                            screen.actors.add(new Block2(screen,
+                                    screen.coinBlockTextures,
+                                    mapObject.getProperties().get("x", Float.TYPE),
+                                    mapObject.getProperties().get("y", Float.TYPE),
+                                    true,
+                                    GameScreen2.ItemIndex.COIN.getValue(),
+                                    true));
+                        } else { //Non Breakable Block
+                            screen.actors.add(new Block2(screen,
+                                    screen.blockTextures,
+                                    mapObject.getProperties().get("x", Float.TYPE),
+                                    mapObject.getProperties().get("y", Float.TYPE),
+                                    false,
+                                    GameScreen2.ItemIndex.COIN.getValue(),
+                                    false));
+                        }
+                        */
                         screen.actors.add(new Block2(screen,
                                 screen.itemBlockTextures,
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE),
                                 false,
-                                false));
+                                GameScreen2.ItemIndex.NONE.getValue(),
+                                mapObject.getProperties().get("breakable", Boolean.TYPE)));
                         break;
                     case ("Enemy2"): //FIXME (Wait for other properties)
-                        System.out.println("enemy");
                         screen.actors.add(new Enemy2(screen,
                                 screen.enemyTextures,
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE),
-                                Enemy2.Action.DEFAULT,
+                                Enemy2.Action.DEFAULT, //FIXME need to get property
                                 screen.getPlayer()
                                 ));
                         break;
-                    case ("End"): //FIXME (Wait for other properties)
+                    case ("End"):
                         screen.actors.add(new End(screen,
                                 screen.endTexture,
                                 mapObject.getProperties().get("x", Float.TYPE),
@@ -167,12 +219,33 @@ public class TileMap extends ApplicationAdapter{
                                 screen.getPlayer()
                                 ));
                         break;
-                    case ("CheckPoint2"): //FIXME (Wait for other properties)
+                    case ("CheckPoint2"):
                         screen.actors.add(new CheckPoint2(screen,
                                 screen.checkpointTextures,
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE),
                                 screen.getPlayer()
+                                ));
+                        break;
+                    case ("Jewel"):
+                        screen.actors.add(new Jewel(screen,
+                                screen.jewelTexture,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
+                                ));
+                        break;
+                    case ("SpikeBlock"):
+                        screen.actors.add(new SpikeBlock(screen,
+                                screen.spikeBlockTexture,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
+                                ));
+                        break;
+                    case ("CoinStatic"):
+                        screen.actors.add(new CoinStatic(screen,
+                                screen.coinTexture,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
                                 ));
                         break;
                 }
@@ -184,7 +257,7 @@ public class TileMap extends ApplicationAdapter{
     }
 
     public void render (OrthographicCamera camera, Player2 player, boolean reset) {
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(135/255f, 206/255f, 235/255f, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -242,5 +315,46 @@ public class TileMap extends ApplicationAdapter{
     }
     public float getGravity() {
         return gravity;
+    }
+
+
+
+    static public void createTMX() {
+        tmTest = new TmxMapLoader2().load("stump_tprkjymj.tmx");
+        tmProperties = tmTest.getProperties();
+        collectCoinTest = tmProperties.get("collectCoins", Boolean.class);
+        beatTimeLimitTest = tmProperties.get("beatTimeLimit", Boolean.class);
+        killAllEnemiesTest = tmProperties.get("killAllEnemies", Boolean.class);
+        killNoEnemiesTest = tmProperties.get("killNoEnemies", Boolean.class);
+        keepJewelTest = tmProperties.get("keepJewel", Boolean.class);
+        timeLimitTest = tmProperties.get("timeLimit", Float.class);
+        gravityTest = tmProperties.get("gravity", Float.class);
+        if (collectCoinTest) {
+            conditionListTest.add(1);
+        }
+        if (beatTimeLimitTest) {
+            conditionListTest.add(5);
+        }
+        if (killAllEnemiesTest) {
+            conditionListTest.add(2);
+        }
+        if (killNoEnemiesTest) {
+            conditionListTest.add(3);
+        }
+        if (keepJewelTest) {
+            conditionListTest.add(4);
+        }
+    }
+
+    static public ArrayList<Integer> getConditionListTest() {
+        return conditionListTest;
+    }
+
+    static public float getTimeLimitTest1() {
+        return timeLimitTest;
+    }
+
+    static public float getGravityTest1() {
+        return gravityTest;
     }
 }
