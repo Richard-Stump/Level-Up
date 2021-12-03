@@ -21,6 +21,7 @@ import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.TileMap;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.actors.Player2;
+import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.hud.Hud2;
 
 public class GameOverScreen implements Screen {
@@ -42,6 +43,7 @@ public class GameOverScreen implements Screen {
     public Label timeLabel;
     public Label finishConditionLabel;
     public Label timerLabel;
+    public Label recordLabel;
 
     public TextButton mainMenuButton;
     public TextButton tryAgainButton;
@@ -55,12 +57,13 @@ public class GameOverScreen implements Screen {
     public boolean showRating = false;
     public String levelid;
     public double time;
+    ServerDBHandler db;
 
     public GameOverScreen (NextLevel game, Hud2 hud2, String title, Player2 player2, String levelInfo) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
         this.levelInfo = levelInfo;
-
+        db = new ServerDBHandler();
         batch = game.batch;
         camera = new OrthographicCamera();
         viewport = new FitViewport(960, 500, camera);
@@ -141,6 +144,8 @@ public class GameOverScreen implements Screen {
         //scoreLabel.scaleBy(.9f);
         timeLabel = new Label("Time Remaining : " + hud.getTime(), titleStyle);
         timerLabel = new Label("Timer : " + time, titleStyle);
+        recordLabel = new Label("Record : " + db.getRecordTime(levelInfo), titleStyle);
+
         finishConditionLabel = new Label("Finishing Conditions : ", titleStyle);
         mainMenuButton = new TextButton("Main Menu", skin);
         tryAgainButton = new TextButton("Try Again", skin);
@@ -186,6 +191,8 @@ public class GameOverScreen implements Screen {
         mainTable.add(timerLabel).left().padRight(10).colspan(2).width(labelWidth).padBottom(labelBottomPadding);
         mainTable.row();
         mainTable.add(timeLabel).left().padRight(10).colspan(2).width(labelWidth).padBottom(labelBottomPadding + 20);
+        mainTable.row();
+        mainTable.add(recordLabel).left().padRight(10).colspan(2).width(labelWidth).padBottom(labelBottomPadding);
         mainTable.row();
 //        mainTable.add(finishConditionLabel).left().padRight(10).colspan(2).width(labelWidth).padBottom(labelBottomPadding + 20);
 //        mainTable.row();
