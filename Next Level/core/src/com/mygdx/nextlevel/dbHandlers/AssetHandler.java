@@ -3,6 +3,9 @@ package com.mygdx.nextlevel.dbHandlers;
 import com.mygdx.nextlevel.Asset;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -136,7 +139,33 @@ public class AssetHandler {
      */
     public void uploadAsset(Asset asset) {
         //verify that there is a unique ID, a name, an author, and that the file is not null
+        if (asset == null) {
+            return;
+        }
+        if ((asset.getAssetID() == null) || (asset.getAssetID().equals(""))) {
+            return;
+        }
+        if ((asset.name == null) || (asset.name.equals(""))) {
+            return;
+        }
+        if ((asset.author == null) || (asset.author.equals(""))) {
+            return;
+        }
 
+        String sqlQuery = "INSERT INTO api.assets (assetid, name, author, file) VALUES (?, ?, ?, ?);";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, asset.getAssetID());
+            statement.setString(2, asset.name);
+            statement.setString(3, asset.author);
+
+            File fAsset = new File(asset.getAssetID());
+            statement.setBinaryStream(4, new FileInputStream(fAsset), (int)fAsset.length());
+
+            statement.executeUpdate();
+        } catch (SQLException | FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
