@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.actors.Player2;
+import com.mygdx.nextlevel.enums.BackgroundColor;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 import com.mygdx.nextlevel.jankFix.TmxMapLoader2;
@@ -52,6 +53,7 @@ public class EditorLevel {
     @Property(displayName="Gravity") public float gravity = -9.81f;
     @Property(displayName="Time Limit") public int timeLimit = 120;
     @Property(displayName="Auto Scroll") public boolean autoScroll = false;
+    @Property(displayName="Background Color") public BackgroundColor backgroundColor = BackgroundColor.BLUE;
 
     @Property(group="Completion Flags", displayName="Collect All Coins") public boolean collectCoins = false;
     @Property(group="Completion Flags", displayName="Beat The Time Limit") public boolean beatTimeLimit = true;

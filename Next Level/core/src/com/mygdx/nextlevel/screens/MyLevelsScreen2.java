@@ -335,8 +335,7 @@ public class MyLevelsScreen2 implements Screen {
 
         //right column labels
         float rate = levelInfo.getRating();
-        float rateInt = levelInfo.getRating();
-        if (rateInt < 0) {
+        if (rate < 0) {
             rating = new Label("Rating: NA/5  [#" + numRaters + "]", skin);
         } else {
             //right column labels
@@ -381,8 +380,11 @@ public class MyLevelsScreen2 implements Screen {
               ServerDBHandler handler = new ServerDBHandler();
 
               LevelInfo info = handler.getLevelByID(id, true);
-
-              game.setScreen(new EditLevelScreen(game, info));
+              if (info.isPublic()) {
+                  ErrorDialog errorDialog = new ErrorDialog(skin, "Please unpublish level first in order to edit", stage);
+              } else {
+                  game.setScreen(new EditLevelScreen(game, info));
+              }
           }
         };
     }

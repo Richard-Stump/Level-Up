@@ -28,6 +28,7 @@ import com.mygdx.nextlevel.actors.Block;
 import com.mygdx.nextlevel.actors.Block2;
 import com.mygdx.nextlevel.actors.Player2;
 import com.mygdx.nextlevel.actors.*;
+import com.mygdx.nextlevel.enums.BackgroundColor;
 import com.mygdx.nextlevel.jankFix.TmxMapLoader2;
 import com.mygdx.nextlevel.screens.GameScreen2;
 import com.sun.org.apache.xpath.internal.operations.Bool;
@@ -65,12 +66,17 @@ public class TileMap extends ApplicationAdapter{
     boolean autoScroll;
     float timeLimit;
     float gravity;
+    String backgroundColor;
 
     //Camera Position
     float xAxis;
     float yAxis;
     float screenWidth;
     float screenHeight;
+
+    //Hud Properties
+    int coinCount = 0;
+    int enemyCount = 0;
 
     public TileMap(){}
 
@@ -103,6 +109,7 @@ public class TileMap extends ApplicationAdapter{
         timeLimit = tiledMapProperties.get("timeLimit", Integer.class);
         autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
         gravity = tiledMapProperties.get("gravity", Float.class);
+        backgroundColor = tiledMapProperties.get("backgroundColor", String.class);
 
         if (collectCoin) {
             conditionList.add(1);
@@ -120,14 +127,14 @@ public class TileMap extends ApplicationAdapter{
             conditionList.add(4);
         }
 
-        for (Integer integer : conditionList) {
-            System.out.println(integer);
-        }
-        if (conditionList.contains(5)) {
-            System.out.println(timeLimit);
-        } else  {
-            System.out.println("No time limit");
-        }
+//        for (Integer integer : conditionList) {
+//            System.out.println(integer);
+//        }
+//        if (conditionList.contains(5)) {
+//            System.out.println(timeLimit);
+//        } else  {
+////            System.out.println("No time limit");
+//        }
 
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1.0f/32.0f);
     }
@@ -183,6 +190,7 @@ public class TileMap extends ApplicationAdapter{
                                     true,
                                     GameScreen2.ItemIndex.COIN.getValue(),
                                     true));
+                                    coinCount++;
                         } else { //Non Breakable Block
                             screen.actors.add(new Block2(screen,
                                     screen.blockTextures,
@@ -209,6 +217,7 @@ public class TileMap extends ApplicationAdapter{
                                 Enemy2.Action.DEFAULT, //FIXME need to get property
                                 screen.getPlayer()
                                 ));
+                        enemyCount++;
                         break;
                     case ("End"):
                         screen.actors.add(new End(screen,
@@ -246,6 +255,7 @@ public class TileMap extends ApplicationAdapter{
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE)
                                 ));
+                        coinCount++;
                         break;
                 }
             }
@@ -256,7 +266,17 @@ public class TileMap extends ApplicationAdapter{
     }
 
     public void render (OrthographicCamera camera, Player2 player, boolean reset) {
-        Gdx.gl.glClearColor(135/255f, 206/255f, 235/255f, 1);
+        switch (backgroundColor){
+            case "Blue" : Gdx.gl.glClearColor(135/255f, 206/255f, 235/255f, 1);
+                break;
+            case "Green": Gdx.gl.glClearColor(47/255f, 79/255f, 79/255f, 1);
+                break;
+            case "Brown": Gdx.gl.glClearColor(160/255f, 82/255f, 45/255f, 1);
+                break;
+            case "Grey": Gdx.gl.glClearColor(169/255f, 169/255f, 169/255f, 1);
+                break;
+        }
+
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -356,4 +376,7 @@ public class TileMap extends ApplicationAdapter{
     static public float getGravityTest1() {
         return gravityTest;
     }
+
+    public int getCoinCount() { return this.coinCount; }
+    public int getEnemyCount() { return this.enemyCount; }
 }

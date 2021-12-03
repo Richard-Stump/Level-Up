@@ -22,6 +22,7 @@ import com.mygdx.nextlevel.actors.Item2;
 import com.mygdx.nextlevel.actors.Player;
 import com.mygdx.nextlevel.actors.Player2;
 import com.mygdx.nextlevel.screens.ErrorMessageScreen;
+import com.mygdx.nextlevel.screens.GameScreen2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,13 +59,13 @@ public class Hud2 {
     TileMap tm;
     private int condition = -1;
     ArrayList<Integer> conditionList;
+    GameScreen2 screen;
 
-    public Hud2(SpriteBatch spriteBatch, Player2 player, String levelInfo) {
+    public Hud2(GameScreen2 screen, SpriteBatch spriteBatch, Player2 player, String levelInfo) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
-        tileMapName = levelInfo + ".tmx";
-        tm = new TileMap(tileMapName);
-//        worldTimer = 50;
+        this.screen = screen;
+        tm = screen.getTileMap();
         worldTimer = tm.getTimeLimit();
         if (worldTimer <= 0) {
             worldTimer = 300;
@@ -207,12 +208,10 @@ public class Hud2 {
 //            numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), 1));
 //        }
         if (conditionList.contains(1)) {
-            //Todo: fix set number of coins to number of coins in the creator wants
-            numCoinLabel.setText(String.format("%d/%d", player.getCoins(), 5));
+            numCoinLabel.setText(String.format("%d/%d", player.getCoins(), tm.getCoinCount()));
         }
         if (conditionList.contains(2)) {
-            //Todo: fix set number of enemies to number creator wants
-            numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), 1));
+            numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), tm.getEnemyCount()));
         }
         if (conditionList.contains(3)) {
             killNoEnemy.setText(String.format("%d", player.getEnemiesKilled()));
