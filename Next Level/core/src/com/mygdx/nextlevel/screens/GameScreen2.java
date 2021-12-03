@@ -277,7 +277,6 @@ public class GameScreen2 extends Timer implements Screen {
         enemyFireTexture = new Texture("blue-fire.png");
         playerFireTexture = new Texture("fireball.png");
 
-
 //        player = new Player2(this, playerTextures, 1.0f, 1.0f);
 //        actors.add(new Enemy2(this, enemyTextures, 16, 2, Enemy2.Action.JUMP, player));
 //        actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
