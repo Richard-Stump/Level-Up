@@ -13,6 +13,7 @@ public class TestRunner {
 
 
     public static void main(String[] args) {
+
         int totalTests;
         int totalPassed;
         int numTests;
@@ -41,6 +42,7 @@ public class TestRunner {
         totalPassed += numPassed;
         totalTests += numTests;
         System.out.println();
+
 
 //        System.out.println("Login tests:");
 //        Result resultLogin = JUnitCore.runClasses(LoginTest.class);
