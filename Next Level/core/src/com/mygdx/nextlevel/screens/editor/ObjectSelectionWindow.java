@@ -1,17 +1,17 @@
 package com.mygdx.nextlevel.screens.editor;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisScrollPane;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisWindow;
+import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.tabbedpane.Tab;
 import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPane;
 import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneAdapter;
+import com.kotcrab.vis.ui.widget.tabbedpane.TabbedPaneListener;
 import com.mygdx.nextlevel.screens.EditLevelScreen;
 import jdk.internal.org.jline.reader.Editor;
 
@@ -57,6 +57,22 @@ public class ObjectSelectionWindow extends VisWindow {
 
         TabbedPane.TabbedPaneStyle style = VisUI.getSkin().get("default", TabbedPane.TabbedPaneStyle.class);
         pane = new TabbedPane(style);
+        pane.addListener(new TabbedPaneListener() {
+            @Override
+            public void switchedTab(Tab tab) {
+                update();
+            }
+
+            @Override
+            public void removedTab(Tab tab) {
+
+            }
+
+            @Override
+            public void removedAllTabs() {
+
+            }
+        });
 
         // listener to recreate the tab's content when a new tab is selected
         pane.addListener(new TabbedPaneAdapter() {
@@ -74,11 +90,13 @@ public class ObjectSelectionWindow extends VisWindow {
         add(table).expand().fill();
 
         for(String name : groups.keySet()) {
-            pane.add(new ObjectSelectionTab(name, groups.get(name)));
+            pane.add(new ObjectSelectionTab(this, name, groups.get(name)));
         }
 
         setSize(400, 500 * 2 - 50);
         setPosition(0, -50);
+
+        update();
     }
 
     /**
@@ -159,7 +177,7 @@ class ObjectSelectionTab extends Tab {
      * @param groupName The name of the group
      * @param objects A list of objects that belong in this group
      */
-    public ObjectSelectionTab(String groupName, ArrayList<PlaceableObject> objects) {
+    public ObjectSelectionTab(final ObjectSelectionWindow win, String groupName, ArrayList<PlaceableObject> objects) {
         super(false, false);
         this.groupName = groupName;
         this.objects = objects;
@@ -177,6 +195,13 @@ class ObjectSelectionTab extends Tab {
         buttonGroup.setMinCheckCount(1);
         buttonGroup.setUncheckLast(true);
 
+        ClickListener listener = new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                win.update();
+            }
+        };
+
         final float size = 128 + 48;
 
         int i = 0;
@@ -192,6 +217,7 @@ class ObjectSelectionTab extends Tab {
             buttonTable.add(lab).width(size).align(Align.left).fillX();
 
             Button button = new Button(buttonTable, VisUI.getSkin(), "toggle");
+            button.addListener(listener);
 
             buttonGroup.add(button);
             innerTable.add(button).expand().fill();

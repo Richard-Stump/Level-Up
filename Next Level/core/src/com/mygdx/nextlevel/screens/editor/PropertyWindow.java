@@ -10,7 +10,9 @@ public class PropertyWindow extends VisWindow {
     public PropertyWindow() {
         super("Properties:");
 
-        setSize(400, 250 * 2 - 50);
+        setMovable(false);
+
+        setSize(800, 250 - 50);
         setPosition(1600, -50);
     }
 

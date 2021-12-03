@@ -133,14 +133,16 @@ public class EditLevelScreen implements Screen {
             }
         });
 
+        //property window needs to go first
+        propWindow = new PropertyWindow();
+        stage.addActor(propWindow);
+
         MenuWindow win2 = new MenuWindow(this, level, stage);
         stage.addActor(win2);
 
         win3 = new ObjectSelectionWindow(this, placeableObjects);
         stage.addActor(win3);
 
-        propWindow = new PropertyWindow();
-        stage.addActor(propWindow);
 
         backButton.setPosition(0.0f, STAGE_HEIGHT - backButton.getHeight());
         stage.addActor(backButton);
@@ -219,6 +221,7 @@ public class EditLevelScreen implements Screen {
     }
 
     public Object getObjectToPlace() {
+        propWindow.updateObject();
         return win3.getCurrentObject();
     }
 
