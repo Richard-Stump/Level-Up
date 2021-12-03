@@ -194,7 +194,7 @@ public class GameScreen2 extends Timer implements Screen {
      *
      * @param game The screen that created this screen
      */
-    public GameScreen2(NextLevel game, String levelInfo) {
+    private GameScreen2(NextLevel game, String levelInfo) {
         this.game = game;
         this.levelInfo = levelInfo;
 
@@ -605,6 +605,7 @@ public class GameScreen2 extends Timer implements Screen {
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player, levelInfo, elapsedTime));
                 break;
             case PUBLISH:   //If the player is publishing the level, they should be taken to a screen for it
+                game.setScreen(new PublishMessageScreen(game, levelInfo));
                 break;
             case TEST:      //If the player is testing, they should go back to the editor when done.
                 ((Game) Gdx.app.getApplicationListener()).setScreen(prevScreen);
@@ -787,22 +788,13 @@ public class GameScreen2 extends Timer implements Screen {
 
     @Override
     public void dispose() {
-//<<<<<<< Updated upstream
-////        this.skin.dispose();
-////        this.atlas.dispose();
-//    }
-//    public boolean getPaused() {
-//        return paused;
-//    }
-//    public void setPaused(boolean set) {
-//        paused = set;
-//=======
-//
-//>>>>>>> Stashed changes
+
     }
+
     public boolean getPaused() {
         return paused;
     }
+
     public void setPaused(boolean set) {
         paused = set;
     }
@@ -818,13 +810,8 @@ public class GameScreen2 extends Timer implements Screen {
     public TileMap getTileMap() {
         return this.tm;
     }
+
+    public Mode getMode() { return mode; }
+
+    public Screen getPrevScreen() { return prevScreen; }
 }
-//<<<<<<< Updated upstream
-//    public void resetGameMenu() {
-//        menu.dispose();
-//        menu = new GameMenuDialog(skin, "Menu", stage, "Resume", "Restart", "Exit", this, this.game);
-//    }
-//}
-//=======
-//}
-//>>>>>>> Stashed changes

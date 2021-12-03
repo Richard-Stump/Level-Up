@@ -370,8 +370,9 @@ public class AssetDownloadScreen implements Screen {
         for (Asset assetToAdd: list2) {
             boolean isInList = false;
             for (Asset assetInList: combined) {
-                if (assetToAdd.getAssetID() == assetInList.getAssetID()) {
+                if (assetToAdd.getAssetID().equals(assetInList.getAssetID())) {
                     isInList = true;
+                    break;
                 }
             }
             if (!isInList) {

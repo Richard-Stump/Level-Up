@@ -100,11 +100,11 @@ public class LevelDownloadScreen implements Screen {
         dbServer = new ServerDBHandler();
         selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";
+
+        init();
     }
 
-    public void show() {
-        Gdx.input.setInputProcessor(stage);
-        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+    private void init() {
 
         //start new layout
         mainTable = new Table();
@@ -178,6 +178,12 @@ public class LevelDownloadScreen implements Screen {
         //end
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
+    }
+
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+
     }
 
     /**
@@ -353,6 +359,8 @@ public class LevelDownloadScreen implements Screen {
     }
 
     private ClickListener downloadLevel() {
+        final Screen screen = this;
+
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -371,8 +379,7 @@ public class LevelDownloadScreen implements Screen {
 
                 //TODO: after downloading set screen to level to play pass the level id
                 ((Game)Gdx.app.getApplicationListener()).setScreen(
-                        new GameScreen2(game, dbCreated.searchByID(selectedId).getId(), GameScreen2.Mode.PLAY, null)
-                );
+                        new GameScreen2(game, dbCreated.searchByID(selectedId).getId(), GameScreen2.Mode.PLAY, screen));
             }
         };
     }

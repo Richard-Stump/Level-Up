@@ -102,7 +102,7 @@ public class Hud2 {
 
         jewelLabel = new Label("JEWEL", new Label.LabelStyle(new BitmapFont(), Color.BLACK));
         jewelImg = new Image(new Texture("x.png"));
-        conditionList = player.getConditions();
+        conditionList = tm.getConditionList();
 
 
 
