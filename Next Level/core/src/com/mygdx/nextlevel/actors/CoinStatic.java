@@ -17,6 +17,8 @@ public class CoinStatic extends Actor2 {
     boolean spawned = true;
     boolean reset = false;
 //    Player2 player;
+    public CoinStatic() {}
+
     public CoinStatic(GameScreen2 screen, Texture texture, float x, float y) {
         super(screen, x, y, 0.5f, 0.5f);
         collider = new BoxCollider(this, new Vector2(x, y), new Vector2(0.5f, 0.5f), false, (short) (CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ITEM);
