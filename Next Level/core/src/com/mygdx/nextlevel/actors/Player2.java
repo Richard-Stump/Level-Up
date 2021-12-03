@@ -701,4 +701,11 @@ public class Player2 extends Actor2 {
     public boolean getJewelCondition() {
         return jewelConditionMet;
     }
+
+    public void resetPlayer() {
+        lifeCount = 3;
+        respawnPosition = worldSpawn;
+        powerUp = false;
+        respawn = true;
+    }
 }
