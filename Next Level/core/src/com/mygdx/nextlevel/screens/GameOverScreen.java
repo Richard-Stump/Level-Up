@@ -51,7 +51,8 @@ public class GameOverScreen implements Screen {
     public static int labelBottomPadding = 20;
     public static int buttonWidth = 190;
 
-    boolean showRating = false;
+    public boolean showRating = false;
+    public String levelid;
 
     public GameOverScreen (NextLevel game, Hud2 hud2, String title, Player2 player2, String levelInfo) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
@@ -71,6 +72,7 @@ public class GameOverScreen implements Screen {
         this.hud = hud2;
         this.title = title;
         this.player = player2;
+        this.levelid = levelInfo;
 
         if (title.equals("VICTORY")) {
             showRating = true;
@@ -137,7 +139,7 @@ public class GameOverScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
                 //TODO: set screen to restart current level
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new RateScreen(game));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new RateScreen(game, levelid));
             }
         });
         okButton.addListener(new HoverListener());
