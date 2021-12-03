@@ -134,7 +134,7 @@ public class ErrorDialog {
                     System.out.println("obj = 2");
                     if ((buttonOpRight.compareTo("Publish")) == 0) {
                         dbHandler.publishLevel(id);
-                        //button.setText("Unpublish");
+                        button.setText("Published");
                         //button.setDisabled(true);
                         levelInfo.setPublic(true);
                         dbHandler.updateLevel(levelInfo);
