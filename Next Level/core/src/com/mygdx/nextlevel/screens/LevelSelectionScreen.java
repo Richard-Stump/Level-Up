@@ -310,7 +310,7 @@ public class LevelSelectionScreen implements Screen {
         if (rate < 0) {
             rate = 0;
         }
-        rating = new Label("" + rate + "/5", skin);
+        rating = new Label(String.format("" + "%.2f" + "/5", rate), skin);
         playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
         rating.addListener(selectLevelListener(id));

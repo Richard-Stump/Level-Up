@@ -314,7 +314,7 @@ public class LevelDownloadScreen implements Screen {
             rating = new Label("Rating: NA/5  [#" + numRaters + "]", skin);
         } else {
             //right column labels
-            rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
+            rating = new Label(String.format("Rating: " + "%.2f" + "/5  [#" + numRaters + "]", levelInfo.getRating()), skin);
         }
         playCount = new Label("Play Count: " + levelInfo.getPlayCount(), skin);
 

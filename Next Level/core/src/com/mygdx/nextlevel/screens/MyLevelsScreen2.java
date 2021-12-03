@@ -339,7 +339,7 @@ public class MyLevelsScreen2 implements Screen {
             rating = new Label("Rating: NA/5  [#" + numRaters + "]", skin);
         } else {
             //right column labels
-            rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
+            rating = new Label(String.format("Rating: %.2f" + "/5  [#" + "%d" + "]", levelInfo.getRating(), numRaters), skin);
         }
         playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
