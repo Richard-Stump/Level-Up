@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" infinite="0">
+<tileset firstgid="1" source="test2.tsx"/>
+<properties>
+<property name="collectCoins" type="bool" value="false"/>
+<property name="beatTimeLimit" type="bool" value="false"/>
+<property name="killAllEnemies" type="bool" value="false"/>
+<property name="killNoEnemies" type="bool" value="false"/>
+<property name="keepJewel" type="bool" value="false"/>
+<property name="gravity" type="float" value="0.0"/>
+<property name="timeLimit" type="float" value="0"/>
+</properties>
+<layer id="1" name="Tile Layer 1" width="32" height="32">
+<data encoding="csv">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</data>
+</layer>
+</map>
