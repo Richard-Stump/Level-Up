@@ -30,6 +30,7 @@ class GameScreen2Game extends NextLevel {
         viewport = new ExtendViewport(960, 500, camera);
 
         GameScreen2 screen = new GameScreen2(this, "test3");
+        GameScreen2 screen = new GameScreen2(this, "testAccount_wkeap");
 
         this.setScreen(screen);
     }
