@@ -48,7 +48,6 @@ public class EditorLevel {
 
     @Property(displayName="Level Width") public int width;
     @Property(displayName="Level Height") public int height;
-    //@Property(displayName="Level Name") public String name;
     @Property(displayName="Difficulty") public Difficulty difficulty = Difficulty.NONE;
     @Property(displayName="Gravity") public float gravity;
     @Property(displayName="Time Limit") public int timeLimit;
@@ -85,10 +84,26 @@ public class EditorLevel {
     }
 
     public void placeObject(int x, int y, PlaceableObject po, Object o) {
+        //Ensure that there is only one player in the level
+        if(o instanceof Player2) {
+            if(lastPlayerX != -1 && lastPlayerY != -1) {
+                objects[lastPlayerX][lastPlayerY] = null;
+            }
+
+            lastPlayerX = x;
+            lastPlayerY = y;
+        }
+
         objects[x][y] = new PlacedObject(po, po.clazz.cast(o));
     }
 
     public void clearObject(int x, int y) {
+        //Ensure that there is only one player in the level
+        if(x == lastPlayerX && y == lastPlayerY) {
+            lastPlayerX = -1;
+            lastPlayerY = -1;
+        }
+
         objects[x][y] = null;
     }
 
@@ -141,6 +156,8 @@ public class EditorLevel {
      */
     public File exportTo(String filename) throws FileNotFoundException {
         File file = new File(filename);
+        System.out.println("Exporting to \"" + filename + "\"");
+
 
         PrintWriter fileWriter = new PrintWriter(file);
 
@@ -179,14 +196,9 @@ public class EditorLevel {
     private void writePlayer(PrintWriter fileWriter) {
         fileWriter.println(" <objectgroup id=\"2\" name=\"Player Layer\">");
 
-        int id = 1;
-        for(int y = 0; y < height; y++) {
-            for(int x = 0; x < width; x++) {
-                PlacedObject po = objects[x][y];
-                if(po != null && po.object != null && po.object instanceof Player2)
-                    writeObject(x, y, id, fileWriter, po);
-            }
-        }
+        //Ensure that the player exists in the level
+        if(lastPlayerX != -1 && lastPlayerY != -1)
+            writeObject(lastPlayerX, lastPlayerY, 1, fileWriter, objects[lastPlayerX][lastPlayerY]);
 
         fileWriter.println(" </objectgroup>");
     }
@@ -302,6 +314,7 @@ public class EditorLevel {
     ///TODO: ReWrite
     public void importFrom(String filename) {
         TiledMap tiledMap = new TmxMapLoader2().load(filename);
+        System.out.println("Importing from \"" + filename + "\"");
 
         //Load the map's properties
         MapProperties tiledMapProperties = tiledMap.getProperties();
@@ -311,6 +324,8 @@ public class EditorLevel {
 
         MapLayers layers = tiledMap.getLayers();
         MapLayer objectLayer = layers.get("Object Layer 1");
+
+        importPlayer(layers.get("Player Layer"));
 
         MapObjects mapObjects = objectLayer.getObjects();
         importObjects(mapObjects);
@@ -332,6 +347,18 @@ public class EditorLevel {
                 }
             }
         }
+    }
+
+    private void importPlayer(MapLayer layer) {
+        MapObject mapObject = layer.getObjects().get(0);
+
+        MapProperties objectProperties = mapObject.getProperties();
+
+        //I have no idea why, but for some reason the y axis is flipped when read.
+        lastPlayerX = objectProperties.get("x", Float.TYPE).intValue();
+        lastPlayerY = height - objectProperties.get("y", Float.TYPE).intValue();
+
+        importObject(mapObject);
     }
 
     private void importObjects(MapObjects objects) {

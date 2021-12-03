@@ -142,6 +142,7 @@ public class GameScreen2 extends Timer implements Screen {
     public Texture jewelTexture;
     public Texture playerFireTexture;
     public Texture enemyFireTexture;
+    public Texture spikeBlockTexture;
 
     //skins for screens
     private TextureAtlas atlas;
@@ -276,6 +277,9 @@ public class GameScreen2 extends Timer implements Screen {
         //Fire Textures
         enemyFireTexture = new Texture("blue-fire.png");
         playerFireTexture = new Texture("fireball.png");
+
+        //SpikeBall Texture
+        spikeBlockTexture = new Texture("spike-block.png");
 
 //        player = new Player2(this, playerTextures, 1.0f, 1.0f);
 //        actors.add(new Enemy2(this, enemyTextures, 16, 2, Enemy2.Action.JUMP, player));
