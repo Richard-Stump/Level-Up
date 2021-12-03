@@ -91,7 +91,6 @@ public class GameScreen2 extends Timer implements Screen {
     private OrthographicCamera camera;
     private Hud2 hud;
     TileMap tm;
-//    ServerDBHandler db = new ServerDBHandler();
 
     private BoxCollider floor;
     private Player2 player;
@@ -234,7 +233,7 @@ public class GameScreen2 extends Timer implements Screen {
      */
     private void init() {
         //Initialize the collision manager
-        CollisionManager.init();
+        CollisionManager.init(tm.getGravity());
 
         //Clear all the queues
         actors.clear();

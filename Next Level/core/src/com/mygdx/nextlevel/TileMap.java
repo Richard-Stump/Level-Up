@@ -104,7 +104,6 @@ public class TileMap extends ApplicationAdapter{
         autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
         gravity = tiledMapProperties.get("gravity", Float.class);
 
-
         if (collectCoin) {
             conditionList.add(1);
         }
