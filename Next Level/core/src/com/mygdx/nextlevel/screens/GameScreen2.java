@@ -118,6 +118,7 @@ public class GameScreen2 extends Timer implements Screen {
     }
 
     public String tileMapName;              //The name of the tilemap
+    private String levelInfo;
     PushBlock pb;
 
     public ArrayList<Actor2> actors;               //The list of actors currently in play
@@ -157,6 +158,7 @@ public class GameScreen2 extends Timer implements Screen {
 //    public GameScreen2(NextLevel game, String levelInfo) {
      public GameScreen2(NextLevel game, String levelInfo) {
          this.game = game;
+         this.levelInfo = levelInfo;
 
          atlas = new TextureAtlas("skin/uiskin.atlas");
          skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
@@ -490,12 +492,12 @@ public class GameScreen2 extends Timer implements Screen {
 //            System.out.println(String.format("New Record Time: %f", player.getRecordTime()));
 //            System.out.println(elapsedTime);
          // ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player));
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player, levelInfo));
         }
         if (player.getFail()) {
             //System.out.println("Im here");
 //            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "FAIL", "MainMenuScreen"));
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over...", player));
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over...", player, levelInfo));
         }
     }
 
