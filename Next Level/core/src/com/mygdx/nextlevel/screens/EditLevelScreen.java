@@ -142,7 +142,7 @@ public class EditLevelScreen implements Screen {
             }
         });
 
-        MenuWindow win2 = new MenuWindow(level, stage);
+        MenuWindow win2 = new MenuWindow(this, level, stage);
         stage.addActor(win2);
 
         win3 = new ObjectSelectionWindow(placeableObjects);
@@ -243,5 +243,7 @@ public class EditLevelScreen implements Screen {
     }
 
     public Stage getStage() { return stage; }
+
+    public NextLevel getGame() { return game; }
 }
 

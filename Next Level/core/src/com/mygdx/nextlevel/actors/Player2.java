@@ -74,8 +74,6 @@ public class Player2 extends Actor2 {
 //    private int condition = 5;
 //    private int condition2 = 2;
 
-    @Property(group="Test", displayName = "Test String") public String strTest = "Testing";
-    @Property(group="Test", displayName = "Test Enum")  public Difficulty difficulty = Difficulty.HARD;
     @Property(group="Movement", displayName="Default Speed") public float defaultMoveSpeed = 12.0f;
     @Property(group="Movement", displayName="Default Jump") public float defaultJump = 13.0f;
 
@@ -369,6 +367,26 @@ public class Player2 extends Actor2 {
 
         //Check if player falls off edge
         if (other instanceof DeathBlock) {
+            lifeCount--;
+            respawn = true;
+            score -= 200;
+            if (score < 0) {
+                score = 0;
+            }
+
+            if(lifeCount < 1) {
+                lifeCount = 3;
+                respawnPosition = worldSpawn;
+
+                for(Actor2 actor : screen.checkpointList) {
+                    ((CheckPoint2) actor).reset();
+                }
+            }
+
+            screen.setShouldReset(true);
+        }
+
+        if (other instanceof PushBlock) {
             lifeCount--;
             respawn = true;
             score -= 200;
