@@ -251,7 +251,7 @@ public class RateScreen implements Screen {
 //                db.addLevelRating(levelid, rate);
 
                     //TODO: if successful show dialog then set screen to main menu
-                    ErrorDialog dialog = new ErrorDialog("Rating Level", "MainMenuScreen", game, skin, "Thank you for rating!", stage);
+                    ErrorDialog dialog = new ErrorDialog("Rating Level", "LevelDownloadScreen", game, skin, "Thank you for rating!", stage);
                     //Dialog dialog1 = dialog.getErrorDialog();
                 }
 
