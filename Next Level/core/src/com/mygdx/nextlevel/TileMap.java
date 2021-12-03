@@ -70,15 +70,14 @@ public class TileMap extends ApplicationAdapter{
         xAxis = screenWidth/2f;
         yAxis = screenWidth/2f/32f;
 
-//        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
-//        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
-//        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
-//        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
-//        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
-//        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
-//        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
-//        gravity = tiledMapProperties.get("gravity", Float.class);
-//        autoScroll = true;
+        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
+        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
+        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
+        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
+        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
+        timeLimit = tiledMapProperties.get("timeLimit", Integer.class);
+        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
+        gravity = tiledMapProperties.get("gravity", Float.class);
 
         if (collectCoin) {
             conditionList.add(1);
@@ -173,6 +172,27 @@ public class TileMap extends ApplicationAdapter{
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE),
                                 screen.getPlayer()
+                                ));
+                        break;
+                    case ("Jewel"): //FIXME (Wait for other properties)
+                        screen.actors.add(new Jewel(screen,
+                                screen.jewelTexture,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
+                                ));
+                        break;
+                    case ("SpikeBlock"): //FIXME (Wait for other properties)
+                        screen.actors.add(new SpikeBlock(screen,
+                                screen.spikeBlockTexture,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
+                                ));
+                        break;
+                    case ("CoinStatic"): //FIXME (Wait for other properties)
+                        screen.actors.add(new CoinStatic(screen,
+                                screen.coinTexture,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE)
                                 ));
                         break;
                 }
