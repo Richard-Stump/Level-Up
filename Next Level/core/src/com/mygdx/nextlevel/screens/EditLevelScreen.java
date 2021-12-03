@@ -61,7 +61,12 @@ public class EditLevelScreen implements Screen {
         this.level = level;
         level.info = levelInfo;
 
+        placeableObjects = new ArrayList<>();
+        loadPlaceableObjects();
+        level.setPlaceableObjects(placeableObjects);
+
         initializeUi();
+
     }
 
     /**
@@ -73,11 +78,15 @@ public class EditLevelScreen implements Screen {
     public EditLevelScreen(NextLevel game, LevelInfo levelInfo) {
         this.game = game;
         this.level = new EditorLevel(0, 0);
+        placeableObjects = new ArrayList<>();
+        loadPlaceableObjects();
+        level.setPlaceableObjects(placeableObjects);
         level.importFrom(levelInfo.getId() + ".tmx");
 
         level.info = levelInfo;
 
         initializeUi();
+
     }
 
     protected void initializeUi() {
@@ -101,10 +110,6 @@ public class EditLevelScreen implements Screen {
 
         batch = game.batch;
         stage = new Stage(viewport, batch);
-
-        placeableObjects = new ArrayList<>();
-
-        loadPlaceableObjects();
 
         levelView = new LevelView(this, level, STAGE_WIDTH, STAGE_HEIGHT);
 

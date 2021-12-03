@@ -30,117 +30,129 @@ public class TestRunner {
         totalTests = numTests;
         System.out.println();
 
-        System.out.println("Login tests:");
-        Result resultLogin = JUnitCore.runClasses(LoginTest.class);
-        for (Failure failure: resultLogin.getFailures()) {
+        System.out.println("TMX tests:");
+        Result resultTMX = JUnitCore.runClasses(TmxTests.class);
+        for (Failure failure: resultTMX.getFailures()) {
             System.out.println(failure.toString());
         }
-        numTests = resultLogin.getRunCount();
-        numPassed = numTests -  resultLogin.getFailureCount();
-        System.out.println("LoginTest - Passed: " + numPassed + "/" + numTests);
+        numTests = resultTMX.getRunCount();
+        numPassed = numTests -  resultTMX.getFailureCount();
+        System.out.println("TmxTest - Passed: " + numPassed + "/" + numTests);
         totalPassed += numPassed;
         totalTests += numTests;
         System.out.println();
 
-        System.out.println("ForgetPassword tests:");
-        Result resultFP = JUnitCore.runClasses(ForgetPasswordTest.class);
-        for (Failure failure: resultFP.getFailures()) {
-            System.out.println(failure.toString());
-        }
-        numTests = resultFP.getRunCount();
-        numPassed = numTests -  resultFP.getFailureCount();
-        System.out.println("ForgetPassword - Passed: " + numPassed + "/" + numTests);
-        totalPassed += numPassed;
-        totalTests += numTests;
-        System.out.println();
-
-        System.out.println("ChangePassword tests:");
-        Result resultCP = JUnitCore.runClasses(ChangePasswordTest.class);
-        for (Failure failure: resultCP.getFailures()) {
-            System.out.println(failure.toString());
-        }
-        numTests = resultCP.getRunCount();
-        numPassed = numTests -  resultCP.getFailureCount();
-        System.out.println("ChangePassword - Passed: " + numPassed + "/" + numTests);
-        totalPassed += numPassed;
-        totalTests += numTests;
-        System.out.println();
-
-        System.out.println("Finishing tests:");
-        Result resultFinish = JUnitCore.runClasses(FinishingTest.class);
-        for (Failure failure: resultFinish.getFailures()) {
-            System.out.println(failure.toString());
-        }
-        numTests += resultFinish.getRunCount();
-        numPassed += numTests -  resultFinish.getFailureCount();
-        System.out.println("FinishingTest - Passed: " + numPassed + "/" + numTests);
-        totalPassed = numPassed;
-        totalTests = numTests;
-        System.out.println();
-
-        System.out.println("Item tests:");
-        Result resultItem = JUnitCore.runClasses(ItemTest.class);
-//        System.out.println("Initialized resultItem");
-        for (Failure failure: resultItem.getFailures()) {
-            System.out.println(failure.toString());
-        }
-        numTests = resultItem.getRunCount();
-        numPassed = numTests -  resultItem.getFailureCount();
-        System.out.println("ItemTest - Passed: " + numPassed + "/" + numTests);
-        totalPassed += numPassed;
-        totalTests += numTests;
+//        System.out.println("Login tests:");
+//        Result resultLogin = JUnitCore.runClasses(LoginTest.class);
+//        for (Failure failure: resultLogin.getFailures()) {
+//            System.out.println(failure.toString());
+//        }
+//        numTests = resultLogin.getRunCount();
+//        numPassed = numTests -  resultLogin.getFailureCount();
+//        System.out.println("LoginTest - Passed: " + numPassed + "/" + numTests);
+//        totalPassed += numPassed;
+//        totalTests += numTests;
+//        System.out.println();
+//
+//        System.out.println("ForgetPassword tests:");
+//        Result resultFP = JUnitCore.runClasses(ForgetPasswordTest.class);
+//        for (Failure failure: resultFP.getFailures()) {
+//            System.out.println(failure.toString());
+//        }
+//        numTests = resultFP.getRunCount();
+//        numPassed = numTests -  resultFP.getFailureCount();
+//        System.out.println("ForgetPassword - Passed: " + numPassed + "/" + numTests);
+//        totalPassed += numPassed;
+//        totalTests += numTests;
+//        System.out.println();
+//
+//        System.out.println("ChangePassword tests:");
+//        Result resultCP = JUnitCore.runClasses(ChangePasswordTest.class);
+//        for (Failure failure: resultCP.getFailures()) {
+//            System.out.println(failure.toString());
+//        }
+//        numTests = resultCP.getRunCount();
+//        numPassed = numTests -  resultCP.getFailureCount();
+//        System.out.println("ChangePassword - Passed: " + numPassed + "/" + numTests);
+//        totalPassed += numPassed;
+//        totalTests += numTests;
+//        System.out.println();
+//
+//        System.out.println("Finishing tests:");
+//        Result resultFinish = JUnitCore.runClasses(FinishingTest.class);
+//        for (Failure failure: resultFinish.getFailures()) {
+//            System.out.println(failure.toString());
+//        }
+//        numTests += resultFinish.getRunCount();
+//        numPassed += numTests -  resultFinish.getFailureCount();
+//        System.out.println("FinishingTest - Passed: " + numPassed + "/" + numTests);
 //        totalPassed = numPassed;
 //        totalTests = numTests;
-        System.out.println();
-
-        System.out.println("Checkpoint tests:");
-        Result resultCheckpoint = JUnitCore.runClasses(CheckpointTest.class);
-        for (Failure failure: resultCheckpoint.getFailures()) {
-            System.out.println(failure.toString());
-        }
-        numTests = resultCheckpoint.getRunCount();
-        numPassed = numTests -  resultCheckpoint.getFailureCount();
-        System.out.println("CheckpointTest - Passed: " + numPassed + "/" + numTests);
-        totalPassed += numPassed;
-        totalTests += numTests;
-        System.out.println();
-
-        System.out.println("Block tests:");
-        Result resultBlock = JUnitCore.runClasses(BlockTest.class);
-        for (Failure failure: resultBlock.getFailures()) {
-            System.out.println(failure.toString());
-        }
-        numTests = resultBlock.getRunCount();
-        numPassed = numTests -  resultBlock.getFailureCount();
-        System.out.println("BlockTest - Passed: " + numPassed + "/" + numTests);
-        totalPassed += numPassed;
-        totalTests += numTests;
-        System.out.println();
-
-
-        System.out.println("Local Database tests:");
-        Result resultLocalDB = JUnitCore.runClasses(CreatedLevelsDBTest.class, LevelsDBControllerTest.class);
-        for (Failure failure: resultLocalDB.getFailures()) {
-            System.out.println(failure.toString());
-        }
-        numTests = resultLocalDB.getRunCount();
-        numPassed = numTests -  resultLocalDB.getFailureCount();
-        System.out.println("DatabaseTest - Passed: " + numPassed + "/" + numTests);
-        totalPassed += numPassed;
-        totalTests += numTests;
-        System.out.println();
-
-
-        System.out.println("Server Database tests:");
-        Result resultServerDB = JUnitCore.runClasses(ServerDBTest.class, PostgreSQLConnectTest.class);
-        for (Failure failure: resultServerDB.getFailures()) {
-            System.out.println(failure.toString());
-        }
-        numTests = resultServerDB.getRunCount();
-        numPassed = numTests -  resultServerDB.getFailureCount();
-        System.out.println("Server Database Test - Passed: " + numPassed + "/" + numTests);
-        totalPassed += numPassed;
-        totalTests += numTests;
+//        System.out.println();
+//
+//        System.out.println("Item tests:");
+//        Result resultItem = JUnitCore.runClasses(ItemTest.class);
+////        System.out.println("Initialized resultItem");
+//        for (Failure failure: resultItem.getFailures()) {
+//            System.out.println(failure.toString());
+//        }
+//        numTests = resultItem.getRunCount();
+//        numPassed = numTests -  resultItem.getFailureCount();
+//        System.out.println("ItemTest - Passed: " + numPassed + "/" + numTests);
+//        totalPassed += numPassed;
+//        totalTests += numTests;
+////        totalPassed = numPassed;
+////        totalTests = numTests;
+//        System.out.println();
+//
+//        System.out.println("Checkpoint tests:");
+//        Result resultCheckpoint = JUnitCore.runClasses(CheckpointTest.class);
+//        for (Failure failure: resultCheckpoint.getFailures()) {
+//            System.out.println(failure.toString());
+//        }
+//        numTests = resultCheckpoint.getRunCount();
+//        numPassed = numTests -  resultCheckpoint.getFailureCount();
+//        System.out.println("CheckpointTest - Passed: " + numPassed + "/" + numTests);
+//        totalPassed += numPassed;
+//        totalTests += numTests;
+//        System.out.println();
+//
+//        System.out.println("Block tests:");
+//        Result resultBlock = JUnitCore.runClasses(BlockTest.class);
+//        for (Failure failure: resultBlock.getFailures()) {
+//            System.out.println(failure.toString());
+//        }
+//        numTests = resultBlock.getRunCount();
+//        numPassed = numTests -  resultBlock.getFailureCount();
+//        System.out.println("BlockTest - Passed: " + numPassed + "/" + numTests);
+//        totalPassed += numPassed;
+//        totalTests += numTests;
+//        System.out.println();
+//
+//
+//        System.out.println("Local Database tests:");
+//        Result resultLocalDB = JUnitCore.runClasses(CreatedLevelsDBTest.class, LevelsDBControllerTest.class);
+//        for (Failure failure: resultLocalDB.getFailures()) {
+//            System.out.println(failure.toString());
+//        }
+//        numTests = resultLocalDB.getRunCount();
+//        numPassed = numTests -  resultLocalDB.getFailureCount();
+//        System.out.println("DatabaseTest - Passed: " + numPassed + "/" + numTests);
+//        totalPassed += numPassed;
+//        totalTests += numTests;
+//        System.out.println();
+//
+//
+//        System.out.println("Server Database tests:");
+//        Result resultServerDB = JUnitCore.runClasses(ServerDBTest.class, PostgreSQLConnectTest.class);
+//        for (Failure failure: resultServerDB.getFailures()) {
+//            System.out.println(failure.toString());
+//        }
+//        numTests = resultServerDB.getRunCount();
+//        numPassed = numTests -  resultServerDB.getFailureCount();
+//        System.out.println("Server Database Test - Passed: " + numPassed + "/" + numTests);
+//        totalPassed += numPassed;
+//        totalTests += numTests;
         System.out.println();
 
         if (totalTests == totalPassed)

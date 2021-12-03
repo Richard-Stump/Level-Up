@@ -474,8 +474,11 @@ public class MyLevelsScreen2 implements Screen {
                 if (activeDB.equals("created")) {
                     System.out.println("Should be playing: " + dbCreated.searchByID(selectedId).getTitle());
                 }
+                LevelInfo levelInfo = dbServer.getLevelByID(selectedId, true);
+                System.out.println("Should be downloading: " + levelInfo.getTitle());
                 //TODO: open the game screen with the level that is selected
 
+                new GameScreen2(game, dbCreated.searchByID(selectedId).getId());
             }
         };
     }
