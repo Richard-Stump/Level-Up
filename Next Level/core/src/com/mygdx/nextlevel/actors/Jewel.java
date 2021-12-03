@@ -5,7 +5,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
+import com.mygdx.nextlevel.screens.editor.Placeable;
 
+@Placeable(
+        group = "Items",
+        textures = { "jewel.png" },
+        displayName = "Jewel"
+)
 public class Jewel extends Actor2 {
     BoxCollider collider;
     boolean spawned = true;
