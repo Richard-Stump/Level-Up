@@ -172,7 +172,6 @@ public class GameScreen2 extends Timer implements Screen {
     protected Skin skin;
 
     private GameMenuDialog menu;
-    //public String levelInfo;
 
     /**
      * Initialize the game screen

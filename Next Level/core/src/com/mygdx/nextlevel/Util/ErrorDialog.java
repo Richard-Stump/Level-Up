@@ -24,7 +24,7 @@ public class ErrorDialog {
     private ServerDBHandler dbHandler;
 
     public ErrorDialog(Skin skin, String message, final Stage stage, String buttonOpLeft, final String buttonOpRight,
-                       final String id, final TextButton button, final LevelInfo levelInfo) {
+                       final String id, final TextButton button, final LevelInfo levelInfo, final NextLevel game) {
         dbCreated = new CreatedLevelsDB();
         dbHandler = new ServerDBHandler();
 
@@ -40,10 +40,10 @@ public class ErrorDialog {
                         dbHandler.publishLevel(id);
                         button.setText("Unpublish");
                         levelInfo.setPublic(true);
+                        dbHandler.updateLevel(levelInfo);
                     } else {
                         levelInfo.setPlayCount(0);
                         levelInfo.setRating(0);
-                        int res = dbHandler.updateLevel(levelInfo);
                         //System.out.println("This is the result of update level: " + res);
                         dbHandler.unpublishLevel(id);
                         //System.out.println("Current Rating count: " + levelInfo.getPlayCount());
@@ -51,6 +51,8 @@ public class ErrorDialog {
 //                        dbHandler.updateLevel(levelInfo);
                         button.setText("Publish");
                         levelInfo.setPublic(false);
+                        int res = dbHandler.updateLevel(levelInfo);
+
                     }
                 } else {
                     Timer.schedule(new Timer.Task() {
