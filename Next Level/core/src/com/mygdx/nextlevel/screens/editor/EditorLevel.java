@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -182,6 +183,7 @@ public class EditorLevel {
         fileWriter.println("  <property name=\"gravity\" type=\"float\" value=\"" + gravity + "\"/>");
         fileWriter.println("  <property name=\"timeLimit\" type=\"int\" value=\"" + timeLimit + "\"/>");
         fileWriter.println("  <property name=\"autoScroll\" type=\"bool\" value=\"" + autoScroll + "\"/>");
+        fileWriter.println("  <property name=\"backgroundColor\" type=\"string\" value=\"" + backgroundColor.toString() + "\"/>");
         fileWriter.println(" </properties>");
 
         //Player must be written first
@@ -200,6 +202,7 @@ public class EditorLevel {
 
         //Ensure that the player exists in the level
         if(lastPlayerX != -1 && lastPlayerY != -1)
+            writeObject(lastPlayerX, lastPlayerY, 1, fileWriter, objects[lastPlayerX][lastPlayerY]);
             writeObject(lastPlayerX, lastPlayerY, 1, fileWriter, objects[lastPlayerX][lastPlayerY]);
 
         fileWriter.println(" </objectgroup>");
@@ -343,12 +346,17 @@ public class EditorLevel {
 
             if(property != null) {
                 try {
-                    field.set(this, mapProperties.get(field.getName(), field.getType()));
+                    if(!field.getType().isEnum()){
+                        field.set(this, mapProperties.get(field.getName(), field.getType()));
+                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
         }
+
+        //Cheap fix
+        backgroundColor = BackgroundColor.fromString(mapProperties.get("backgroundColor", String.class));
     }
 
     private void importPlayer(MapLayer layer) {
