@@ -266,6 +266,8 @@ public class TileMap extends ApplicationAdapter{
     }
 
     public void render (OrthographicCamera camera, Player2 player, boolean reset) {
+
+
         switch (backgroundColor){
             case "Blue" : Gdx.gl.glClearColor(135/255f, 206/255f, 235/255f, 1);
                 break;

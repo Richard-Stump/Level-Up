@@ -7,15 +7,20 @@
   <property name="killAllEnemies" type="bool" value="false"/>
   <property name="killNoEnemies" type="bool" value="false"/>
   <property name="keepJewel" type="bool" value="false"/>
-  <property name="gravity" type="float" value="0.0"/>
+  <property name="gravity" type="float" value="-9.81"/>
   <property name="timeLimit" type="int" value="0"/>
   <property name="autoScroll" type="bool" value="false"/>
+  <property name="backgroundColor" type="string" value="Grey"/>
  </properties>
  <objectgroup id="2" name="Player Layer">
   <object id="1" name="Player2" x="10" y="9" >
    <properties>
-    <property name="strTest" type="string" value="Testing"/>
-    <property name="difficulty" type="string" value="HARD"/>
+    <property name="defaultMoveSpeed" type="float" value="12.0"/>
+    <property name="defaultJump" type="float" value="13.0"/>
+   </properties>
+  </object>
+  <object id="1" name="Player2" x="10" y="9" >
+   <properties>
     <property name="defaultMoveSpeed" type="float" value="12.0"/>
     <property name="defaultJump" type="float" value="13.0"/>
    </properties>
@@ -211,6 +216,14 @@
   <object id="1" name="Block2" x="8" y="21" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="1" name="Jewel" x="70" y="31" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="Jewel" x="65" y="33" >
+   <properties>
    </properties>
   </object>
   <object id="1" name="Jewel" x="48" y="37" >
