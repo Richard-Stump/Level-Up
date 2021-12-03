@@ -9,8 +9,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.nextlevel.*;
 import com.mygdx.nextlevel.actors.*;
@@ -141,6 +143,10 @@ public class GameScreen2 extends Timer implements Screen {
     public Texture playerFireTexture;
     public Texture enemyFireTexture;
 
+    //skins for screens
+    private TextureAtlas atlas;
+    protected Skin skin;
+
     /**
      * Initialize the game screen
      * @param game The screen that created this screen
@@ -148,6 +154,9 @@ public class GameScreen2 extends Timer implements Screen {
 //    public GameScreen2(NextLevel game, String levelInfo) {
      public GameScreen2(NextLevel game, String levelInfo) {
          this.game = game;
+
+         atlas = new TextureAtlas("skin/uiskin.atlas");
+         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
          //Used to display where the colliders are on the screen
          box2dRenderer = new Box2DDebugRenderer();
@@ -453,7 +462,7 @@ public class GameScreen2 extends Timer implements Screen {
             player.incScore(elapsed / 100000);
 //            System.out.println(String.format("New Record Time: %f", player.getRecordTime()));
 //            System.out.println(elapsedTime);
-//            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
+         // ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
             ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player));
         }
         if (player.getFail()) {
