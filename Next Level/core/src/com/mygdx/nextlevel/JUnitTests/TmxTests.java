@@ -13,7 +13,7 @@ public class TmxTests {
     @Before
     public void init() {
         db = new ServerDBHandler();
-        tm = new TileMap(db.getLevelByID("jchen3_vcq", true).getId() + ".tmx");
+        tm = new TileMap("stump_tprkjymj.tmx");
         System.out.println(String.format("Gravity: %f, Time: %f", tm.getGravity(), tm.getTimeLimit()));
     }
 

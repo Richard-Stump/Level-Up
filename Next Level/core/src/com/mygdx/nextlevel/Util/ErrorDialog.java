@@ -123,6 +123,9 @@ public class ErrorDialog {
                         case("ProfileMainMenu"):
                             game.setScreen(new ProfileMainMenu(game));
                             break;
+                        case("LevelDownloadScreen"):
+                            game.setScreen(new LevelDownloadScreen(game));
+                            break;
                         default:
                             break;
                         //errorDialog.hide();

@@ -18,6 +18,8 @@ import java.util.ArrayList;
 public class SpikeBlock extends Actor2 {
     protected BoxCollider collider;
 
+    public SpikeBlock() {}
+
     public SpikeBlock(GameScreen2 screen, float x, float y) {
         super(screen, x, y, 1, 1);
 

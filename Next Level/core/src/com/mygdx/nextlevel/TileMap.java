@@ -27,6 +27,7 @@ import com.mygdx.nextlevel.actors.Block;
 import com.mygdx.nextlevel.actors.Block2;
 import com.mygdx.nextlevel.actors.Player2;
 import com.mygdx.nextlevel.actors.*;
+import com.mygdx.nextlevel.jankFix.TmxMapLoader2;
 import com.mygdx.nextlevel.screens.GameScreen2;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
@@ -37,7 +38,6 @@ public class TileMap extends ApplicationAdapter{
     TiledMap tiledMap;
     MapProperties tiledMapProperties;
     TiledMapRenderer tiledMapRenderer;
-    TiledMapTileLayer layer;
     public static ArrayList<Integer> conditionList = new ArrayList<>();
 
     //Tile Map Properties
@@ -56,15 +56,17 @@ public class TileMap extends ApplicationAdapter{
     float xAxis;
     float yAxis;
     float screenWidth;
+    float screenHeight;
 
     public TileMap(String filename) {
-        tiledMap = new TmxMapLoader().load(filename);
+        tiledMap = new TmxMapLoader2().load(filename);
         tiledMapProperties = tiledMap.getProperties();
 
         mapWidth = tiledMapProperties.get("width", Integer.class);
         mapHeight = tiledMapProperties.get("height", Integer.class);
 
         screenWidth = Gdx.graphics.getWidth()/32f;
+        screenHeight = Gdx.graphics.getHeight()/32f;
         xAxis = screenWidth/2f;
         yAxis = screenWidth/2f/32f;
 
@@ -76,7 +78,7 @@ public class TileMap extends ApplicationAdapter{
 //        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
 //        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
 //        gravity = tiledMapProperties.get("gravity", Float.class);
-        autoScroll = true;
+//        autoScroll = true;
 
         if (collectCoin) {
             conditionList.add(1);
@@ -120,15 +122,15 @@ public class TileMap extends ApplicationAdapter{
         //TODO End texture (add to End texutre)
 
         MapLayer objectLayer;
-        objectLayer = tiledMap.getLayers().get("Player");
+        objectLayer = tiledMap.getLayers().get("Player Layer");
         for(MapObject object : objectLayer.getObjects()) {
             if (object instanceof RectangleMapObject) {
                 RectangleMapObject mapObject = (RectangleMapObject) object;
                 if (mapObject.getName().equals("Player2")) {
                     screen.setPlayer(new Player2( screen,
                             screen.playerTextures,
-                            ((float) mapObject.getProperties().get("x"))/32.0f,
-                            ((float)mapObject.getProperties().get("y"))/32.0f
+                            mapObject.getProperties().get("x", Float.TYPE),
+                            mapHeight - mapObject.getProperties().get("y", Float.TYPE)
                             ));
                 }
             }
@@ -142,16 +144,17 @@ public class TileMap extends ApplicationAdapter{
                     case ("Block2"): //FIXME (Wait for other properties)
                         screen.actors.add(new Block2(screen,
                                 screen.itemBlockTextures,
-                                ((float) mapObject.getProperties().get("x"))/32.0f,
-                                ((float) mapObject.getProperties().get("y"))/32.0f,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE),
                                 false,
                                 false));
                         break;
                     case ("Enemy2"): //FIXME (Wait for other properties)
+                        System.out.println("enemy");
                         screen.actors.add(new Enemy2(screen,
                                 screen.enemyTextures,
-                                ((float) mapObject.getProperties().get("x"))/32.0f,
-                                ((float) mapObject.getProperties().get("y"))/32.0f,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE),
                                 Enemy2.Action.DEFAULT,
                                 screen.getPlayer()
                                 ));
@@ -159,22 +162,23 @@ public class TileMap extends ApplicationAdapter{
                     case ("End"): //FIXME (Wait for other properties)
                         screen.actors.add(new End(screen,
                                 screen.endTexture,
-                                ((float) mapObject.getProperties().get("x"))/32.0f,
-                                ((float) mapObject.getProperties().get("y"))/32.0f,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE),
                                 screen.getPlayer()
                                 ));
                         break;
-                    case ("Checkpoint2"): //FIXME (Wait for other properties)
+                    case ("CheckPoint2"): //FIXME (Wait for other properties)
                         screen.actors.add(new CheckPoint2(screen,
                                 screen.checkpointTextures,
-                                ((float) mapObject.getProperties().get("x"))/32.0f,
-                                ((float) mapObject.getProperties().get("y"))/32.0f,
+                                mapObject.getProperties().get("x", Float.TYPE),
+                                mapHeight - mapObject.getProperties().get("y", Float.TYPE),
                                 screen.getPlayer()
                                 ));
                         break;
                 }
             }
         }
+
         //Add player to the screen
         screen.actors.add(screen.getPlayer());
     }
@@ -207,7 +211,14 @@ public class TileMap extends ApplicationAdapter{
                 xAxis = player.getX();
             }
         }
-        yAxis = Gdx.graphics.getHeight()/2f/32f;
+
+        if (player.getY() <= screenHeight/2f) {
+            yAxis = screenHeight/2f;
+        } else if (mapHeight - player.getY() <= screenHeight/2f) {
+            yAxis = mapHeight - screenHeight/2f;
+        } else {
+            yAxis = player.getY();
+        }
 
         camera.position.x = xAxis;
         camera.position.y = yAxis;

@@ -29,7 +29,7 @@ class GameScreen2Game extends NextLevel {
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(960, 500, camera);
 
-        GameScreen2 screen = new GameScreen2(this, "testAccount_wkeap");
+        GameScreen2 screen = new GameScreen2(this, "testAccount_gmtgr");
 
         this.setScreen(screen);
     }

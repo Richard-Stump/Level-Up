@@ -17,7 +17,7 @@ public class Jewel extends Actor2 {
     boolean spawned = true;
 
     public Jewel() {
-        collider = new BoxCollider(this, new Vector2(1,1), new Vector2(0.5f, 0.5f), true, (short) (CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR);
+//        collider = new BoxCollider(this, new Vector2(1,1), new Vector2(0.5f, 0.5f), true, (short) (CollisionGroups.WORLD | CollisionGroups.BLOCK), CollisionGroups.ACTOR);
     }
 
     public Jewel(GameScreen2 screen, Texture texture, float x, float y) {
