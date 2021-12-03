@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.CollisionGroups;
+import com.mygdx.nextlevel.TileMap;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.screens.GameScreen2;
 import com.mygdx.nextlevel.screens.editor.Placeable;
@@ -48,6 +49,7 @@ public class Player2 extends Actor2 {
     boolean killNoEnemyConditionMet = false;
     boolean jewelConditionMet = false;
     boolean timeLimitConditionMet = false;
+    TileMap tm;
 
     //Item Booleans
     private boolean mushroomItem;
@@ -116,6 +118,7 @@ public class Player2 extends Actor2 {
         lifeCount = 3;
         coin = 0;
         score = 0;
+        tm = screen.getTileMap();
 
         //The texture region needs to be set for rendering.
         setRegion(this.textures.get(PlayerIndex.DEFAULT.value));
@@ -127,7 +130,7 @@ public class Player2 extends Actor2 {
         starItem = false;
         fireFlowerItem = false;
         jewel = false;
-        conditions = new ArrayList<>();
+        conditions = tm.getConditionList();
 
     }
 
@@ -637,13 +640,15 @@ public class Player2 extends Actor2 {
         return conditions;
     }
 
-    public void checkConditions(ArrayList<Integer> conditions) {
+    public void checkConditions() {
         if (conditions.contains(1)) {
             coinConditionMet = false;
+            System.out.println(screen.getTileMap().getCoinCount());
             if (coin == screen.getTileMap().getCoinCount()) {
                 coinConditionMet = true;
             }
         } else {
+            System.out.println("No coind condiiton");
             coinConditionMet = true;
         }
 
