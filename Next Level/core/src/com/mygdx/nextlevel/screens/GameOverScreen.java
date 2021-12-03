@@ -144,6 +144,9 @@ public class GameOverScreen implements Screen {
         //scoreLabel.scaleBy(.9f);
         timeLabel = new Label("Time Remaining : " + hud.getTime(), titleStyle);
         timerLabel = new Label("Timer : " + time, titleStyle);
+        if (this.time < db.getRecordTime(levelInfo)) {
+            db.updateRecordTime(levelInfo, this.time);
+        }
         recordLabel = new Label("Record : " + db.getRecordTime(levelInfo), titleStyle);
 
         finishConditionLabel = new Label("Finishing Conditions : ", titleStyle);
