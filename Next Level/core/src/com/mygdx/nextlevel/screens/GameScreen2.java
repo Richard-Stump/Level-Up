@@ -345,7 +345,7 @@ public class GameScreen2 extends Timer implements Screen {
 
         tm.loadObjects(this, actors);
 
-        hud = new Hud2(game.batch, player, tileMapName.substring(0, tileMapName.length()-4));
+        hud = new Hud2(this, game.batch, player, tileMapName.substring(0, tileMapName.length()-4));
 
         //Add all checkpoints into checkpointlist
         for (Actor2 actor : actors) {
@@ -393,7 +393,7 @@ public class GameScreen2 extends Timer implements Screen {
         fireList.clear();
         despawnedActors.clear();
 
-        hud = new Hud2(game.batch, player, tileMapName.substring(0, tileMapName.length()-4));
+        hud = new Hud2(this, game.batch, player, tileMapName.substring(0, tileMapName.length()-4));
 
         shouldReset = false;
 
@@ -668,4 +668,5 @@ public class GameScreen2 extends Timer implements Screen {
 
     public Player2 getPlayer() {return this.player;}
     public void setPlayer(Player2 player) { this.player = player; }
+    public TileMap getTileMap() { return this.tm; }
 }
