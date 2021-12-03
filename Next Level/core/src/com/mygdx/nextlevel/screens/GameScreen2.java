@@ -605,7 +605,7 @@ public class GameScreen2 extends Timer implements Screen {
 
             batch.end();
 
-            box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
+//            box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
         }
     }
 

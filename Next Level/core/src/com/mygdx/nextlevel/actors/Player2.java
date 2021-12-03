@@ -413,48 +413,48 @@ public class Player2 extends Actor2 {
         if(other instanceof SlowItem2) {
             slowItem = true;
             speedItem = false;
-//            score += 20;
+            score += 20;
         } else if (other instanceof SpeedItem2) {
             speedItem = true;
             slowItem = false;
-//            score += 20;
+            score += 20;
         } else if (other instanceof LifeItem2) {
-//            lifeCount++;
-//            score += 20;
+            lifeCount++;
+            score += 20;
         } else if (other instanceof MushroomItem2) {
             powerUp = true;
             mushroomItem = true;
             drawTexture = true;
-//            score += 20;
+            score += 20;
         } else if (other instanceof FireFlowerItem2) {
             if (heldItem == null) {
                 heldItem = (Item2) other;
-//                score += 20;
+                score += 20;
             } else {
                 powerUp = true;
                 mushroomItem = true;
                 drawTexture = true;
-//                score += 20;
+                score += 20;
             }
         } else if (other instanceof StarItem2) {
             if (heldItem == null) {
                 heldItem = (Item2) other;
-//                score += 20;
+                score += 20;
             } else {
                 powerUp = true;
                 mushroomItem = true;
                 drawTexture = true;
-//                score += 20;
+                score += 20;
             }
         } else if (other instanceof LifeStealItem2) {
             if (heldItem == null) {
                 heldItem = (Item2) other;
-//                score += 20;
+                score += 20;
             } else {
                 powerUp = true;
                 mushroomItem = true;
                 drawTexture = true;
-//                score += 20;
+                score += 20;
             }
         }
 //        if ((other instanceof CoinStatic || other instanceof Coin)) {
@@ -642,7 +642,7 @@ public class Player2 extends Actor2 {
     public void checkConditions(ArrayList<Integer> conditions) {
         if (conditions.contains(1)) {
             coinConditionMet = false;
-            if (coin == 5) {
+            if (coin == screen.getTileMap().getCoinCount()) {
                 coinConditionMet = true;
             }
         } else {
@@ -650,7 +650,7 @@ public class Player2 extends Actor2 {
         }
         if (conditions.contains(2)) {
             killEnemyConditionMet = false;
-            if (enemiesKilled == 1) {
+            if (enemiesKilled == screen.getTileMap().getEnemyCount()) {
                 killEnemyConditionMet = true;
             }
         } else  {
