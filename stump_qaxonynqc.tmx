@@ -12,5 +12,16 @@
   <property name="autoScroll" type="bool" value="false"/>
  </properties>
  <objectgroup id="2" name="Object Layer 1">
+  <object id="1" name="Enemy2" x="0" y="0" >
+   <properties>
+    <property name="timeTillTurn" type="float" value="2.0"/>
+    <property name="right" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1" name="Block2" x="31" y="31" >
+   <properties>
+    <property name="breakable" type="bool" value="false"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

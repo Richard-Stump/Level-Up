@@ -65,7 +65,7 @@ public class GameScreen2 extends Timer implements Screen {
     }
     public enum BlockIndex {
         DEFAULT(0), EMPTY(1);
-        public final int value;
+        private final int value;
 
         BlockIndex(final int newValue) { value = newValue; }
     }
@@ -118,7 +118,7 @@ public class GameScreen2 extends Timer implements Screen {
     public String tileMapName;              //The name of the tilemap
     PushBlock pb;
 
-    ArrayList<Actor2> actors;               //The list of actors currently in play
+    public ArrayList<Actor2> actors;               //The list of actors currently in play
     LinkedList<ActorSpawnInfo> spawnQueue;  //List of actors to spawn in the next frame
     LinkedList<Actor2> despawnQueue;        //List of actors to destroy in the next frame
 
@@ -192,6 +192,7 @@ public class GameScreen2 extends Timer implements Screen {
 
          //Create and load tilemap
          tileMapName = levelInfo + ".tmx";
+         System.out.println(tileMapName);
          tm = new TileMap(tileMapName);
          conditionList = tm.getConditionList();
 
@@ -276,8 +277,24 @@ public class GameScreen2 extends Timer implements Screen {
         enemyFireTexture = new Texture("blue-fire.png");
         playerFireTexture = new Texture("fireball.png");
 
-
-        player = new Player2(this, playerTextures, 1.0f, 1.0f);
+//        player = new Player2(this, playerTextures, 1.0f, 1.0f);
+//        actors.add(new Enemy2(this, enemyTextures, 16, 2, Enemy2.Action.JUMP, player));
+//        actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
+//        actors.add(new End(this, endTexture, 30, 1, player));
+//        actors.add(new Block2(this,itemBlockTextures, 7, 4, true, ItemIndex.ALL.value, false));
+//        actors.add(new Block2(this, itemBlockTextures, 10, 4, true, ItemIndex.SLOW.value, false));
+//        actors.add(new Block2(this, itemBlockTextures, 13, 4, true, ItemIndex.SPEED.value, false));
+//        actors.add(new Block2(this, itemBlockTextures, 16, 4, true, ItemIndex.LIFE.value, false));
+//        actors.add(new Block2(this, itemBlockTextures, 19, 4, true, ItemIndex.MUSHROOM.value, false));
+//        actors.add(new Block2(this, itemBlockTextures, 22, 4, true, ItemIndex.STAR.value, false));
+//        actors.add(new Block2(this, itemBlockTextures, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
+//        actors.add(new Block2(this, itemBlockTextures, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
+//        actors.add(new Block2(this, coinBlockTextures, 29, 4, true, ItemIndex.COIN.value, true));
+//        actors.add(new Block2(this, coinBlockTextures, 30, 4, false,false));
+//        actors.add(new CoinStatic(this, coinTexture, 10, 5));
+//        actors.add(new CoinStatic(this, coinTexture, 13, 5));
+//        actors.add(new CoinStatic(this, coinTexture, 16, 5));
+//        actors.add(new CoinStatic(this, coinTexture, 19, 5));
 //        actors.add(new Enemy2(this, enemyTextures, 16, 2, Enemy2.Action.JUMP, player));
 //        actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
 //        actors.add(new End(this, endTexture, 30, 1, player));
@@ -300,7 +317,8 @@ public class GameScreen2 extends Timer implements Screen {
 //        actors.add(new CoinStatic(this, coinTexture, 16, 5));
 //        actors.add(new CoinStatic(this, coinTexture, 19, 5));
 //        actors.add(new Jewel(this, jewelTexture, 2, 1));
-        actors.add(player);
+//        actors.add(player);
+//        actors.add(player);
 
         tm.loadObjects(this, actors);
 
@@ -626,4 +644,5 @@ public class GameScreen2 extends Timer implements Screen {
     }
 
     public Player2 getPlayer() {return this.player;}
+    public void setPlayer(Player2 player) { this.player = player; }
 }

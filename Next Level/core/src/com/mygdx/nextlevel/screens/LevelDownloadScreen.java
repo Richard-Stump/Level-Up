@@ -309,8 +309,13 @@ public class LevelDownloadScreen implements Screen {
             numRaters = dbServer.getRatingCount(id);
         }
 
-        //right column labels
-        rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
+        float rateInt = levelInfo.getRating();
+        if (rateInt < 0) {
+            rating = new Label("Rating: NA/5  [#" + numRaters + "]", skin);
+        } else {
+            //right column labels
+            rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
+        }
         playCount = new Label("Play Count: " + levelInfo.getPlayCount(), skin);
 
         rating.addListener(selectLevelListener(id));
@@ -335,10 +340,9 @@ public class LevelDownloadScreen implements Screen {
                 selectedId = id;
 
                 if ((dbDownloaded.searchByID(id) != null) || (dbCreated.searchByID(id) != null)) {
-                    downloadAndPlayButton.setTouchable(Touchable.enabled);
+                    downloadAndPlayButton.setTouchable(Touchable.disabled);
                     downloadAndPlayButton.setText("Play");
                     downloadAndPlayButton.setColor(Color.RED);
-
                 } else {
                     downloadAndPlayButton.setTouchable(Touchable.enabled);
                     downloadAndPlayButton.setText("Download and Play");
@@ -352,6 +356,7 @@ public class LevelDownloadScreen implements Screen {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                //TODO: if the level is already downloaded directly go to play
 
                 if (selectedId.equals("")) {
                     return;
@@ -364,9 +369,7 @@ public class LevelDownloadScreen implements Screen {
                 downloadAndPlayButton.setText("Play");
                 downloadAndPlayButton.setColor(Color.RED);
 
-                //TODO: after downloading set screen to level to play
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, "test3"));
-
+                //TODO: after downloading set screen to level to play pass the level id
             }
         };
     }

@@ -359,7 +359,9 @@ public class LevelSelectionScreen implements Screen {
                     levelInfo = dbCreated.searchByID(selectedId);
                 }
                 System.out.println("Should be playing: " + levelInfo.getTitle());
+//                System.out.println("Should be playing: " + levelInfo.getTitle());
                 //TODO: open the game screen with the level that is selected
+                System.out.println(levelInfo.getId());
                 new GameScreen2(game, levelInfo.getId());
             }
         };

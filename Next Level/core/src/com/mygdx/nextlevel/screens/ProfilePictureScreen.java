@@ -79,7 +79,7 @@ public class ProfilePictureScreen extends LoginScreen implements Screen {
 //        pic4.setSize(1f, 1f);
         Image pic5 = new Image(new Texture(Gdx.files.internal("star-hero.png")));
 //        pic5.setSize(1f, 1f);
-        Image pic6 = new Image(new Texture(Gdx.files.internal("enemy.jpg")));
+        Image pic6 = new Image(new Texture(Gdx.files.internal("enemy.png")));
 //        pic6.setSize(1f, 1f);
         Image pic7 = new Image(new Texture(Gdx.files.internal("enemy_jump.png")));
 //        pic7.setSize(1f, 1f);
@@ -87,6 +87,15 @@ public class ProfilePictureScreen extends LoginScreen implements Screen {
 //        pic8.setSize(1f, 1f);
 
         //pic1.scaleBy(-.5f);
+
+        pic1.scaleBy(-.2f);
+        pic2.scaleBy(-.2f);
+        pic3.scaleBy(-.2f);
+        pic4.scaleBy(-.2f);
+        pic5.scaleBy(-.2f);
+        pic6.scaleBy(-.2f);
+        pic7.scaleBy(-.2f);
+        pic8.scaleBy(-.2f);
 
         TextButton applyButton = new TextButton("Apply", skin);
         TextButton backButton = new TextButton("Back", skin);
@@ -143,7 +152,7 @@ public class ProfilePictureScreen extends LoginScreen implements Screen {
 
         pic6.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                selectedPic = "enemy.jpg";
+                selectedPic = "enemy.png";
                 selectedPicLabel.setText("Selected Profile Pic: Enemy");
             }
         });
@@ -191,6 +200,7 @@ public class ProfilePictureScreen extends LoginScreen implements Screen {
         mainTable.add(pic5).padBottom(10);
         mainTable.add(pic6).padBottom(10);
         mainTable.row();
+        mainTable.add(new Label("", skin));
         mainTable.add(pic7).padBottom(10);
         mainTable.add(pic8).padBottom(10);
         mainTable.row();

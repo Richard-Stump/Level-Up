@@ -74,9 +74,9 @@ public class MyLevelsScreen2 implements Screen {
     public String username;
 
     //static vars
-    public static int rightColumnWidth = 75;
+    public static int rightColumnWidth = 120;
     public static int topBottomPad = 30;
-    public static int leftColumnWidth = 280;
+    public static int leftColumnWidth = 200;
     public static int labelHeight = 25;
 
     public MyLevelsScreen2(NextLevel game) {
@@ -333,10 +333,13 @@ public class MyLevelsScreen2 implements Screen {
 
         //right column labels
         float rate = levelInfo.getRating();
-        if (rate < 0) {
-            rate = 0;
+        float rateInt = levelInfo.getRating();
+        if (rateInt < 0) {
+            rating = new Label("Rating: NA/5  [#" + numRaters + "]", skin);
+        } else {
+            //right column labels
+            rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
         }
-        rating = new Label("" + rate + "/5  [#" + numRaters + "]", skin);
         playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
         rating.addListener(selectLevelListener(id));
@@ -471,8 +474,11 @@ public class MyLevelsScreen2 implements Screen {
                 if (activeDB.equals("created")) {
                     System.out.println("Should be playing: " + dbCreated.searchByID(selectedId).getTitle());
                 }
+                LevelInfo levelInfo = dbServer.getLevelByID(selectedId, true);
+                System.out.println("Should be downloading: " + levelInfo.getTitle());
                 //TODO: open the game screen with the level that is selected
 
+                new GameScreen2(game, dbCreated.searchByID(selectedId).getId());
             }
         };
     }

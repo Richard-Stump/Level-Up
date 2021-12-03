@@ -6,15 +6,20 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.mygdx.nextlevel.LevelInfo;
+import com.mygdx.nextlevel.actors.Player2;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
+import com.mygdx.nextlevel.jankFix.TmxMapLoader2;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class EditorLevel {
     //This class represents and object that has been placed in the level's map
@@ -28,7 +33,11 @@ public class EditorLevel {
         }
     }
 
+    protected HashMap<String, PlaceableObject> placeableObjects;
     protected PlacedObject objects[][];
+
+    protected int lastPlayerX = -1;
+    protected int lastPlayerY = -1;
 
     public String           saveName;
     public ArrayList<Tag>   tags;
@@ -65,6 +74,14 @@ public class EditorLevel {
 
     public EditorLevel(String name, int width, int height) {
         this(width, height);
+    }
+
+    public void setPlaceableObjects(ArrayList<PlaceableObject> placeableObjects) {
+        this.placeableObjects = new HashMap<>();
+
+        for(PlaceableObject po : placeableObjects) {
+            this.placeableObjects.put(po.clazz.getSimpleName(), po);
+        }
     }
 
     public void placeObject(int x, int y, PlaceableObject po, Object o) {
@@ -129,10 +146,10 @@ public class EditorLevel {
 
         fileWriter.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         fileWriter.print("<map version=\"1.2\" tiledversion=\"1.3.4\" orientation=\"orthogonal\"");
-        fileWriter.print(" renderorder=\"right-down\" ");
+        fileWriter.print(" renderorder=\"right-up\" ");
         fileWriter.print("width=\"" + Integer.toString(width) + "\" ");
         fileWriter.print("height=\"" + Integer.toString(height) + "\" ");
-        fileWriter.println("tilewidth=\"32\" tileheight=\"32\" infinite=\"0\">");
+        fileWriter.println("tilewidth=\"1\" tileheight=\"1\" infinite=\"0\">");
         fileWriter.println(" <tileset firstgid=\"1\" source=\"test2.tsx\"/>");
 
         //Write all of the properties that belong to the actual map itself. Not every property needs to be written,
@@ -148,6 +165,8 @@ public class EditorLevel {
         fileWriter.println("  <property name=\"autoScroll\" type=\"bool\" value=\"" + autoScroll + "\"/>");
         fileWriter.println(" </properties>");
 
+        //Player must be written first
+        writePlayer(fileWriter);
         writeObjects(fileWriter);
 
         fileWriter.println("</map>");
@@ -157,12 +176,27 @@ public class EditorLevel {
         return file;
     }
 
+    private void writePlayer(PrintWriter fileWriter) {
+        fileWriter.println(" <objectgroup id=\"2\" name=\"Player Layer\">");
+
+        int id = 1;
+        for(int y = 0; y < height; y++) {
+            for(int x = 0; x < width; x++) {
+                PlacedObject po = objects[x][y];
+                if(po != null && po.object != null && po.object instanceof Player2)
+                    writeObject(x, y, id, fileWriter, po);
+            }
+        }
+
+        fileWriter.println(" </objectgroup>");
+    }
+
     /**
-     * Write all the objects in the tilemap to the TMX file.
+     * Write all the objects in the tilemap to the TMX file, except the player
      * @param fileWriter The PrintWriter to use to write the data
      */
     private void writeObjects(PrintWriter fileWriter) {
-        fileWriter.println(" <objectgroup id=\"2\" name=\"Object Layer 1\">");
+        fileWriter.println(" <objectgroup id=\"3\" name=\"Object Layer 1\">");
 
         //Loop through each of the placed objects in the map, and if they're not null, write them to the file
         //Give each object a unique id.
@@ -170,7 +204,7 @@ public class EditorLevel {
         for(int y = 0; y < height; y++) {
             for(int x = 0; x < width; x++) {
                 PlacedObject po = objects[x][y];
-                if(po != null && po.object != null)
+                if(po != null && po.object != null && !(po.object instanceof Player2))
                     writeObject(x, y, id, fileWriter, po);
             }
         }
@@ -267,11 +301,13 @@ public class EditorLevel {
 
     ///TODO: ReWrite
     public void importFrom(String filename) {
-        TiledMap tiledMap = new TmxMapLoader().load(filename);
+        TiledMap tiledMap = new TmxMapLoader2().load(filename);
 
         //Load the map's properties
         MapProperties tiledMapProperties = tiledMap.getProperties();
         importLevelProperties(tiledMapProperties);
+
+        objects = new PlacedObject[width][height];
 
         MapLayers layers = tiledMap.getLayers();
         MapLayer objectLayer = layers.get("Object Layer 1");
@@ -279,6 +315,8 @@ public class EditorLevel {
         MapObjects mapObjects = objectLayer.getObjects();
         importObjects(mapObjects);
 
+        this.oldWidth = width;
+        this.oldHeight = height;
         return;
     }
 
@@ -303,5 +341,32 @@ public class EditorLevel {
     }
 
     private void importObject(MapObject mapObject) {
+        MapProperties objectProperties = mapObject.getProperties();
+
+        int x = objectProperties.get("x", Float.TYPE).intValue();
+
+        //I have no idea why, but for some reason the y axis is flipped when read.
+        int y = height - objectProperties.get("y", Float.TYPE).intValue();
+
+        PlaceableObject po = placeableObjects.get(mapObject.getName());
+        if(po == null)
+            return;
+
+        try {
+            Class objectClass = po.clazz;
+            Constructor constructor = objectClass.getDeclaredConstructor();
+
+            Object object = constructor.newInstance();
+
+            objects[x][y] = new PlacedObject(po, object);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }
