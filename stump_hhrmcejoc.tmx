@@ -12,7 +12,7 @@
   <property name="autoScroll" type="bool" value="false"/>
  </properties>
  <objectgroup id="2" name="Player Layer">
-  <object id="1" name="Player2" x="5" y="7" >
+  <object id="1" name="Player2" x="2" y="2" >
    <properties>
     <property name="strTest" type="string" value="Testing"/>
     <property name="difficulty" type="string" value="HARD"/>
@@ -26,6 +26,10 @@
    <properties>
     <property name="timeTillTurn" type="float" value="2.0"/>
     <property name="right" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1" name="End" x="29" y="22" >
+   <properties>
    </properties>
   </object>
   <object id="1" name="Block2" x="31" y="31" >
