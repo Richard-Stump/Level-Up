@@ -340,7 +340,7 @@ public class LevelDownloadScreen implements Screen {
                 selectedId = id;
 
                 if ((dbDownloaded.searchByID(id) != null) || (dbCreated.searchByID(id) != null)) {
-                    downloadAndPlayButton.setTouchable(Touchable.disabled);
+                    downloadAndPlayButton.setTouchable(Touchable.enabled);
                     downloadAndPlayButton.setText("Play");
                     downloadAndPlayButton.setColor(Color.RED);
                 } else {
@@ -370,6 +370,7 @@ public class LevelDownloadScreen implements Screen {
                 downloadAndPlayButton.setColor(Color.RED);
 
                 //TODO: after downloading set screen to level to play pass the level id
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, dbCreated.searchByID(selectedId).getId()));
             }
         };
     }
