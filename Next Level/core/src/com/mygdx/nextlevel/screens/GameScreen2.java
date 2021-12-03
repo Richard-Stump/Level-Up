@@ -158,9 +158,6 @@ public class GameScreen2 extends Timer implements Screen {
     public ArrayList<Texture> itemBlockTextures;
     public ArrayList<Texture> coinBlockTextures;
     public ArrayList<Texture> blockTextures;
-    public ArrayList<Texture> basicBlock1Textures;
-    public ArrayList<Texture> basicBlock2Textures;
-    public ArrayList<Texture> basicBlock3Textures;
     public ArrayList<String> itemTextures;
     public ArrayList<Texture> checkpointTextures;
     public Texture endTexture;
@@ -197,7 +194,7 @@ public class GameScreen2 extends Timer implements Screen {
          skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
          menu = new GameMenuDialog(skin, "Menu", stage, "Resume", "Restart", "Exit", this, this.game);
          //Used to display where the colliders are on the screen
-         //box2dRenderer = new Box2DDebugRenderer();
+         box2dRenderer = new Box2DDebugRenderer();
 
 
          //Initialize a camera to view the world. Specify how many tiles are viewable vertically, and then
@@ -228,9 +225,6 @@ public class GameScreen2 extends Timer implements Screen {
          itemBlockTextures = new ArrayList<>();
          coinBlockTextures = new ArrayList<>();
          blockTextures = new ArrayList<>();
-         basicBlock1Textures = new ArrayList<>();
-         basicBlock2Textures = new ArrayList<>();
-         basicBlock3Textures = new ArrayList<>();
          checkpointTextures = new ArrayList<>();
 
          //Create and load tilemap
@@ -302,9 +296,6 @@ public class GameScreen2 extends Timer implements Screen {
         itemBlockTextures.add(BlockIndex.EMPTY.value, new Texture("used-item-block.png"));
         coinBlockTextures.add(BlockIndex.DEFAULT.value, new Texture("Block.png"));
         blockTextures.add(new Texture("Block.png"));
-        basicBlock1Textures.add(new Texture("stone.png"));
-        basicBlock2Textures.add(new Texture("dirt-grass.png"));
-        basicBlock3Textures.add(new Texture("dirt.png"));
 
         //Enemy Texture
         enemyTextures.add(EnemyIndex.DEFAULT.value, new Texture("enemy.jpg"));
@@ -614,7 +605,7 @@ public class GameScreen2 extends Timer implements Screen {
 
             batch.end();
 
-            //box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
+//            box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
         }
     }
 
