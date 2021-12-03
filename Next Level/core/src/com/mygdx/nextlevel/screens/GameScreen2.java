@@ -227,13 +227,16 @@ public class GameScreen2 extends Timer implements Screen {
         despawnQueue.clear();
 
         //Create floor and world ends
-        floor = new BoxCollider(new Vector2(15, 0), new Vector2(30, 1), false, CollisionGroups.ALL, CollisionGroups.WORLD);
         new DeathBlock(this, tm.getMapWidth());
 
+        //Left Side of the screen
         pb = new PushBlock(this, tm);
         if (tm.getAutoScroll()) {
             actors.add(pb);
         }
+
+        ///Right side of the screen
+        new EndBlock(this, tm);
 
         //Player Textures
         playerTextures.add(PlayerIndex.DEFAULT.value, new Texture("hero.png"));
