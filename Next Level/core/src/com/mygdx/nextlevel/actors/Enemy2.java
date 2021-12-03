@@ -14,7 +14,7 @@ import java.util.ArrayList;
 @Placeable(
         group = "Enemies",
         displayName = "Enemy",
-        textures = { "enemy.jpg" }
+        textures = { "enemy.png" }
 )
 public class Enemy2 extends Actor2 {
     protected BoxCollider boxCollider;

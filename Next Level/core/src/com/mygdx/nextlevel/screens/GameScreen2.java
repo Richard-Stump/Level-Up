@@ -305,6 +305,9 @@ public class GameScreen2 extends Timer implements Screen {
          itemBlockTextures = new ArrayList<>();
          coinBlockTextures = new ArrayList<>();
          blockTextures = new ArrayList<>();
+         basicBlock1Textures = new ArrayList<>();
+         basicBlock2Textures = new ArrayList<>();
+         basicBlock3Textures = new ArrayList<>();
          checkpointTextures = new ArrayList<>();
          basicBlock1Textures = new ArrayList<>();
          basicBlock2Textures = new ArrayList<>();
@@ -391,22 +394,22 @@ public class GameScreen2 extends Timer implements Screen {
         itemBlockTextures.add(BlockIndex.DEFAULT.value, new Texture("item-block.png"));
         itemBlockTextures.add(BlockIndex.EMPTY.value, new Texture("used-item-block.png"));
         coinBlockTextures.add(BlockIndex.DEFAULT.value, new Texture("Block.png"));
-        blockTextures.add(new Texture("Block.png"));
+        blockTextures.add(new Texture("dirt-grass.png"));
         basicBlock1Textures.add(new Texture("stone.png"));
         basicBlock2Textures.add(new Texture("dirt-grass.png"));
         basicBlock3Textures.add(new Texture("dirt.png"));
 
         //Enemy Texture
-        enemyTextures.add(EnemyIndex.DEFAULT.value, new Texture("enemy.jpg"));
-        enemyTextures.add(EnemyIndex.JUMP.value, new Texture("enemy_jump.png"));
-        enemyTextures.add(EnemyIndex.SHOOT.value, new Texture("enemy_shoot.png"));
+        enemyTextures.add(EnemyIndex.DEFAULT.value, new Texture("enemy.png"));
+        enemyTextures.add(EnemyIndex.JUMP.value, new Texture("enemy.png"));
+        enemyTextures.add(EnemyIndex.SHOOT.value, new Texture("enemy.png"));
 
         //Checkpoint Textures
         checkpointTextures.add(CheckpointIndex.DEFAULT.value, new Texture("checkpoint.png"));
         checkpointTextures.add(CheckpointIndex.TRIGGERED.value, new Texture("checkpoint2.png"));
 
         //End Texture
-        endTexture = new Texture("end.jpeg");
+        endTexture = new Texture("flag.png");
 
         //Jewel Texture
         jewelTexture = new Texture("jewel.png");
