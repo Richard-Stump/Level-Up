@@ -299,7 +299,7 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Block Texture
         itemBlockTextures.add(BlockIndex.DEFAULT.value, new Texture("item-block.png"));
-        itemBlockTextures.add(BlockIndex.EMPTY.value, new Texture("used-item-block.jpg"));
+        itemBlockTextures.add(BlockIndex.EMPTY.value, new Texture("used-item-block.png"));
         coinBlockTextures.add(BlockIndex.DEFAULT.value, new Texture("Block.png"));
         blockTextures.add(new Texture("Block.png"));
         basicBlock1Textures.add(new Texture("stone.png"));
