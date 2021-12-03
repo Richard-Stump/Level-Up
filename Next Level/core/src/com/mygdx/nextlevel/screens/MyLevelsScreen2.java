@@ -395,15 +395,19 @@ public class MyLevelsScreen2 implements Screen {
                 selectedLevel.setText("Level Selected: " + dbCreated.searchByID(id).getTitle());
                 //check if level is published
                 //if yes, show dialog that states that it is already published
-                if (level.isPublic()) {
-                    ErrorDialog unpublicLevelDialog = new ErrorDialog(skin, "Level is already published. Are you " +
-                            "sure you want to unpublish " + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
-                            "Unpublish", id, publishButton, level);
+                if (level.getPlayCount() > 0) {
+                    if (level.isPublic()) {
+                        ErrorDialog unpublishLevelDialog = new ErrorDialog(skin, "Level is already published. Are you " +
+                                "sure you want to unpublish " + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
+                                "Unpublish", id, publishButton, level);
+                    } else {
+                        //if no, are you sure you want to publish, then success or fail dialog
+                        ErrorDialog publishLevelDialog = new ErrorDialog(skin, "Are you sure you want to publish "
+                                + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
+                                "Publish", id, publishButton, level);
+                    }
                 } else {
-                    //if no, are you sure you want to publish, then success or fail dialog
-                    ErrorDialog publishLevelDialog = new ErrorDialog(skin, "Are you sure you want to publish "
-                            + dbCreated.searchByID(id).getTitle() + "?", stage, "Cancel",
-                            "Publish", id, publishButton, level);
+                    ErrorDialog dialog = new ErrorDialog(skin, "You must complete the level in order to publish!", stage);
                 }
             }
         };
