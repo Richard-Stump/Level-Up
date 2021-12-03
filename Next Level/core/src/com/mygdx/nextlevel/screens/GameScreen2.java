@@ -12,7 +12,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.nextlevel.*;
 import com.mygdx.nextlevel.actors.*;
@@ -39,6 +41,12 @@ import java.util.LinkedList;
  * actors/colliders in the collision handling methods will cause crashes.
  */
 public class GameScreen2 extends Timer implements Screen {
+
+    public enum Mode {
+        PLAY,       //Normal Playing. When the user reaches the end, they get taken to rate the level
+        TEST,       //Testing, when reaching the end, the user goes back to the editor.
+        PUBLISH     //Publishing. When the user reaches the end, they are able to publish the level.
+    }
 
     /**
      * Enums to the screen in which specify what item goes into the block
@@ -94,6 +102,9 @@ public class GameScreen2 extends Timer implements Screen {
     public ArrayList<Integer> conditionList;
 
     public HashMap<Item2, String> itemToName = new HashMap<>();
+
+    private Mode mode = Mode.PLAY;
+    private Screen endScreen;
 
     /**
      * Used to queue actor spawns because colliders cannot be created in the collision handlers.
@@ -154,9 +165,11 @@ public class GameScreen2 extends Timer implements Screen {
      * Initialize the game screen
      * @param game The screen that created this screen
      */
-//    public GameScreen2(NextLevel game, String levelInfo) {
-     public GameScreen2(NextLevel game, String levelInfo) {
+     public GameScreen2(NextLevel game, String levelInfo, Mode mode, Screen endScreen) {
          this.game = game;
+
+         this.mode = mode;
+         this.endScreen = endScreen;
 
          atlas = new TextureAtlas("skin/uiskin.atlas");
          skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
