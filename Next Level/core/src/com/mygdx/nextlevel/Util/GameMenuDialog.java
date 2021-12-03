@@ -10,7 +10,6 @@ import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.*;
-import sun.rmi.rmic.Main;
 
 public class GameMenuDialog extends GameScreen2 {
     public Dialog menuDialog;
