@@ -165,7 +165,7 @@ public class GameOverScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
                 //TODO: set screen to restart current level
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, levelInfo));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, levelInfo, GameScreen2.Mode.PLAY, null));
             }
         });
         tryAgainButton.addListener(new HoverListener());
