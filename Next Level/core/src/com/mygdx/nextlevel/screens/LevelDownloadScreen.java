@@ -309,8 +309,13 @@ public class LevelDownloadScreen implements Screen {
             numRaters = dbServer.getRatingCount(id);
         }
 
-        //right column labels
-        rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
+        float rateInt = levelInfo.getRating();
+        if (rateInt < 0) {
+            rating = new Label("Rating: NA/5  [#" + numRaters + "]", skin);
+        } else {
+            //right column labels
+            rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
+        }
         playCount = new Label("Play Count: " + levelInfo.getPlayCount(), skin);
 
         rating.addListener(selectLevelListener(id));
@@ -364,7 +369,7 @@ public class LevelDownloadScreen implements Screen {
                 downloadAndPlayButton.setText("Play");
                 downloadAndPlayButton.setColor(Color.RED);
 
-                //TODO: after downloading set screen to level to play
+                //TODO: after downloading set screen to level to play pass the level id
             }
         };
     }

@@ -330,7 +330,13 @@ public class DeleteDownloadedLevelsScreen implements Screen {
 
         //right column labels
         if (levelInfo != null) {
-            rating = new Label("" + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
+            float rateInt = levelInfo.getRating();
+            if (rateInt < 0) {
+                rating = new Label("Rating: NA/5  [#" + numRaters + "]", skin);
+            } else {
+                //right column labels
+                rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
+            }
             playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
             rating.addListener(selectLevelListener(id));
