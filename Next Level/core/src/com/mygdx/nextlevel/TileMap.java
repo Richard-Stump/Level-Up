@@ -120,19 +120,19 @@ public class TileMap extends ApplicationAdapter{
         //TODO End texture (add to End texutre)
 
         MapLayer objectLayer;
-//        objectLayer = tiledMap.getLayers().get("Player");
-//        for(MapObject object : objectLayer.getObjects()) {
-//            if (object instanceof TextureMapObject) {
-//                TextureMapObject mapObject = (TextureMapObject) object;
-//                if (mapObject.getProperties().get("name").equals("Player2")) {
-//                    screen.setPlayer(new Player2( screen,
-//                            screen.playerTextures,
-//                            mapObject.getX()/32.0f,
-//                            mapObject.getY()/32.0f
-//                            ));
-//                }
-//            }
-//        }
+        objectLayer = tiledMap.getLayers().get("Player");
+        for(MapObject object : objectLayer.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                RectangleMapObject mapObject = (RectangleMapObject) object;
+                if (mapObject.getName().equals("Player2")) {
+                    screen.setPlayer(new Player2( screen,
+                            screen.playerTextures,
+                            ((float) mapObject.getProperties().get("x"))/32.0f,
+                            ((float)mapObject.getProperties().get("y"))/32.0f
+                            ));
+                }
+            }
+        }
 
         objectLayer = tiledMap.getLayers().get("Object Layer 1");
         for(MapObject object : objectLayer.getObjects()){
