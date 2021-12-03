@@ -1,8 +1,7 @@
 package com.mygdx.nextlevel.screens.editor;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.MapObjects;
-import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.*;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -40,7 +39,7 @@ public class EditorLevel {
 
     @Property(displayName="Level Width") public int width;
     @Property(displayName="Level Height") public int height;
-    @Property(displayName="Level Name") public String name;
+    //@Property(displayName="Level Name") public String name;
     @Property(displayName="Difficulty") public Difficulty difficulty = Difficulty.NONE;
     @Property(displayName="Gravity") public float gravity;
     @Property(displayName="Time Limit") public int timeLimit;
@@ -58,7 +57,6 @@ public class EditorLevel {
         this.height = height;
         this.oldWidth = width;
         this.oldHeight = height;
-        this.name = null;
         this.difficulty = null;
         this.tags = null;
 
@@ -67,8 +65,6 @@ public class EditorLevel {
 
     public EditorLevel(String name, int width, int height) {
         this(width, height);
-
-        this.name = name;
     }
 
     public void placeObject(int x, int y, PlaceableObject po, Object o) {
@@ -149,7 +145,7 @@ public class EditorLevel {
         fileWriter.println("  <property name=\"keepJewel\" type=\"bool\" value=\"" + keepJewel + "\"/>");
         fileWriter.println("  <property name=\"gravity\" type=\"float\" value=\"" + gravity + "\"/>");
         fileWriter.println("  <property name=\"timeLimit\" type=\"int\" value=\"" + timeLimit + "\"/>");
-        fileWriter.println("  <property name=\"autoScroll\" type=\"float\" value=\"" + autoScroll + "\"/>");
+        fileWriter.println("  <property name=\"autoScroll\" type=\"bool\" value=\"" + autoScroll + "\"/>");
         fileWriter.println(" </properties>");
 
         writeObjects(fileWriter);
@@ -272,24 +268,40 @@ public class EditorLevel {
     ///TODO: ReWrite
     public void importFrom(String filename) {
         TiledMap tiledMap = new TmxMapLoader().load(filename);
+
+        //Load the map's properties
         MapProperties tiledMapProperties = tiledMap.getProperties();
-        TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
+        importLevelProperties(tiledMapProperties);
 
-        width = tiledMapProperties.get("width", Integer.class);
-        height = tiledMapProperties.get("height", Integer.class);
-        name = filename.substring(0, filename.lastIndexOf(".tmx"));
+        MapLayers layers = tiledMap.getLayers();
+        MapLayer objectLayer = layers.get("Object Layer 1");
 
-        this.width = width;
-        this.height = height;
-        this.oldWidth = width;
-        this.oldHeight = height;
-
-        for(int y = height - 1; y >= 0; y--) {
-            for(int x = 0; x < width; x++) {
-                TiledMapTileLayer.Cell cell = layer.getCell(x, y);
-            }
-        }
+        MapObjects mapObjects = objectLayer.getObjects();
+        importObjects(mapObjects);
 
         return;
+    }
+
+    private void importLevelProperties(MapProperties mapProperties) {
+        for(Field field : this.getClass().getFields()) {
+            Property property = field.getDeclaredAnnotation(Property.class);
+
+            if(property != null) {
+                try {
+                    field.set(this, mapProperties.get(field.getName(), field.getType()));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void importObjects(MapObjects objects) {
+        for(MapObject mapObject : objects) {
+            importObject(mapObject);
+        }
+    }
+
+    private void importObject(MapObject mapObject) {
     }
 }

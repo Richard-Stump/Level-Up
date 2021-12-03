@@ -373,7 +373,11 @@ public class MyLevelsScreen2 implements Screen {
         return new ClickListener() {
           @Override
           public void clicked(InputEvent event, float x, float y) {
-              //TODO: set to edit screen with the given level
+              ServerDBHandler handler = new ServerDBHandler();
+
+              LevelInfo info = handler.getLevelByID(id, true);
+
+              game.setScreen(new EditLevelScreen(game, info));
           }
         };
     }
