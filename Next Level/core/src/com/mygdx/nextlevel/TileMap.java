@@ -26,6 +26,7 @@ import com.mygdx.nextlevel.actors.Actor2;
 import com.mygdx.nextlevel.actors.Block;
 import com.mygdx.nextlevel.actors.Block2;
 import com.mygdx.nextlevel.actors.Player2;
+import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.screens.GameScreen2;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
@@ -123,6 +124,22 @@ public class TileMap extends ApplicationAdapter{
 
         MapLayer objectLayer = tiledMap.getLayers().get("Item Block");
         //FIXME Create one for each actor
+        MapLayer objectLayer;
+//        objectLayer = tiledMap.getLayers().get("Player");
+//        for(MapObject object : objectLayer.getObjects()) {
+//            if (object instanceof TextureMapObject) {
+//                TextureMapObject mapObject = (TextureMapObject) object;
+//                if (mapObject.getProperties().get("name").equals("Player2")) {
+//                    screen.setPlayer(new Player2( screen,
+//                            screen.playerTextures,
+//                            mapObject.getX()/32.0f,
+//                            mapObject.getY()/32.0f
+//                            ));
+//                }
+//            }
+//        }
+
+        objectLayer = tiledMap.getLayers().get("Object Layer 1");
         for(MapObject object : objectLayer.getObjects()){
             if(object instanceof TextureMapObject) {
                 TextureMapObject mapObject = (TextureMapObject) object;
@@ -136,6 +153,55 @@ public class TileMap extends ApplicationAdapter{
                 mapObject.getTextureRegion().setRegion(mapObject.getTextureRegion().getRegionX() + x, mapObject.getTextureRegion().getRegionY() + y, width, height);
                 test.add(texture);
                 actors.add(new Block2(screen, test, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
+            System.out.println(object);
+            if(object instanceof RectangleMapObject) {
+                System.out.println("test");
+                RectangleMapObject mapObject = (RectangleMapObject) object;
+//                if (((String) mapObject.getProperties().get("name")).equals("Block2")) {
+//                    screen.actors.add(new Block2(screen,
+//                            screen.itemBlockTextures,
+//                            ((float) mapObject.getProperties().get("x"))/32.0f,
+//                            ((float) mapObject.getProperties().get("y"))/32.0f,
+//                            false,
+//                            false));
+//                }
+
+//                switch (mapObject.getProperties().get("name").toString()) {
+                switch (mapObject.getName()) {
+                    case ("Block2"): //FIXME (Wait for other properties)
+                        screen.actors.add(new Block2(screen,
+                                screen.itemBlockTextures,
+                                ((float) mapObject.getProperties().get("x"))/32.0f,
+                                ((float) mapObject.getProperties().get("y"))/32.0f,
+                                false,
+                                false));
+                        break;
+                    case ("Enemy2"): //FIXME (Wait for other properties)
+                        screen.actors.add(new Enemy2(screen,
+                                screen.enemyTextures,
+                                ((float) mapObject.getProperties().get("x"))/32.0f,
+                                ((float) mapObject.getProperties().get("y"))/32.0f,
+                                Enemy2.Action.DEFAULT,
+                                screen.getPlayer()
+                                ));
+                        break;
+                    case ("End"): //FIXME (Wait for other properties)
+                        screen.actors.add(new End(screen,
+                                screen.endTexture,
+                                ((float) mapObject.getProperties().get("x"))/32.0f,
+                                ((float) mapObject.getProperties().get("y"))/32.0f,
+                                screen.getPlayer()
+                                ));
+                        break;
+                    case ("Checkpoint2"): //FIXME (Wait for other properties)
+                        screen.actors.add(new CheckPoint2(screen,
+                                screen.checkpointTextures,
+                                ((float) mapObject.getProperties().get("x"))/32.0f,
+                                ((float) mapObject.getProperties().get("y"))/32.0f,
+                                screen.getPlayer()
+                                ));
+                        break;
+                }
             }
         }
 
@@ -156,6 +222,8 @@ public class TileMap extends ApplicationAdapter{
                 actors.add(new Block2(screen, test, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
             }
         }
+        //Add player to the screen
+        screen.actors.add(screen.getPlayer());
     }
 
     public void render (OrthographicCamera camera, Player2 player, boolean reset) {
