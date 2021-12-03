@@ -524,9 +524,9 @@ public class GameScreen2 extends Timer implements Screen {
             long elapsed = end-start;
             double elapsedTime = (double) elapsed / 1000000000;
 //            System.out.println(String.format("Current Record Time: %f", player.getRecordTime()));
-            if (player.getRecordTime() > elapsedTime) {
-                player.setRecordTime(elapsedTime);
-            }
+//            if (player.getRecordTime() > elapsedTime) {
+//                player.setRecordTime(elapsedTime);
+//            }
             player.incScore(elapsed / 100000);
 //            System.out.println(String.format("New Record Time: %f", player.getRecordTime()));
 //            System.out.println(elapsedTime);
@@ -546,7 +546,7 @@ public class GameScreen2 extends Timer implements Screen {
      */
     @Override
     public void render(float delta) {
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_0)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
 //            System.out.println("Escape");
 //            escaped = !escaped;
             paused = true;
