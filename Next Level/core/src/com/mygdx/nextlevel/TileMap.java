@@ -112,14 +112,14 @@ public class TileMap extends ApplicationAdapter{
             conditionList.add(4);
         }
 
-        for (Integer integer : conditionList) {
-            System.out.println(integer);
-        }
-        if (conditionList.contains(5)) {
-            System.out.println(timeLimit);
-        } else  {
-            System.out.println("No time limit");
-        }
+//        for (Integer integer : conditionList) {
+//            System.out.println(integer);
+//        }
+//        if (conditionList.contains(5)) {
+//            System.out.println(timeLimit);
+//        } else  {
+////            System.out.println("No time limit");
+//        }
 
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1.0f/32.0f);
     }

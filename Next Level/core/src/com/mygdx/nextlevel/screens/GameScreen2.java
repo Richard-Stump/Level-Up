@@ -1,24 +1,25 @@
 package com.mygdx.nextlevel.screens;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.*;
+import com.mygdx.nextlevel.Util.GameMenuDialog;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.hud.Hud2;
 import org.w3c.dom.Text;
+import sun.tools.jconsole.Tab;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -93,6 +94,15 @@ public class GameScreen2 extends Timer implements Screen {
 
     public HashMap<Item2, String> itemToName = new HashMap<>();
 
+    public Stage stage;
+    public Viewport viewport;
+    public SpriteBatch batch;
+    public Camera menuCamera;
+    public boolean escaped = false;
+    public static final int STAGE_WIDTH = 1920 / 2;
+    public static final int STAGE_HEIGHT = 1080 / 2;
+    boolean paused = false;
+
     /**
      * Used to queue actor spawns because colliders cannot be created in the collision handlers.
      * Actors should start at the beginning of the frame anyways, not in the middle
@@ -148,6 +158,8 @@ public class GameScreen2 extends Timer implements Screen {
     private TextureAtlas atlas;
     protected Skin skin;
 
+    private GameMenuDialog menu;
+
     /**
      * Initialize the game screen
      * @param game The screen that created this screen
@@ -155,12 +167,19 @@ public class GameScreen2 extends Timer implements Screen {
 //    public GameScreen2(NextLevel game, String levelInfo) {
      public GameScreen2(NextLevel game, String levelInfo) {
          this.game = game;
-
+         batch = game.batch;
+         menuCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+         menuCamera.position.set(menuCamera.viewportWidth, menuCamera.viewportHeight, 0.0F);
+         menuCamera.update();
+         viewport = new StretchViewport(500, 500, menuCamera);
+         viewport.apply();
+         stage = new Stage(viewport, batch);
          atlas = new TextureAtlas("skin/uiskin.atlas");
          skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
-
+         menu = new GameMenuDialog(skin, "Menu", stage, "Resume", "Restart", "Exit", this, this.game);
          //Used to display where the colliders are on the screen
          box2dRenderer = new Box2DDebugRenderer();
+
 
          //Initialize a camera to view the world. Specify how many tiles are viewable vertically, and then
          //use the screen's aspect ratio to calculate how many tiles to view along the x access to keep tiles square.
@@ -452,6 +471,7 @@ public class GameScreen2 extends Timer implements Screen {
     private void update(float delta) {
         despawnActorsInQueue();
         if(shouldReset)
+            System.out.println("Will reset");
             reset();
 
         //New actors should be spawned before physics and update methods are called because we want the new
@@ -500,24 +520,66 @@ public class GameScreen2 extends Timer implements Screen {
      */
     @Override
     public void render(float delta) {
-        update(delta);
-        ScreenUtils.clear(Color.WHITE);
-        tm.render(camera, player, false);
-
-        SpriteBatch batch = game.batch;
-        batch.begin();
-        batch.setProjectionMatrix(camera.combined);
-
-        for(Actor2 a : actors) {
-            if (!a.getClass().equals(PushBlock.class))
-                a.draw(batch);
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_0)) {
+//            System.out.println("Escape");
+//            escaped = !escaped;
+            paused = true;
+            System.out.println(getPaused());
+//            escaped = true;
         }
 
-        hud.render(batch);
+        ScreenUtils.clear(Color.WHITE);
+//        int count = 0;
+        if (paused) {
+//            Table table = new Table();
+//            table.setFillParent(true);
+//            stage.addActor(table);
+            Gdx.input.setInputProcessor(stage);
+            Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+            tm.render(camera, player, false);
 
-        batch.end();
+            SpriteBatch batch = game.batch;
+            batch.begin();
+            batch.setProjectionMatrix(camera.combined);
 
-        box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
+            for (Actor2 a : actors) {
+                if (!a.getClass().equals(PushBlock.class))
+                    a.draw(batch);
+            }
+
+            hud.render(batch);
+
+            batch.end();
+
+            box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
+//            if (count == 0) {
+                stage.act();
+                stage.draw();
+//                count++;
+//            }
+//            GameMenuDialog menu = new GameMenuDialog(skin, "Menu", stage, "Resume", "Restart", "Exit", this, game);
+//            batch.begin();
+//
+//            batch.end();
+        } else {
+            update(delta);
+            tm.render(camera, player, false);
+
+            SpriteBatch batch = game.batch;
+            batch.begin();
+            batch.setProjectionMatrix(camera.combined);
+
+            for (Actor2 a : actors) {
+                if (!a.getClass().equals(PushBlock.class))
+                    a.draw(batch);
+            }
+
+            hud.render(batch);
+
+            batch.end();
+
+            box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
+        }
     }
 
     /**
@@ -624,7 +686,9 @@ public class GameScreen2 extends Timer implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        this.viewport.update(width, height);
+        this.camera.position.set(this.camera.viewportWidth / 2.0F, this.camera.viewportHeight / 2.0F, 0.0F);
+        this.camera.update();
     }
 
     @Override
@@ -644,7 +708,14 @@ public class GameScreen2 extends Timer implements Screen {
 
     @Override
     public void dispose() {
-
+        this.skin.dispose();
+        this.atlas.dispose();
+    }
+    public boolean getPaused() {
+        return paused;
+    }
+    public void setPaused(boolean set) {
+        paused = set;
     }
 
     public Player2 getPlayer() {return this.player;}
