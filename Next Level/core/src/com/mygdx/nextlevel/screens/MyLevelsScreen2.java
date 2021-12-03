@@ -78,7 +78,7 @@ public class MyLevelsScreen2 implements Screen {
     public static int rightColumnWidth = 120;
     public static int topBottomPad = 30;
     public static int leftColumnWidth = 200;
-    public static int labelHeight = 25;
+    public static int labelHeight = 30;
 
     public MyLevelsScreen2(NextLevel game) {
         this.game = game;
@@ -227,8 +227,8 @@ public class MyLevelsScreen2 implements Screen {
 
         for (LevelInfo levelInfo: levels) {
             String id = levelInfo.getId();
-            infoTable.add(getLeftColumn(id)).padLeft(5);
-            infoTable.add(getRightColumn(id));
+            infoTable.add(getLeftColumn(id)).padLeft(5).padTop(10);
+            infoTable.add(getRightColumn(id)).padTop(10);
 
             TextButton deleteButton = new TextButton("Delete", skin);
             deleteButton.addListener(deleteLevelListener(id));
@@ -245,7 +245,7 @@ public class MyLevelsScreen2 implements Screen {
 
             TextButton publishButton = new TextButton("Publish", skin);
             if (levelInfo.isPublic()) {
-                publishButton.setText("Unpublish");
+                publishButton.setText("Published");
             }
             //TODO: create listener for publish
             publishButton.addListener(publishLevelListener(levelInfo, id, publishButton));
@@ -255,7 +255,7 @@ public class MyLevelsScreen2 implements Screen {
             infoTable.row();
 
             Image line = new Image(new Texture(Gdx.files.internal("horzline.png")));
-            infoTable.add(line).colspan(5);
+            //infoTable.add(line).colspan(5);
             infoTable.row();
         }
 
