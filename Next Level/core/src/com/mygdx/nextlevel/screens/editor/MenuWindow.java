@@ -30,6 +30,7 @@ public class MenuWindow extends VisWindow {
     Button saveButton;
     Button testButton;
     Button publishButton;
+    Button assetButton;
 
     EditorLevel level;
     EditLevelScreen screen;
@@ -55,6 +56,9 @@ public class MenuWindow extends VisWindow {
         table.add(testButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING).fillY();
         publishButton = new TextButton("Publish", VisUI.getSkin());
         table.add(publishButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING).fillY();
+        assetButton = new TextButton("Custom\nAssets", VisUI.getSkin());
+        table.add(assetButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING).fillY();
+
 
         final EditorLevel lev = level;
 
@@ -111,7 +115,7 @@ public class MenuWindow extends VisWindow {
 
         add(table).fill();
 
-        int numButtons = 4;
+        int numButtons = 5;
         float width = 50 + BUTTON_WIDTH * numButtons + BUTTON_PADDING * numButtons;
         float x = EditLevelScreen.STAGE_WIDTH - width;
         float y = EditLevelScreen.STAGE_HEIGHT;
