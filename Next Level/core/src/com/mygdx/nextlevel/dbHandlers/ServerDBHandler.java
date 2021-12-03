@@ -572,11 +572,10 @@ public class ServerDBHandler {
         }
 
         //update playcount if needed
-        String sqlQueryPlayCount = "UPDATE api.levels SET playcount=? WHERE (levelid=?) AND (playcount < ?);";
+        String sqlQueryPlayCount = "UPDATE api.levels SET playcount=? WHERE levelid=?;"; //AND (playcount < ?);
         try (PreparedStatement statement = connection.prepareStatement(sqlQueryPlayCount)) {
             statement.setInt(1, levelInfo.getPlayCount());
             statement.setString(2, levelInfo.getId());
-            statement.setInt(3, levelInfo.getPlayCount());
 
             statement.executeUpdate();
         } catch (SQLException e) {
