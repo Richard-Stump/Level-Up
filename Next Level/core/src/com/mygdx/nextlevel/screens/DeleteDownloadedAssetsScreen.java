@@ -2,8 +2,10 @@ package com.mygdx.nextlevel.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -59,6 +61,8 @@ public class DeleteDownloadedAssetsScreen implements Screen {
     public static int labelHeight = 25;
 
     private boolean serverDelete;
+    private ArrayList<String> downloadedAssets;
+    private ArrayList<String> imagePreviews;
 
     public DeleteDownloadedAssetsScreen(NextLevel game, boolean serverDelete) {
         this.serverDelete = serverDelete;
@@ -80,6 +84,20 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         dbAssets = new AssetHandler();
         selectedAsset = new Label("Asset Selected: none", skin);
         selectedId = "";
+
+        downloadedAssets = new ArrayList<>();
+        imagePreviews = new ArrayList<>();
+        for(Asset asset: dbAssets.sortAllByTitle()) {
+            if (serverDelete) {
+                if (asset.author.equals(LoginScreen.getCurAcc())) {
+                    if (dbAssets.existsLocally(asset.getAssetID())) {
+                        downloadedAssets.add(asset.getAssetID());
+                    }
+                    imagePreviews.add(asset.getAssetID());
+                    dbAssets.downloadAsset(asset.getAssetID());
+                }
+            }
+        }
     }
 
     public void show() {
@@ -90,7 +108,7 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         mainTable = new Table();
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
-        mainTable.setDebug(true);
+        //mainTable.setDebug(true);
 
         //row 1: back button, screen title, current user overview
         //back button
@@ -98,6 +116,7 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         backButton.left();
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                cleanImages();
                 if (serverDelete) {
                     game.setScreen(new ProfileMainMenu(game));
                 } else {
@@ -120,8 +139,16 @@ public class DeleteDownloadedAssetsScreen implements Screen {
         mainTable.add(new Label("", skin)).width(backButton.getWidth());
         mainTable.row();
 
+        ArrayList<Asset> assetList = new ArrayList<>(dbAssets.sortAllByTitle());
+        ArrayList<Asset> copyList = new ArrayList<>(assetList);
+        for (Asset asset: copyList) {
+            if (!downloadedAssets.contains(asset.getAssetID())) {
+                assetList.remove(asset);
+            }
+        }
+
         //set up asset information section
-        Table infoTable = getAssetTable(new ArrayList<>(dbAssets.sortAllByTitle()));
+        Table infoTable = getAssetTable(assetList);
         assetVerticalGroup = new VerticalGroup();
         assetVerticalGroup.addActor(infoTable);
         assetVerticalGroup.padRight(50);
@@ -211,19 +238,12 @@ public class DeleteDownloadedAssetsScreen implements Screen {
             asset = dbAssets.searchByID(id);
         }
 
-        //adding left column labels
-        assetName = new Label(asset.name, skin);
-        assetAuthor = new Label(asset.author, skin);
+        //have an image preview
+        FileHandle fileHandle = new FileHandle(id);
+        Texture texture = new Texture(fileHandle);
+        Image preview = new Image(texture);
 
-        assetName.addListener(selectAssetListener(id));
-        assetName.addListener(new HoverListener());
-        assetAuthor.addListener(selectAssetListener(id));
-        assetAuthor.addListener(new HoverListener());
-
-        //adding to left table
-        leftTable.add(assetName).width(leftColumnWidth - 10).left().height(labelHeight);
-        leftTable.row();
-        leftTable.add(assetAuthor).width(leftColumnWidth - 10).left().height(labelHeight);
+        leftTable.add(preview).width(64).height(64).padRight(25);
 
         return leftTable;
     }
@@ -242,7 +262,30 @@ public class DeleteDownloadedAssetsScreen implements Screen {
             asset = dbAssets.searchByID(id);
         }
 
+        //adding left column labels
+        assetName = new Label(asset.name, skin);
+        assetAuthor = new Label(asset.author, skin);
+
+        assetName.addListener(selectAssetListener(id));
+        assetName.addListener(new HoverListener());
+        assetAuthor.addListener(selectAssetListener(id));
+        assetAuthor.addListener(new HoverListener());
+
+        //adding to left table
+        rightTable.add(assetName).width(leftColumnWidth - 10).left().height(labelHeight);
+        rightTable.row();
+        rightTable.add(assetAuthor).width(leftColumnWidth - 10).left().height(labelHeight);
+
         return rightTable;
+    }
+
+    private void cleanImages() {
+        for (String id: imagePreviews) {
+            if (!downloadedAssets.contains(id)) {
+                dbAssets.removeAssetLocal(id);
+            }
+        }
+        imagePreviews = new ArrayList<>();
     }
 
     private ClickListener selectAssetListener(final String id) {
@@ -280,8 +323,11 @@ public class DeleteDownloadedAssetsScreen implements Screen {
                         if ((Boolean) object) {
                             if (serverDelete) {
                                 dbAssets.removeAssetServer(id);
+                                downloadedAssets.remove(id);
+                                imagePreviews.remove(id);
                             } else {
                                 dbAssets.removeAssetLocal(id);
+                                downloadedAssets.remove(id);
                             }
                             assetVerticalGroup.clear();
                             assetVerticalGroup.addActor(getRefreshedAssetList());

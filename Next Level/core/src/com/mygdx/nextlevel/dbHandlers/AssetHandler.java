@@ -284,7 +284,7 @@ public class AssetHandler {
             if (file.delete()) {
                 System.out.printf("%s deleted successfully\n", id);
             } else {
-                System.out.printf("Could not delete %s\n, id");
+                System.out.printf("Could not delete %s\n", id);
             }
         } else {
             System.out.printf("%s was not detected as a file\n", id);
@@ -316,5 +316,10 @@ public class AssetHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean existsLocally(String id) {
+        File file = new File(id);
+        return file.exists();
     }
 }

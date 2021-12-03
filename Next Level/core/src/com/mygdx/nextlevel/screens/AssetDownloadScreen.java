@@ -8,9 +8,11 @@ package com.mygdx.nextlevel.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -18,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.Asset;
@@ -59,6 +62,9 @@ public class AssetDownloadScreen implements Screen {
     public Label assetName;
     public Label author;
 
+    private ArrayList<String> downloadedAssets;
+    private ArrayList<String> imagePreviews;
+
     //static vars
     public static int rightColumnWidth = 250;
     public static int topBottomPad = 30;
@@ -84,6 +90,16 @@ public class AssetDownloadScreen implements Screen {
         dbAssets = new AssetHandler();
         selectedAsset = new Label("Asset Selected: none", skin);
         selectedId = "";
+
+        downloadedAssets = new ArrayList<>();
+        imagePreviews = new ArrayList<>();
+        for(Asset asset: dbAssets.sortAllByTitle()) {
+            if (dbAssets.existsLocally(asset.getAssetID())) {
+                downloadedAssets.add(asset.getAssetID());
+            }
+            imagePreviews.add(asset.getAssetID());
+            dbAssets.downloadAsset(asset.getAssetID());
+        }
     }
 
     public void show() {
@@ -102,6 +118,7 @@ public class AssetDownloadScreen implements Screen {
         backButton.left();
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                cleanImages();
                 game.setScreen(new MainMenuScreen(game));
             }
         });
@@ -113,6 +130,7 @@ public class AssetDownloadScreen implements Screen {
         downloadedAssetsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                cleanImages();
                 ((Game)Gdx.app.getApplicationListener()).setScreen(new DeleteDownloadedAssetsScreen(game, false));
             }
         });
@@ -209,6 +227,27 @@ public class AssetDownloadScreen implements Screen {
         if (dbAssets == null) {
             System.out.println("db is not active");
             return null;
+        }
+
+        //have an image preview
+        FileHandle fileHandle = new FileHandle(id);
+        Texture texture = new Texture(fileHandle);
+        Image preview = new Image(texture);
+
+        leftTable.add(preview).width(64).height(64).padRight(25);
+
+        return leftTable;
+    }
+
+    private Table getRightColumn(String id) {
+        Table rightTable = new Table();
+        Asset asset;
+        //rightTable.setDebug(true);
+
+        //verify database is connected
+        if (dbAssets == null) {
+            System.out.println("db is not active");
+            return null;
         } else {
             asset = dbAssets.searchByID(id);
         }
@@ -223,28 +262,20 @@ public class AssetDownloadScreen implements Screen {
         author.addListener(new HoverListener());
 
         //adding to left table
-        leftTable.add(assetName).width(leftColumnWidth - 10).left().height(labelHeight);
-        leftTable.row();
-        leftTable.add(author).width(leftColumnWidth - 10).left().height(labelHeight);
-
-        return leftTable;
-    }
-
-    private Table getRightColumn(String id) {
-        Table rightTable = new Table();
-        Asset asset;
-        //rightTable.setDebug(true);
-
-        //TODO: show image?
-        //verify database is connected
-        if (dbAssets == null) {
-            System.out.println("db is not active");
-            return null;
-        } else {
-            asset = dbAssets.searchByID(id);
-        }
+        rightTable.add(assetName).width(leftColumnWidth - 10).left().height(labelHeight);
+        rightTable.row();
+        rightTable.add(author).width(leftColumnWidth - 10).left().height(labelHeight);
 
         return rightTable;
+    }
+
+    private void cleanImages() {
+        for (String id: imagePreviews) {
+            if (!downloadedAssets.contains(id)) {
+                dbAssets.removeAssetLocal(id);
+            }
+        }
+        imagePreviews = new ArrayList<>();
     }
 
     private ClickListener selectAssetListener(final String id) {
@@ -255,8 +286,7 @@ public class AssetDownloadScreen implements Screen {
                 selectedAsset.setText("Asset Selected: " + dbAssets.searchByID(id).name);
                 selectedId = id;
 
-                File file = new File(id);
-                if (file.exists()) {
+                if (downloadedAssets.contains(id)) {
                     //file is already downloaded
                     downloadButton.setTouchable(Touchable.disabled);
                     downloadButton.setText("Already Downloaded");
@@ -280,7 +310,8 @@ public class AssetDownloadScreen implements Screen {
                 }
                 Asset asset = dbAssets.searchByID(selectedId);
                 System.out.println("Should be downloading: " + asset.name);
-                dbAssets.downloadAsset(selectedId);
+                //dbAssets.downloadAsset(selectedId);
+                downloadedAssets.add(asset.getAssetID());
 
                 downloadButton.setTouchable(Touchable.disabled);
                 downloadButton.setText("Downloaded");
@@ -375,5 +406,8 @@ public class AssetDownloadScreen implements Screen {
     public void dispose() {
         this.skin.dispose();
         this.atlas.dispose();
+
+        System.out.println("In dispose function");
+        cleanImages();
     }
 }
