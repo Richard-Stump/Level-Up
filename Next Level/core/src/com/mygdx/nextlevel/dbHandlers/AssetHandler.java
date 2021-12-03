@@ -1,15 +1,17 @@
 package com.mygdx.nextlevel.dbHandlers;
 
 import com.mygdx.nextlevel.Asset;
+import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.dbUtil.PostgreSQLConnect;
+import com.mygdx.nextlevel.enums.Tag;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.FileOutputStream;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class AssetHandler {
@@ -114,7 +116,51 @@ public class AssetHandler {
     }
 
     /**
-     * Download an asset to the assets folder
+     * Search for an asset using its name
+     * Does not download the asset
+     *
+     * @param name name to search for
+     * @return asset with the name
+     */
+    public List<Asset> searchByName(String name) {
+        String sqlQuery = "SELECT * FROM api.assets WHERE name LIKE ? ORDER BY name ASC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, "%" + name + "%");
+            ResultSet resultSet = statement.executeQuery();
+
+            List<Asset> list = resultAsList(resultSet);
+
+            return list;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Search for an asset using its author
+     * Does not download the asset
+     *
+     * @param author name to search for
+     * @return asset with the author
+     */
+    public List<Asset> searchByAuthor(String author) {
+        String sqlQuery = "SELECT * FROM api.assets WHERE author LIKE ? ORDER BY author ASC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            statement.setString(1, "%" + author + "%");
+            ResultSet resultSet = statement.executeQuery();
+
+            List<Asset> list = resultAsList(resultSet);
+
+            return list;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Download an asset
      *
      * @param id
      */
@@ -123,11 +169,11 @@ public class AssetHandler {
     }
 
     /**
-     * Download the image to the assets folder
+     * Download the image
      *
      * @param id
      */
-    public void downloadImage(String id) {
+    private void downloadImage(String id) {
 
     }
 
@@ -166,6 +212,47 @@ public class AssetHandler {
         } catch (SQLException | FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     *  This function sorts all assets in the server alphabetically
+     *
+     * @return a list of Asset objects that are sorted alphabetically by title
+     */
+    public List<Asset> sortAllByTitle() {
+        ResultSet resultSet;
+
+        String sqlQuery = "SELECT * FROM api.assets ORDER BY name ASC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+            resultSet = statement.executeQuery();
+
+            return resultAsList(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Takes a ResultSet and makes a List of Asset's out of it
+     *
+     * @param resultSet raw resultset
+     * @return a list of Asset objects that match the search
+     * @throws SQLException if there's an SQL exception
+     */
+    public List<Asset> resultAsList(ResultSet resultSet) throws SQLException {
+        List<Asset> list = new ArrayList<>();
+
+        //cycle through results and add it to the list
+        while (resultSet.next()) {
+            String name = resultSet.getString("name");
+            String author = resultSet.getString("author");
+            Asset asset = new Asset(name, author);
+            asset.setAssetID(resultSet.getString("assetid"));
+            list.add(asset);
+        }
+        return list;
     }
 
     /**
