@@ -78,7 +78,6 @@ public class GameOverScreen implements Screen {
         this.title = title;
         this.player = player2;
         this.levelid = levelInfo;
-        this.time = time;
 
         if (title.equals("VICTORY")) {
             showRating = true;
@@ -90,6 +89,7 @@ public class GameOverScreen implements Screen {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
         this.levelInfo = levelInfo;
+        db = new ServerDBHandler();
 
         batch = game.batch;
         camera = new OrthographicCamera();
@@ -143,8 +143,11 @@ public class GameOverScreen implements Screen {
         scoreLabel = new Label("Score : " + player.getScore(), titleStyle);
         //scoreLabel.scaleBy(.9f);
         timeLabel = new Label("Time Remaining : " + hud.getTime(), titleStyle);
-        timerLabel = new Label("Timer : " + time, titleStyle);
-        recordLabel = new Label("Record : " + db.getRecordTime(levelInfo), titleStyle);
+        timerLabel = new Label(String.format("Timer : %.02f", time), titleStyle);
+        if (this.time < db.getRecordTime(levelInfo)) {
+            db.updateRecordTime(levelInfo, this.time);
+        }
+        recordLabel = new Label(String.format("Record : %.2f", db.getRecordTime(levelInfo)), titleStyle);
 
         finishConditionLabel = new Label("Finishing Conditions : ", titleStyle);
         mainMenuButton = new TextButton("Main Menu", skin);
@@ -165,7 +168,7 @@ public class GameOverScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
                 //TODO: set screen to restart current level
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, levelInfo));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, levelInfo, GameScreen2.Mode.PLAY, null));
             }
         });
         tryAgainButton.addListener(new HoverListener());

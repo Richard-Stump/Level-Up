@@ -8,21 +8,19 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
 import com.mygdx.nextlevel.*;
 import com.mygdx.nextlevel.Util.GameMenuDialog;
 import com.mygdx.nextlevel.actors.*;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.hud.Hud2;
 import org.w3c.dom.Text;
-import sun.tools.jconsole.Tab;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -61,31 +59,45 @@ public class GameScreen2 extends Timer implements Screen {
             value = newValue;
         }
 
-        public int getValue() { return this.value; }
+        public int getValue() {
+            return this.value;
+        }
     }
+
     public enum PlayerIndex {
         DEFAULT(0), POWERUP(1), STAR(2), FIRE(3), LIFESTEAL(4);
         private final int value;
 
-        PlayerIndex(final int newValue) { value = newValue; }
+        PlayerIndex(final int newValue) {
+            value = newValue;
+        }
     }
+
     public enum EnemyIndex {
         DEFAULT(0), JUMP(1), SHOOT(2);
         private final int value;
 
-        EnemyIndex(final int newValue) { value = newValue; }
+        EnemyIndex(final int newValue) {
+            value = newValue;
+        }
     }
+
     public enum BlockIndex {
         DEFAULT(0), EMPTY(1);
         private final int value;
 
-        BlockIndex(final int newValue) { value = newValue; }
+        BlockIndex(final int newValue) {
+            value = newValue;
+        }
     }
+
     public enum CheckpointIndex {
         DEFAULT(0), TRIGGERED(1);
         private final int value;
 
-        CheckpointIndex(final int newValue) { value = newValue; }
+        CheckpointIndex(final int newValue) {
+            value = newValue;
+        }
     }
 
     private NextLevel game;
@@ -93,6 +105,7 @@ public class GameScreen2 extends Timer implements Screen {
     private OrthographicCamera camera;
     private Hud2 hud;
     TileMap tm;
+    public boolean paused;
 
     private BoxCollider floor;
     private Player2 player;
@@ -104,16 +117,10 @@ public class GameScreen2 extends Timer implements Screen {
 
     public HashMap<Item2, String> itemToName = new HashMap<>();
 
-    public Stage stage;
-    public Viewport viewport;
-    public SpriteBatch batch;
-    public Camera menuCamera;
-    public boolean escaped = false;
-    public static final int STAGE_WIDTH = 1920 / 2;
-    public static final int STAGE_HEIGHT = 1080 / 2;
-    boolean paused = false;
     private Mode mode = Mode.PLAY;
+    private Screen prevScreen;
     private Screen endScreen;
+
 
     /**
      * Used to queue actor spawns because colliders cannot be created in the collision handlers.
@@ -158,6 +165,9 @@ public class GameScreen2 extends Timer implements Screen {
     public ArrayList<Texture> itemBlockTextures;
     public ArrayList<Texture> coinBlockTextures;
     public ArrayList<Texture> blockTextures;
+    public ArrayList<Texture> basicBlock1Textures;
+    public ArrayList<Texture> basicBlock2Textures;
+    public ArrayList<Texture> basicBlock3Textures;
     public ArrayList<String> itemTextures;
     public ArrayList<Texture> checkpointTextures;
     public Texture endTexture;
@@ -171,28 +181,98 @@ public class GameScreen2 extends Timer implements Screen {
     private TextureAtlas atlas;
     protected Skin skin;
 
-    private GameMenuDialog menu;
+    private Camera cameraNew;
+    private Viewport viewport;
+    private SpriteBatch batch;
+    private Stage stage;
+    int count;
+
+    //public String levelInfo;
 
     /**
      * Initialize the game screen
+     *
      * @param game The screen that created this screen
      */
-     public GameScreen2(NextLevel game, String levelInfo) {
+    public GameScreen2(NextLevel game, String levelInfo) {
+        this.game = game;
+        this.levelInfo = levelInfo;
+
+        this.mode = mode;
+        this.endScreen = endScreen;
+
+        atlas = new TextureAtlas("skin/uiskin.atlas");
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
+
+        //Used to display where the colliders are on the screen
+        //box2dRenderer = new Box2DDebugRenderer();
+
+        //Initialize a camera to view the world. Specify how many tiles are viewable vertically, and then
+        //use the screen's aspect ratio to calculate how many tiles to view along the x access to keep tiles square.
+        //This camera converts the world coordinates into screen coordinates when rendering, so actors don't need to
+        //worry about the screen's size.
+        float numTilesVisibleY = 15.0f;
+        float aspect = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
+        camera = new OrthographicCamera(numTilesVisibleY * aspect, numTilesVisibleY);
+        camera.translate(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f);
+        camera.update();
+
+        //Lists to keep track of actors and their states
+        actors = new ArrayList<>();
+        spawnQueue = new LinkedList<>();
+        despawnQueue = new LinkedList<>();
+
+        despawnedActors = new ArrayList<>();
+        itemsList = new ArrayList<>();
+        blockList = new ArrayList<>();
+        checkpointList = new ArrayList<>();
+        fireList = new ArrayList<>();
+        enemyList = new ArrayList<>();
+
+        playerTextures = new ArrayList<>();
+        enemyTextures = new ArrayList<>();
+        itemTextures = new ArrayList<>();
+        itemBlockTextures = new ArrayList<>();
+        coinBlockTextures = new ArrayList<>();
+        blockTextures = new ArrayList<>();
+        basicBlock1Textures = new ArrayList<>();
+        basicBlock2Textures = new ArrayList<>();
+        basicBlock3Textures = new ArrayList<>();
+        checkpointTextures = new ArrayList<>();
+
+        paused = false;
+        count = 0;
+
+        cameraNew = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        cameraNew.position.set(cameraNew.viewportWidth, cameraNew.viewportHeight, 0.0F);
+        cameraNew.update();
+        viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), cameraNew);
+        viewport.apply();
+        batch = new SpriteBatch();
+        stage = new Stage(viewport, batch);
+
+//        GameMenuDialog menu = new GameMenuDialog(skin, "", stage, "Resume", "Restart", "Exit", this, game);
+
+        //Create and load tilemap
+        tileMapName = levelInfo + ".tmx";
+        System.out.println(tileMapName);
+        tm = new TileMap(tileMapName);
+        conditionList = tm.getConditionList();
+
+        //setup the initial map
+        init();
+
+        start = getStartTime();
+    }
+     public GameScreen2(NextLevel game, String levelInfo, Mode mode, Screen prevScreen) {
          this.game = game;
-         batch = game.batch;
-         menuCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-         menuCamera.position.set(menuCamera.viewportWidth, menuCamera.viewportHeight, 0.0F);
-         menuCamera.update();
-         viewport = new StretchViewport(500, 500, menuCamera);
-         viewport.apply();
-         stage = new Stage(viewport, batch);
          this.levelInfo = levelInfo;
 
          this.mode = mode;
+         this.prevScreen = prevScreen;
          this.endScreen = endScreen;
          atlas = new TextureAtlas("skin/uiskin.atlas");
          skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
-         menu = new GameMenuDialog(skin, "Menu", stage, "Resume", "Restart", "Exit", this, this.game);
          //Used to display where the colliders are on the screen
          box2dRenderer = new Box2DDebugRenderer();
 
@@ -226,6 +306,9 @@ public class GameScreen2 extends Timer implements Screen {
          coinBlockTextures = new ArrayList<>();
          blockTextures = new ArrayList<>();
          checkpointTextures = new ArrayList<>();
+         basicBlock1Textures = new ArrayList<>();
+         basicBlock2Textures = new ArrayList<>();
+         basicBlock3Textures = new ArrayList<>();
 
          //Create and load tilemap
          tileMapName = levelInfo + ".tmx";
@@ -233,14 +316,27 @@ public class GameScreen2 extends Timer implements Screen {
          tm = new TileMap(tileMapName);
          conditionList = tm.getConditionList();
 
+         paused = false;
+         count = 0;
+
+         cameraNew = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+         cameraNew.position.set(cameraNew.viewportWidth, cameraNew.viewportHeight, 0.0F);
+         cameraNew.update();
+         viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), cameraNew);
+         viewport.apply();
+         batch = new SpriteBatch();
+         stage = new Stage(viewport, batch);
+
          //setup the initial map
          init();
 
          start = getStartTime();
+
     }
 
     /**
      * Sets whether the game's world should be reset before the next frame.
+     *
      * @param shouldReset Whether the world should be reset
      */
     public void setShouldReset(boolean shouldReset) {
@@ -285,17 +381,20 @@ public class GameScreen2 extends Timer implements Screen {
         itemTextures.add(ItemIndex.MUSHROOM.value, "mushroom.jpeg");
         itemTextures.add(ItemIndex.STAR.value, "star.jpg");
         itemTextures.add(ItemIndex.FIREFLOWER.value, "fireflower.png");
-        itemTextures.add(ItemIndex.LIFESTEAL.value,"lifesteal-mushroom.png");
-        itemTextures.add(ItemIndex.COIN.value,"coin.png");
+        itemTextures.add(ItemIndex.LIFESTEAL.value, "lifesteal-mushroom.png");
+        itemTextures.add(ItemIndex.COIN.value, "coin.png");
 
         //Coin Texture
         coinTexture = new Texture("coin.png");
 
         //Block Texture
         itemBlockTextures.add(BlockIndex.DEFAULT.value, new Texture("item-block.png"));
-        itemBlockTextures.add(BlockIndex.EMPTY.value, new Texture("used-item-block.jpg"));
+        itemBlockTextures.add(BlockIndex.EMPTY.value, new Texture("used-item-block.png"));
         coinBlockTextures.add(BlockIndex.DEFAULT.value, new Texture("Block.png"));
         blockTextures.add(new Texture("Block.png"));
+        basicBlock1Textures.add(new Texture("stone.png"));
+        basicBlock2Textures.add(new Texture("dirt-grass.png"));
+        basicBlock3Textures.add(new Texture("dirt.png"));
 
         //Enemy Texture
         enemyTextures.add(EnemyIndex.DEFAULT.value, new Texture("enemy.jpg"));
@@ -319,52 +418,10 @@ public class GameScreen2 extends Timer implements Screen {
         //SpikeBall Texture
         spikeBlockTexture = new Texture("spike-block.png");
 
-//        player = new Player2(this, playerTextures, 1.0f, 1.0f);
-//        actors.add(new Enemy2(this, enemyTextures, 16, 2, Enemy2.Action.JUMP, player));
-//        actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
-//        actors.add(new End(this, endTexture, 30, 1, player));
-//        actors.add(new Block2(this,itemBlockTextures, 7, 4, true, ItemIndex.ALL.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 10, 4, true, ItemIndex.SLOW.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 13, 4, true, ItemIndex.SPEED.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 16, 4, true, ItemIndex.LIFE.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 19, 4, true, ItemIndex.MUSHROOM.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 22, 4, true, ItemIndex.STAR.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
-//        actors.add(new Block2(this, coinBlockTextures, 29, 4, true, ItemIndex.COIN.value, true));
-//        actors.add(new Block2(this, coinBlockTextures, 30, 4, false,false));
-//        actors.add(new CoinStatic(this, coinTexture, 10, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 13, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 16, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 19, 5));
-//        actors.add(new Enemy2(this, enemyTextures, 16, 2, Enemy2.Action.JUMP, player));
-//        actors.add(new CheckPoint2(this, checkpointTextures, 10.0f, 1.0f, player));
-//        actors.add(new End(this, endTexture, 30, 1, player));
-//        actors.add(new Block2(this,itemBlockTextures, 7, 4, true, ItemIndex.ALL.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 10, 4, true, ItemIndex.SLOW.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 13, 4, true, ItemIndex.SPEED.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 16, 4, true, ItemIndex.LIFE.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 19, 4, true, ItemIndex.MUSHROOM.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 22, 4, true, ItemIndex.STAR.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 25, 4, true, ItemIndex.FIREFLOWER.value, false));
-//        actors.add(new Block2(this, itemBlockTextures, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
-//        actors.add(new Block2(this, coinBlockTextures, 29, 4, true, ItemIndex.COIN.value, true));
-//        actors.add(new Block2(this, coinBlockTextures, 30, 4, false,false));
-//        actors.add(new CoinStatic(this, coinTexture, 10, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 13, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 16, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 19, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 10, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 13, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 16, 5));
-//        actors.add(new CoinStatic(this, coinTexture, 19, 5));
-//        actors.add(new Jewel(this, jewelTexture, 2, 1));
-//        actors.add(player);
-//        actors.add(player);
-
         tm.loadObjects(this, actors);
 
-        hud = new Hud2(this, game.batch, player, tileMapName.substring(0, tileMapName.length()-4));
+        //hud = new Hud2(this, game.batch, player, tileMapName.substring(0, tileMapName.length()-4));
+        hud = new Hud2(this, game.batch, player, tileMapName.substring(0, tileMapName.length() - 4));
 
         //Add all checkpoints into checkpointlist
         for (Actor2 actor : actors) {
@@ -376,7 +433,7 @@ public class GameScreen2 extends Timer implements Screen {
         shouldReset = false;
         tm.render(camera, player, true);
         pb.getCollider().dispose();
-        pb.createBoxCollider(tm.getxAxis() - tm.getScreenWidth()/2f);
+        pb.createBoxCollider(tm.getxAxis() - tm.getScreenWidth() / 2f);
         if (!tm.getAutoScroll()) {
             pb.getCollider().setStatic();
         }
@@ -391,7 +448,7 @@ public class GameScreen2 extends Timer implements Screen {
         despawnQueue.clear();
 
         //Add all despawnedActors into the spawnQueue (Blocks and Enemies)
-        for(Actor2 actor : despawnedActors) {
+        for (Actor2 actor : despawnedActors) {
 //            if (actor.getClass() == Jewel.class) {
 //                System.out.println("Respawning jewel");
 //            }
@@ -418,7 +475,9 @@ public class GameScreen2 extends Timer implements Screen {
         fireList.clear();
         despawnedActors.clear();
 
-        hud = new Hud2(this, game.batch, player, tileMapName.substring(0, tileMapName.length()-4));
+        //Player operations
+
+        hud = new Hud2(this, game.batch, player, tileMapName.substring(0, tileMapName.length() - 4));
 
         shouldReset = false;
 
@@ -426,7 +485,7 @@ public class GameScreen2 extends Timer implements Screen {
 
         if (tm.getAutoScroll()) {
             pb.getCollider().dispose();
-            pb.createBoxCollider(tm.getxAxis() - tm.getScreenWidth()/2f);
+            pb.createBoxCollider(tm.getxAxis() - tm.getScreenWidth() / 2f);
         }
     }
 
@@ -434,8 +493,9 @@ public class GameScreen2 extends Timer implements Screen {
      * Queues a new actor to be spawned in the next frame. This is partly to avoid the issue of colliders not being
      * able to be created in the collision handler, but also to ensure all new actors are spawned before the next frame
      * rather than in the middle of actor updated.
-     * @param x The actor's x coordinate
-     * @param y The actor's y coordinate
+     *
+     * @param x    The actor's x coordinate
+     * @param y    The actor's y coordinate
      * @param type The type of actor to spawn.
      */
     public void queueActorSpawn(float x, float y, Class<? extends Actor2> type) {
@@ -445,12 +505,13 @@ public class GameScreen2 extends Timer implements Screen {
     /**
      * Queues an actor to be despawned in the next frame. This avoids the issue of colliders being unable to be destroyed
      * in the collision handlers
+     *
      * @param o The object to be destroyed.
      */
     public void queueActorDespawn(Actor2 o) {
         //Make sure that this object isn't in the list. If it were to be added twice,
         //then box2d would crash because it would try to destroy the object's body twice.
-        if(!despawnQueue.contains(o)) {
+        if (!despawnQueue.contains(o)) {
             despawnQueue.add(o);
 
             if (o instanceof Item2) { //If this is an item
@@ -460,7 +521,7 @@ public class GameScreen2 extends Timer implements Screen {
                 itemsList.remove(o);
             } else if (o instanceof Fire2 || o instanceof BlueFire) {
                 fireList.remove(o);
-            } else if (o instanceof Block2 && ((Block2) o ).isSpawnItem() && ((Block2) o).isBreakable()) {
+            } else if (o instanceof Block2 && ((Block2) o).isSpawnItem() && ((Block2) o).isBreakable()) {
                 blockList.add(o);
             } else if (o instanceof Block2 && ((Block2) o).isSpawnItem()) {
                 blockList.add(o);
@@ -491,13 +552,15 @@ public class GameScreen2 extends Timer implements Screen {
 
     /**
      * Called before rendering each frame to update the game's state.
+     *
      * @param delta How much time has passed since the last frame
      */
     private void update(float delta) {
         despawnActorsInQueue();
-        if(shouldReset) {
+        if (shouldReset) {
             System.out.println("Will reset");
             reset();
+            paused = false;
         }
 
         //New actors should be spawned before physics and update methods are called because we want the new
@@ -507,7 +570,7 @@ public class GameScreen2 extends Timer implements Screen {
         //I think higher iteration constants decreases the chances for side detection failure.
         CollisionManager.getWorld().step(delta, 27, 27);
 
-        for(Actor2 a : actors) {
+        for (Actor2 a : actors) {
             a.update(delta);
         }
 
@@ -517,79 +580,64 @@ public class GameScreen2 extends Timer implements Screen {
 
         hud.update(delta, player, itemToName);
         if (player.getWin()) {
-            end = getEndTime();
-//            System.out.println(start);
-//            System.out.println(end);
-//            System.out.println(end-start);
-            long elapsed = end-start;
-            double elapsedTime = (double) elapsed / 1000000000;
-//            System.out.println(String.format("Current Record Time: %f", player.getRecordTime()));
-            if (player.getRecordTime() > elapsedTime) {
-                player.setRecordTime(elapsedTime);
-            }
-            player.incScore(elapsed / 100000);
-//            System.out.println(String.format("New Record Time: %f", player.getRecordTime()));
-//            System.out.println(elapsedTime);
-         // ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "VICTORY", "MainMenuScreen"));
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player, levelInfo, elapsedTime));
+            processWin();
         }
         if (player.getFail()) {
-            //System.out.println("Im here");
-//            ((Game) Gdx.app.getApplicationListener()).setScreen(new ErrorMessageScreen(game, "FAIL", "MainMenuScreen"));
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over...", player, levelInfo));
+            processFail();
         }
+    }
+
+    private void processWin() {
+        System.out.println("In win ");
+
+        switch(mode) {
+            case PLAY: //If the player is playing normally, process the win as normal
+                end = getEndTime();
+                long elapsed = end - start;
+                double elapsedTime = (double)elapsed / 1_000_000_000;   //What is this constant for?
+                if(player.getRecordTime() > elapsedTime) {
+                    player.setRecordTime(elapsedTime);
+                }
+                player.incScore(elapsed / 100000);
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "VICTORY", player, levelInfo, elapsedTime));
+                break;
+            case PUBLISH:   //If the player is publishing the level, they should be taken to a screen for it
+                break;
+            case TEST:      //If the player is testing, they should go back to the editor when done.
+                ((Game) Gdx.app.getApplicationListener()).setScreen(prevScreen);
+                break;
+        }
+    }
+
+    private void processFail() {
+        ((Game) Gdx.app.getApplicationListener()).setScreen(new GameOverScreen(game, hud, "Game Over...", player, levelInfo));
     }
 
     /**
      * Called each frame by LibGDX
+     *
      * @param delta The amount of time that has passed since the last frame
      */
     @Override
     public void render(float delta) {
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_0)) {
-//            System.out.println("Escape");
-//            escaped = !escaped;
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             paused = true;
-            System.out.println(getPaused());
-//            escaped = true;
-        }
 
-        ScreenUtils.clear(Color.WHITE);
-//        int count = 0;
+//            //TODO: go back to screen
+
+        }
         if (paused) {
-//            Table table = new Table();
-//            table.setFillParent(true);
-//            stage.addActor(table);
+            if (count == 0) {
+                count++;
+                GameMenuDialog menu = new GameMenuDialog(skin, "", stage, "Resume", "Restart", "Exit", this, game);
+            }
             Gdx.input.setInputProcessor(stage);
             Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
-//            tm.render(camera, player, false);
-
-            SpriteBatch batch = game.batch;
-            batch.begin();
-            batch.setProjectionMatrix(camera.combined);
-
-            for (Actor2 a : actors) {
-                if (!a.getClass().equals(PushBlock.class))
-                    a.draw(batch);
-            }
-
-            hud.render(batch);
-
-            batch.end();
-
-            box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
-//            if (count == 0) {
-                stage.act();
-                stage.draw();
-//                count++;
-//            }
-//            GameMenuDialog menu = new GameMenuDialog(skin, "Menu", stage, "Resume", "Restart", "Exit", this, game);
-//            batch.begin();
-//
-//            batch.end();
+            stage.act();
+            stage.draw();
         } else {
             update(delta);
-            Gdx.input.setInputProcessor(null);
+            ScreenUtils.clear(Color.WHITE);
             tm.render(camera, player, false);
 
             SpriteBatch batch = game.batch;
@@ -604,9 +652,14 @@ public class GameScreen2 extends Timer implements Screen {
             hud.render(batch);
 
             batch.end();
-
-            box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
         }
+
+//<<<<<<< Updated upstream
+//            box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
+        //}
+//=======
+        //box2dRenderer.render(CollisionManager.getWorld(), camera.combined);
+//>>>>>>> Stashed changes
     }
 
     /**
@@ -616,22 +669,22 @@ public class GameScreen2 extends Timer implements Screen {
         while (!spawnQueue.isEmpty()) {
             //Use fancy reflection stuff to fetch the constructor and spawn the actor type specified.
             try {
-                ActorSpawnInfo i =  spawnQueue.remove();
+                ActorSpawnInfo i = spawnQueue.remove();
                 Constructor<?> c;
                 if (i.type.equals(Block2.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, ArrayList.class, float.class, float.class, boolean.class, int.class, boolean.class);
-                    actors.add((Block2) c.newInstance(this, coinBlockTextures, i.x +0.5f, i.y + 0.5f, true, ItemIndex.COIN.value, true));
+                    actors.add((Block2) c.newInstance(this, coinBlockTextures, i.x + 0.5f, i.y + 0.5f, true, ItemIndex.COIN.value, true));
                 } else if (i.type.equals(CoinStatic.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
-                    actors.add((CoinStatic) c.newInstance(this, coinTexture, i.x +0.25f, i.y+0.25f));
+                    actors.add((CoinStatic) c.newInstance(this, coinTexture, i.x + 0.25f, i.y + 0.25f));
                 } else if (i.type.equals(Coin.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class, String.class);
-                    actors.add((Coin) c.newInstance(this, i.x +0.25f, i.y+0.25f, itemTextures.get(ItemIndex.COIN.value)));
+                    actors.add((Coin) c.newInstance(this, i.x + 0.25f, i.y + 0.25f, itemTextures.get(ItemIndex.COIN.value)));
                 } else if (i.type.equals(Jewel.class)) {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, Texture.class, float.class, float.class);
                     actors.add((Jewel) c.newInstance(this, jewelTexture, i.x, i.y));
                 } else if (i.type.equals(Enemy2.class)) {
-                    c = i.type.getDeclaredConstructor(GameScreen2.class, ArrayList.class,float.class, float.class, Enemy2.Action.class, Player2.class);
+                    c = i.type.getDeclaredConstructor(GameScreen2.class, ArrayList.class, float.class, float.class, Enemy2.Action.class, Player2.class);
                     actors.add((Enemy2) c.newInstance(this, enemyTextures, i.x, i.y, enemyList.get(0), player));
                     enemyList.remove(0);
                 } else if (i.type.equals(BlueFire.class)) {
@@ -659,8 +712,7 @@ public class GameScreen2 extends Timer implements Screen {
                     } else if (i.type.equals(Coin.class)) {
                         actors.add((Coin) c.newInstance(this, i.x, i.y, itemTextures.get(ItemIndex.COIN.value)));
                     }
-                }
-                else {
+                } else {
                     c = i.type.getDeclaredConstructor(GameScreen2.class, float.class, float.class);
                     actors.add((Actor2) c.newInstance(this, i.x, i.y));
                 }
@@ -671,8 +723,7 @@ public class GameScreen2 extends Timer implements Screen {
                 } else if (i.type.equals(Fire2.class) || i.type.equals(BlueFire.class)) {
                     fireList.add(actors.get(actors.size() - 1));
                 }
-            }
-            catch (InvocationTargetException e) {
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
@@ -689,7 +740,7 @@ public class GameScreen2 extends Timer implements Screen {
      */
     private void despawnActorsInQueue() {
         //ensure the world is not locked. Despawning actor while the world is locked will cause a crash.
-        if(!CollisionManager.getWorld().isLocked()) {
+        if (!CollisionManager.getWorld().isLocked()) {
             while (!despawnQueue.isEmpty()) {
                 Actor2 a = despawnQueue.remove();
                 if (a.getClass().equals(Item2.class)) {
@@ -713,9 +764,7 @@ public class GameScreen2 extends Timer implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        this.viewport.update(width, height);
-        this.camera.position.set(this.camera.viewportWidth / 2.0F, this.camera.viewportHeight / 2.0F, 0.0F);
-        this.camera.update();
+
     }
 
     @Override
@@ -735,8 +784,18 @@ public class GameScreen2 extends Timer implements Screen {
 
     @Override
     public void dispose() {
-        this.skin.dispose();
-        this.atlas.dispose();
+//<<<<<<< Updated upstream
+////        this.skin.dispose();
+////        this.atlas.dispose();
+//    }
+//    public boolean getPaused() {
+//        return paused;
+//    }
+//    public void setPaused(boolean set) {
+//        paused = set;
+//=======
+//
+//>>>>>>> Stashed changes
     }
     public boolean getPaused() {
         return paused;
@@ -745,7 +804,24 @@ public class GameScreen2 extends Timer implements Screen {
         paused = set;
     }
 
-    public Player2 getPlayer() {return this.player;}
-    public void setPlayer(Player2 player) { this.player = player; }
-    public TileMap getTileMap() { return this.tm; }
+    public Player2 getPlayer() {
+        return this.player;
+    }
+
+    public void setPlayer(Player2 player) {
+        this.player = player;
+    }
+
+    public TileMap getTileMap() {
+        return this.tm;
+    }
 }
+//<<<<<<< Updated upstream
+//    public void resetGameMenu() {
+//        menu.dispose();
+//        menu = new GameMenuDialog(skin, "Menu", stage, "Resume", "Restart", "Exit", this, this.game);
+//    }
+//}
+//=======
+//}
+//>>>>>>> Stashed changes

@@ -128,9 +128,7 @@ public class Player2 extends Actor2 {
         fireFlowerItem = false;
         jewel = false;
         conditions = new ArrayList<>();
-        conditions.add(1);
-        conditions.add(2);
-        conditions.add(5);
+
     }
 
     public void update(float delta) {
@@ -413,48 +411,48 @@ public class Player2 extends Actor2 {
         if(other instanceof SlowItem2) {
             slowItem = true;
             speedItem = false;
-//            score += 20;
+            score += 20;
         } else if (other instanceof SpeedItem2) {
             speedItem = true;
             slowItem = false;
-//            score += 20;
+            score += 20;
         } else if (other instanceof LifeItem2) {
-//            lifeCount++;
-//            score += 20;
+            lifeCount++;
+            score += 20;
         } else if (other instanceof MushroomItem2) {
             powerUp = true;
             mushroomItem = true;
             drawTexture = true;
-//            score += 20;
+            score += 20;
         } else if (other instanceof FireFlowerItem2) {
             if (heldItem == null) {
                 heldItem = (Item2) other;
-//                score += 20;
+                score += 20;
             } else {
                 powerUp = true;
                 mushroomItem = true;
                 drawTexture = true;
-//                score += 20;
+                score += 20;
             }
         } else if (other instanceof StarItem2) {
             if (heldItem == null) {
                 heldItem = (Item2) other;
-//                score += 20;
+                score += 20;
             } else {
                 powerUp = true;
                 mushroomItem = true;
                 drawTexture = true;
-//                score += 20;
+                score += 20;
             }
         } else if (other instanceof LifeStealItem2) {
             if (heldItem == null) {
                 heldItem = (Item2) other;
-//                score += 20;
+                score += 20;
             } else {
                 powerUp = true;
                 mushroomItem = true;
                 drawTexture = true;
-//                score += 20;
+                score += 20;
             }
         }
 //        if ((other instanceof CoinStatic || other instanceof Coin)) {
@@ -642,27 +640,36 @@ public class Player2 extends Actor2 {
     public void checkConditions(ArrayList<Integer> conditions) {
         if (conditions.contains(1)) {
             coinConditionMet = false;
-            if (coin == 5) {
+            if (coin == screen.getTileMap().getCoinCount()) {
                 coinConditionMet = true;
             }
         } else {
             coinConditionMet = true;
         }
-        if (conditions.contains(2)) {
-            killEnemyConditionMet = false;
-            if (enemiesKilled == 1) {
-                killEnemyConditionMet = true;
-            }
-        } else  {
+
+        if (!conditions.contains(2) && !conditions.contains(3)) {
+            killNoEnemyConditionMet = true;
             killEnemyConditionMet = true;
         }
-        if (conditions.contains(3)) {
-            killNoEnemyConditionMet = false;
-            if (enemiesKilled == 0) {
+        else {
+            if (conditions.contains(2)) {
+                killEnemyConditionMet = false;
+                if (enemiesKilled == screen.getTileMap().getEnemyCount()) {
+                    killEnemyConditionMet = true;
+                }
+            } else  {
+                killEnemyConditionMet = true;
+            }
+
+            if (conditions.contains(3)) {
+                killNoEnemyConditionMet = false;
+                if (enemiesKilled == 0) {
+                    killNoEnemyConditionMet = true;
+                }
+            } else {
                 killNoEnemyConditionMet = true;
             }
-        } else {
-            killNoEnemyConditionMet = true;
+
         }
         if (conditions.contains(4)) {
             jewelConditionMet = false;
@@ -700,5 +707,12 @@ public class Player2 extends Actor2 {
 
     public boolean getJewelCondition() {
         return jewelConditionMet;
+    }
+
+    public void resetPlayer() {
+        lifeCount = 3;
+        respawnPosition = worldSpawn;
+        powerUp = false;
+        respawn = true;
     }
 }

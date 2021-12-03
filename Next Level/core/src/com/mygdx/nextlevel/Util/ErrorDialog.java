@@ -38,22 +38,24 @@ public class ErrorDialog {
                     System.out.println("obj = 2");
                     if ((buttonOpRight.compareTo("Publish")) == 0) {
                         dbHandler.publishLevel(id);
-                        button.setText("Unpublish");
+                        //button.setText("Unpublish");
+                        //button.setDisabled(true);
                         levelInfo.setPublic(true);
                         dbHandler.updateLevel(levelInfo);
-                    } else {
-                        levelInfo.setPlayCount(0);
-                        levelInfo.setRating(0);
-                        //System.out.println("This is the result of update level: " + res);
-                        dbHandler.unpublishLevel(id);
-                        //System.out.println("Current Rating count: " + levelInfo.getPlayCount());
-//                        levelInfo.setPlayCount(0);
-//                        dbHandler.updateLevel(levelInfo);
-                        button.setText("Publish");
-                        levelInfo.setPublic(false);
-                        int res = dbHandler.updateLevel(levelInfo);
-
                     }
+//                    else {
+//                        levelInfo.setPlayCount(0);
+//                        levelInfo.setRating(0);
+//                        //System.out.println("This is the result of update level: " + res);
+//                        dbHandler.unpublishLevel(id);
+//                        //System.out.println("Current Rating count: " + levelInfo.getPlayCount());
+////                        levelInfo.setPlayCount(0);
+////                        dbHandler.updateLevel(levelInfo);
+//                        button.setText("Publish");
+//                        levelInfo.setPublic(false);
+//                        int res = dbHandler.updateLevel(levelInfo);
+//
+//                    }
                 } else {
                     Timer.schedule(new Timer.Task() {
                         @Override

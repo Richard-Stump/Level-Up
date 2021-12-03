@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="right-up" width="32" height="32" tilewidth="1" tileheight="1" infinite="0">
+ <tileset firstgid="1" source="test2.tsx"/>
+ <properties>
+  <property name="collectCoins" type="bool" value="false"/>
+  <property name="beatTimeLimit" type="bool" value="true"/>
+  <property name="killAllEnemies" type="bool" value="false"/>
+  <property name="killNoEnemies" type="bool" value="false"/>
+  <property name="keepJewel" type="bool" value="false"/>
+  <property name="gravity" type="float" value="-9.81"/>
+  <property name="timeLimit" type="int" value="120"/>
+  <property name="autoScroll" type="bool" value="false"/>
+  <property name="backgroundColor" type="string" value="Green"/>
+ </properties>
+ <objectgroup id="2" name="Player Layer">
+  <object id="1" name="Player2" x="2" y="1" >
+   <properties>
+    <property name="defaultMoveSpeed" type="float" value="12.0"/>
+    <property name="defaultJump" type="float" value="13.0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="3" name="Object Layer 1">
+  <object id="1" name="basicBlock2" x="0" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="1" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="2" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="3" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="4" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="5" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="6" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="7" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="8" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="9" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="10" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="11" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="12" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="13" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="14" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="15" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="16" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="17" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="18" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="19" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="20" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="21" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="22" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="23" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="24" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="25" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="26" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="27" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="28" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="29" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="30" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="31" y="0" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="1" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="Enemy2" x="8" y="1" >
+   <properties>
+    <property name="timeTillTurn" type="float" value="2.0"/>
+    <property name="right" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="23" y="1" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="24" y="1" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="25" y="1" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="26" y="1" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="27" y="1" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="28" y="1" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="29" y="1" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="30" y="1" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="1" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="2" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="24" y="2" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="25" y="2" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="26" y="2" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="27" y="2" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="28" y="2" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="29" y="2" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock3" x="30" y="2" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="2" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="3" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="5" y="3" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="6" y="3" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="7" y="3" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="25" y="3" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="26" y="3" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="27" y="3" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="28" y="3" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="29" y="3" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock2" x="30" y="3" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="3" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="4" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="End" x="28" y="4" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="4" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="5" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="5" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="6" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="Block2" x="6" y="6" >
+   <properties>
+    <property name="breakable" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="10" y="6" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="11" y="6" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="12" y="6" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="15" y="6" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="16" y="6" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="17" y="6" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="20" y="6" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="21" y="6" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="22" y="6" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="6" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="7" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="CheckPoint2" x="11" y="7" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="7" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="8" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="8" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="9" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="9" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="10" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="10" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="11" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="Jewel" x="16" y="11" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="11" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="0" y="12" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="basicBlock1" x="31" y="12" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="Jewel" x="27" y="24" >
+   <properties>
+   </properties>
+  </object>
+  <object id="1" name="Jewel" x="27" y="25" >
+   <properties>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

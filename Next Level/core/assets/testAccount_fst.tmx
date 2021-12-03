@@ -10,6 +10,7 @@
   <property name="gravity" type="float" value="-9.8"/>
   <property name="timeLimit" type="int" value="0"/>
   <property name="autoScroll" type="bool" value="true"/>
+    <property name="backgroundColor" type="string" value="Blue"/>
  </properties>
  <objectgroup id="2" name="Player Layer">
   <object id="1" name="Player2" x="2" y="19" >
@@ -412,7 +413,7 @@
     <property name="breakable" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="1" name="Block2" x="20" y="24" >
+  <object id="1" name="CoinStatic" x="20" y="24" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
    </properties>
