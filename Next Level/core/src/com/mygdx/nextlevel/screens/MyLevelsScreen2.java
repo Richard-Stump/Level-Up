@@ -75,7 +75,7 @@ public class MyLevelsScreen2 implements Screen {
     public String username;
 
     //static vars
-    public static int rightColumnWidth = 120;
+    public static int rightColumnWidth = 140;
     public static int topBottomPad = 30;
     public static int leftColumnWidth = 200;
     public static int labelHeight = 30;
