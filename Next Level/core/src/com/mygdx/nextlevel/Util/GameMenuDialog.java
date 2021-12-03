@@ -10,7 +10,6 @@ import com.mygdx.nextlevel.NextLevel;
 import com.mygdx.nextlevel.dbHandlers.CreatedLevelsDB;
 import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 import com.mygdx.nextlevel.screens.*;
-import sun.rmi.rmic.Main;
 
 public class GameMenuDialog extends GameScreen2 {
     public Dialog menuDialog;
@@ -30,11 +29,13 @@ public class GameMenuDialog extends GameScreen2 {
                     System.out.println("Hide menu");
 //                    menuDialog.hide();
                     screen.setPaused(false);
-                    System.out.println(screen.getPaused());
+                    screen.resetGameMenu();
                 } else if (object.equals(2)) {
                     System.out.println("Restart");
                     screen.setPaused(false);
+                    screen.getPlayer().resetPlayer();
                     screen.setShouldReset(true);
+                    screen.resetGameMenu();
                 } else if (object.equals(3)) {
                     System.out.println("Exit");
                     screen.setPaused(false);

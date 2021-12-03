@@ -427,6 +427,8 @@ public class GameScreen2 extends Timer implements Screen {
         fireList.clear();
         despawnedActors.clear();
 
+        //Player operations
+
         hud = new Hud2(this, game.batch, player, tileMapName.substring(0, tileMapName.length()-4));
 
         shouldReset = false;
@@ -555,11 +557,9 @@ public class GameScreen2 extends Timer implements Screen {
      */
     @Override
     public void render(float delta) {
-        if (Gdx.input.isKeyPressed(Input.Keys.NUM_0)) {
-//            System.out.println("Escape");
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
 //            escaped = !escaped;
             paused = true;
-            System.out.println(getPaused());
 //            escaped = true;
         }
 
@@ -744,8 +744,8 @@ public class GameScreen2 extends Timer implements Screen {
 
     @Override
     public void dispose() {
-        this.skin.dispose();
-        this.atlas.dispose();
+//        this.skin.dispose();
+//        this.atlas.dispose();
     }
     public boolean getPaused() {
         return paused;
@@ -757,4 +757,8 @@ public class GameScreen2 extends Timer implements Screen {
     public Player2 getPlayer() {return this.player;}
     public void setPlayer(Player2 player) { this.player = player; }
     public TileMap getTileMap() { return this.tm; }
+    public void resetGameMenu() {
+        menu.dispose();
+        menu = new GameMenuDialog(skin, "Menu", stage, "Resume", "Restart", "Exit", this, this.game);
+    }
 }

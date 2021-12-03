@@ -203,7 +203,6 @@ public class EditorLevel {
         //Ensure that the player exists in the level
         if(lastPlayerX != -1 && lastPlayerY != -1)
             writeObject(lastPlayerX, lastPlayerY, 1, fileWriter, objects[lastPlayerX][lastPlayerY]);
-//            writeObject(lastPlayerX, lastPlayerY, 1, fileWriter, objects[lastPlayerX][lastPlayerY]);
 
         fileWriter.println(" </objectgroup>");
     }
