@@ -37,9 +37,11 @@ public class RateScreen implements Screen {
 
     TextButton enjoymentButtons[] = new TextButton[10];
     public int enjoymentButtonSelected = -1;
+    public float enjoymentRate = -1;
 
     TextButton difficultyButtons[] = new TextButton[10];
     public int difficultyButtonSelected = -1;
+    public float difficultyRate = -1;
 
     public RateScreen(NextLevel game, String levelid) {
         db = new ServerDBHandler();
@@ -194,6 +196,7 @@ public class RateScreen implements Screen {
                         }
                     }
                     enjoymentButtonSelected = -1;
+                    enjoymentRate = -1;
                 } else if (enjoymentButtonSelected < 0) {
                     //if enjoyment button selected is less than 0
                     for (int i = 0; i < 10; i++) {
@@ -204,6 +207,7 @@ public class RateScreen implements Screen {
                         }
                     }
                     enjoymentButtonSelected = clickedButton;
+                    enjoymentRate = Float.parseFloat(enjoymentButtons[clickedButton].getText().toString());
                 }
             }
         };
@@ -223,6 +227,7 @@ public class RateScreen implements Screen {
                         }
                     }
                     difficultyButtonSelected = -1;
+                    difficultyRate = -1;
                 } else if (difficultyButtonSelected < 0) {
                     //if enjoyment button selected is less than 0
                     for (int i = 0; i < 10; i++) {
@@ -233,6 +238,7 @@ public class RateScreen implements Screen {
                         }
                     }
                     difficultyButtonSelected = clickedButton;
+                    difficultyRate = Float.parseFloat(difficultyButtons[clickedButton].getText().toString());
                 }
             }
         };
@@ -247,7 +253,10 @@ public class RateScreen implements Screen {
                 if ((enjoymentButtonSelected == -1) || (difficultyButtonSelected == -1)) {
                     ErrorDialog notEnoughInfo = new ErrorDialog(skin, "Please select ratings for level.", stage);
                 } else {
-                    rate = (enjoymentButtonSelected + difficultyButtonSelected) / 2f;
+//                    System.out.println(enjoymentButtonSelected);
+//                    System.out.println(difficultyRate);
+                    //rate = (enjoymentButtonSelected + difficultyButtonSelected) / 2f;
+                    rate = (enjoymentRate + difficultyRate) / 2f;
 
                     //TODO: add rating to database
                     //when level rating is updated so is # users rated

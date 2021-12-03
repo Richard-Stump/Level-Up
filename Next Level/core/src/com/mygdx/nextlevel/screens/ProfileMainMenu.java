@@ -29,10 +29,7 @@ import com.mygdx.nextlevel.dbHandlers.ServerDBHandler;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 public class ProfileMainMenu extends LoginScreen implements Screen {
     public SpriteBatch batch;
@@ -99,6 +96,7 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         TextButton changePasswordButton = new TextButton("Change Password", skin);
         TextButton deleteLevelsButton = new TextButton("Delete Levels", skin);
         TextButton uploadAssetButton = new TextButton("Upload Asset", skin);
+        TextButton removeAssetServerButton = new TextButton("Remove Asset from Server", skin);
 
         //TODO: rewire the buttons
         backButton.addListener(new ClickListener() {
@@ -133,12 +131,23 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 FileDialog fd = new FileDialog(new JFrame(), "Choose an asset", FileDialog.LOAD);
                 fd.setDirectory("C:\\");
-                //fd.setFile("*.png");
+                //TODO: figure out how to filter the correct files
+                fd.setFilenameFilter(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        String ext = name.substring(name.indexOf('.'));
+                        if (ext.equals(".jpg") || ext.equals(".jpeg") || ext.equals(".png")) {
+                            return true;
+                        }
+                        return false;
+                    }
+                });
                 fd.setVisible(true);
                 String filename = fd.getFile();
                 String dir = fd.getDirectory();
                 if (filename == null) {
                     System.out.println("Canceled");
+                    return;
                 } else {
                     System.out.printf("File '%s' was selected from directory %s\n", filename, dir);
                 }
@@ -197,6 +206,14 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         });
         uploadAssetButton.addListener(new HoverListener());
 
+        removeAssetServerButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new DeleteDownloadedAssetsScreen(game, true));
+            }
+        });
+        removeAssetServerButton.addListener(new HoverListener());
+
 
         //vertical groups
 //        VerticalGroup profileGroup = new VerticalGroup();
@@ -226,6 +243,8 @@ public class ProfileMainMenu extends LoginScreen implements Screen {
         buttonTable.add(deleteLevelsButton).width(buttonWidth).padBottom(bottomPadding);
         buttonTable.row();
         buttonTable.add(uploadAssetButton).width(buttonWidth).padBottom(bottomPadding);
+        buttonTable.row();
+        buttonTable.add(removeAssetServerButton).width(buttonWidth).padBottom(bottomPadding);
 
 //        Table headerTable = new Table();
 //        //headerTable.setDebug(true);

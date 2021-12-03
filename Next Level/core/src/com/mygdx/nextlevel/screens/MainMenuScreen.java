@@ -82,6 +82,7 @@ public class MainMenuScreen extends LoginScreen implements Screen {
         //TextButton playButton = new TextButton("Play", skin);
         TextButton createLevelButton = new TextButton("Create Level", skin);
         TextButton selectLevelButton = new TextButton("Browse Levels", skin);
+        TextButton browseAssets = new TextButton("Browse Assets", skin);
         TextButton editLevelButton = new TextButton("My Levels", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
         TextButton logoutButton = new TextButton("Logout", skin);
@@ -90,7 +91,9 @@ public class MainMenuScreen extends LoginScreen implements Screen {
 
         //buttonTable.add(playButton).colspan(2).width(buttonWidth * 2 + 5).padBottom(10);
         //buttonTable.row();
-        buttonTable.add(selectLevelButton).width(buttonWidth * 2 + 5).colspan(2).padBottom(10);
+        buttonTable.add(selectLevelButton).width(buttonWidth).padBottom(10).padRight(5);
+        buttonTable.add(browseAssets).width(buttonWidth).padBottom(10);
+
         buttonTable.row();
         buttonTable.add(createLevelButton).width(buttonWidth * 2 + 5).colspan(2).padBottom(10);
         buttonTable.row();
@@ -170,6 +173,13 @@ public class MainMenuScreen extends LoginScreen implements Screen {
             }
         });
         selectLevelButton.addListener(new HoverListener());
+        browseAssets.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new AssetDownloadScreen(game));
+            }
+        });
+        browseAssets.addListener(new HoverListener());
         tutorialButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

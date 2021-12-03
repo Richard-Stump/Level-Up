@@ -379,8 +379,7 @@ public class LevelDownloadScreen implements Screen {
 
                 //TODO: after downloading set screen to level to play pass the level id
                 ((Game)Gdx.app.getApplicationListener()).setScreen(
-                        new GameScreen2(game, dbCreated.searchByID(selectedId).getId(), GameScreen2.Mode.PLAY, screen)
-                );
+                        new GameScreen2(game, dbCreated.searchByID(selectedId).getId(), GameScreen2.Mode.PLAY, screen));
             }
         };
     }
