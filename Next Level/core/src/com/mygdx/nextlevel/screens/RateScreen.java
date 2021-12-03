@@ -41,10 +41,13 @@ public class RateScreen implements Screen {
     TextButton difficultyButtons[] = new TextButton[10];
     public int difficultyButtonSelected = -1;
 
-    public RateScreen(NextLevel game) {
+    public RateScreen(NextLevel game, String levelid) {
         db = new ServerDBHandler();
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
+
+        this.levelid = levelid;
+        System.out.println("Level id is: " + levelid);
 
         batch = game.batch;
         camera = new OrthographicCamera();
@@ -248,7 +251,8 @@ public class RateScreen implements Screen {
 
                     //TODO: add rating to database
                     //when level rating is updated so is # users rated
-//                db.addLevelRating(levelid, rate);
+                    db.addLevelRating(levelid, rate);
+                    db.increaseLevelPlayCount(levelid);
 
                     //TODO: if successful show dialog then set screen to main menu
                     ErrorDialog dialog = new ErrorDialog("Rating Level", "LevelDownloadScreen", game, skin, "Thank you for rating!", stage);
