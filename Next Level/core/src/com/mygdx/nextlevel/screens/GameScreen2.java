@@ -7,15 +7,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-<<<<<<< HEAD
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-=======
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
->>>>>>> 2854411ede26763fca53da7a4096e13c11a84b9e
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -107,7 +104,6 @@ public class GameScreen2 extends Timer implements Screen {
 
     public HashMap<Item2, String> itemToName = new HashMap<>();
 
-<<<<<<< HEAD
     public Stage stage;
     public Viewport viewport;
     public SpriteBatch batch;
@@ -116,10 +112,8 @@ public class GameScreen2 extends Timer implements Screen {
     public static final int STAGE_WIDTH = 1920 / 2;
     public static final int STAGE_HEIGHT = 1080 / 2;
     boolean paused = false;
-=======
     private Mode mode = Mode.PLAY;
     private Screen endScreen;
->>>>>>> 2854411ede26763fca53da7a4096e13c11a84b9e
 
     /**
      * Used to queue actor spawns because colliders cannot be created in the collision handlers.
