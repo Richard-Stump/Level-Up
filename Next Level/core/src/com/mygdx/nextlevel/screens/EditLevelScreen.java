@@ -168,7 +168,7 @@ public class EditLevelScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(backgroundColor);
-        
+
         Gdx.input.setInputProcessor(stage);
 
         stage.act(delta);

@@ -86,7 +86,7 @@ public class TutorialScreen implements Screen {
         Label movement = new Label("Move the character using LEFT and Right\n arrow keys and UP to jump.", skin);
 
         //killing enemies information
-        Image enemy = new Image(new Texture(Gdx.files.internal("goomba.png")));
+        Image enemy = new Image(new Texture(Gdx.files.internal("enemy.png")));
         Label killEnemy = new Label("Kill enemies by jumping on top of them.", skin);
 
         //powerups information
@@ -94,8 +94,8 @@ public class TutorialScreen implements Screen {
         Label powerupGain = new Label("Collect items for a power up.", skin);
 
         //finishing a level
-        Image flag = new Image(new Texture(Gdx.files.internal("flag.png")));
-        Label finishInfo = new Label("Complete a level by reaching the finish flag.", skin);
+        Image flag = new Image(new Texture(Gdx.files.internal("end.jpeg")));
+        Label finishInfo = new Label("Complete a level by reaching the finish marker.", skin);
 
         //table organization
         table.add(backButton).top().width(75);

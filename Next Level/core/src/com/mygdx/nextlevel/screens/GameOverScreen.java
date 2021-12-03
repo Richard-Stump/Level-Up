@@ -78,7 +78,6 @@ public class GameOverScreen implements Screen {
         this.title = title;
         this.player = player2;
         this.levelid = levelInfo;
-        this.time = time;
 
         if (title.equals("VICTORY")) {
             showRating = true;
@@ -90,6 +89,7 @@ public class GameOverScreen implements Screen {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
         this.levelInfo = levelInfo;
+        db = new ServerDBHandler();
 
         batch = game.batch;
         camera = new OrthographicCamera();
