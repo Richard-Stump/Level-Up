@@ -3,6 +3,7 @@ package com.mygdx.nextlevel;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -73,8 +74,16 @@ public class TileMap extends ApplicationAdapter{
 
     public TileMap(){}
 
+    public TileMap(String filename, FileHandleResolver resolver) {
+        init(filename, new TmxMapLoader2(resolver));
+    }
+
     public TileMap(String filename) {
-        tiledMap = new TmxMapLoader2().load(filename);
+        init(filename, new TmxMapLoader2());
+    }
+
+    protected void init(String filename, TmxMapLoader2 loader) {
+        tiledMap = loader.load(filename);
         tiledMapProperties = tiledMap.getProperties();
 
         mapWidth = tiledMapProperties.get("width", Integer.class);

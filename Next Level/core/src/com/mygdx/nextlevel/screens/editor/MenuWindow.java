@@ -22,7 +22,8 @@ import java.io.FileNotFoundException;
 public class MenuWindow extends VisWindow {
     Button levelSettingsButton;
     Button saveButton;
-    Button loadButton;
+    Button testButton;
+    Button publishButton;
 
     EditorLevel level;
 
@@ -32,6 +33,8 @@ public class MenuWindow extends VisWindow {
     public MenuWindow(final EditorLevel level, final Stage stage) {
         super("Menu:");
 
+        setMovable(false);
+
         this.level = level;
 
         VisTable table = new VisTable();
@@ -39,7 +42,11 @@ public class MenuWindow extends VisWindow {
         saveButton = new TextButton("Save", VisUI.getSkin());
         table.add(saveButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING).fillY();
         levelSettingsButton = new TextButton("Level\nSettings", VisUI.getSkin());
-        table.add(levelSettingsButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING);
+        table.add(levelSettingsButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING).fillY();
+        testButton = new TextButton("Test", VisUI.getSkin());
+        table.add(testButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING).fillY();
+        publishButton = new TextButton("Publish", VisUI.getSkin());
+        table.add(publishButton).width(BUTTON_WIDTH).pad(BUTTON_PADDING).fillY();
 
         final EditorLevel lev = level;
 
@@ -62,7 +69,7 @@ public class MenuWindow extends VisWindow {
 
         add(table).fill();
 
-        int numButtons = 2;
+        int numButtons = 4;
         float width = 50 + BUTTON_WIDTH * numButtons + BUTTON_PADDING * numButtons;
         float x = EditLevelScreen.STAGE_WIDTH - width;
         float y = EditLevelScreen.STAGE_HEIGHT;

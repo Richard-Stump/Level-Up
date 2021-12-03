@@ -38,6 +38,14 @@ task testGameScreen2(dependsOn: classes, type: JavaExec) {
     ignoreExitValue = true
 }
 
+task runUnitTests(dependsOn: classes, type: JavaExec) {
+    main = "com.mygdx.nextlevel.desktop.TestLauncher";
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = project.assetsDir
+    ignoreExitValue = true
+}
+
 
 task testMainMenu(dependsOn: classes, type: JavaExec) {
     main = "com.mygdx.nextlevel.desktop.MainMenuLauncher";
