@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.nextlevel.NextLevel;
+import com.mygdx.nextlevel.TileMap;
 import com.mygdx.nextlevel.Util.HoverListener;
 import com.mygdx.nextlevel.actors.Player2;
 import com.mygdx.nextlevel.hud.Hud2;
@@ -32,6 +33,7 @@ public class GameOverScreen implements Screen {
     private NextLevel game;
     private Hud2 hud;
     private Player2 player;
+    private String levelInfo;
 
     public String title;
 
@@ -49,11 +51,13 @@ public class GameOverScreen implements Screen {
     public static int labelBottomPadding = 20;
     public static int buttonWidth = 190;
 
-    boolean showRating = false;
+    public boolean showRating = false;
+    public String levelid;
 
-    public GameOverScreen (NextLevel game, Hud2 hud2, String title, Player2 player2) {
+    public GameOverScreen (NextLevel game, Hud2 hud2, String title, Player2 player2, String levelInfo) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
+        this.levelInfo = levelInfo;
 
         batch = game.batch;
         camera = new OrthographicCamera();
@@ -68,6 +72,7 @@ public class GameOverScreen implements Screen {
         this.hud = hud2;
         this.title = title;
         this.player = player2;
+        this.levelid = levelInfo;
 
         if (title.equals("VICTORY")) {
             showRating = true;
@@ -124,7 +129,7 @@ public class GameOverScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
                 //TODO: set screen to restart current level
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, ""));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen2(game, levelInfo));
             }
         });
         tryAgainButton.addListener(new HoverListener());
@@ -134,7 +139,7 @@ public class GameOverScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
                 //TODO: set screen to restart current level
-                ((Game)Gdx.app.getApplicationListener()).setScreen(new RateScreen(game));
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new RateScreen(game, levelid));
             }
         });
         okButton.addListener(new HoverListener());

@@ -39,8 +39,6 @@ public class EditLevelScreen implements Screen {
     private ObjectSelectionWindow win3;
 
     private LevelView levelView;
-    private ArrayList<Texture> tiles;
-    private ArrayList<Texture> actorTextures;
 
     private ArrayList<PlaceableObject> placeableObjects;
 
@@ -66,7 +64,6 @@ public class EditLevelScreen implements Screen {
         level.setPlaceableObjects(placeableObjects);
 
         initializeUi();
-
     }
 
     /**
@@ -97,7 +94,6 @@ public class EditLevelScreen implements Screen {
         this.atlas = new TextureAtlas(Gdx.files.internal("skin/uiskin.atlas"));
         this.skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
 
-        this.tiles = new ArrayList<Texture>();
 
         // Create a new orthographic camera and set it to view the center of the screen.
         camera = new OrthographicCamera();
@@ -146,7 +142,7 @@ public class EditLevelScreen implements Screen {
             }
         });
 
-        MenuWindow win2 = new MenuWindow(level, stage);
+        MenuWindow win2 = new MenuWindow(this, level, stage);
         stage.addActor(win2);
 
         win3 = new ObjectSelectionWindow(placeableObjects);
@@ -247,5 +243,7 @@ public class EditLevelScreen implements Screen {
     }
 
     public Stage getStage() { return stage; }
+
+    public NextLevel getGame() { return game; }
 }
 

@@ -41,7 +41,14 @@ public class ErrorDialog {
                         button.setText("Unpublish");
                         levelInfo.setPublic(true);
                     } else {
+                        levelInfo.setPlayCount(0);
+                        levelInfo.setRating(0);
+                        int res = dbHandler.updateLevel(levelInfo);
+                        //System.out.println("This is the result of update level: " + res);
                         dbHandler.unpublishLevel(id);
+                        //System.out.println("Current Rating count: " + levelInfo.getPlayCount());
+//                        levelInfo.setPlayCount(0);
+//                        dbHandler.updateLevel(levelInfo);
                         button.setText("Publish");
                         levelInfo.setPublic(false);
                     }

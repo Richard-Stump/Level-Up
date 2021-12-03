@@ -21,8 +21,8 @@ public class CollisionManager implements ContactListener {
     /**
      * Private constructor which constructs the Box2D world and sets up other collision handling stuff.
      */
-    private CollisionManager() {
-        world = new World(new Vector2(0.0f, -9.81f * 2.0f), true);
+    private CollisionManager(float gravity) {
+        world = new World(new Vector2(0.0f, gravity * 2.0f), true);
         world.setContactListener(this);
     }
 
@@ -34,8 +34,8 @@ public class CollisionManager implements ContactListener {
             throw new RuntimeException("CollisionManager not initialized");
     }
 
-    public static void init() {
-        instance = new CollisionManager();
+    public static void init(float gravity) {
+        instance = new CollisionManager(gravity);
     }
 
     /**

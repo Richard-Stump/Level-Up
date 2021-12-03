@@ -20,12 +20,13 @@ public class PushBlock extends Actor2 {
         collider = new BoxCollider(
                 this,
                 new Vector2(0f, tm.getMapHeight()/2f),
-                new Vector2(1, tm.getMapHeight()),
+                new Vector2(0.75f, tm.getMapHeight()),
                 tm.getAutoScroll(),
                 (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.FIRE | CollisionGroups.ITEM),
                 CollisionGroups.WORLD
         );
 
+        collider.setHiddenBox(new Vector2(1f, tm.getMapHeight()), CollisionGroups.ACTOR, CollisionGroups.WORLD);
         collider.setKinematic();
     }
 
@@ -38,25 +39,19 @@ public class PushBlock extends Actor2 {
         }
     }
 
-    public void updatePosition(Vector2 vec) {
-////        Vector2 v = new Vector2();
-////        v.x = vec.x-1f;
-//        collider.setPosition(vec);
-////        collider.setPosition(v);
-        setPosition(collider.getPosition());
-    }
-
     public BoxCollider getCollider() { return collider; }
 
     public void createBoxCollider(float x) {
         collider = new BoxCollider(
                 this,
                 new Vector2(x, tm.getMapHeight()/2f),
-                new Vector2(1, tm.getMapHeight()),
+                new Vector2(0.75f, tm.getMapHeight()),
                 true,
                 (short) (CollisionGroups.ACTOR | CollisionGroups.WORLD | CollisionGroups.FIRE | CollisionGroups.ITEM),
                 CollisionGroups.WORLD
         );
+
+        collider.setHiddenBox(new Vector2(1f, tm.getMapHeight()), CollisionGroups.ACTOR, CollisionGroups.WORLD);
         collider.setKinematic();
     }
 }

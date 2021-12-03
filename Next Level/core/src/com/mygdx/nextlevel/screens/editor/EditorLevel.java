@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.mygdx.nextlevel.LevelInfo;
 import com.mygdx.nextlevel.actors.Player2;
+import com.mygdx.nextlevel.enums.BackgroundColor;
 import com.mygdx.nextlevel.enums.Difficulty;
 import com.mygdx.nextlevel.enums.Tag;
 import com.mygdx.nextlevel.jankFix.TmxMapLoader2;
@@ -48,16 +49,17 @@ public class EditorLevel {
 
     @Property(displayName="Level Width") public int width;
     @Property(displayName="Level Height") public int height;
-    @Property(displayName="Difficulty") public Difficulty difficulty = Difficulty.NONE;
-    @Property(displayName="Gravity") public float gravity;
-    @Property(displayName="Time Limit") public int timeLimit;
-    @Property(displayName="Auto Scroll") public boolean autoScroll;
+    @Property(displayName="Difficulty") public Difficulty difficulty = Difficulty.MEDIUM;
+    @Property(displayName="Gravity") public float gravity = -9.81f;
+    @Property(displayName="Time Limit") public int timeLimit = 120;
+    @Property(displayName="Auto Scroll") public boolean autoScroll = false;
+    @Property(displayName="Background Color") public BackgroundColor backgroundColor = BackgroundColor.BLUE;
 
-    @Property(group="Completion Flags", displayName="Collect All Coins") public boolean collectCoins;
-    @Property(group="Completion Flags", displayName="Beat The Time Limit") public boolean beatTimeLimit;
-    @Property(group="Completion Flags", displayName="Kill All Enemies") public boolean killAllEnemies;
-    @Property(group="Completion Flags", displayName="Kill No Enemies") public boolean killNoEnemies;
-    @Property(group="Completion Flags", displayName="Keep The Jewel Safe") public boolean keepJewel;
+    @Property(group="Completion Flags", displayName="Collect All Coins") public boolean collectCoins = false;
+    @Property(group="Completion Flags", displayName="Beat The Time Limit") public boolean beatTimeLimit = true;
+    @Property(group="Completion Flags", displayName="Kill All Enemies") public boolean killAllEnemies = false;
+    @Property(group="Completion Flags", displayName="Kill No Enemies") public boolean killNoEnemies = false;
+    @Property(group="Completion Flags", displayName="Keep The Jewel Safe") public boolean keepJewel = false;
 
     //creates an empty tile map
     public EditorLevel(int width, int height) {
