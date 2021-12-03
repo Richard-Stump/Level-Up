@@ -156,12 +156,12 @@ public class MainMenuScreen extends LoginScreen implements Screen {
 //            }
 //        });
 //        playButton.addListener(new HoverListener());
-//        createLevelButton.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                ((Game)Gdx.app.getApplicationListener()).setScreen(new CreateLevelMenuScreen(game));
-//            }
-//        });
+        createLevelButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game)Gdx.app.getApplicationListener()).setScreen(new CreateLevelMenuScreen(game));
+            }
+        });
         createLevelButton.addListener(new HoverListener());
         selectLevelButton.addListener(new ClickListener() {
             @Override

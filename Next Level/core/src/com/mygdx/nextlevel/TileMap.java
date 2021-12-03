@@ -72,6 +72,10 @@ public class TileMap extends ApplicationAdapter{
     float screenWidth;
     float screenHeight;
 
+    //Hud Properties
+    int coinCount = 0;
+    int enemyCount = 0;
+
     public TileMap(){}
 
     public TileMap(String filename, FileHandleResolver resolver) {
@@ -183,6 +187,7 @@ public class TileMap extends ApplicationAdapter{
                                     true,
                                     GameScreen2.ItemIndex.COIN.getValue(),
                                     true));
+                                    coinCount++;
                         } else { //Non Breakable Block
                             screen.actors.add(new Block2(screen,
                                     screen.blockTextures,
@@ -209,6 +214,7 @@ public class TileMap extends ApplicationAdapter{
                                 Enemy2.Action.DEFAULT, //FIXME need to get property
                                 screen.getPlayer()
                                 ));
+                        enemyCount++;
                         break;
                     case ("End"):
                         screen.actors.add(new End(screen,
@@ -246,6 +252,7 @@ public class TileMap extends ApplicationAdapter{
                                 mapObject.getProperties().get("x", Float.TYPE),
                                 mapHeight - mapObject.getProperties().get("y", Float.TYPE)
                                 ));
+                        coinCount++;
                         break;
                 }
             }
@@ -356,4 +363,7 @@ public class TileMap extends ApplicationAdapter{
     static public float getGravityTest1() {
         return gravityTest;
     }
+
+    public int getCoinCount() { return this.coinCount; }
+    public int getEnemyCount() { return this.enemyCount; }
 }
