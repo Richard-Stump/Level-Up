@@ -37,6 +37,7 @@ public class DeleteDownloadedLevelsScreen implements Screen {
     private final String titleText = "Level Select";
     private DownloadedLevelsDB dbDownloaded;
     private CreatedLevelsDB dbCreated;
+    private ServerDBHandler dbServer;
 
     public static final int STAGE_WIDTH = 1920 / 2;
     public static final int STAGE_HEIGHT = 1080 / 2;
@@ -92,6 +93,7 @@ public class DeleteDownloadedLevelsScreen implements Screen {
         dbCreated = new CreatedLevelsDB();
         dbCreated.updateCreatedDatabase();
         dbDownloaded = new DownloadedLevelsDB();
+        dbServer = new ServerDBHandler();
         selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";
         activeDB = "downloaded";
@@ -241,6 +243,7 @@ public class DeleteDownloadedLevelsScreen implements Screen {
 
             TextButton deleteButton = new TextButton("Delete", skin);
             deleteButton.addListener(deleteLevelListener(id));
+            deleteButton.addListener(new HoverListener());
             infoTable.add(deleteButton).width(80).padBottom(15);
 
             infoTable.row();
@@ -275,6 +278,7 @@ public class DeleteDownloadedLevelsScreen implements Screen {
         if (levelInfo  != null) {
             levelName = new Label(levelInfo.getTitle(), skin);
             author = new Label(levelInfo.getAuthor(), skin);
+            //System.out.println(levelInfo.getAuthor());
 
             String difficultyString = Difficulty.values()[levelInfo.getDifficulty()].getDisplayName();
             difficulty = new Label(difficultyString + " - " + levelInfo.getTags().toString(), skin);
@@ -289,6 +293,8 @@ public class DeleteDownloadedLevelsScreen implements Screen {
             //adding to left table
             leftTable.add(levelName).width(leftColumnWidth - 10).left().height(labelHeight);
             leftTable.row();
+            leftTable.add(author).width(leftColumnWidth - 10).left().height(labelHeight);
+            leftTable.row();
             leftTable.add(difficulty).width(leftColumnWidth - 10).left().height(labelHeight);
 
             return leftTable;
@@ -300,6 +306,8 @@ public class DeleteDownloadedLevelsScreen implements Screen {
         Table rightTable = new Table();
         LevelInfo levelInfo;
         //rightTable.setDebug(true);
+
+        int numRaters = 0;
 
         //verify database is connected
         if (activeDB.equals("downloaded")) {
@@ -313,9 +321,22 @@ public class DeleteDownloadedLevelsScreen implements Screen {
             return null;
         }
 
+        if (!dbServer.isDBActive()) {
+            System.out.println("db is not active");
+            return null;
+        } else {
+            numRaters = dbServer.getRatingCount(id);
+        }
+
         //right column labels
         if (levelInfo != null) {
-            rating = new Label("" + levelInfo.getRating() + "/5", skin);
+            float rateInt = levelInfo.getRating();
+            if (rateInt < 0) {
+                rating = new Label("Rating: NA/5  [#" + numRaters + "]", skin);
+            } else {
+                //right column labels
+                rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
+            }
             playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
             rating.addListener(selectLevelListener(id));

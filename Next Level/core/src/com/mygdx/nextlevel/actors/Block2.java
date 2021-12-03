@@ -7,6 +7,7 @@ import com.mygdx.nextlevel.BoxCollider.Side;
 import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 import com.mygdx.nextlevel.screens.editor.Placeable;
+import com.mygdx.nextlevel.screens.editor.Property;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -15,15 +16,17 @@ import java.util.Random;
 @Placeable(
         group = "Blocks",
         displayName = "Item Block",
-        textures = { "item-block.png", "block.png" }
+        textures = { "item-block.png" }
 )
 public class Block2 extends Actor2 {
     protected boolean spawnItem;
     protected boolean spawned;
-    protected boolean breakable;
+   // protected boolean breakable;
     protected BoxCollider collider;
     protected int itemIndex = 0;
     protected ArrayList<Texture> blockTextures;
+
+    @Property(displayName = "Is Breakable") public boolean breakable;
 
     ArrayList<Class> items = new ArrayList<>();
 

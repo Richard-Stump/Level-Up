@@ -7,27 +7,31 @@ import com.mygdx.nextlevel.BoxCollider;
 import com.mygdx.nextlevel.CollisionGroups;
 import com.mygdx.nextlevel.screens.GameScreen2;
 import com.mygdx.nextlevel.screens.editor.Placeable;
+import com.mygdx.nextlevel.screens.editor.Property;
 
 import java.util.ArrayList;
 
 @Placeable(
         group = "Enemies",
         displayName = "Enemy",
-        textures = { "enemy.jpg", "enemy_jump.png", "enemy_shoot.png" }
+        textures = { "enemy.jpg" }
 )
 public class Enemy2 extends Actor2 {
     protected BoxCollider boxCollider;
     BoxCollider playerCollider;
 
     protected float turnTimer;
-    protected boolean right = true;
+    //protected boolean right = true;
     boolean jump = false;
     boolean contactFloor = false;
-    protected final static float timeTillTurn = 2.0f;
     Enemy2.Action action;
     boolean fireSpawn = false;
     float fireTimer = 0;
     Player2 player;
+
+    @Property(displayName = "Time Before Turning") public float timeTillTurn = 2.0f;
+    @Property(displayName = "Face Right") public boolean right = true;
+
 
 //    public enum Action {
 //        DEFAULT, JUMP, SHOOT;

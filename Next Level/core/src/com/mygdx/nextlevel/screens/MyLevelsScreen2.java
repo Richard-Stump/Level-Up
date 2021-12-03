@@ -40,7 +40,7 @@ public class MyLevelsScreen2 implements Screen {
     private Stage stage;
     private final String titleText = "Level Select";
     private CreatedLevelsDB dbCreated;
-    private ServerDBHandler dbHandler;
+    private ServerDBHandler dbServer;
 
     public static final int STAGE_WIDTH = 1920 / 2;
     public static final int STAGE_HEIGHT = 1080 / 2;
@@ -74,9 +74,9 @@ public class MyLevelsScreen2 implements Screen {
     public String username;
 
     //static vars
-    public static int rightColumnWidth = 50;
+    public static int rightColumnWidth = 120;
     public static int topBottomPad = 30;
-    public static int leftColumnWidth = 320;
+    public static int leftColumnWidth = 200;
     public static int labelHeight = 25;
 
     public MyLevelsScreen2(NextLevel game) {
@@ -96,7 +96,7 @@ public class MyLevelsScreen2 implements Screen {
         stage = new Stage(viewport, batch);
 
         dbCreated = new CreatedLevelsDB();
-        dbHandler = new ServerDBHandler();
+        dbServer = new ServerDBHandler();
         selectedLevel = new Label("Level Selected: none", skin);
         selectedId = "";
         activeDB = "created";
@@ -309,6 +309,8 @@ public class MyLevelsScreen2 implements Screen {
         LevelInfo levelInfo;
         //rightTable.setDebug(true);
 
+        int numRaters = 0;
+
         //verify database is connected
         if (activeDB.equals("created")) {
             if (!dbCreated.isDBActive()) {
@@ -321,12 +323,23 @@ public class MyLevelsScreen2 implements Screen {
             return null;
         }
 
+        if (!dbServer.isDBActive()) {
+            System.out.println("db is not active");
+            return null;
+        } else {
+            levelInfo = dbServer.getLevelByID(id, false);
+            numRaters = dbServer.getRatingCount(id);
+        }
+
         //right column labels
         float rate = levelInfo.getRating();
-        if (rate < 0) {
-            rate = 0;
+        float rateInt = levelInfo.getRating();
+        if (rateInt < 0) {
+            rating = new Label("Rating: NA/5  [#" + numRaters + "]", skin);
+        } else {
+            //right column labels
+            rating = new Label("Rating: " + levelInfo.getRating() + "/5  [#" + numRaters + "]", skin);
         }
-        rating = new Label("" + rate + "/5", skin);
         playCount = new Label("" + levelInfo.getPlayCount(), skin);
 
         rating.addListener(selectLevelListener(id));
@@ -363,7 +376,11 @@ public class MyLevelsScreen2 implements Screen {
         return new ClickListener() {
           @Override
           public void clicked(InputEvent event, float x, float y) {
-              //TODO: set to edit screen with the given level
+              ServerDBHandler handler = new ServerDBHandler();
+
+              LevelInfo info = handler.getLevelByID(id, true);
+
+              game.setScreen(new EditLevelScreen(game, info));
           }
         };
     }
