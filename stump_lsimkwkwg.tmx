@@ -13,7 +13,7 @@
   <property name="backgroundColor" type="string" value="Blue"/>
  </properties>
  <objectgroup id="2" name="Player Layer">
-  <object id="1" name="Player2" x="4" y="4" >
+  <object id="1" name="Player2" x="2" y="3" >
    <properties>
     <property name="defaultMoveSpeed" type="float" value="12.0"/>
     <property name="defaultJump" type="float" value="13.0"/>
@@ -206,129 +206,8 @@
     <property name="breakable" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="1" name="Block2" x="5" y="1" >
+  <object id="1" name="End" x="27" y="1" >
    <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="6" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="7" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="8" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="9" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="10" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="11" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="12" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="13" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="14" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="15" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="16" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="17" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="18" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="19" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="20" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="21" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="22" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="23" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="24" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="25" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="26" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="27" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="28" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="29" y="1" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
    </properties>
   </object>
   <object id="1" name="Block2" x="30" y="1" >
@@ -346,47 +225,9 @@
     <property name="breakable" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="1" name="Block2" x="1" y="2" >
+  <object id="1" name="Block2" x="30" y="2" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="2" y="2" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="3" y="2" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="4" y="2" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="5" y="2" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Enemy2" x="13" y="2" >
-   <properties>
-    <property name="timeTillTurn" type="float" value="2.0"/>
-    <property name="right" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1" name="CoinStatic" x="16" y="2" >
-   <properties>
-   </properties>
-  </object>
-  <object id="1" name="CoinStatic" x="17" y="2" >
-   <properties>
-   </properties>
-  </object>
-  <object id="1" name="End" x="28" y="2" >
-   <properties>
    </properties>
   </object>
   <object id="1" name="Block2" x="31" y="2" >
@@ -395,6 +236,11 @@
    </properties>
   </object>
   <object id="1" name="Block2" x="0" y="3" >
+   <properties>
+    <property name="breakable" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="1" name="Block2" x="30" y="3" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
    </properties>
@@ -409,12 +255,22 @@
     <property name="breakable" type="bool" value="false"/>
    </properties>
   </object>
+  <object id="1" name="Block2" x="30" y="4" >
+   <properties>
+    <property name="breakable" type="bool" value="false"/>
+   </properties>
+  </object>
   <object id="1" name="Block2" x="31" y="4" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
    </properties>
   </object>
   <object id="1" name="Block2" x="0" y="5" >
+   <properties>
+    <property name="breakable" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="1" name="Block2" x="30" y="5" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
    </properties>
@@ -429,12 +285,22 @@
     <property name="breakable" type="bool" value="false"/>
    </properties>
   </object>
+  <object id="1" name="Block2" x="30" y="6" >
+   <properties>
+    <property name="breakable" type="bool" value="false"/>
+   </properties>
+  </object>
   <object id="1" name="Block2" x="31" y="6" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
    </properties>
   </object>
   <object id="1" name="Block2" x="0" y="7" >
+   <properties>
+    <property name="breakable" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="1" name="Block2" x="30" y="7" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
    </properties>
@@ -449,17 +315,17 @@
     <property name="breakable" type="bool" value="false"/>
    </properties>
   </object>
+  <object id="1" name="Block2" x="30" y="8" >
+   <properties>
+    <property name="breakable" type="bool" value="false"/>
+   </properties>
+  </object>
   <object id="1" name="Block2" x="31" y="8" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
    </properties>
   </object>
   <object id="1" name="Block2" x="0" y="9" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="31" y="9" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
    </properties>
@@ -480,16 +346,6 @@
    </properties>
   </object>
   <object id="1" name="Block2" x="0" y="13" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="0" y="14" >
-   <properties>
-    <property name="breakable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="1" name="Block2" x="0" y="15" >
    <properties>
     <property name="breakable" type="bool" value="false"/>
    </properties>

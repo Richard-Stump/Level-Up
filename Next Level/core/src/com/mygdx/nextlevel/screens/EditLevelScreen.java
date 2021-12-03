@@ -113,16 +113,6 @@ public class EditLevelScreen implements Screen {
         // TODO: Figure out how to use the same skin as the main menu
         if(!VisUI.isLoaded())
             VisUI.load(VisUI.SkinScale.X2);
-    }
-
-    /**
-     * Called by LibGDX when the screen is shown
-     */
-    @Override
-    public void show() {
-        //Stage should control input:
-        Gdx.input.setInputProcessor(stage);
-        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
 
         //back button
         TextButton backButton = new TextButton("Back", VisUI.getSkin());
@@ -162,12 +152,24 @@ public class EditLevelScreen implements Screen {
     }
 
     /**
+     * Called by LibGDX when the screen is shown
+     */
+    @Override
+    public void show() {
+        //Stage should control input:
+        Gdx.input.setInputProcessor(stage);
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+    }
+
+    /**
      * Called by libGDX each frame.
      * @param delta The change in time since the last frame
      */
     @Override
     public void render(float delta) {
         ScreenUtils.clear(backgroundColor);
+        
+        Gdx.input.setInputProcessor(stage);
 
         stage.act(delta);
         stage.draw();

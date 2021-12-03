@@ -500,7 +500,7 @@ public class GameScreen2 extends Timer implements Screen {
             case PUBLISH:   //If the player is publishing the level, they should be taken to a screen for it
                 break;
             case TEST:      //If the player is testing, they should go back to the editor when done.
-                game.setScreen(prevScreen);
+                ((Game) Gdx.app.getApplicationListener()).setScreen(prevScreen);
                 break;
         }
     }
