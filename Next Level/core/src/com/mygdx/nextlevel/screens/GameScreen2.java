@@ -291,6 +291,7 @@ public class GameScreen2 extends Timer implements Screen {
         actors.add(new Block2(this, itemBlockTextures, 28, 4, true, ItemIndex.LIFESTEAL.value, false));
         actors.add(new Block2(this, coinBlockTextures, 29, 4, true, ItemIndex.COIN.value, true));
         actors.add(new Block2(this, coinBlockTextures, 30, 4, false,false));
+        actors.add(new SpikeBlock(this, 3, 4));
         actors.add(new CoinStatic(this, coinTexture, 10, 5));
         actors.add(new CoinStatic(this, coinTexture, 13, 5));
         actors.add(new CoinStatic(this, coinTexture, 16, 5));

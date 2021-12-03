@@ -68,15 +68,15 @@ public class TileMap extends ApplicationAdapter{
         xAxis = screenWidth/2f;
         yAxis = screenWidth/2f/32f;
 
-        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
-        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
-        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
-        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
-        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
-        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
-//        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
-        gravity = tiledMapProperties.get("gravity", Float.class);
-        autoScroll = true;
+//        collectCoin = tiledMapProperties.get("collectCoins", Boolean.class);
+//        beatTimeLimit = tiledMapProperties.get("beatTimeLimit", Boolean.class);
+//        killAllEnemies = tiledMapProperties.get("killAllEnemies", Boolean.class);
+//        killNoEnemies = tiledMapProperties.get("killNoEnemies", Boolean.class);
+//        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
+//        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
+////        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
+//        gravity = tiledMapProperties.get("gravity", Float.class);
+        autoScroll = false;
 
         if (collectCoin) {
             conditionList.add(1);
