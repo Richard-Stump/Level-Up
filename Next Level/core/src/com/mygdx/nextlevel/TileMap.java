@@ -54,6 +54,8 @@ public class TileMap extends ApplicationAdapter{
     float yAxis;
     float screenWidth;
 
+    public ArrayList<Texture> coinBlockTextures;
+
     public TileMap(String filename) {
         tiledMap = new TmxMapLoader().load(filename);
         tiledMapProperties = tiledMap.getProperties();
@@ -73,7 +75,8 @@ public class TileMap extends ApplicationAdapter{
 //        keepJewel = tiledMapProperties.get("keepJewel", Boolean.class);
 //        timeLimit = tiledMapProperties.get("timeLimit", Float.class);
 //        autoScroll = tiledMapProperties.get("autoScroll", Boolean.class);
-        autoScroll = true;
+
+        autoScroll = false; //CHANGE BACK TO TRUE WHEN DONE
 
         if (collectCoin) {
             conditionList.add(1);
@@ -120,6 +123,8 @@ public class TileMap extends ApplicationAdapter{
 
         MapLayer objectLayer = tiledMap.getLayers().get("Item Block");
         //FIXME Create one for each actor
+        coinBlockTextures = new ArrayList<>();
+        coinBlockTextures.add(GameScreen2.BlockIndex.DEFAULT.value, new Texture("Block.png"));
         for(MapObject object : objectLayer.getObjects()){
             if(object instanceof TextureMapObject) {
                 TextureMapObject mapObject = (TextureMapObject) object;
@@ -132,7 +137,7 @@ public class TileMap extends ApplicationAdapter{
                 Texture texture = mapObject.getTextureRegion().getTexture();
                 mapObject.getTextureRegion().setRegion(mapObject.getTextureRegion().getRegionX() + x, mapObject.getTextureRegion().getRegionY() + y, width, height);
                 test.add(texture);
-                actors.add(new Block2(screen, test, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
+                actors.add(new Block2(screen, coinBlockTextures, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
             }
         }
 
@@ -150,7 +155,7 @@ public class TileMap extends ApplicationAdapter{
                 Texture texture = mapObject.getTextureRegion().getTexture();
                 mapObject.getTextureRegion().setRegion(mapObject.getTextureRegion().getRegionX() + x, mapObject.getTextureRegion().getRegionY() + y, width, height);
                 test.add(texture);
-                actors.add(new Block2(screen, test, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
+                actors.add(new Block2(screen, coinBlockTextures, mapObject.getX()/32.0f, mapObject.getY()/32.0f, false, false));
             }
         }
     }
