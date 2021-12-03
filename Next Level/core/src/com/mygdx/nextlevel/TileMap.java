@@ -268,16 +268,16 @@ public class TileMap extends ApplicationAdapter{
     public void render (OrthographicCamera camera, Player2 player, boolean reset) {
 
 
-//        switch (backgroundColor){
-//            case "Blue" : Gdx.gl.glClearColor(135/255f, 206/255f, 235/255f, 1);
-//                break;
-//            case "Green": Gdx.gl.glClearColor(47/255f, 79/255f, 79/255f, 1);
-//                break;
-//            case "Brown": Gdx.gl.glClearColor(160/255f, 82/255f, 45/255f, 1);
-//                break;
-//            case "Grey": Gdx.gl.glClearColor(169/255f, 169/255f, 169/255f, 1);
-//                break;
-//        }
+        switch (backgroundColor){
+            case "Blue" : Gdx.gl.glClearColor(135/255f, 206/255f, 235/255f, 1);
+                break;
+            case "Green": Gdx.gl.glClearColor(47/255f, 79/255f, 79/255f, 1);
+                break;
+            case "Brown": Gdx.gl.glClearColor(160/255f, 82/255f, 45/255f, 1);
+                break;
+            case "Grey": Gdx.gl.glClearColor(169/255f, 169/255f, 169/255f, 1);
+                break;
+        }
 
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
