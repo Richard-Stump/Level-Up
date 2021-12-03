@@ -495,9 +495,10 @@ public class GameScreen2 extends Timer implements Screen {
      */
     private void update(float delta) {
         despawnActorsInQueue();
-        if(shouldReset)
+        if(shouldReset) {
             System.out.println("Will reset");
             reset();
+        }
 
         //New actors should be spawned before physics and update methods are called because we want the new
         //actors to be considered in this frame.
