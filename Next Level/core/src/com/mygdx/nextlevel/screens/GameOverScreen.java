@@ -150,7 +150,7 @@ public class GameOverScreen implements Screen {
         //scoreLabel.scaleBy(.9f);
         timeLabel = new Label("Time Remaining : " + hud.getTime(), titleStyle);
         timerLabel = new Label(String.format("Timer : %.02f", time), titleStyle);
-        if (this.time < db.getRecordTime(levelInfo)) {
+        if ((this.time < db.getRecordTime(levelInfo)) && (db.getLevelByID(levelid, false).isPublic())) {
             db.updateRecordTime(levelInfo, this.time);
         }
         recordLabel = new Label(String.format("Record : %.2f", db.getRecordTime(levelInfo)), titleStyle);
