@@ -452,17 +452,11 @@ public class GameScreen2 extends Timer implements Screen {
 
         //Add all despawnedActors into the spawnQueue (Blocks and Enemies)
         for (Actor2 actor : despawnedActors) {
-//            if (actor.getClass() == Jewel.class) {
-//                System.out.println("Respawning jewel");
-//            }
             queueActorSpawn(actor.getX(), actor.getY(), actor.getClass());
         }
 
         //Reset all modified Blocks into the spawnQueue
         for (Actor2 actor : blockList) {
-//            if (((Block2) actor).isSpawnItem() && ((Block2) actor).isBreakable()) {
-//
-//            }
             if (((Block2) actor).isSpawnItem()) {
                 ((Block2) actor).reset();
             }

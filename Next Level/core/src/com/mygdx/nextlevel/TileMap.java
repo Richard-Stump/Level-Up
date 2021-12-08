@@ -36,7 +36,7 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import java.util.ArrayList;
 
 
-public class TileMap extends ApplicationAdapter{
+public class TileMap extends ApplicationAdapter {
     TiledMap tiledMap;
     MapProperties tiledMapProperties;
     TiledMapRenderer tiledMapRenderer;

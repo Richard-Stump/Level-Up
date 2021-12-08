@@ -61,6 +61,11 @@ public class Hud2 {
     ArrayList<Integer> conditionList;
     GameScreen2 screen;
 
+    TextureRegionDrawable jewelDrawable;
+    TextureRegionDrawable xDrawable;
+    HashMap<String, TextureRegionDrawable> itemDrawables;
+
+
     public Hud2(GameScreen2 screen, SpriteBatch spriteBatch, Player2 player, String levelInfo) {
         atlas = new TextureAtlas("skin/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"), atlas);
@@ -104,7 +109,10 @@ public class Hud2 {
         jewelImg = new Image(new Texture("x.png"));
         conditionList = tm.getConditionList();
 
+        jewelDrawable = new TextureRegionDrawable(new Texture("jewel.png"));
+        xDrawable = new TextureRegionDrawable(new Texture("x.png"));
 
+        itemDrawables = new HashMap<>();
 
         table.add(livesLabel).expandX().padTop(10);
         table.add(playerLabel).expandX().padTop(10);
@@ -153,19 +161,6 @@ public class Hud2 {
         if (conditionList.contains(4)) {
             table.add(jewelImg).width(25).height(25).expandX();
         }
-//        if (player.getCondition() == 1) {
-//            table.add(numCoinLabel).expandX();
-//        } else if (player.getCondition() == 2) {
-//            table.add(numEnemyLabel).expandX();
-//        } else if (player.getCondition() == 3) {
-//            table.add(killNoEnemy).expandX();
-//        } else if (player.getCondition() == 4) {
-//            table.add(jewelImg).width(25).height(25).expandX();
-//        }
-//        if (player.getCondition() == 1 && player.getCondition2() == 2) {
-//            table.add(numCoinLabel).expandX();
-//            table.add(numEnemyLabel).expandX();
-//        }
 
         stage.addActor(table);
     }
@@ -190,23 +185,6 @@ public class Hud2 {
             }
         }
         numLivesLabel.setText(String.format("%d", player.getLives()));
-//        if (player.getCondition() == 1) {
-//            numCoinLabel.setText(String.format("%d/%d", player.getCoins(), 5));
-//        } else if (player.getCondition() == 2) {
-//            numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), 2));
-//        } else if (player.getCondition() == 3) {
-//            killNoEnemy.setText(String.format("%d", player.getEnemiesKilled()));
-//        } else if (player.getCondition() == 4) {
-//            if (player.getJewel()) {
-//                jewelImg.setDrawable(new TextureRegionDrawable(new Texture("jewel.png")));
-//            } else {
-//                jewelImg.setDrawable(new TextureRegionDrawable(new Texture("x.png")));
-//            }
-//        }
-//        if (player.getCondition() == 1 && player.getCondition2() == 2) {
-//            numCoinLabel.setText(String.format("%d/%d", player.getCoins(), 5));
-//            numEnemyLabel.setText(String.format("%d/%d", player.getEnemiesKilled(), 1));
-//        }
         if (conditionList.contains(1)) {
             numCoinLabel.setText(String.format("%d/%d", player.getCoins(), tm.getCoinCount()));
         }
@@ -218,15 +196,24 @@ public class Hud2 {
         }
         if (conditionList.contains(4)) {
             if (player.getJewel()) {
-                jewelImg.setDrawable(new TextureRegionDrawable(new Texture("jewel.png")));
+                jewelImg.setDrawable(jewelDrawable);
             } else {
-                jewelImg.setDrawable(new TextureRegionDrawable(new Texture("x.png")));
+                jewelImg.setDrawable(xDrawable);
             }
         }
         if (player.getHeldItem() != null) {
-            itemImg.setDrawable(new TextureRegionDrawable(new Texture(map.get(player.getHeldItem()))));
+            String itemName = map.get(player.getHeldItem());
+
+            TextureRegionDrawable drawable = itemDrawables.get(itemName);
+
+            if(drawable == null) {
+                drawable = new TextureRegionDrawable(new Texture(map.get(player.getHeldItem())));
+                itemDrawables.put(itemName, drawable);
+            }
+
+            itemImg.setDrawable(drawable);
         } else {
-            itemImg.setDrawable(new TextureRegionDrawable(new Texture("x.png")));
+            itemImg.setDrawable(xDrawable);
         }
     }
 
